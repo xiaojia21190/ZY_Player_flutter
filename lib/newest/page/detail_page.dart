@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -14,6 +15,8 @@ import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../model/detail_reource.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({
@@ -37,17 +40,15 @@ class _DetailPageState extends State<DetailPage> {
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
-  List<DetailReource> _listDetail = [];
+  CollectProvider _collectProvider;
 
   @override
   void initState() {
     super.initState();
-    _listDetail = SpUtil.getObjList<DetailReource>("collcetPlayer", (data) => DetailReource.fromJson(data));
-    _detailProvider.setListDetailResource(_listDetail);
     if (widget.type == "1") {
       initData();
     } else {
-      _detailProvider.setDetailResource(_listDetail[int.parse(widget.index)]);
+      _detailProvider.setDetailResource(context.read<CollectProvider>().listDetailResource[int.parse(widget.index)]);
     }
   }
 
@@ -60,7 +61,16 @@ class _DetailPageState extends State<DetailPage> {
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource,
         queryParameters: {"key": SpUtil.getString("selection"), "url": widget.url}, onSuccess: (data) {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
+      context.read<CollectProvider>().changeNoti();
     }, onError: (_, __) {});
+  }
+
+  bool getFilterData(DetailReource data) {
+    if (data != null) {
+      var result = context.read<CollectProvider>().listDetailResource.where((element) => element.url == data.url);
+      return result.length > 0;
+    }
+    return false;
   }
 
   @override
@@ -75,30 +85,27 @@ class _DetailPageState extends State<DetailPage> {
               widget.title,
             ),
             actions: <Widget>[
-              Selector<DetailProvider, List<DetailReource>>(
-                  builder: (_, listData, __) {
-                    return IconButton(
-                        icon: listData.contains(_detailProvider.detailReource)
-                            ? Icon(
-                                Icons.turned_in,
-                                color: Colors.red,
-                              )
-                            : Icon(
-                                Icons.turned_in_not,
-                                color: Colors.red,
-                              ),
-                        onPressed: () {
-                          if (listData.contains(_detailProvider.detailReource)) {
-                            Log.d("点击取消");
-                            listData.remove(_detailProvider.detailReource);
-                          } else {
-                            Log.d("点击收藏");
-                            listData.add(_detailProvider.detailReource);
-                          }
-                          SpUtil.putObjectList("collcetPlayer", listData);
-                        });
-                  },
-                  selector: (_, store) => store.listDetailResource)
+              Consumer<CollectProvider>(builder: (_, provider, __) {
+                return IconButton(
+                    icon: getFilterData(_detailProvider.detailReource)
+                        ? Icon(
+                            Icons.turned_in,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.turned_in_not,
+                            color: Colors.red,
+                          ),
+                    onPressed: () {
+                      if (getFilterData(_detailProvider.detailReource)) {
+                        Log.d("点击取消");
+                        provider.removeResource(_detailProvider.detailReource);
+                      } else {
+                        Log.d("点击收藏");
+                        provider.addListResource(_detailProvider.detailReource);
+                      }
+                    });
+              })
             ],
           ),
           body: Consumer<DetailProvider>(builder: (_, provider, __) {
@@ -111,7 +118,7 @@ class _DetailPageState extends State<DetailPage> {
                           elevation: 2,
                           child: Container(
                             width: MediaQuery.of(context).size.width,
-                            height: ScreenUtil.getInstance().getWidth(300),
+                            height: ScreenUtil.getInstance().getWidth(310),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,14 +137,14 @@ class _DetailPageState extends State<DetailPage> {
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Text(provider.detailReource.title),
-                                          Text(
-                                            provider.detailReource.qingxi,
-                                            style: TextStyle(color: Colours.text_gray, fontSize: 12),
-                                          ),
-                                        ],
+                                      Text(
+                                        provider.detailReource.title,
+                                        maxLines: 2,
+                                      ),
+                                      Text(
+                                        provider.detailReource.qingxi,
+                                        maxLines: 2,
+                                        style: TextStyle(color: Colours.text_gray, fontSize: 12),
                                       ),
                                       Text(provider.detailReource.daoyan),
                                       Text(

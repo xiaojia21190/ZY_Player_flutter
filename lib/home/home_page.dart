@@ -1,5 +1,7 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
+import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/classification/page/classification_page.dart';
+import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
@@ -8,6 +10,8 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:provider/provider.dart';
 import 'package:ZY_Player_flutter/newest/page/newest_page.dart';
+
+import '../model/detail_reource.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -33,6 +37,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
+    context.read<CollectProvider>().setListDetailResource();
     _pageList = [NewestPage(), ClassificationPage(), CollectPage()];
   }
 

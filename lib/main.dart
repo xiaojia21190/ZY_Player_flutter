@@ -1,3 +1,4 @@
+import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/home/provider/player_resource_provider.dart';
 import 'package:dio/dio.dart';
@@ -33,6 +34,7 @@ Future<void> main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<PlayerResourceProvider>(create: (_) => PlayerResourceProvider()),
+      ChangeNotifierProvider<CollectProvider>(create: (_) => CollectProvider()),
     ],
     child: MyApp(),
   ));

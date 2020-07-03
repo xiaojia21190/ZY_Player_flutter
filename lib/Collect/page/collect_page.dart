@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/newest/newest_router.dart';
 import 'package:ZY_Player_flutter/newest/provider/detail_provider.dart';
@@ -14,14 +15,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
+import '../../widgets/load_image.dart';
+
 class CollectPage extends StatefulWidget {
   @override
   _CollectPageState createState() => _CollectPageState();
 }
 
 class _CollectPageState extends State<CollectPage> {
-  DetailProvider _detailProvider = DetailProvider();
-
   BaseListProvider<DetailReource> _baseListProvider = BaseListProvider();
 
   @override
@@ -31,8 +32,7 @@ class _CollectPageState extends State<CollectPage> {
   }
 
   Future _onRefresh() async {
-    var list = SpUtil.getObjList<DetailReource>("collcetPlayer", (data) => DetailReource.fromJson(data));
-    _baseListProvider.list.addAll(list);
+    _baseListProvider.list.addAll(context.read<CollectProvider>().listDetailResource);
   }
 
   @override
@@ -44,32 +44,6 @@ class _CollectPageState extends State<CollectPage> {
             centerTitle: true,
             backgroundColor: Colours.app_main,
             title: MySearchBar(),
-            actions: <Widget>[
-              Selector<DetailProvider, List>(
-                  builder: (_, listData, __) {
-                    return IconButton(
-                        icon: listData.contains(_detailProvider.detailReource)
-                            ? Icon(
-                                Icons.turned_in,
-                                color: Colors.red,
-                              )
-                            : Icon(
-                                Icons.turned_in_not,
-                                color: Colors.red,
-                              ),
-                        onPressed: () {
-                          if (listData.contains(_detailProvider.detailReource)) {
-                            Log.d("点击取消");
-                            listData.remove(_detailProvider.detailReource);
-                          } else {
-                            Log.d("点击收藏");
-                            listData.add(_detailProvider.detailReource);
-                          }
-                          SpUtil.putObjectList("collcetPlayer", listData);
-                        });
-                  },
-                  selector: (_, store) => store.listDetailResource)
-            ],
           ),
           body: Consumer<BaseListProvider<DetailReource>>(builder: (_, provider, __) {
             return DeerListView(
@@ -82,6 +56,7 @@ class _CollectPageState extends State<CollectPage> {
                   return Slidable(
                     child: Container(
                       child: ListTile(
+                        leading: LoadImage(_baseListProvider.list[index].cover),
                         title: Text(_baseListProvider.list[index].title),
                         subtitle: Text(_baseListProvider.list[index].leixing),
                         trailing: Icon(Icons.keyboard_arrow_right),
@@ -102,7 +77,7 @@ class _CollectPageState extends State<CollectPage> {
                         onTap: () {
                           // 取消收藏
                           _baseListProvider.list.remove(_baseListProvider.list[index]);
-                          SpUtil.putObjectList("collcetPlayer", _baseListProvider.list);
+                          context.read<CollectProvider>().removeResource(_baseListProvider.list[index]);
                         },
                       ),
                     ],
