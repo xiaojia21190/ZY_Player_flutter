@@ -66,6 +66,10 @@ dependencies:
   event_bus: ^1.1.1
   #json 序列化
   json_annotation: ^3.0.1
+  # 生成二维码
+  qr_flutter: ^3.2.0
+  # 保存图片
+  image_picker_saver: ^0.3.0
   #播放器
   # fijkplayer: ^0.8.4
 

@@ -66,7 +66,6 @@ class _CollectPageState extends State<CollectPage> {
                             listData.add(_detailProvider.detailReource);
                           }
                           SpUtil.putObjectList("collcetPlayer", listData);
-                          setState(() {});
                         });
                   },
                   selector: (_, store) => store.listDetailResource)

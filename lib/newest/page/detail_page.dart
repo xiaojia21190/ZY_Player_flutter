@@ -75,7 +75,7 @@ class _DetailPageState extends State<DetailPage> {
               widget.title,
             ),
             actions: <Widget>[
-              Selector<DetailProvider, List>(
+              Selector<DetailProvider, List<DetailReource>>(
                   builder: (_, listData, __) {
                     return IconButton(
                         icon: listData.contains(_detailProvider.detailReource)
@@ -96,7 +96,6 @@ class _DetailPageState extends State<DetailPage> {
                             listData.add(_detailProvider.detailReource);
                           }
                           SpUtil.putObjectList("collcetPlayer", listData);
-                          setState(() {});
                         });
                   },
                   selector: (_, store) => store.listDetailResource)

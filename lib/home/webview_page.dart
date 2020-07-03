@@ -43,6 +43,7 @@ class _WebViewPageState extends State<WebViewPage> {
                   return Future.value(false);
                 }
               }
+              SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
               return Future.value(true);
             },
             child: Scaffold(
