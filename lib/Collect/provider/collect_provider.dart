@@ -13,7 +13,6 @@ class CollectProvider extends ChangeNotifier {
     if (result.length > 0) {
       _listDetailResource.addAll(result);
     }
-    notifyListeners();
   }
 
   removeResource(DetailReource data) {

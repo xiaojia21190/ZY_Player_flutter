@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
+import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +23,8 @@ class WebViewPage extends StatefulWidget {
 
 class _WebViewPageState extends State<WebViewPage> {
   final Completer<WebViewController> _controller = Completer<WebViewController>();
+
+  bool isLangu = false;
 
   @override
   void initState() {
@@ -47,16 +51,55 @@ class _WebViewPageState extends State<WebViewPage> {
               return Future.value(true);
             },
             child: Scaffold(
-                appBar: MyAppBar(
-                  centerTitle: widget.title,
-                ),
-                body: WebView(
-                  initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-                  initialUrl: widget.url,
-                  javascriptMode: JavascriptMode.unrestricted,
-                  onWebViewCreated: (WebViewController webViewController) {
-                    _controller.complete(webViewController);
-                  },
+                backgroundColor: Colors.transparent,
+                body: Stack(
+                  children: <Widget>[
+                    WebView(
+                      initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+                      initialUrl: widget.url,
+                      javascriptMode: JavascriptMode.unrestricted,
+                      onWebViewCreated: (WebViewController webViewController) {
+                        _controller.complete(webViewController);
+                      },
+                    ),
+                    Positioned(
+                        top: 20,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            IconButton(
+                              onPressed: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                Navigator.maybePop(context);
+                              },
+                              tooltip: '返回',
+                              padding: const EdgeInsets.all(12.0),
+                              icon: Image.asset(
+                                "assets/images/ic_back_black.png",
+                                color: Colors.red,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                if (!isLangu) {
+                                  isLangu = true;
+                                  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+                                } else {
+                                  isLangu = false;
+                                  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+                                }
+                              },
+                              tooltip: '全屏',
+                              padding: const EdgeInsets.all(12.0),
+                              icon: Icon(
+                                Icons.landscape,
+                                color: Colors.red,
+                              ),
+                            )
+                          ],
+                        ))
+                  ],
                 )),
           );
         });
