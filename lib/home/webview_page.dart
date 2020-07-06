@@ -93,7 +93,7 @@ class _WebViewPageState extends State<WebViewPage> {
                               tooltip: '全屏',
                               padding: const EdgeInsets.all(12.0),
                               icon: Icon(
-                                Icons.landscape,
+                                Icons.aspect_ratio,
                                 color: Colors.red,
                               ),
                             )

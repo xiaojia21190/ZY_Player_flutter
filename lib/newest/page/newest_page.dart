@@ -26,7 +26,6 @@ enum ResourceFarther {
   mahuazy,
   zuixinzy,
   ku123,
-  wolongzy,
   zy135,
 }
 
@@ -170,10 +169,6 @@ class _NewestPageState extends State<NewestPage> with AutomaticKeepAliveClientMi
                     const PopupMenuItem<ResourceFarther>(
                       value: ResourceFarther.ku123,
                       child: Text('123资源网'),
-                    ),
-                    const PopupMenuItem<ResourceFarther>(
-                      value: ResourceFarther.wolongzy,
-                      child: Text('卧龙资源网'),
                     ),
                     const PopupMenuItem<ResourceFarther>(
                       value: ResourceFarther.zy135,
