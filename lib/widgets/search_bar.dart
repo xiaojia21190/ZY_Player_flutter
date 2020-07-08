@@ -4,8 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 
-import 'load_image.dart';
-
 /// 搜索页的AppBar
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   const SearchBar({

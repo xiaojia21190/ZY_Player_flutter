@@ -40,7 +40,6 @@ class _DetailPageState extends State<DetailPage> {
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
-  CollectProvider _collectProvider;
 
   @override
   void initState() {

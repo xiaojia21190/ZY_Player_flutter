@@ -57,7 +57,7 @@ class _PlayerViewPageState extends State<PlayerViewPage> {
       await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource,
           queryParameters: {"keywords": widget.keywords, "key": widget.keyw, "page": _currentPage}, onSuccess: (resultList) {
         _baseListProvider.setStateType(StateType.empty);
-        _baseListProvider.setHasMore(true);
+        _baseListProvider.setHasMore(false);
         List.generate(resultList.length, (i) => _baseListProvider.list.add(ResourceData.fromJson(resultList[i])));
       }, onError: (_, __) {
         _baseListProvider.setStateType(StateType.network);
@@ -101,7 +101,7 @@ class _PlayerViewPageState extends State<PlayerViewPage> {
                     onTap: () {
                       Log.d('前往详情页');
                       NavigatorUtils.push(context,
-                          '${NewestRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].url)}&key=${widget.keyw}&title=${Uri.encodeComponent(_baseListProvider.list[index].title)})');
+                          '${NewestRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].url)}&key=${widget.keyw}&title=${Uri.encodeComponent(_baseListProvider.list[index].title)}&type=1');
                     },
                   );
                 });
