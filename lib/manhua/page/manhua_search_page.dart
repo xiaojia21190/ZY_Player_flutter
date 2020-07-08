@@ -1,22 +1,28 @@
 import 'package:ZY_Player_flutter/classification/classification_router.dart';
+import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
+import 'package:ZY_Player_flutter/model/manhua_detail.dart';
+import 'package:ZY_Player_flutter/net/dio_utils.dart';
+import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/newest/provider/search_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
+import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SearchPage extends StatefulWidget {
+class ManhuaSearchPage extends StatefulWidget {
   @override
-  _SearchPageState createState() => _SearchPageState();
+  _ManhuaSearchPageState createState() => _ManhuaSearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
-  SearchProvider _searchProvider = SearchProvider();
+class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
+  ManhuaSearchProvider _searchProvider = ManhuaSearchProvider();
 
   @override
   void initState() {
@@ -29,25 +35,31 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
+  Future getSearchWords(String keywords) async {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua,
+        queryParameters: {"keywords": keywords},
+        onSuccess: (resultList) => {_searchProvider.setList(List.generate(resultList.legnth, (index) => ManhuaDetail.fromJson(resultList[index])))},
+        onError: (_, __) {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
 
-    return ChangeNotifierProvider<SearchProvider>(
+    return ChangeNotifierProvider<ManhuaSearchProvider>(
         create: (_) => _searchProvider,
         child: Scaffold(
           appBar: SearchBar(
-              hintText: '请输入资源名称查询',
+              hintText: '请输入漫画名称查询',
               onPressed: (text) {
                 Toast.show('搜索内容：$text');
                 _searchProvider.addWors(text);
-                NavigatorUtils.push(context,
-                    '${ClassificationtRouter.playerViewPage}?keywords=${Uri.encodeComponent(text)}&title=${Uri.encodeComponent(text)}&keyw=zuidazy');
+                getSearchWords(text);
               }),
           body: Container(
             child: Column(
               children: <Widget>[
-                Consumer<SearchProvider>(builder: (_, provider, __) {
+                Consumer<ManhuaSearchProvider>(builder: (_, provider, __) {
                   return provider.words.length > 0
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -71,7 +83,7 @@ class _SearchPageState extends State<SearchPage> {
                                     })
                               ],
                             ),
-                            Selector<SearchProvider, List>(
+                            Selector<ManhuaSearchProvider, List>(
                                 builder: (_, words, __) {
                                   return Padding(
                                     padding: EdgeInsets.only(left: 10),
@@ -101,9 +113,30 @@ class _SearchPageState extends State<SearchPage> {
                           ],
                         )
                       : Container();
-                })
+                }),
+                Expanded(child: Consumer<ManhuaSearchProvider>(builder: (_, provider, __) {
+                  return provider.list.length > 0
+                      ? ListView.builder(
+                          itemCount: provider.list.length,
+                          itemBuilder: (_, index) {
+                            return ListTile(
+                              title: Text(provider.list[index].title),
+                              subtitle: Text(provider.list[index].author),
+                              leading: LoadImage(provider.list[index].cover),
+                              trailing: Icon(Icons.keyboard_arrow_right),
+                              onTap: () {
+                                Log.d('前往详情页');
+                              },
+                            );
+                          })
+                      : Center(
+                          child: StateLayout(type: StateType.empty),
+                        );
+                }))
               ],
             ),
+
+            //
           ),
         ));
   }

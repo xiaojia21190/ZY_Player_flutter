@@ -1,7 +1,7 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/classification/page/classification_page.dart';
-import 'package:flustars/flustars.dart';
+import 'package:ZY_Player_flutter/manhua/page/manhua_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
@@ -11,8 +11,6 @@ import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:provider/provider.dart';
 import 'package:ZY_Player_flutter/newest/page/newest_page.dart';
 
-import '../model/detail_reource.dart';
-
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -21,7 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['最新', '分类', '收藏'];
+  final List<String> _appBarTitles = ['最新', '分类', '收藏', '动漫'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -38,7 +36,7 @@ class _HomeState extends State<Home> {
 
   void initData() {
     context.read<CollectProvider>().setListDetailResource();
-    _pageList = [NewestPage(), ClassificationPage(), CollectPage()];
+    _pageList = [NewestPage(), ClassificationPage(), CollectPage(), ManhuaSearchPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {
@@ -80,8 +78,20 @@ class _HomeState extends State<Home> {
             color: Colours.app_main,
           ),
         ],
+        [
+          const LoadAssetImage(
+            'home/icon_shop',
+            width: 25.0,
+            color: Colours.unselected_item_color,
+          ),
+          const LoadAssetImage(
+            'home/icon_shop',
+            width: 25.0,
+            color: Colours.app_main,
+          ),
+        ]
       ];
-      _list = List.generate(3, (i) {
+      _list = List.generate(4, (i) {
         return BottomNavigationBarItem(
             icon: _tabImages[i][0],
             activeIcon: _tabImages[i][1],
@@ -124,9 +134,17 @@ class _HomeState extends State<Home> {
             color: Colours.dark_app_main,
           ),
         ],
+        [
+          const LoadAssetImage('home/icon_shop', width: 25.0),
+          const LoadAssetImage(
+            'home/icon_shop',
+            width: 25.0,
+            color: Colours.dark_app_main,
+          ),
+        ]
       ];
 
-      _listDark = List.generate(3, (i) {
+      _listDark = List.generate(4, (i) {
         return BottomNavigationBarItem(
             icon: _tabImagesDark[i][0],
             activeIcon: _tabImagesDark[i][1],

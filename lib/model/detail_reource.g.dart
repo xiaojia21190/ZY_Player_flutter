@@ -25,7 +25,8 @@ DetailReource _$DetailReourceFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) => <String, dynamic>{
+Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) =>
+    <String, dynamic>{
       'videoList': instance.videoList,
       'content': instance.content,
       'cover': instance.cover,
