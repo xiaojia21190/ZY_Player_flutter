@@ -4,6 +4,12 @@ part 'manhua_catlog_detail.g.dart';
 
 @JsonSerializable()
 class ManhuaCatlogDetail extends Object {
+  @JsonKey(name: 'url')
+  String url;
+
+  @JsonKey(name: 'cover')
+  String cover;
+
   @JsonKey(name: 'gengxin')
   String gengxin;
 
@@ -23,6 +29,8 @@ class ManhuaCatlogDetail extends Object {
   List<Catlogs> catlogs;
 
   ManhuaCatlogDetail(
+    this.url,
+    this.cover,
     this.gengxin,
     this.author,
     this.leixing,

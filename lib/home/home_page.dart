@@ -19,7 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['最新', '分类', '收藏', '动漫'];
+  final List<String> _appBarTitles = ['最新', '小说', '收藏', '动漫'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -35,7 +35,6 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    context.read<CollectProvider>().setListDetailResource();
     _pageList = [NewestPage(), ClassificationPage(), CollectPage(), ManhuaSearchPage()];
   }
 

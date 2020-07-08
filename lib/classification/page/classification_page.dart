@@ -1,11 +1,9 @@
 import 'package:ZY_Player_flutter/classification/classification_router.dart';
 import 'package:ZY_Player_flutter/home/provider/player_resource_provider.dart';
-import 'package:ZY_Player_flutter/newest/newest_router.dart';
 import 'package:ZY_Player_flutter/newest/widget/my_search_bar.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

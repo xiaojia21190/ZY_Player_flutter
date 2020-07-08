@@ -1,13 +1,21 @@
+import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/manhua_detail.dart';
+import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
-class ManhuaSearchProvider extends ChangeNotifier {
+class ManhuaProvider extends ChangeNotifier {
   List<String> _words = [];
   List<String> get words => _words;
 
   List<ManhuaDetail> _list = [];
   List<ManhuaDetail> get list => _list;
+
+  ManhuaCatlogDetail _catLog;
+  ManhuaCatlogDetail get catLog => _catLog;
+
+  StateType _state = StateType.empty;
+  StateType get state => _state;
 
   setWords() {
     _words = SpUtil.getStringList("ManHuaWords", defValue: []);
@@ -35,5 +43,15 @@ class ManhuaSearchProvider extends ChangeNotifier {
       SpUtil.putStringList("ManHuaWords", _words);
       notifyListeners();
     }
+  }
+
+  setManhuaDetail(ManhuaCatlogDetail manhuaCatlogDetail) {
+    _catLog = manhuaCatlogDetail;
+    notifyListeners();
+  }
+
+  setstate(StateType stateType) {
+    _state = stateType;
+    notifyListeners();
   }
 }

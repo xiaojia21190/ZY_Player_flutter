@@ -1,9 +1,9 @@
 import 'package:ZY_Player_flutter/classification/classification_router.dart';
+import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
 import 'package:ZY_Player_flutter/model/manhua_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
-import 'package:ZY_Player_flutter/newest/provider/search_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
@@ -22,7 +22,7 @@ class ManhuaSearchPage extends StatefulWidget {
 }
 
 class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
-  ManhuaSearchProvider _searchProvider = ManhuaSearchProvider();
+  ManhuaProvider _searchProvider = ManhuaProvider();
 
   @override
   void initState() {
@@ -36,30 +36,37 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
   }
 
   Future getSearchWords(String keywords) async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua,
-        queryParameters: {"keywords": keywords},
-        onSuccess: (resultList) => {_searchProvider.setList(List.generate(resultList.legnth, (index) => ManhuaDetail.fromJson(resultList[index])))},
-        onError: (_, __) {});
+    _searchProvider.setstate(StateType.loading);
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
+      var data = List.generate(resultList.length, (index) => ManhuaDetail.fromJson(resultList[index]));
+      _searchProvider.setList(data);
+      _searchProvider.setstate(StateType.empty);
+    }, onError: (_, __) {
+      _searchProvider.setstate(StateType.network);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
 
-    return ChangeNotifierProvider<ManhuaSearchProvider>(
+    return ChangeNotifierProvider<ManhuaProvider>(
         create: (_) => _searchProvider,
         child: Scaffold(
           appBar: SearchBar(
+              isBack: false,
               hintText: '请输入漫画名称查询',
               onPressed: (text) {
                 Toast.show('搜索内容：$text');
-                _searchProvider.addWors(text);
-                getSearchWords(text);
+                if (text != "") {
+                  _searchProvider.addWors(text);
+                  getSearchWords(text);
+                }
               }),
           body: Container(
             child: Column(
               children: <Widget>[
-                Consumer<ManhuaSearchProvider>(builder: (_, provider, __) {
+                Consumer<ManhuaProvider>(builder: (_, provider, __) {
                   return provider.words.length > 0
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -83,7 +90,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
                                     })
                               ],
                             ),
-                            Selector<ManhuaSearchProvider, List>(
+                            Selector<ManhuaProvider, List>(
                                 builder: (_, words, __) {
                                   return Padding(
                                     padding: EdgeInsets.only(left: 10),
@@ -102,8 +109,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
                                             ),
                                             onTap: () {
                                               //搜索关键词
-                                              NavigatorUtils.push(context,
-                                                  '${ClassificationtRouter.playerViewPage}?keywords=${Uri.encodeComponent(s)}&title=${Uri.encodeComponent("搜索结果")}&keyw=${SpUtil.getString("selection")}');
+                                              getSearchWords(s);
                                             },
                                           );
                                         }).toList()),
@@ -114,23 +120,39 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
                         )
                       : Container();
                 }),
-                Expanded(child: Consumer<ManhuaSearchProvider>(builder: (_, provider, __) {
+                Expanded(child: Consumer<ManhuaProvider>(builder: (_, provider, __) {
                   return provider.list.length > 0
-                      ? ListView.builder(
-                          itemCount: provider.list.length,
-                          itemBuilder: (_, index) {
-                            return ListTile(
-                              title: Text(provider.list[index].title),
-                              subtitle: Text(provider.list[index].author),
-                              leading: LoadImage(provider.list[index].cover),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: () {
-                                Log.d('前往详情页');
-                              },
-                            );
-                          })
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Text("搜索结果"),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: ScreenUtil.getInstance().getWidth(491),
+                              child: ListView.builder(
+                                  itemCount: provider.list.length,
+                                  itemBuilder: (_, index) {
+                                    return ListTile(
+                                      title: Text(provider.list[index].title),
+                                      subtitle: Text(provider.list[index].author),
+                                      leading: LoadImage(provider.list[index].cover),
+                                      trailing: Icon(Icons.keyboard_arrow_right),
+                                      onTap: () {
+                                        Log.d('前往详情页');
+                                        NavigatorUtils.push(context,
+                                            '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
+                                      },
+                                    );
+                                  }),
+                            )
+                          ],
+                        )
                       : Center(
-                          child: StateLayout(type: StateType.empty),
+                          child: StateLayout(type: provider.state),
                         );
                 }))
               ],

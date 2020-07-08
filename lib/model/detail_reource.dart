@@ -1,3 +1,4 @@
+import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'detail_reource.g.dart';
@@ -46,6 +47,9 @@ class DetailReource extends Object {
   @JsonKey(name: 'url')
   String url;
 
+  @JsonKey(name: 'type')
+  CollectType type;
+
   DetailReource(
     this.videoList,
     this.content,
@@ -61,6 +65,7 @@ class DetailReource extends Object {
     this.shangying,
     this.pianchang,
     this.url,
+    this.type,
   );
 
   factory DetailReource.fromJson(Map<String, dynamic> srcJson) => _$DetailReourceFromJson(srcJson);

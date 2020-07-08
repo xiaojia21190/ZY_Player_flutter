@@ -11,10 +11,12 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
     this.hintText = '',
     this.backImg = 'assets/images/ic_back_black.png',
     this.onPressed,
+    this.isBack,
   }) : super(key: key);
 
   final String backImg;
   final String hintText;
+  final bool isBack;
   final Function(String) onPressed;
 
   @override
@@ -144,7 +146,11 @@ class _SearchBarState extends State<SearchBar> {
           child: Container(
             child: Row(
               children: <Widget>[
-                back,
+                widget.isBack
+                    ? back
+                    : Container(
+                        width: 10,
+                      ),
                 textField,
                 Gaps.hGap8,
                 search,

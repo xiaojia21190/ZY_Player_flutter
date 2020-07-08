@@ -40,9 +40,11 @@ class _SearchPageState extends State<SearchPage> {
               hintText: '请输入资源名称查询',
               onPressed: (text) {
                 Toast.show('搜索内容：$text');
-                _searchProvider.addWors(text);
-                NavigatorUtils.push(context,
-                    '${ClassificationtRouter.playerViewPage}?keywords=${Uri.encodeComponent(text)}&title=${Uri.encodeComponent(text)}&keyw=zuidazy');
+                if (text != null) {
+                  _searchProvider.addWors(text);
+                  NavigatorUtils.push(context,
+                      '${ClassificationtRouter.playerViewPage}?keywords=${Uri.encodeComponent(text)}&title=${Uri.encodeComponent(text)}&keyw=zuidazy');
+                }
               }),
           body: Container(
             child: Column(

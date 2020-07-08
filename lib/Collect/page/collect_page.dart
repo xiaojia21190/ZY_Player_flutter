@@ -32,7 +32,7 @@ class _CollectPageState extends State<CollectPage> {
   }
 
   Future _onRefresh() async {
-    _baseListProvider.list.addAll(context.read<CollectProvider>().listDetailResource);
+    // _baseListProvider.list.addAll(context.read<CollectProvider>().listDetailResource);
   }
 
   @override
@@ -77,7 +77,7 @@ class _CollectPageState extends State<CollectPage> {
                         onTap: () {
                           // 取消收藏
                           _baseListProvider.list.remove(_baseListProvider.list[index]);
-                          context.read<CollectProvider>().removeResource(_baseListProvider.list[index]);
+                          // context.read<CollectProvider>().removeResource(_baseListProvider.list[index]);
                         },
                       ),
                     ],

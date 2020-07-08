@@ -8,20 +8,20 @@ part of 'manhua_catlog_detail.dart';
 
 ManhuaCatlogDetail _$ManhuaCatlogDetailFromJson(Map<String, dynamic> json) {
   return ManhuaCatlogDetail(
+    json['url'] as String,
+    json['cover'] as String,
     json['gengxin'] as String,
     json['author'] as String,
     json['leixing'] as String,
     json['gengxinTime'] as String,
     json['content'] as String,
-    (json['catlogs'] as List)
-        ?.map((e) =>
-            e == null ? null : Catlogs.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['catlogs'] as List)?.map((e) => e == null ? null : Catlogs.fromJson(e as Map<String, dynamic>))?.toList(),
   );
 }
 
-Map<String, dynamic> _$ManhuaCatlogDetailToJson(ManhuaCatlogDetail instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ManhuaCatlogDetailToJson(ManhuaCatlogDetail instance) => <String, dynamic>{
+      'url': instance.url,
+      'cover': instance.cover,
       'gengxin': instance.gengxin,
       'author': instance.author,
       'leixing': instance.leixing,

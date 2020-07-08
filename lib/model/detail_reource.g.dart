@@ -22,11 +22,11 @@ DetailReource _$DetailReourceFromJson(Map<String, dynamic> json) {
     json['shangying'] as String,
     json['pianchang'] as String,
     json['url'] as String,
+    json['type'] as CollectType,
   );
 }
 
-Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) => <String, dynamic>{
       'videoList': instance.videoList,
       'content': instance.content,
       'cover': instance.cover,
@@ -41,4 +41,5 @@ Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) =>
       'shangying': instance.shangying,
       'pianchang': instance.pianchang,
       'url': instance.url,
+      'type': instance.type,
     };

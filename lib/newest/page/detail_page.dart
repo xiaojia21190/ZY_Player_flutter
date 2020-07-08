@@ -44,6 +44,8 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
+
+    context.read<CollectProvider>().setListDetailResource("collcetPlayer");
     if (widget.type == "1") {
       initData();
     } else {
@@ -98,10 +100,10 @@ class _DetailPageState extends State<DetailPage> {
                     onPressed: () {
                       if (getFilterData(_detailProvider.detailReource)) {
                         Log.d("点击取消");
-                        provider.removeResource(_detailProvider.detailReource);
+                        provider.removeResource(_detailProvider.detailReource.url, "collcetPlayer");
                       } else {
                         Log.d("点击收藏");
-                        provider.addListResource(_detailProvider.detailReource);
+                        provider.addResource(_detailProvider.detailReource, "collcetPlayer");
                       }
                     });
               })
@@ -239,30 +241,5 @@ class _DetailPageState extends State<DetailPage> {
                 : StateLayout(type: StateType.loading);
           }),
         ));
-  }
-}
-
-class StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
-  final SizedBox child;
-
-  StickyTabBarDelegate({@required this.child});
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Theme.of(context).backgroundColor,
-      child: this.child,
-    );
-  }
-
-  @override
-  double get maxExtent => this.child.height;
-
-  @override
-  double get minExtent => this.child.height;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
   }
 }
