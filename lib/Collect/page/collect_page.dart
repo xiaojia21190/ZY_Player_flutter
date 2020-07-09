@@ -1,16 +1,12 @@
-import 'dart:developer';
-
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
-import 'package:ZY_Player_flutter/model/detail_reource.dart';
-import 'package:ZY_Player_flutter/newest/newest_router.dart';
-import 'package:ZY_Player_flutter/newest/provider/detail_provider.dart';
-import 'package:ZY_Player_flutter/newest/widget/my_search_bar.dart';
-import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
+import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
+import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
+import 'package:ZY_Player_flutter/res/dimens.dart';
+import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
-import 'package:flustars/flustars.dart';
+import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -22,68 +18,168 @@ class CollectPage extends StatefulWidget {
   _CollectPageState createState() => _CollectPageState();
 }
 
-class _CollectPageState extends State<CollectPage> {
-  BaseListProvider<DetailReource> _baseListProvider = BaseListProvider();
+class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
+  @override
+  bool get wantKeepAlive => true;
+  TabController _tabController;
+  PageController _pageController;
+
+  CollectProvider _collectProvider;
+
+  List<dynamic> _list = [];
+
+  int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(vsync: this, length: 3);
+    _pageController = PageController(initialPage: 0);
+    _collectProvider = context.read<CollectProvider>();
     _onRefresh();
   }
 
   Future _onRefresh() async {
-    // _baseListProvider.list.addAll(context.read<CollectProvider>().listDetailResource);
+    _list = _collectProvider.listDetailResource;
+    setState(() {});
+  }
+
+  Widget getData(data, int index) {
+    switch (index) {
+      case 0:
+        return ListTile(
+          title: Text(_list[index].title),
+          subtitle: Text(_list[index].leixing),
+          onTap: () {
+            Log.d('前往详情页');
+            NavigatorUtils.push(
+                context, '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_list[index].url)}&title=${Uri.encodeComponent(_list[index].title)}');
+          },
+        );
+        break;
+      case 1:
+        return ListTile(
+          title: Text(_list[index].title),
+          subtitle: Text(_list[index].leixing),
+          onTap: () {
+            Log.d('前往详情页');
+          },
+        );
+        break;
+      case 2:
+        return ListTile(
+          title: Text(_list[index].title),
+          subtitle: Text(_list[index].author),
+          trailing: Icon(Icons.keyboard_arrow_right),
+          leading: LoadImage(
+            _list[index].cover,
+            fit: BoxFit.cover,
+          ),
+          onTap: () {
+            Log.d('前往详情页');
+            NavigatorUtils.push(
+                context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(_list[index].url)}&title=${Uri.encodeComponent(_list[index].title)}');
+          },
+        );
+        break;
+      default:
+        return ListTile(
+          leading: _list[index].cover != null ? LoadImage(_list[index].cover) : Container(),
+          title: Text(_list[index].title),
+          subtitle: Text(_list[index].type),
+          trailing: Icon(Icons.keyboard_arrow_right),
+          onTap: () {
+            Log.d('前往详情页');
+          },
+        );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BaseListProvider<DetailReource>>(
-        create: (_) => _baseListProvider,
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: Colours.app_main,
-            title: MySearchBar(),
+    super.build(context);
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: TabBar(
+          labelPadding: const EdgeInsets.symmetric(horizontal: 10),
+          controller: _tabController,
+          labelColor: Colours.red_selected_line,
+          unselectedLabelColor: Color(0xff646566),
+          labelStyle: TextStyles.textBold16,
+          unselectedLabelStyle: const TextStyle(
+            fontSize: Dimens.font_sp16,
+            color: Colours.red_selected_line,
           ),
-          body: Consumer<BaseListProvider<DetailReource>>(builder: (_, provider, __) {
-            return DeerListView(
-                itemCount: _baseListProvider.list.length,
-                stateType: _baseListProvider.stateType,
-                onRefresh: _onRefresh,
-                pageSize: 100,
-                hasMore: false,
-                itemBuilder: (_, index) {
-                  return Slidable(
-                    child: Container(
-                      child: ListTile(
-                        leading: LoadImage(_baseListProvider.list[index].cover),
-                        title: Text(_baseListProvider.list[index].title),
-                        subtitle: Text(_baseListProvider.list[index].leixing),
-                        trailing: Icon(Icons.keyboard_arrow_right),
-                        onTap: () {
-                          Log.d('前往详情页');
-                          NavigatorUtils.push(context,
-                              '${NewestRouter.detailPage}?type=2&index=$index&title=${Uri.encodeComponent(_baseListProvider.list[index].title)}');
-                        },
-                      ),
-                    ),
-                    actionPane: SlidableDrawerActionPane(),
-                    actionExtentRatio: 0.25,
-                    secondaryActions: <Widget>[
-                      IconSlideAction(
-                        caption: '取消收藏',
-                        color: Colors.red,
-                        icon: Icons.delete,
-                        onTap: () {
-                          // 取消收藏
-                          _baseListProvider.list.remove(_baseListProvider.list[index]);
-                          // context.read<CollectProvider>().removeResource(_baseListProvider.list[index]);
-                        },
-                      ),
-                    ],
-                  );
-                });
-          }),
-        ));
+          indicatorSize: TabBarIndicatorSize.label,
+          indicatorColor: Colours.red_selected_line,
+          indicatorWeight: 3,
+          tabs: const <Widget>[
+            Text("影视"),
+            Text("小说"),
+            Text("漫画"),
+          ],
+          onTap: (index) {
+            if (!mounted) {
+              return;
+            }
+            _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+          },
+        ),
+      ),
+      body: Container(
+        color: Color(0xfff5f5f5),
+        child: PageView.builder(
+            key: const Key('pageView'),
+            itemCount: 3,
+            onPageChanged: _onPageChange,
+            controller: _pageController,
+            itemBuilder: (_, index) {
+              return _list.length > 0
+                  ? ListView.builder(
+                      itemCount: _list.length,
+                      itemBuilder: (_, index) {
+                        return Slidable(
+                          child: getData(_list[index], currentIndex),
+                          actionPane: SlidableDrawerActionPane(),
+                          actionExtentRatio: 0.25,
+                          secondaryActions: <Widget>[
+                            IconSlideAction(
+                              caption: '取消收藏',
+                              color: Colors.red,
+                              icon: Icons.delete,
+                              onTap: () {
+                                // 取消收藏
+                              },
+                            ),
+                          ],
+                        );
+                      })
+                  : StateLayout(
+                      type: StateType.empty,
+                    );
+            }),
+      ),
+    );
+  }
+
+  _onPageChange(int index) async {
+    // 加载不同的数据
+    switch (index) {
+      case 0:
+        _list = _collectProvider.listDetailResource;
+        currentIndex = 0;
+        break;
+      case 1:
+        _list = _collectProvider.manhuaCatlog;
+        currentIndex = 1;
+        break;
+      case 2:
+        _list = _collectProvider.manhuaCatlog;
+        currentIndex = 2;
+        break;
+      default:
+    }
+    _tabController.animateTo(index);
   }
 }

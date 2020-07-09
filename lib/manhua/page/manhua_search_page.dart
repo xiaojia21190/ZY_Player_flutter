@@ -1,4 +1,3 @@
-import 'package:ZY_Player_flutter/classification/classification_router.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
 import 'package:ZY_Player_flutter/model/manhua_detail.dart';
@@ -21,13 +20,15 @@ class ManhuaSearchPage extends StatefulWidget {
   _ManhuaSearchPageState createState() => _ManhuaSearchPageState();
 }
 
-class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
+class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepAliveClientMixin<ManhuaSearchPage>, SingleTickerProviderStateMixin {
+  @override
+  bool get wantKeepAlive => true;
   ManhuaProvider _searchProvider;
 
   @override
   void initState() {
     super.initState();
-    _searchProvider = Provider.of<ManhuaProvider>(context, listen: false);
+    _searchProvider = context.read<ManhuaProvider>();
     _searchProvider.setWords();
   }
 
@@ -49,6 +50,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final bool isDark = ThemeUtils.isDark(context);
 
     return Scaffold(

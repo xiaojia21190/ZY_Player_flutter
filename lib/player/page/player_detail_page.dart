@@ -4,7 +4,7 @@ import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
-import 'package:ZY_Player_flutter/newest/provider/detail_provider.dart';
+import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
@@ -18,25 +18,21 @@ import 'package:provider/provider.dart';
 
 import '../../model/detail_reource.dart';
 
-class DetailPage extends StatefulWidget {
-  const DetailPage({
+class PlayerDetailPage extends StatefulWidget {
+  const PlayerDetailPage({
     Key key,
-    this.url,
+    @required this.url,
     @required this.title,
-    this.type,
-    this.index,
   }) : super(key: key);
 
   final String url;
   final String title;
-  final String type;
-  final String index;
 
   @override
-  _DetailPageState createState() => _DetailPageState();
+  _PlayerDetailPageState createState() => _PlayerDetailPageState();
 }
 
-class _DetailPageState extends State<DetailPage> {
+class _PlayerDetailPageState extends State<PlayerDetailPage> {
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
@@ -44,13 +40,8 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
-
     context.read<CollectProvider>().setListDetailResource("collcetPlayer");
-    if (widget.type == "1") {
-      initData();
-    } else {
-      _detailProvider.setDetailResource(context.read<CollectProvider>().listDetailResource[int.parse(widget.index)]);
-    }
+    initData();
   }
 
   @override
@@ -59,8 +50,8 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Future initData() async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource,
-        queryParameters: {"key": SpUtil.getString("selection"), "url": widget.url}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"key": "zuidazy", "url": widget.url},
+        onSuccess: (data) {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
       context.read<CollectProvider>().changeNoti();
     }, onError: (_, __) {});
@@ -100,10 +91,10 @@ class _DetailPageState extends State<DetailPage> {
                     onPressed: () {
                       if (getFilterData(_detailProvider.detailReource)) {
                         Log.d("点击取消");
-                        provider.removeResource(_detailProvider.detailReource.url, "collcetPlayer");
+                        provider.removeResource(_detailProvider.detailReource.url);
                       } else {
                         Log.d("点击收藏");
-                        provider.addResource(_detailProvider.detailReource, "collcetPlayer");
+                        provider.addResource(_detailProvider.detailReource);
                       }
                     });
               })

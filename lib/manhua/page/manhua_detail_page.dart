@@ -83,11 +83,13 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
         onPressed: () {
           if (getFilterData(_manhuaProvider.catLog)) {
             Log.d("点击取消");
-            _collectProvider.removeResource(_manhuaProvider.catLog.url, "collcetManhua");
+            _collectProvider.removeCatlogResource(_manhuaProvider.catLog.url);
             actionName = "点击取消";
           } else {
             Log.d("点击收藏");
-            _collectProvider.addResource(_manhuaProvider.catLog, "collcetManhua");
+            _collectProvider.addCatlogResource(
+              _manhuaProvider.catLog,
+            );
             actionName = "点击收藏";
           }
           setState(() {});

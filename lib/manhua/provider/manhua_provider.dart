@@ -22,7 +22,6 @@ class ManhuaProvider extends ChangeNotifier {
 
   setWords() {
     _words = SpUtil.getStringList("ManHuaWords", defValue: []);
-    notifyListeners();
   }
 
   setList(List<ManhuaDetail> list) {

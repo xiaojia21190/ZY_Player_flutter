@@ -5,7 +5,7 @@ class BaseListProvider<T> extends ChangeNotifier {
   final List<T> _list = [];
   List<T> get list => _list;
 
-  StateType _stateType = StateType.loading;
+  StateType _stateType = StateType.empty;
   bool _hasMore = true;
 
   StateType get stateType => _stateType;

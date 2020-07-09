@@ -5,50 +5,55 @@ import 'package:flutter/material.dart';
 import '../../model/detail_reource.dart';
 
 class CollectProvider extends ChangeNotifier {
-  List<dynamic> _listDetailResource = [];
-  List<dynamic> get listDetailResource => _listDetailResource;
+  List<DetailReource> _listDetailResource = [];
+  List<DetailReource> get listDetailResource => _listDetailResource;
+
+  List<ManhuaCatlogDetail> _manhuaCatlog = [];
+  List<ManhuaCatlogDetail> get manhuaCatlog => _manhuaCatlog;
 
   setListDetailResource(String collect) {
-    var result = [];
     switch (collect) {
       case "collcetPlayer":
-        result = SpUtil.getObjList<DetailReource>(collect, (data) => DetailReource.fromJson(data));
+        var result = SpUtil.getObjList<DetailReource>(collect, (data) => DetailReource.fromJson(data));
+        if (result.length > 0) {
+          _listDetailResource.addAll(result);
+        }
         break;
       case "collcetManhua":
-        result = SpUtil.getObjList<ManhuaCatlogDetail>(collect, (data) => ManhuaCatlogDetail.fromJson(data));
+        var result = SpUtil.getObjList<ManhuaCatlogDetail>(collect, (data) => ManhuaCatlogDetail.fromJson(data));
+        if (result.length > 0) {
+          _manhuaCatlog.addAll(result);
+        }
         break;
       default:
     }
-
-    if (result.length > 0) {
-      _listDetailResource.addAll(result);
-    }
   }
 
-  removeResource(String url, String collect) {
+  removeResource(String url) {
     _listDetailResource.removeWhere((element) => element.url == url);
-    SpUtil.putObjectList(collect, _listDetailResource);
+    SpUtil.putObjectList("collcetPlayer", _listDetailResource);
     notifyListeners();
   }
 
-  addResource<T>(T data, String collect) {
+  removeCatlogResource(String url) {
+    _manhuaCatlog.removeWhere((element) => element.url == url);
+    SpUtil.putObjectList("collcetManhua", _listDetailResource);
+    notifyListeners();
+  }
+
+  addResource(DetailReource data) {
     _listDetailResource.add(data);
-    SpUtil.putObjectList(collect, _listDetailResource);
+    SpUtil.putObjectList("collcetPlayer", _listDetailResource);
+    notifyListeners();
+  }
+
+  addCatlogResource(ManhuaCatlogDetail data) {
+    _manhuaCatlog.add(data);
+    SpUtil.putObjectList("collcetManhua", _manhuaCatlog);
     notifyListeners();
   }
 
   changeNoti() {
     notifyListeners();
   }
-}
-
-enum CollectType {
-  /// 影视
-  yingshi,
-
-  /// 小说
-  xiaoshuo,
-
-  /// 漫画
-  manhua,
 }

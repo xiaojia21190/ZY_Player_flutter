@@ -22,7 +22,6 @@ DetailReource _$DetailReourceFromJson(Map<String, dynamic> json) {
     json['shangying'] as String,
     json['pianchang'] as String,
     json['url'] as String,
-    json['type'] as CollectType,
   );
 }
 
@@ -41,5 +40,4 @@ Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) => <String, d
       'shangying': instance.shangying,
       'pianchang': instance.pianchang,
       'url': instance.url,
-      'type': instance.type,
     };

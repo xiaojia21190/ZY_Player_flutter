@@ -1,6 +1,7 @@
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/home/provider/player_resource_provider.dart';
+import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flustars/flustars.dart';
@@ -38,6 +39,7 @@ Future<void> main() async {
       ChangeNotifierProvider<PlayerResourceProvider>(create: (_) => PlayerResourceProvider()),
       ChangeNotifierProvider<CollectProvider>(create: (_) => CollectProvider()),
       ChangeNotifierProvider<ManhuaProvider>(create: (_) => ManhuaProvider()),
+      ChangeNotifierProvider<PlayerProvider>(create: (_) => PlayerProvider()),
     ],
     child: MyApp(),
   ));

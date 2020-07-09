@@ -47,9 +47,6 @@ class DetailReource extends Object {
   @JsonKey(name: 'url')
   String url;
 
-  @JsonKey(name: 'type')
-  CollectType type;
-
   DetailReource(
     this.videoList,
     this.content,
@@ -65,7 +62,6 @@ class DetailReource extends Object {
     this.shangying,
     this.pianchang,
     this.url,
-    this.type,
   );
 
   factory DetailReource.fromJson(Map<String, dynamic> srcJson) => _$DetailReourceFromJson(srcJson);

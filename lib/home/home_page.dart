@@ -1,7 +1,9 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
-import 'package:ZY_Player_flutter/classification/page/classification_page.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_search_page.dart';
+import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
+import 'package:ZY_Player_flutter/player/page/player_search_page.dart';
+import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
@@ -9,7 +11,6 @@ import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:provider/provider.dart';
-import 'package:ZY_Player_flutter/newest/page/newest_page.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['最新', '小说', '收藏', '动漫'];
+  final List<String> _appBarTitles = ['最新', '小说', '动漫', '收藏'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -35,7 +36,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [NewestPage(), ClassificationPage(), CollectPage(), ManhuaSearchPage()];
+    _pageList = [PlayerSearchPage(), ManhuaSearchPage(), ManhuaSearchPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {
@@ -159,6 +160,8 @@ class _HomeState extends State<Home> {
     return _listDark;
   }
 
+  int _lastReportedPage = 0;
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
@@ -184,17 +187,27 @@ class _HomeState extends State<Home> {
               },
             ),
             // 使用PageView的原因参看 https://zhuanlan.zhihu.com/p/58582876
-            body: PageView(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              children: _pageList,
-              physics: const NeverScrollableScrollPhysics(), // 禁止滑动
+            body: NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification notification) {
+                /// PageView的onPageChanged是监听ScrollUpdateNotification，会造成滑动中卡顿。这里修改为监听滚动结束再更新、
+                if (notification.depth == 0 && notification is ScrollEndNotification) {
+                  final PageMetrics metrics = notification.metrics;
+                  final int currentPage = metrics.page.round();
+                  if (currentPage != _lastReportedPage) {
+                    _lastReportedPage = currentPage;
+                    provider.value = currentPage;
+                  }
+                }
+                return false;
+              },
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) => provider.value = index,
+                children: _pageList,
+                physics: NeverScrollableScrollPhysics(), // 禁止滑动
+              ),
             )),
       ),
     );
-  }
-
-  void _onPageChanged(int index) {
-    provider.value = index;
   }
 }

@@ -1,4 +1,3 @@
-import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +10,6 @@ class DetailProvider extends ChangeNotifier {
 
   setDetailResource(DetailReource detailReourceData) {
     _detailReource = detailReourceData;
-    _detailReource.type = CollectType.yingshi;
     _playerUrl = detailReourceData.videoList[0];
     notifyListeners();
   }
