@@ -11,7 +11,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
     this.hintText = '',
     this.backImg = 'assets/images/ic_back_black.png',
     this.onPressed,
-    this.isBack,
+    this.isBack = false,
   }) : super(key: key);
 
   final String backImg;

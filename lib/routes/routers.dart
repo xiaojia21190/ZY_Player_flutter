@@ -1,4 +1,5 @@
 import 'package:ZY_Player_flutter/classification/classification_router.dart';
+import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/newest/newest_router.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,7 @@ class Routes {
     _listRouter.add(SettingRouter());
     _listRouter.add(NewestRouter());
     _listRouter.add(ClassificationtRouter());
+    _listRouter.add(ManhuaRouter());
 
     /// 初始化路由
     _listRouter.forEach((routerProvider) {

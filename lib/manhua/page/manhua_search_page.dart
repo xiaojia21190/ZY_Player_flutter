@@ -22,11 +22,12 @@ class ManhuaSearchPage extends StatefulWidget {
 }
 
 class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
-  ManhuaProvider _searchProvider = ManhuaProvider();
+  ManhuaProvider _searchProvider;
 
   @override
   void initState() {
     super.initState();
+    _searchProvider = Provider.of<ManhuaProvider>(context, listen: false);
     _searchProvider.setWords();
   }
 
@@ -50,116 +51,117 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
 
-    return ChangeNotifierProvider<ManhuaProvider>(
-        create: (_) => _searchProvider,
-        child: Scaffold(
-          appBar: SearchBar(
-              isBack: false,
-              hintText: '请输入漫画名称查询',
-              onPressed: (text) {
-                Toast.show('搜索内容：$text');
-                if (text != "") {
-                  _searchProvider.addWors(text);
-                  getSearchWords(text);
-                }
-              }),
-          body: Container(
-            child: Column(
-              children: <Widget>[
-                Consumer<ManhuaProvider>(builder: (_, provider, __) {
-                  return provider.words.length > 0
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: Text("历史搜索"),
-                                ),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.delete_forever,
-                                      color: isDark ? Colours.dark_material_bg : Colours.dark_bg_gray,
-                                    ),
-                                    onPressed: () {
-                                      Log.d("删除搜索");
-                                      _searchProvider.clearWords();
-                                    })
-                              ],
-                            ),
-                            Selector<ManhuaProvider, List>(
-                                builder: (_, words, __) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Wrap(
-                                        spacing: 10,
-                                        runSpacing: 5,
-                                        children: words.map<Widget>((s) {
-                                          return InkWell(
-                                            child: Container(
-                                              padding: EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                              child: Text('$s'),
-                                            ),
-                                            onTap: () {
-                                              //搜索关键词
-                                              getSearchWords(s);
-                                            },
-                                          );
-                                        }).toList()),
-                                  );
-                                },
-                                selector: (_, store) => store.words)
-                          ],
-                        )
-                      : Container();
-                }),
-                Expanded(child: Consumer<ManhuaProvider>(builder: (_, provider, __) {
-                  return provider.list.length > 0
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      appBar: SearchBar(
+          isBack: false,
+          hintText: '请输入漫画名称查询',
+          onPressed: (text) {
+            Toast.show('搜索内容：$text');
+            if (text != "") {
+              _searchProvider.addWors(text);
+              getSearchWords(text);
+            }
+          }),
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Consumer<ManhuaProvider>(builder: (_, provider, __) {
+              return provider.words.length > 0
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Text("搜索结果"),
+                              padding: EdgeInsets.only(left: 20),
+                              child: Text("历史搜索"),
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: ScreenUtil.getInstance().getWidth(491),
-                              child: ListView.builder(
-                                  itemCount: provider.list.length,
-                                  itemBuilder: (_, index) {
-                                    return ListTile(
-                                      title: Text(provider.list[index].title),
-                                      subtitle: Text(provider.list[index].author),
-                                      leading: LoadImage(provider.list[index].cover),
-                                      trailing: Icon(Icons.keyboard_arrow_right),
-                                      onTap: () {
-                                        Log.d('前往详情页');
-                                        NavigatorUtils.push(context,
-                                            '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
-                                      },
-                                    );
-                                  }),
-                            )
+                            IconButton(
+                                icon: Icon(
+                                  Icons.delete_forever,
+                                  color: isDark ? Colours.dark_material_bg : Colours.dark_bg_gray,
+                                ),
+                                onPressed: () {
+                                  Log.d("删除搜索");
+                                  _searchProvider.clearWords();
+                                })
                           ],
+                        ),
+                        Selector<ManhuaProvider, List>(
+                            builder: (_, words, __) {
+                              return Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Wrap(
+                                    spacing: 10,
+                                    runSpacing: 5,
+                                    children: words.map<Widget>((s) {
+                                      return InkWell(
+                                        child: Container(
+                                          padding: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Text('$s'),
+                                        ),
+                                        onTap: () {
+                                          //搜索关键词
+                                          getSearchWords(s);
+                                        },
+                                      );
+                                    }).toList()),
+                              );
+                            },
+                            selector: (_, store) => store.words)
+                      ],
+                    )
+                  : Container();
+            }),
+            Expanded(child: Consumer<ManhuaProvider>(builder: (_, provider, __) {
+              return provider.list.length > 0
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Text("搜索结果"),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: ScreenUtil.getInstance().getWidth(491),
+                          child: ListView.builder(
+                              itemCount: provider.list.length,
+                              itemBuilder: (_, index) {
+                                return ListTile(
+                                  title: Text(provider.list[index].title),
+                                  subtitle: Text(provider.list[index].author),
+                                  leading: LoadImage(
+                                    provider.list[index].cover,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  trailing: Icon(Icons.keyboard_arrow_right),
+                                  onTap: () {
+                                    Log.d('前往详情页');
+                                    NavigatorUtils.push(context,
+                                        '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
+                                  },
+                                );
+                              }),
                         )
-                      : Center(
-                          child: StateLayout(type: provider.state),
-                        );
-                }))
-              ],
-            ),
+                      ],
+                    )
+                  : Center(
+                      child: StateLayout(type: provider.state),
+                    );
+            }))
+          ],
+        ),
 
-            //
-          ),
-        ));
+        //
+      ),
+    );
   }
 }

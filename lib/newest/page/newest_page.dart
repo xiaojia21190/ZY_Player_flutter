@@ -78,7 +78,7 @@ class _NewestPageState extends State<NewestPage> with AutomaticKeepAliveClientMi
         queryParameters: {"key": playerResourceProvider.taps[_selection.index]["key"], "page": _currentPage}, onSuccess: (resultList) {
       _baseListProvider.setStateType(StateType.empty);
       _baseListProvider.setHasMore(true);
-      List.generate(resultList.length, (i) => _baseListProvider.list.add(ResourceData.fromJson(resultList[i])));
+      List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
     }, onError: (_, __) {
       _baseListProvider.setStateType(StateType.network);
     });

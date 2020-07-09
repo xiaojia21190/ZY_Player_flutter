@@ -49,7 +49,7 @@ class _PlayerViewPageState extends State<PlayerViewPage> {
           queryParameters: {"id": widget.id, "key": widget.keyw, "page": _currentPage}, onSuccess: (resultList) {
         _baseListProvider.setStateType(StateType.empty);
         _baseListProvider.setHasMore(true);
-        List.generate(resultList.length, (i) => _baseListProvider.list.add(ResourceData.fromJson(resultList[i])));
+        List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
       }, onError: (_, __) {
         _baseListProvider.setStateType(StateType.network);
       });
@@ -58,7 +58,7 @@ class _PlayerViewPageState extends State<PlayerViewPage> {
           queryParameters: {"keywords": widget.keywords, "key": widget.keyw, "page": _currentPage}, onSuccess: (resultList) {
         _baseListProvider.setStateType(StateType.empty);
         _baseListProvider.setHasMore(false);
-        List.generate(resultList.length, (i) => _baseListProvider.list.add(ResourceData.fromJson(resultList[i])));
+        List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
       }, onError: (_, __) {
         _baseListProvider.setStateType(StateType.network);
       });

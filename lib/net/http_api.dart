@@ -6,4 +6,5 @@ class HttpApi {
   static const String detailReource = 'getDetailZiyuan';
   static const String searchManhua = 'getSearchManhua';
   static const String detailManhua = 'getDetailManhua';
+  static const String imageManhua = 'getImagesManhua';
 }

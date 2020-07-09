@@ -17,9 +17,6 @@ class SearchProvider extends ChangeNotifier {
   }
 
   addWors(String word) {
-    if (word == "") {
-      return;
-    }
     var whereWord = _words.where((element) => element == word);
     if (whereWord.length == 0) {
       _words.add(word);

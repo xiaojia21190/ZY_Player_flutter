@@ -37,6 +37,7 @@ class _SearchPageState extends State<SearchPage> {
         create: (_) => _searchProvider,
         child: Scaffold(
           appBar: SearchBar(
+              isBack: true,
               hintText: '请输入资源名称查询',
               onPressed: (text) {
                 Toast.show('搜索内容：$text');

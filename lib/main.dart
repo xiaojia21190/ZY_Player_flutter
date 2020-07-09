@@ -22,6 +22,8 @@ import 'package:ZY_Player_flutter/home/splash_page.dart';
 import 'package:provider/provider.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 
+import 'manhua/provider/manhua_provider.dart';
+
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
 //  debugPaintLayerBordersEnabled = true;
@@ -35,6 +37,7 @@ Future<void> main() async {
     providers: [
       ChangeNotifierProvider<PlayerResourceProvider>(create: (_) => PlayerResourceProvider()),
       ChangeNotifierProvider<CollectProvider>(create: (_) => CollectProvider()),
+      ChangeNotifierProvider<ManhuaProvider>(create: (_) => ManhuaProvider()),
     ],
     child: MyApp(),
   ));

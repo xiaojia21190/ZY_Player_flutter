@@ -7,13 +7,17 @@ import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
+import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
+import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
-import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../manhua_router.dart';
 
 class ManhuaDetailPage extends StatefulWidget {
   const ManhuaDetailPage({
@@ -32,12 +36,16 @@ class ManhuaDetailPage extends StatefulWidget {
 class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   bool startedPlaying = false;
 
-  ManhuaProvider _manhuaProvider = ManhuaProvider();
+  ManhuaProvider _manhuaProvider;
+  CollectProvider _collectProvider;
+  String actionName = "点击收藏";
 
   @override
   void initState() {
     super.initState();
-    context.read<CollectProvider>().setListDetailResource("collcetManhua");
+    _manhuaProvider = context.read<ManhuaProvider>();
+    _collectProvider = context.read<CollectProvider>();
+    _collectProvider.setListDetailResource("collcetManhua");
     initData();
   }
 
@@ -47,16 +55,18 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   }
 
   Future initData() async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource,
-        queryParameters: {"key": SpUtil.getString("selection"), "url": widget.url}, onSuccess: (data) {
-      _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data[0]));
-      context.read<CollectProvider>().changeNoti();
-    }, onError: (_, __) {});
+    _manhuaProvider.setstate(StateType.loading);
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url}, onSuccess: (data) {
+      _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data));
+      _collectProvider.changeNoti();
+    }, onError: (_, __) {
+      _manhuaProvider.setstate(StateType.network);
+    });
   }
 
   bool getFilterData(ManhuaCatlogDetail data) {
     if (data != null) {
-      var result = context.read<CollectProvider>().listDetailResource.where((element) => element.url == data.url);
+      var result = _collectProvider.listDetailResource.where((element) => element.url == data.url);
       return result.length > 0;
     }
     return false;
@@ -64,145 +74,115 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ManhuaProvider>(
-        create: (_) => _manhuaProvider,
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: Colours.app_main,
-            title: Text(
-              widget.title,
-            ),
-            actions: <Widget>[
-              Consumer<CollectProvider>(builder: (_, provider, __) {
-                return IconButton(
-                    icon: getFilterData(_manhuaProvider.catLog)
-                        ? Icon(
-                            Icons.turned_in,
-                            color: Colors.red,
-                          )
-                        : Icon(
-                            Icons.turned_in_not,
-                            color: Colors.red,
-                          ),
-                    onPressed: () {
-                      if (getFilterData(_manhuaProvider.catLog)) {
-                        Log.d("点击取消");
-                        provider.removeResource(_manhuaProvider.catLog.url, "collcetManhua");
-                      } else {
-                        Log.d("点击收藏");
-                        provider.addResource(_manhuaProvider.catLog, "collcetManhua");
-                      }
-                    });
-              })
-            ],
-          ),
-          body: Consumer<ManhuaProvider>(builder: (_, provider, __) {
-            return provider.catLog != null
-                ? CustomScrollView(
-                    slivers: <Widget>[
-                      SliverToBoxAdapter(
-                        child: Card(
-                          shadowColor: Colors.blueAccent,
-                          elevation: 2,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: ScreenUtil.getInstance().getWidth(310),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: LoadImage(
-                                    provider.catLog.cover,
-                                    width: 150,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                Expanded(
-                                    child: Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        provider.catLog.author,
-                                        maxLines: 2,
-                                      ),
-                                      Text(
-                                        provider.catLog.gengxin,
-                                        maxLines: 2,
-                                        style: TextStyle(color: Colours.text_gray, fontSize: 12),
-                                      ),
-                                      Text(provider.catLog.gengxinTime),
-                                    ],
-                                  ),
-                                ))
-                              ],
+    final ThemeData themeData = Theme.of(context);
+    final bool isDark = themeData.brightness == Brightness.dark;
+    return Scaffold(
+      appBar: MyAppBar(
+        centerTitle: widget.title,
+        actionName: actionName,
+        onPressed: () {
+          if (getFilterData(_manhuaProvider.catLog)) {
+            Log.d("点击取消");
+            _collectProvider.removeResource(_manhuaProvider.catLog.url, "collcetManhua");
+            actionName = "点击取消";
+          } else {
+            Log.d("点击收藏");
+            _collectProvider.addResource(_manhuaProvider.catLog, "collcetManhua");
+            actionName = "点击收藏";
+          }
+          setState(() {});
+        },
+      ),
+      body: Consumer<ManhuaProvider>(builder: (_, provider, __) {
+        return provider.catLog != null
+            ? CustomScrollView(
+                slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: Card(
+                      shadowColor: Colors.blueAccent,
+                      elevation: 2,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: ScreenUtil.getInstance().getWidth(100),
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            LoadImage(
+                              provider.catLog.cover,
+                              width: 100,
+                              fit: BoxFit.contain,
                             ),
-                          ),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Card(
-                          shadowColor: Colors.blueAccent,
-                          elevation: 2,
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[Text("剧情介绍"), Gaps.vGap10, Text(provider.catLog.content)],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: provider.catLog.catlogs.length > 1
-                            ? Card(
-                                shadowColor: Colors.blueAccent,
-                                elevation: 2,
+                            Expanded(
                                 child: Container(
-                                  padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                                        child: Text(
-                                          "剧集选择",
-                                          style: TextStyle(fontSize: 15),
-                                        ),
-                                      ),
-                                      Wrap(
-                                        spacing: 4, // 主轴(水平)方向间距
-                                        runSpacing: 10, // 纵轴（垂直）方向间距
-                                        alignment: WrapAlignment.start, //沿主轴方向居中
-                                        children: List.generate(provider.catLog.catlogs.length, (index) {
-                                          return InkWell(
-                                            onTap: () {},
-                                            child: Container(
-                                              width: ScreenUtil.getInstance().getWidth(70),
-                                              margin: EdgeInsets.only(right: 10),
-                                              child: MyButton(
-                                                onPressed: () {},
-                                                text: '${provider.catLog.catlogs[index].text}',
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                      )
-                                    ],
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    provider.catLog.author,
                                   ),
-                                ))
-                            : Container(),
-                      )
-                    ],
-                  )
-                : StateLayout(type: StateType.loading);
-          }),
-        ));
+                                  Text(
+                                    provider.catLog.gengxin,
+                                  ),
+                                  Text(provider.catLog.gengxinTime),
+                                ],
+                              ),
+                            ))
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Card(
+                      shadowColor: Colors.blueAccent,
+                      elevation: 2,
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[Text(provider.catLog.content)],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.all(5),
+                    sliver: SliverGrid(
+                      //Grid
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4, //Grid按两列显示
+                        mainAxisSpacing: 1,
+                        crossAxisSpacing: 1,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                          //创建子widget
+                          return Container(
+                              color: isDark ? Colours.dark_text_gray : Colours.text_gray_c,
+                              alignment: Alignment.center,
+                              child: InkWell(
+                                  onTap: () {
+                                    NavigatorUtils.push(context, '${ManhuaRouter.imagesPage}?index=$index');
+                                  },
+                                  child: Text(
+                                    '${provider.catLog.catlogs[index].text}',
+                                    style: TextStyle(
+                                      color: isDark ? Colours.dark_text : Colors.white,
+                                    ),
+                                  )));
+                        },
+                        childCount: provider.catLog.catlogs.length,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : StateLayout(type: provider.state);
+      }),
+    );
   }
 }

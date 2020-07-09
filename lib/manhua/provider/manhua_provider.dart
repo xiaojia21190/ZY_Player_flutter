@@ -14,6 +14,9 @@ class ManhuaProvider extends ChangeNotifier {
   ManhuaCatlogDetail _catLog;
   ManhuaCatlogDetail get catLog => _catLog;
 
+  List<String> _images = [];
+  List<String> get images => _images;
+
   StateType _state = StateType.empty;
   StateType get state => _state;
 
@@ -34,9 +37,6 @@ class ManhuaProvider extends ChangeNotifier {
   }
 
   addWors(String word) {
-    if (word == "") {
-      return;
-    }
     var whereWord = _words.where((element) => element == word);
     if (whereWord.length == 0) {
       _words.add(word);
@@ -52,6 +52,11 @@ class ManhuaProvider extends ChangeNotifier {
 
   setstate(StateType stateType) {
     _state = stateType;
+    notifyListeners();
+  }
+
+  setImages(List<String> images) {
+    _images = images;
     notifyListeners();
   }
 }
