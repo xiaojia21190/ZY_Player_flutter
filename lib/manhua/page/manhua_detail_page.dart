@@ -55,12 +55,12 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   }
 
   Future initData() async {
-    _manhuaProvider.setstate(StateType.loading);
+    _manhuaProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url}, onSuccess: (data) {
       _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data));
       _collectProvider.changeNoti();
     }, onError: (_, __) {
-      _manhuaProvider.setstate(StateType.network);
+      _manhuaProvider.setStateType(StateType.network);
     });
   }
 

@@ -38,13 +38,12 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   }
 
   Future getSearchWords(String keywords) async {
-    _searchProvider.setstate(StateType.loading);
+    _searchProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(resultList.length, (index) => ManhuaDetail.fromJson(resultList[index]));
       _searchProvider.setList(data);
-      _searchProvider.setstate(StateType.empty);
     }, onError: (_, __) {
-      _searchProvider.setstate(StateType.network);
+      _searchProvider.setStateType(StateType.network);
     });
   }
 

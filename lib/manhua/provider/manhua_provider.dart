@@ -49,7 +49,7 @@ class ManhuaProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setstate(StateType stateType) {
+  setStateType(StateType stateType) {
     _state = stateType;
     notifyListeners();
   }

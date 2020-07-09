@@ -1,4 +1,5 @@
 import 'package:ZY_Player_flutter/model/resource_data.dart';
+import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,10 @@ class PlayerProvider extends ChangeNotifier {
   List<String> get words => _words;
 
   List<ResourceData> _list = [];
-  List<ResourceData> get list => list;
+  List<ResourceData> get list => _list;
+
+  StateType _stateType = StateType.empty;
+  StateType get stateType => _stateType;
 
   setWords() {
     _words = SpUtil.getStringList("searchWords", defValue: []);
@@ -30,6 +34,11 @@ class PlayerProvider extends ChangeNotifier {
 
   setResource(List<ResourceData> list) {
     _list = list;
+    notifyListeners();
+  }
+
+  void setStateType(StateType stateType) {
+    _stateType = stateType;
     notifyListeners();
   }
 }

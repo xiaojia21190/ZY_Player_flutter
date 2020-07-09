@@ -12,6 +12,7 @@ import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
+import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,37 +24,24 @@ class PlayerSearchPage extends StatefulWidget {
 class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepAliveClientMixin<PlayerSearchPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-  PlayerProvider _searchProvider = PlayerProvider();
-
-  BaseListProvider<ResourceData> _baseListProvider = BaseListProvider();
-  int _pageSize = 50;
-
-  String keywords = "";
+  PlayerProvider _playerProvider = PlayerProvider();
 
   @override
   void initState() {
     super.initState();
     context.read<PlayerProvider>().setWords();
-    _searchProvider.setWords();
+    _playerProvider.setWords();
   }
 
   Future getData(String keywords) async {
-    keywords = keywords;
-    _baseListProvider.clear();
-    _baseListProvider.setStateType(StateType.loading);
+    _playerProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1},
         onSuccess: (resultList) {
-      _baseListProvider.setStateType(StateType.empty);
-      _baseListProvider.setHasMore(false);
-      List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
+      _playerProvider.setStateType(StateType.empty);
+      List.generate(resultList.length, (i) => _playerProvider.list.add(ResourceData.fromJson(resultList[i])));
     }, onError: (_, __) {
-      _baseListProvider.setStateType(StateType.network);
+      _playerProvider.setStateType(StateType.network);
     });
-  }
-
-  Future _onRefresh() async {
-    _baseListProvider.clear();
-    getData(keywords);
   }
 
   @override
@@ -67,14 +55,14 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
     final bool isDark = ThemeUtils.isDark(context);
 
     return ChangeNotifierProvider<PlayerProvider>(
-        create: (_) => _searchProvider,
+        create: (_) => _playerProvider,
         child: Scaffold(
           appBar: SearchBar(
               hintText: '请输入资源名称查询',
               onPressed: (text) {
                 Toast.show('搜索内容：$text');
                 if (text != null) {
-                  _searchProvider.addWors(text);
+                  _playerProvider.addWors(text);
                   this.getData(text);
                 }
               }),
@@ -101,7 +89,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
                                     ),
                                     onPressed: () {
                                       Log.d("删除搜索");
-                                      _searchProvider.clearWords();
+                                      _playerProvider.clearWords();
                                     })
                               ],
                             ),
@@ -135,29 +123,40 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
                         )
                       : Container();
                 }),
-                Expanded(
-                    child: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
-                        create: (_) => _baseListProvider,
-                        child: Consumer<BaseListProvider<ResourceData>>(builder: (_, _baseListProvider, __) {
-                          return DeerListView(
-                              itemCount: _baseListProvider.list.length,
-                              stateType: _baseListProvider.stateType,
-                              onRefresh: _onRefresh,
-                              pageSize: _pageSize,
-                              hasMore: false,
-                              itemBuilder: (_, index) {
-                                return ListTile(
-                                  title: Text(_baseListProvider.list[index].title),
-                                  subtitle: Text(_baseListProvider.list[index].type),
-                                  trailing: Icon(Icons.keyboard_arrow_right),
-                                  onTap: () {
-                                    Log.d('前往详情页');
-                                    NavigatorUtils.push(context,
-                                        '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].title)}');
-                                  },
-                                );
-                              });
-                        })))
+                Expanded(child: Consumer<PlayerProvider>(builder: (_, provider, __) {
+                  return provider.list.length > 0
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(left: 20, top: 20),
+                              child: Text("搜索结果"),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: ScreenUtil.getInstance().getWidth(491),
+                              child: ListView.builder(
+                                  itemCount: provider.list.length,
+                                  itemBuilder: (_, index) {
+                                    return ListTile(
+                                      title: Text(provider.list[index].title),
+                                      subtitle: Text(provider.list[index].type),
+                                      trailing: Icon(Icons.keyboard_arrow_right),
+                                      onTap: () {
+                                        Log.d('前往详情页');
+                                        NavigatorUtils.push(context,
+                                            '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
+                                      },
+                                    );
+                                  }),
+                            )
+                          ],
+                        )
+                      : Center(
+                          child: StateLayout(type: provider.stateType),
+                        );
+                }))
               ],
             ),
           ),
