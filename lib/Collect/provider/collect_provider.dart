@@ -1,4 +1,5 @@
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
+import 'package:ZY_Player_flutter/model/xiaoshuo_reource.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,9 @@ class CollectProvider extends ChangeNotifier {
 
   List<ManhuaCatlogDetail> _manhuaCatlog = [];
   List<ManhuaCatlogDetail> get manhuaCatlog => _manhuaCatlog;
+
+  List<XiaoshuoReource> _xiaoshuos = [];
+  List<XiaoshuoReource> get xiaoshuo => _xiaoshuos;
 
   setListDetailResource(String collect) {
     switch (collect) {
@@ -23,6 +27,13 @@ class CollectProvider extends ChangeNotifier {
         var result = SpUtil.getObjList<ManhuaCatlogDetail>(collect, (data) => ManhuaCatlogDetail.fromJson(data));
         if (result.length > 0) {
           _manhuaCatlog.addAll(result);
+        }
+        break;
+
+      case "collcetXiaoshuo":
+        var result = SpUtil.getObjList<XiaoshuoReource>(collect, (data) => XiaoshuoReource.fromJson(data));
+        if (result.length > 0) {
+          _xiaoshuos.addAll(result);
         }
         break;
       default:
@@ -41,6 +52,12 @@ class CollectProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  removeXiaoshuoResource(String url) {
+    _xiaoshuos.removeWhere((element) => element.url == url);
+    SpUtil.putObjectList("collcetXiaoshuo", _xiaoshuos);
+    notifyListeners();
+  }
+
   addResource(DetailReource data) {
     _listDetailResource.add(data);
     SpUtil.putObjectList("collcetPlayer", _listDetailResource);
@@ -50,6 +67,12 @@ class CollectProvider extends ChangeNotifier {
   addCatlogResource(ManhuaCatlogDetail data) {
     _manhuaCatlog.add(data);
     SpUtil.putObjectList("collcetManhua", _manhuaCatlog);
+    notifyListeners();
+  }
+
+  addXiaoshuoResource(XiaoshuoReource data) {
+    _xiaoshuos.add(data);
+    SpUtil.putObjectList("collcetXiaoshuo", _xiaoshuos);
     notifyListeners();
   }
 

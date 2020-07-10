@@ -49,7 +49,7 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
         _baseListProvider.setHasMore(true);
       },
       onError: (code, msg) {
-        _manhuaProvider.setStateType(StateType.network);
+        _baseListProvider.setStateType(StateType.network);
       },
     );
   }

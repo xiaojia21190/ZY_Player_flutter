@@ -20,7 +20,10 @@ class ManhuaSearchPage extends StatefulWidget {
   _ManhuaSearchPageState createState() => _ManhuaSearchPageState();
 }
 
-class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepAliveClientMixin<ManhuaSearchPage>, SingleTickerProviderStateMixin {
+class _ManhuaSearchPageState extends State<ManhuaSearchPage>
+    with
+        AutomaticKeepAliveClientMixin<ManhuaSearchPage>,
+        SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   ManhuaProvider _searchProvider;
@@ -39,8 +42,10 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
 
   Future getSearchWords(String keywords) async {
     _searchProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
-      var data = List.generate(resultList.length, (index) => ManhuaDetail.fromJson(resultList[index]));
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua,
+        queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
+      var data = List.generate(resultList.length,
+          (index) => ManhuaDetail.fromJson(resultList[index]));
       _searchProvider.setList(data);
     }, onError: (_, __) {
       _searchProvider.setStateType(StateType.network);
@@ -82,7 +87,9 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
                             IconButton(
                                 icon: Icon(
                                   Icons.delete_forever,
-                                  color: isDark ? Colours.dark_material_bg : Colours.dark_bg_gray,
+                                  color: isDark
+                                      ? Colours.dark_red
+                                      : Colours.dark_bg_gray,
                                 ),
                                 onPressed: () {
                                   Log.d("删除搜索");
@@ -102,8 +109,11 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
                                         child: Container(
                                           padding: EdgeInsets.all(10),
                                           decoration: BoxDecoration(
-                                            color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
-                                            borderRadius: BorderRadius.circular(10),
+                                            color: isDark
+                                                ? Colours.dark_material_bg
+                                                : Colours.bg_gray,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Text('$s'),
                                         ),
@@ -120,7 +130,8 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
                     )
                   : Container();
             }),
-            Expanded(child: Consumer<ManhuaProvider>(builder: (_, provider, __) {
+            Expanded(
+                child: Consumer<ManhuaProvider>(builder: (_, provider, __) {
               return provider.list.length > 0
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.start,

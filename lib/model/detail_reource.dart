@@ -1,4 +1,3 @@
-import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'detail_reource.g.dart';
