@@ -20,6 +20,7 @@ import 'package:dio/dio.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/detail_reource.dart';
 
@@ -93,6 +94,15 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
       return result.length > 0;
     }
     return false;
+  }
+
+  _launchURL(String prev) async {
+    String url = "mttbrowser://$prev";
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -176,13 +186,10 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                                   Text(provider.detailReource.diqu),
                                   Text(provider.detailReource.yuyan),
                                   Text(provider.detailReource.shangying),
-                                  Text(provider.detailReource.pianchang != null
-                                      ? '${provider.detailReource.pianchang}分钟'
-                                      : ""),
+                                  Text(provider.detailReource.pianchang != null ? '${provider.detailReource.pianchang}分钟' : ""),
                                   MyButton(
                                     onPressed: () {
-                                      NavigatorUtils.goWebViewPage(
-                                          context, provider.detailReource.title, provider.detailReource.videoList[0]);
+                                      NavigatorUtils.goWebViewPage(context, provider.detailReource.title, provider.detailReource.videoList[0]);
                                     },
                                     text: "播放",
                                     fontSize: Dimens.font_sp16,
@@ -242,10 +249,11 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                                                 title: Text(_baseListProvider.list[index].serialname),
                                                 trailing: Icon(Icons.keyboard_arrow_right),
                                                 onTap: () {
-                                                  NavigatorUtils.goWebViewPage(
-                                                      context,
-                                                      _baseListProvider.list[index].serialname,
-                                                      'https://bookshelf.html5.qq.com/?t=web&ch=004645#!/detail/${_baseListProvider.list[index].resourceid}/${_baseListProvider.list[index].serialid}/wenxue_content?bookid=${_baseListProvider.list[index].resourceid}&uuid=${_baseListProvider.list[index].serialid}');
+                                                  // 打开qq浏览器
+                                                  _launchURL(
+                                                      'url=https://bookshelf.html5.qq.com/qbread/adread/chapter?resourceid=${_baseListProvider.list[index].resourceid}&serialid=${{
+                                                    _baseListProvider.list[index].serialid
+                                                  }}&ch=001312');
                                                 },
                                               );
                                             });

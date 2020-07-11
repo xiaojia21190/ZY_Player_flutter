@@ -5,27 +5,25 @@ import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
-import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:dio/dio.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlayerSearchPage extends StatefulWidget {
   @override
   _PlayerSearchPageState createState() => _PlayerSearchPageState();
 }
 
-class _PlayerSearchPageState extends State<PlayerSearchPage>
-    with AutomaticKeepAliveClientMixin<PlayerSearchPage>, SingleTickerProviderStateMixin {
+class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepAliveClientMixin<PlayerSearchPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   PlayerProvider _playerProvider = PlayerProvider();
@@ -39,8 +37,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage>
 
   Future getData(String keywords) async {
     _playerProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource,
-        queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1}, onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1},
+        onSuccess: (resultList) {
       _playerProvider.setStateType(StateType.empty);
       List.generate(resultList.length, (i) => _playerProvider.list.add(ResourceData.fromJson(resultList[i])));
     }, onError: (_, __) {
@@ -66,16 +64,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage>
               onPressed: (text) {
                 Toast.show('搜索内容：$text');
                 if (text != null) {
-//                  _playerProvider.addWors(text);
-//                  this.getData(text);
-                  Dio _dio = Dio();
-                  _dio
-                      .get(
-                          "https://bookshelf.html5.qq.com/api/migration/list_charpter?resourceid=1100648963&start=1&serialnum=2810&sort=asc&t=202007101626",
-                          options: Options(headers: {"Referer": 'https://bookshelf.html5.qq.com/?t=native&ch=004645'}))
-                      .then((value) {
-                    Log.d(value.data.toString());
-                  });
+                  _playerProvider.addWors(text);
+                  this.getData(text);
                 }
               }),
           body: Container(
