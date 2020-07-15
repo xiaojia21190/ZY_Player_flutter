@@ -26,41 +26,31 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
 
   CollectProvider _collectProvider;
 
-  List<dynamic> _list = [];
-
-  int currentIndex = 0;
-
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 3);
     _pageController = PageController(initialPage: 0);
     _collectProvider = context.read<CollectProvider>();
-    _onRefresh();
-  }
-
-  Future _onRefresh() async {
-    _list = _collectProvider.listDetailResource;
-    setState(() {});
+    Future.microtask(() => _collectProvider.getCollectData(_collectProvider.listDetailResource));
   }
 
   Widget getData(data, int index) {
     switch (index) {
       case 0:
         return ListTile(
-          title: Text(_list[index].title),
-          subtitle: Text(_list[index].leixing),
+          title: Text(data.title),
+          subtitle: Text(data.leixing),
           onTap: () {
             Log.d('前往详情页');
-            NavigatorUtils.push(
-                context, '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_list[index].url)}&title=${Uri.encodeComponent(_list[index].title)}');
+            NavigatorUtils.push(context, '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           },
         );
         break;
       case 1:
         return ListTile(
-          title: Text(_list[index].title),
-          subtitle: Text(_list[index].leixing),
+          title: Text(data.title),
+          subtitle: Text(data.leixing),
           onTap: () {
             Log.d('前往详情页');
           },
@@ -68,25 +58,24 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
         break;
       case 2:
         return ListTile(
-          title: Text(_list[index].title),
-          subtitle: Text(_list[index].author),
+          title: Text(data.title),
+          subtitle: Text(data.author),
           trailing: Icon(Icons.keyboard_arrow_right),
           leading: LoadImage(
-            _list[index].cover,
+            data.cover,
             fit: BoxFit.cover,
           ),
           onTap: () {
             Log.d('前往详情页');
-            NavigatorUtils.push(
-                context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(_list[index].url)}&title=${Uri.encodeComponent(_list[index].title)}');
+            NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           },
         );
         break;
       default:
         return ListTile(
-          leading: _list[index].cover != null ? LoadImage(_list[index].cover) : Container(),
-          title: Text(_list[index].title),
-          subtitle: Text(_list[index].type),
+          leading: data.cover != null ? LoadImage(data.cover) : Container(),
+          title: Text(data.title),
+          subtitle: Text(data.type),
           trailing: Icon(Icons.keyboard_arrow_right),
           onTap: () {
             Log.d('前往详情页');
@@ -134,30 +123,34 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
             itemCount: 3,
             onPageChanged: _onPageChange,
             controller: _pageController,
-            itemBuilder: (_, index) {
-              return _list.length > 0
-                  ? ListView.builder(
-                      itemCount: _list.length,
-                      itemBuilder: (_, index) {
-                        return Slidable(
-                          child: getData(_list[index], currentIndex),
-                          actionPane: SlidableDrawerActionPane(),
-                          actionExtentRatio: 0.25,
-                          secondaryActions: <Widget>[
-                            IconSlideAction(
-                              caption: '取消收藏',
-                              color: Colors.red,
-                              icon: Icons.delete,
-                              onTap: () {
-                                // 取消收藏
-                              },
-                            ),
-                          ],
-                        );
-                      })
-                  : StateLayout(
-                      type: StateType.empty,
-                    );
+            itemBuilder: (_, pageIndex) {
+              return Selector<CollectProvider, dynamic>(
+                  builder: (_, list, __) {
+                    return list.length > 0
+                        ? ListView.builder(
+                            itemCount: list.length,
+                            itemBuilder: (_, index) {
+                              return Slidable(
+                                child: getData(list[index], pageIndex),
+                                actionPane: SlidableDrawerActionPane(),
+                                actionExtentRatio: 0.25,
+                                secondaryActions: <Widget>[
+                                  IconSlideAction(
+                                    caption: '取消收藏',
+                                    color: Colors.red,
+                                    icon: Icons.delete,
+                                    onTap: () {
+                                      // 取消收藏
+                                    },
+                                  ),
+                                ],
+                              );
+                            })
+                        : StateLayout(
+                            type: StateType.empty,
+                          );
+                  },
+                  selector: (_, store) => store.list);
             }),
       ),
     );
@@ -167,16 +160,13 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     // 加载不同的数据
     switch (index) {
       case 0:
-        _list = _collectProvider.listDetailResource;
-        currentIndex = 0;
+        _collectProvider.getCollectData(_collectProvider.listDetailResource);
         break;
       case 1:
-        _list = _collectProvider.manhuaCatlog;
-        currentIndex = 1;
+        _collectProvider.getCollectData(_collectProvider.manhuaCatlog);
         break;
       case 2:
-        _list = _collectProvider.manhuaCatlog;
-        currentIndex = 2;
+        _collectProvider.getCollectData(_collectProvider.manhuaCatlog);
         break;
       default:
     }

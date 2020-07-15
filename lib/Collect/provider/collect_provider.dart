@@ -15,6 +15,14 @@ class CollectProvider extends ChangeNotifier {
   List<XiaoshuoReource> _xiaoshuos = [];
   List<XiaoshuoReource> get xiaoshuo => _xiaoshuos;
 
+  List<dynamic> _list = [];
+  List<dynamic> get list => _list;
+
+  getCollectData(List<dynamic> resultList) {
+    _list = resultList;
+    notifyListeners();
+  }
+
   setListDetailResource(String collect) {
     switch (collect) {
       case "collcetPlayer":
