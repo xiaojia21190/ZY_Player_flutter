@@ -2,6 +2,10 @@
 
 基于ZY-Player开发的Flutter版本视频播放器，免费无广告
 
+### flutter 版本安装
+
+- v1.0.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.0.0/app-release.apk
+
 ### 截图
 
 |           首页（搜索）            |              详情页               |

@@ -73,7 +73,6 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
         break;
       default:
         return ListTile(
-          leading: data.cover != null ? LoadImage(data.cover) : Container(),
           title: Text(data.title),
           subtitle: Text(data.type),
           trailing: Icon(Icons.keyboard_arrow_right),
