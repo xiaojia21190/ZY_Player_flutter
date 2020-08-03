@@ -6,6 +6,9 @@
 
 - v1.0.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.0.0/app-release.apk
 
+### 爬虫后台添加
+- 地址 https://github.com/xiaojia21190/egg_crawel
+
 ### 截图
 
 |           首页（搜索）            |              详情页               |
