@@ -1,4 +1,4 @@
-# ZY Player Flutter 资源播放  如果喜欢，麻烦点个start吧！谢谢！！
+# ZY Player Flutter 资源播放  如果喜欢，麻烦点个star吧！谢谢！！
 
 基于ZY-Player开发的Flutter版本视频播放器，免费无广告
 
