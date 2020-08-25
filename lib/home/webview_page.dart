@@ -61,6 +61,8 @@ class _WebViewPageState extends State<WebViewPage> {
                       javascriptMode: JavascriptMode.unrestricted,
                       onWebViewCreated: (WebViewController webViewController) {
                         _controller.complete(webViewController);
+                        webViewController.evaluateJavascript(
+                            'document.querySelector(".___oga").style = "display:none";document.querySelector("#dibecjqswyi").style = "display:none";document.querySelector("#dompcejubvkui").style = "display:none"');
                       },
                     ),
                     Positioned(
