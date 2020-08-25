@@ -3,7 +3,6 @@ import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';

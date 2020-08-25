@@ -17,8 +17,21 @@ class ManhuaProvider extends ChangeNotifier {
   List<String> _images = [];
   List<String> get images => _images;
 
+  List<String> _kanguozhangjie = [];
+  List<String> get kanguozhangjie => _kanguozhangjie;
+
   StateType _state = StateType.empty;
   StateType get state => _state;
+
+  setZhanghjie() {
+    _kanguozhangjie = SpUtil.getStringList("KGzhangjie", defValue: []);
+  }
+
+  saveZhangjie(String zhangjie) {
+    _kanguozhangjie.add(zhangjie);
+    SpUtil.putStringList("KGzhangjie", _kanguozhangjie);
+    notifyListeners();
+  }
 
   setWords() {
     _words = SpUtil.getStringList("ManHuaWords", defValue: []);

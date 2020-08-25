@@ -109,6 +109,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
                                         ),
                                         onTap: () {
                                           //搜索关键词
+                                          Toast.show('搜索内容：$s');
                                           getSearchWords(s);
                                         },
                                       );

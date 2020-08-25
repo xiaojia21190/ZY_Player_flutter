@@ -59,6 +59,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url}, onSuccess: (data) {
       _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data));
       _collectProvider.changeNoti();
+      _manhuaProvider.setZhanghjie();
     }, onError: (_, __) {
       _manhuaProvider.setStateType(StateType.network);
     });
@@ -164,10 +165,11 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         (BuildContext context, int index) {
                           //创建子widget
                           return Container(
-                              color: isDark ? Colours.dark_text_gray : Colours.text_gray_c,
+                              color: _manhuaProvider.kanguozhangjie.contains("${widget.url}_$index") ? Colours.dark_text_gray : Colours.text_gray_c,
                               alignment: Alignment.center,
                               child: InkWell(
                                   onTap: () {
+                                    _manhuaProvider.saveZhangjie("${widget.url}_$index");
                                     NavigatorUtils.push(context, '${ManhuaRouter.imagesPage}?index=$index');
                                   },
                                   child: Text(
