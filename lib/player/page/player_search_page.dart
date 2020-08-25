@@ -127,34 +127,20 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
                 }),
                 Expanded(child: Consumer<PlayerProvider>(builder: (_, provider, __) {
                   return provider.list.length > 0
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(left: 20, top: 20),
-                              child: Text("搜索结果"),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: ScreenUtil.getInstance().getWidth(491),
-                              child: ListView.builder(
-                                  itemCount: provider.list.length,
-                                  itemBuilder: (_, index) {
-                                    return ListTile(
-                                      title: Text(provider.list[index].title),
-                                      subtitle: Text(provider.list[index].type),
-                                      trailing: Icon(Icons.keyboard_arrow_right),
-                                      onTap: () {
-                                        Log.d('前往详情页');
-                                        NavigatorUtils.push(context,
-                                            '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
-                                      },
-                                    );
-                                  }),
-                            )
-                          ],
-                        )
+                      ? ListView.builder(
+                          itemCount: provider.list.length,
+                          itemBuilder: (_, index) {
+                            return ListTile(
+                              title: Text(provider.list[index].title),
+                              subtitle: Text(provider.list[index].type),
+                              trailing: Icon(Icons.keyboard_arrow_right),
+                              onTap: () {
+                                Log.d('前往详情页');
+                                NavigatorUtils.push(context,
+                                    '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
+                              },
+                            );
+                          })
                       : Center(
                           child: StateLayout(type: provider.stateType),
                         );

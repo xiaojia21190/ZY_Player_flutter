@@ -47,13 +47,13 @@ class Rows extends Object {
   String intro;
 
   @JsonKey(name: 'payed')
-  int payed;
+  String payed;
 
   @JsonKey(name: 'price')
   int price;
 
   @JsonKey(name: 'resourceid')
-  int resourceid;
+  String resourceid;
 
   @JsonKey(name: 'serialid')
   int serialid;

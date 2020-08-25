@@ -12,15 +12,11 @@ XiaoshuoCatlog _$XiaoshuoCatlogFromJson(Map<String, dynamic> json) {
     json['resourceid'] as int,
     json['page_No'] as int,
     json['page_count'] as int,
-    (json['rows'] as List)
-        ?.map(
-            (e) => e == null ? null : Rows.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['rows'] as List)?.map((e) => e == null ? null : Rows.fromJson(e as Map<String, dynamic>))?.toList(),
   );
 }
 
-Map<String, dynamic> _$XiaoshuoCatlogToJson(XiaoshuoCatlog instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$XiaoshuoCatlogToJson(XiaoshuoCatlog instance) => <String, dynamic>{
       'ret': instance.ret,
       'resourceid': instance.resourceid,
       'page_No': instance.pageNo,
@@ -34,9 +30,9 @@ Rows _$RowsFromJson(Map<String, dynamic> json) {
     json['contentlen'] as int,
     json['contenttype'] as int,
     json['intro'] as String,
-    json['payed'] as int,
+    json['payed'] as String,
     json['price'] as int,
-    json['resourceid'] as int,
+    json['resourceid'] as String,
     json['serialid'] as int,
     json['serialname'] as String,
   );

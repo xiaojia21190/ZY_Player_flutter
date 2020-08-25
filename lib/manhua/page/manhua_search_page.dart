@@ -20,10 +20,7 @@ class ManhuaSearchPage extends StatefulWidget {
   _ManhuaSearchPageState createState() => _ManhuaSearchPageState();
 }
 
-class _ManhuaSearchPageState extends State<ManhuaSearchPage>
-    with
-        AutomaticKeepAliveClientMixin<ManhuaSearchPage>,
-        SingleTickerProviderStateMixin {
+class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepAliveClientMixin<ManhuaSearchPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   ManhuaProvider _searchProvider;
@@ -42,10 +39,8 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage>
 
   Future getSearchWords(String keywords) async {
     _searchProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua,
-        queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
-      var data = List.generate(resultList.length,
-          (index) => ManhuaDetail.fromJson(resultList[index]));
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
+      var data = List.generate(resultList.length, (index) => ManhuaDetail.fromJson(resultList[index]));
       _searchProvider.setList(data);
     }, onError: (_, __) {
       _searchProvider.setStateType(StateType.network);
@@ -87,9 +82,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage>
                             IconButton(
                                 icon: Icon(
                                   Icons.delete_forever,
-                                  color: isDark
-                                      ? Colours.dark_red
-                                      : Colours.dark_bg_gray,
+                                  color: isDark ? Colours.dark_red : Colours.dark_bg_gray,
                                 ),
                                 onPressed: () {
                                   Log.d("删除搜索");
@@ -109,11 +102,8 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage>
                                         child: Container(
                                           padding: EdgeInsets.all(10),
                                           decoration: BoxDecoration(
-                                            color: isDark
-                                                ? Colours.dark_material_bg
-                                                : Colours.bg_gray,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                            color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
+                                            borderRadius: BorderRadius.circular(10),
                                           ),
                                           child: Text('$s'),
                                         ),
@@ -130,41 +120,26 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage>
                     )
                   : Container();
             }),
-            Expanded(
-                child: Consumer<ManhuaProvider>(builder: (_, provider, __) {
+            Expanded(child: Consumer<ManhuaProvider>(builder: (_, provider, __) {
               return provider.list.length > 0
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Text("搜索结果"),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: ScreenUtil.getInstance().getWidth(491),
-                          child: ListView.builder(
-                              itemCount: provider.list.length,
-                              itemBuilder: (_, index) {
-                                return ListTile(
-                                  title: Text(provider.list[index].title),
-                                  subtitle: Text(provider.list[index].author),
-                                  leading: LoadImage(
-                                    provider.list[index].cover,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  trailing: Icon(Icons.keyboard_arrow_right),
-                                  onTap: () {
-                                    Log.d('前往详情页');
-                                    NavigatorUtils.push(context,
-                                        '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
-                                  },
-                                );
-                              }),
-                        )
-                      ],
-                    )
+                  ? ListView.builder(
+                      itemCount: provider.list.length,
+                      itemBuilder: (_, index) {
+                        return ListTile(
+                          title: Text(provider.list[index].title),
+                          subtitle: Text(provider.list[index].author),
+                          leading: LoadImage(
+                            provider.list[index].cover,
+                            fit: BoxFit.cover,
+                          ),
+                          trailing: Icon(Icons.keyboard_arrow_right),
+                          onTap: () {
+                            Log.d('前往详情页');
+                            NavigatorUtils.push(context,
+                                '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
+                          },
+                        );
+                      })
                   : Center(
                       child: StateLayout(type: provider.state),
                     );

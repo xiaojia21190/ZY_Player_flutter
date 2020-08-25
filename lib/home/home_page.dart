@@ -8,6 +8,7 @@ import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/player/page/player_search_page.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_search_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
@@ -41,7 +42,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [PlayerSearchPage(), ManhuaSearchPage(), ManhuaSearchPage(), CollectPage()];
+    _pageList = [PlayerSearchPage(), XiaoShuoSearchPage(), ManhuaSearchPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {

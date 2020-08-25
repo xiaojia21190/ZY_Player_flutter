@@ -38,9 +38,9 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
   }
 
   Future getData(String keywords) async {
+    _xiaoShuoProvider.list.clear();
     _xiaoShuoProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchXiaoshuo, queryParameters: {"keywords": keywords},
-        onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchXiaoshuo, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       _xiaoShuoProvider.setStateType(StateType.empty);
       List.generate(resultList.length, (i) => _xiaoShuoProvider.list.add(XiaoshuoReource.fromJson(resultList[i])));
     }, onError: (_, __) {
@@ -71,6 +71,7 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
                 }
               }),
           body: Container(
+            height: MediaQuery.of(context).size.height,
             child: Column(
               children: <Widget>[
                 Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
@@ -83,7 +84,7 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Padding(
-                                  padding: EdgeInsets.only(left: 20),
+                                  padding: EdgeInsets.only(left: 15),
                                   child: Text("历史搜索"),
                                 ),
                                 IconButton(
@@ -97,7 +98,7 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
                                     })
                               ],
                             ),
-                            Selector<PlayerProvider, List>(
+                            Selector<XiaoShuoProvider, List>(
                                 builder: (_, words, __) {
                                   return Padding(
                                     padding: EdgeInsets.only(left: 10),
@@ -116,6 +117,7 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
                                             ),
                                             onTap: () {
                                               //搜索关键词
+                                              Toast.show('搜索内容：$s');
                                               this.getData(s);
                                             },
                                           );
@@ -129,45 +131,31 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
                 }),
                 Expanded(child: Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
                   return provider.list.length > 0
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(left: 20, top: 20),
-                              child: Text("搜索结果"),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: ScreenUtil.getInstance().getWidth(491),
-                              child: ListView.builder(
-                                  itemCount: provider.list.length,
-                                  itemBuilder: (_, index) {
-                                    return ListTile(
-                                      title: Text(provider.list[index].title),
-                                      subtitle: Text(provider.list[index].author),
-                                      leading: LoadImage(
-                                        provider.list[index].cover,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      trailing: Icon(Icons.keyboard_arrow_right),
-                                      onTap: () {
-                                        Log.d('前往详情页');
-                                        Navigator.push(
-                                            context,
-                                            CupertinoPageRoute<dynamic>(
-                                                fullscreenDialog: true,
-                                                builder: (BuildContext context) {
-                                                  return XiaoShuoDetailPage(
-                                                    xiaoshuoReource: provider.list[index],
-                                                  );
-                                                }));
-                                      },
-                                    );
-                                  }),
-                            )
-                          ],
-                        )
+                      ? ListView.builder(
+                          itemCount: provider.list.length,
+                          itemBuilder: (_, index) {
+                            return ListTile(
+                              title: Text(provider.list[index].title),
+                              subtitle: Text(provider.list[index].author),
+                              leading: LoadImage(
+                                provider.list[index].cover,
+                                fit: BoxFit.cover,
+                              ),
+                              trailing: Icon(Icons.keyboard_arrow_right),
+                              onTap: () {
+                                Log.d('前往详情页');
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute<dynamic>(
+                                        fullscreenDialog: true,
+                                        builder: (BuildContext context) {
+                                          return XiaoShuoDetailPage(
+                                            xiaoshuoReource: provider.list[index],
+                                          );
+                                        }));
+                              },
+                            );
+                          })
                       : Center(
                           child: StateLayout(type: provider.stateType),
                         );

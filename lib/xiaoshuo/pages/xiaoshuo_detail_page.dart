@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
-import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_catlog.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_reource.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
@@ -22,8 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../model/detail_reource.dart';
-
 class XiaoShuoDetailPage extends StatefulWidget {
   const XiaoShuoDetailPage({
     Key key,
@@ -40,7 +37,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
   bool startedPlaying = false;
 
   BaseListProvider<Rows> _baseListProvider = BaseListProvider();
-  int currentPage = 0;
+  int currentPage = 1;
 
   @override
   void initState() {
@@ -50,22 +47,20 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
   }
 
   Future getData() async {
+    print(widget.xiaoshuoReource);
     _baseListProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(
       Method.get,
-      HttpApi.imageManhua,
-      queryParameters: {
-        "url":
-            'https://bookshelf.html5.qq.com/api/migration/list_charpter?resourceid=${widget.xiaoshuoReource.resourceId}&start=$currentPage&serialnum=2810&sort=asc&t=202007101626'
-      },
+      "https://bookshelf.html5.qq.com/api/migration/list_charpter?resourceid=${widget.xiaoshuoReource.resourceId}&start=$currentPage&serialnum=10000&sort=asc&t=202008251604",
       options: Options(headers: {"Referer": 'https://bookshelf.html5.qq.com/?t=native&ch=004645'}),
       onSuccess: (data) {
-        _baseListProvider.add(Rows.fromJson(data["rows"]));
-        if (data["pageNo"] == data["pageCount"]) {
+        List.generate(data["rows"].length, (i) => _baseListProvider.list.add(Rows.fromJson(data["rows"][i])));
+        if (data["page_No"] == data["page_Count"]) {
           _baseListProvider.setHasMore(false);
         } else {
           _baseListProvider.setHasMore(true);
         }
+        _baseListProvider.setStateType(StateType.empty);
       },
       onError: (code, msg) {
         _baseListProvider.setStateType(StateType.network);
@@ -138,135 +133,56 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
           })
         ],
       ),
-      body: Consumer<DetailProvider>(builder: (_, provider, __) {
-        return provider.detailReource != null
-            ? CustomScrollView(
-                slivers: <Widget>[
-                  SliverToBoxAdapter(
-                    child: Card(
-                      shadowColor: Colors.blueAccent,
-                      elevation: 2,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: ScreenUtil.getInstance().getWidth(310),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                              child: LoadImage(
-                                provider.detailReource.cover,
-                                width: 150,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            Expanded(
-                                child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    provider.detailReource.title,
-                                    maxLines: 2,
-                                  ),
-                                  Text(
-                                    provider.detailReource.qingxi,
-                                    maxLines: 2,
-                                    style: TextStyle(color: Colours.text_gray, fontSize: 12),
-                                  ),
-                                  Text(provider.detailReource.daoyan),
-                                  Text(
-                                    provider.detailReource.zhuyan,
-                                    maxLines: 4,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(provider.detailReource.leixing),
-                                  Text(provider.detailReource.diqu),
-                                  Text(provider.detailReource.yuyan),
-                                  Text(provider.detailReource.shangying),
-                                  Text(provider.detailReource.pianchang != null ? '${provider.detailReource.pianchang}分钟' : ""),
-                                  MyButton(
-                                    onPressed: () {
-                                      NavigatorUtils.goWebViewPage(context, provider.detailReource.title, provider.detailReource.videoList[0]);
-                                    },
-                                    text: "播放",
-                                    fontSize: Dimens.font_sp16,
-                                  )
-                                ],
-                              ),
-                            ))
-                          ],
-                        ),
-                      ),
-                    ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: LoadImage(
+                    widget.xiaoshuoReource.cover,
+                    width: 150,
+                    fit: BoxFit.contain,
                   ),
-                  SliverToBoxAdapter(
-                    child: Card(
-                      shadowColor: Colors.blueAccent,
-                      elevation: 2,
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[Text("剧情介绍"), Gaps.vGap10, Text(provider.detailReource.content)],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: provider.detailReource.videoList.length > 1
-                        ? Card(
-                            shadowColor: Colors.blueAccent,
-                            elevation: 2,
-                            child: Container(
-                              padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 10, bottom: 10),
-                                    child: Text(
-                                      "剧集选择",
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                  ChangeNotifierProvider<BaseListProvider<Rows>>(
-                                      create: (_) => _baseListProvider,
-                                      child: Consumer<BaseListProvider<Rows>>(builder: (_, _baseListProvider, __) {
-                                        return DeerListView(
-                                            itemCount: _baseListProvider.list.length,
-                                            stateType: _baseListProvider.stateType,
-                                            onRefresh: _onRefresh,
-                                            loadMore: _loadMore,
-                                            pageSize: _baseListProvider.list.length,
-                                            hasMore: _baseListProvider.hasMore,
-                                            itemBuilder: (_, index) {
-                                              return ListTile(
-                                                title: Text(_baseListProvider.list[index].serialname),
-                                                trailing: Icon(Icons.keyboard_arrow_right),
-                                                onTap: () {
-                                                  // 打开qq浏览器
-                                                  _launchURL(
-                                                      'url=https://bookshelf.html5.qq.com/qbread/adread/chapter?resourceid=${_baseListProvider.list[index].resourceid}&serialid=${{
-                                                    _baseListProvider.list[index].serialid
-                                                  }}&ch=001312');
-                                                },
-                                              );
-                                            });
-                                      }))
-                                ],
-                              ),
-                            ))
-                        : Container(),
-                  )
-                ],
-              )
-            : StateLayout(type: StateType.loading);
-      }),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${widget.xiaoshuoReource.title}"),
+                    Text("作者：${widget.xiaoshuoReource.author}"),
+                  ],
+                )
+              ],
+            ),
+          ),
+          SliverFillRemaining(
+              child: ChangeNotifierProvider<BaseListProvider<Rows>>(
+                  create: (_) => _baseListProvider,
+                  child: Consumer<BaseListProvider<Rows>>(builder: (_, _baseListProvider, __) {
+                    return DeerListView(
+                        itemCount: _baseListProvider.list.length,
+                        stateType: _baseListProvider.stateType,
+                        onRefresh: _onRefresh,
+                        loadMore: _loadMore,
+                        pageSize: _baseListProvider.list.length,
+                        hasMore: _baseListProvider.hasMore,
+                        itemBuilder: (_, index) {
+                          return ListTile(
+                            title: Text(_baseListProvider.list[index].serialname),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () {
+                              // 打开qq浏览器
+                              //https://bookshelf.html5.qq.com/?t=web&ch=004645#!/detail/1100648963/2811/wenxue_content"
+                              _launchURL(
+                                  'url=https://bookshelf.html5.qq.com/?t=web&ch=004645#!/detail/${_baseListProvider.list[index].resourceid}/${_baseListProvider.list[index].serialid}/wenxue_content');
+                            },
+                          );
+                        });
+                  })))
+        ],
+      ),
     );
   }
 }
