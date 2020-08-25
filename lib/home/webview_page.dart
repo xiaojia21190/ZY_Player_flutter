@@ -9,10 +9,12 @@ class WebViewPage extends StatefulWidget {
     Key key,
     @required this.title,
     @required this.url,
+    this.flag = "1",
   }) : super(key: key);
 
   final String title;
   final String url;
+  final String flag;
 
   @override
   _WebViewPageState createState() => _WebViewPageState();
@@ -26,7 +28,9 @@ class _WebViewPageState extends State<WebViewPage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    if (widget.flag == "1") {
+      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    }
   }
 
   @override

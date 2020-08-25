@@ -36,7 +36,7 @@ class XiaoShuoDetailPage extends StatefulWidget {
 class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
   bool startedPlaying = false;
 
-  BaseListProvider<Rows> _baseListProvider = BaseListProvider();
+  BaseListProvider<XiaoshuoCatlog> _baseListProvider = BaseListProvider();
   int currentPage = 1;
 
   @override
@@ -47,19 +47,14 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
   }
 
   Future getData() async {
-    print(widget.xiaoshuoReource);
     _baseListProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(
       Method.get,
-      "https://bookshelf.html5.qq.com/api/migration/list_charpter?resourceid=${widget.xiaoshuoReource.resourceId}&start=$currentPage&serialnum=10000&sort=asc&t=202008251604",
-      options: Options(headers: {"Referer": 'https://bookshelf.html5.qq.com/?t=native&ch=004645'}),
+      HttpApi.searchXiaoshuozj,
+      queryParameters: {"url": widget.xiaoshuoReource.url},
       onSuccess: (data) {
-        List.generate(data["rows"].length, (i) => _baseListProvider.list.add(Rows.fromJson(data["rows"][i])));
-        if (data["page_No"] == data["page_Count"]) {
-          _baseListProvider.setHasMore(false);
-        } else {
-          _baseListProvider.setHasMore(true);
-        }
+        List.generate(data.length, (i) => _baseListProvider.list.add(XiaoshuoCatlog.fromJson(data[i])));
+        _baseListProvider.setHasMore(false);
         _baseListProvider.setStateType(StateType.empty);
       },
       onError: (code, msg) {
@@ -89,15 +84,6 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
       return result.length > 0;
     }
     return false;
-  }
-
-  _launchURL(String prev) async {
-    String url = "mttbrowser://$prev";
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 
   @override
@@ -152,15 +138,23 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                   children: [
                     Text("${widget.xiaoshuoReource.title}"),
                     Text("作者：${widget.xiaoshuoReource.author}"),
+                    Container(
+                      width: 180,
+                      child: Text(
+                        "简介：${widget.xiaoshuoReource.jianjie}",
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 8,
+                      ),
+                    )
                   ],
                 )
               ],
             ),
           ),
           SliverFillRemaining(
-              child: ChangeNotifierProvider<BaseListProvider<Rows>>(
+              child: ChangeNotifierProvider<BaseListProvider<XiaoshuoCatlog>>(
                   create: (_) => _baseListProvider,
-                  child: Consumer<BaseListProvider<Rows>>(builder: (_, _baseListProvider, __) {
+                  child: Consumer<BaseListProvider<XiaoshuoCatlog>>(builder: (_, _baseListProvider, __) {
                     return DeerListView(
                         itemCount: _baseListProvider.list.length,
                         stateType: _baseListProvider.stateType,
@@ -170,13 +164,12 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                         hasMore: _baseListProvider.hasMore,
                         itemBuilder: (_, index) {
                           return ListTile(
-                            title: Text(_baseListProvider.list[index].serialname),
+                            title: Text(_baseListProvider.list[index].title),
                             trailing: Icon(Icons.keyboard_arrow_right),
                             onTap: () {
                               // 打开qq浏览器
-                              //https://bookshelf.html5.qq.com/?t=web&ch=004645#!/detail/1100648963/2811/wenxue_content"
-                              _launchURL(
-                                  'url=https://bookshelf.html5.qq.com/?t=web&ch=004645#!/detail/${_baseListProvider.list[index].resourceid}/${_baseListProvider.list[index].serialid}/wenxue_content');
+                              NavigatorUtils.goWebViewPage(context, _baseListProvider.list[index].title, _baseListProvider.list[index].url,
+                                  flag: "2");
                             },
                           );
                         });

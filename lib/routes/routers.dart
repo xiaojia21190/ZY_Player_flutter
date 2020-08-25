@@ -29,7 +29,8 @@ class Routes {
     router.define(webViewPage, handler: Handler(handlerFunc: (_, params) {
       final String title = params['title']?.first;
       final String url = params['url']?.first;
-      return WebViewPage(title: title, url: url);
+      final String flag = params['flag']?.first;
+      return WebViewPage(title: title, url: url, flag: flag);
     }));
 
     _listRouter.clear();

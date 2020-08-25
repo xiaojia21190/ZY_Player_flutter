@@ -138,10 +138,6 @@ class DioUtils {
         if (onSuccess != null) {
           onSuccess(result["data"]);
         }
-      } else if (result["rows"].length > 0) {
-        if (onSuccess != null) {
-          onSuccess(result);
-        }
       } else {
         _onError(result["code"], result["message"], onError);
       }

@@ -13,16 +13,13 @@ XiaoshuoReource _$XiaoshuoReourceFromJson(Map<String, dynamic> json) {
     json['author'] as String,
     json['cover'] as String,
     json['jianjie'] as String,
-    json['resourceId'] as String,
   );
 }
 
-Map<String, dynamic> _$XiaoshuoReourceToJson(XiaoshuoReource instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$XiaoshuoReourceToJson(XiaoshuoReource instance) => <String, dynamic>{
       'url': instance.url,
       'title': instance.title,
       'author': instance.author,
       'cover': instance.cover,
       'jianjie': instance.jianjie,
-      'resourceId': instance.resourceId,
     };

@@ -19,16 +19,12 @@ class XiaoshuoReource extends Object {
   @JsonKey(name: 'jianjie')
   String jianjie;
 
-  @JsonKey(name: 'resourceId')
-  String resourceId;
-
   XiaoshuoReource(
     this.url,
     this.title,
     this.author,
     this.cover,
     this.jianjie,
-    this.resourceId,
   );
 
   factory XiaoshuoReource.fromJson(Map<String, dynamic> srcJson) => _$XiaoshuoReourceFromJson(srcJson);
