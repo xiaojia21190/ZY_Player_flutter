@@ -7,6 +7,8 @@ import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
+import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_detail_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -50,9 +52,18 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
       case 1:
         return ListTile(
           title: Text(data.title),
-          subtitle: Text(data.leixing),
+          subtitle: Text(data.author),
           onTap: () {
             Log.d('前往详情页');
+            Navigator.push(
+                context,
+                CupertinoPageRoute<dynamic>(
+                    fullscreenDialog: true,
+                    builder: (BuildContext context) {
+                      return XiaoShuoDetailPage(
+                        xiaoshuoReource: data,
+                      );
+                    }));
           },
         );
         break;

@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:ZY_Player_flutter/model/resource_data.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_reource.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -14,7 +11,6 @@ import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_detail_page.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
-import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
