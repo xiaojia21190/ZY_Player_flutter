@@ -1,15 +1,7 @@
-import 'dart:convert';
-
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
-import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_search_page.dart';
-import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
-import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/player/page/player_search_page.dart';
-import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_search_page.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';

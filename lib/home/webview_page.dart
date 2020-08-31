@@ -21,9 +21,11 @@ class WebViewPage extends StatefulWidget {
 }
 
 class _WebViewPageState extends State<WebViewPage> {
+  WebViewController _webViewController;
   final Completer<WebViewController> _controller = Completer<WebViewController>();
 
   bool isLangu = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -56,52 +58,69 @@ class _WebViewPageState extends State<WebViewPage> {
                 body: Stack(
                   children: <Widget>[
                     WebView(
-                      initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+                      initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
                       initialUrl: widget.url,
-                      javascriptMode: JavascriptMode.unrestricted,
+                      javascriptMode: JavascriptMode.disabled,
+                      onPageStarted: (aa) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                      },
+                      onPageFinished: (finish) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        _webViewController.evaluateJavascript(
+                            'document.querySelector("#dibecjqswyi").style = "display:none";document.querySelector("#dompcejubvkui").style = "display:none"');
+                      },
                       onWebViewCreated: (WebViewController webViewController) {
                         _controller.complete(webViewController);
-                        webViewController.evaluateJavascript(
-                            'document.querySelector(".___oga").style = "display:none";document.querySelector("#dibecjqswyi").style = "display:none";document.querySelector("#dompcejubvkui").style = "display:none"');
+                        _webViewController = webViewController;
                       },
                     ),
-                    Positioned(
-                        top: 20,
-                        width: MediaQuery.of(context).size.width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            IconButton(
-                              onPressed: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                Navigator.maybePop(context);
-                              },
-                              tooltip: '返回',
-                              padding: const EdgeInsets.all(12.0),
-                              icon: Image.asset(
-                                "assets/images/ic_back_black.png",
-                                color: Colors.red,
+                    isLoading
+                        ? Container(
+                            color: Colors.white,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.black26,
                               ),
                             ),
-                            IconButton(
-                              onPressed: () {
-                                if (!isLangu) {
-                                  isLangu = true;
-                                  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-                                } else {
-                                  isLangu = false;
-                                  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                                }
-                              },
-                              tooltip: '全屏',
-                              padding: const EdgeInsets.all(12.0),
-                              icon: Icon(
-                                Icons.aspect_ratio,
-                                color: Colors.red,
-                              ),
-                            )
-                          ],
-                        ))
+                          )
+                        : Positioned(
+                            top: 20,
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                BackButton(
+                                  color: Colors.white,
+                                  onPressed: () {
+                                    FocusManager.instance.primaryFocus?.unfocus();
+                                    Navigator.maybePop(context);
+                                  },
+                                ),
+                                widget.flag == "1"
+                                    ? IconButton(
+                                        onPressed: () {
+                                          if (!isLangu) {
+                                            isLangu = true;
+                                            SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+                                          } else {
+                                            isLangu = false;
+                                            SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+                                          }
+                                        },
+                                        tooltip: '全屏',
+                                        padding: const EdgeInsets.all(12.0),
+                                        icon: Icon(
+                                          Icons.aspect_ratio,
+                                          color: Colors.red,
+                                        ),
+                                      )
+                                    : Container()
+                              ],
+                            )),
                   ],
                 )),
           );

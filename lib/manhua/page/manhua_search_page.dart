@@ -11,7 +11,6 @@ import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -38,6 +37,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   }
 
   Future getSearchWords(String keywords) async {
+    _searchProvider.list.clear();
     _searchProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(resultList.length, (index) => ManhuaDetail.fromJson(resultList[index]));

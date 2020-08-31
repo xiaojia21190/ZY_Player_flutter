@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:ZY_Player_flutter/model/resource_data.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -12,11 +10,8 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:dio/dio.dart';
-import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PlayerSearchPage extends StatefulWidget {
   @override
@@ -36,6 +31,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
   }
 
   Future getData(String keywords) async {
+    _playerProvider.list.clear();
     _playerProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1},
         onSuccess: (resultList) {

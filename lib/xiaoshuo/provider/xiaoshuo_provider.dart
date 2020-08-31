@@ -1,4 +1,3 @@
-import 'package:ZY_Player_flutter/model/resource_data.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_reource.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';

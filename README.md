@@ -5,23 +5,28 @@
 ### flutter 版本安装
 
 - v1.0.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.0.0/app-release.apk
+- v1.1.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.0.0/app-release.apk
 
-### 爬虫后台添加
-- 地址 https://github.com/xiaojia21190/egg_crawel
+### 爬虫后台
+-  https://github.com/xiaojia21190/egg_crawel
 
 ### 截图
 
-|           首页（搜索）            |              详情页               |
-| :-------------------------------: | :-------------------------------: |
-| ![home](./images/image1.jpg)  | ![detail](./images/image2.jpg) |
+|         影视资源              |             详情页             |
+| :--------------------------: | :----------------------------: |
+| ![home](./images/image6.jpg) | ![detail](./images/image9.jpg) |
 
-### TODO
+|         小说资源              |             详情页             |
+| :--------------------------: | :----------------------------: |
+| ![home](./images/image2.jpg) | ![detail](./images/image8.jpg) |
 
-- 详情页展示优化
-- 美化界面
-- 视频分享
-- 多语言
-- 投屏
+|         漫画资源              |             详情页              |           漫画页                |
+| :--------------------------: | :----------------------------: | :----------------------------: |
+| ![home](./images/image5.jpg) | ![detail](./images/image4.jpg) | ![detail](./images/image3.jpg) |
+
+
+
+
 
 ### 版本记录
 
@@ -33,6 +38,14 @@
 - 外部浏览器播放
 - 收藏
 - 暗黑模式
+
+#### v1.1.0
+
+- 视频搜索（收藏）
+- 小说搜索（收藏）
+- 漫画搜索（收藏）
+- 外部浏览器播放
+
 
 ### 重要:
 

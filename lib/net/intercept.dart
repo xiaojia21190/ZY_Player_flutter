@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flustars/flustars.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:sprintf/sprintf.dart';
 
 import 'dio_utils.dart';
 import 'error_handle.dart';

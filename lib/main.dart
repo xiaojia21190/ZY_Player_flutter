@@ -19,7 +19,6 @@ import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:ZY_Player_flutter/home/splash_page.dart';
 import 'package:provider/provider.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 
