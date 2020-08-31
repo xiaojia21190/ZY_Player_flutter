@@ -5,7 +5,7 @@
 ### flutter 版本安装
 
 - v1.0.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.0.0/app-release.apk
-- v1.1.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.0.0/app-release.apk
+- v1.1.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.1.0/app-release.apk
 
 ### 爬虫后台
 -  https://github.com/xiaojia21190/egg_crawel
