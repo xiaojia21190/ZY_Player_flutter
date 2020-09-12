@@ -60,7 +60,7 @@ class _WebViewPageState extends State<WebViewPage> {
                     WebView(
                       initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
                       initialUrl: widget.url,
-                      javascriptMode: JavascriptMode.disabled,
+                      javascriptMode: JavascriptMode.unrestricted,
                       onPageStarted: (aa) {
                         setState(() {
                           isLoading = true;
