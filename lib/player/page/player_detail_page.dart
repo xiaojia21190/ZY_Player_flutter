@@ -50,8 +50,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
   }
 
   Future initData() async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource,
-        queryParameters: {"key": "zuidazy", "url": widget.url}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"key": "zuidazy", "url": widget.url},
+        onSuccess: (data) {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
       context.read<CollectProvider>().changeNoti();
     }, onError: (_, __) {});
@@ -148,13 +148,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                                       Text(provider.detailReource.diqu),
                                       Text(provider.detailReource.yuyan),
                                       Text(provider.detailReource.shangying),
-                                      Text(provider.detailReource.pianchang != null
-                                          ? '${provider.detailReource.pianchang}分钟'
-                                          : ""),
+                                      Text(provider.detailReource.pianchang != null ? '${provider.detailReource.pianchang}分钟' : ""),
                                       MyButton(
                                         onPressed: () {
-                                          NavigatorUtils.goWebViewPage(context, provider.detailReource.title,
-                                              provider.detailReource.videoList[0]);
+                                          NavigatorUtils.goWebViewPage(context, provider.detailReource.title, provider.detailReource.videoList[0],
+                                              flag: "1");
                                         },
                                         text: "播放",
                                         fontSize: Dimens.font_sp16,
@@ -204,23 +202,17 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                                         runSpacing: 10, // 纵轴（垂直）方向间距
                                         alignment: WrapAlignment.start, //沿主轴方向居中
                                         children: List.generate(provider.detailReource.videoList.length, (index) {
-                                          return InkWell(
-                                            onTap: () {
-                                              NavigatorUtils.goWebViewPage(context, provider.detailReource.title,
-                                                  provider.detailReource.videoList[index]);
-                                              Log.d(index.toString());
-                                            },
-                                            child: Container(
-                                              width: ScreenUtil.getInstance().getWidth(70),
-                                              margin: EdgeInsets.only(right: 10),
-                                              child: MyButton(
-                                                onPressed: () {
-                                                  NavigatorUtils.goWebViewPage(context, provider.detailReource.title,
-                                                      provider.detailReource.videoList[index]);
-                                                  Log.d(index.toString());
-                                                },
-                                                text: '第${index + 1}集',
-                                              ),
+                                          return Container(
+                                            width: ScreenUtil.getInstance().getWidth(70),
+                                            margin: EdgeInsets.only(right: 10),
+                                            child: MyButton(
+                                              onPressed: () {
+                                                NavigatorUtils.goWebViewPage(
+                                                    context, provider.detailReource.title, provider.detailReource.videoList[index],
+                                                    flag: "1");
+                                                Log.d(index.toString());
+                                              },
+                                              text: '第${index + 1}集',
                                             ),
                                           );
                                         }),

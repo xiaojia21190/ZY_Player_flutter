@@ -9,7 +9,7 @@ class WebViewPage extends StatefulWidget {
     Key key,
     @required this.title,
     @required this.url,
-    this.flag = "1",
+    @required this.flag,
   }) : super(key: key);
 
   final String title;
@@ -25,7 +25,7 @@ class _WebViewPageState extends State<WebViewPage> {
   final Completer<WebViewController> _controller = Completer<WebViewController>();
 
   bool isLangu = false;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
