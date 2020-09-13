@@ -6,21 +6,22 @@
 
 - v1.0.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.0.0/app-release.apk
 - v1.1.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.1.0/app-release.apk
+- v1.1.1 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.1.1/app-release.apk
 
 ### 爬虫后台
 -  https://github.com/xiaojia21190/egg_crawel
 
 ### 截图
 
-|         影视资源              |             详情页             |
+|           影视资源           |             详情页             |
 | :--------------------------: | :----------------------------: |
 | ![home](./images/image6.jpg) | ![detail](./images/image9.jpg) |
 
-|         小说资源              |             详情页             |
+|           小说资源           |             详情页             |
 | :--------------------------: | :----------------------------: |
 | ![home](./images/image2.jpg) | ![detail](./images/image8.jpg) |
 
-|         漫画资源              |             详情页              |           漫画页                |
+|           漫画资源           |             详情页             |             漫画页             |
 | :--------------------------: | :----------------------------: | :----------------------------: |
 | ![home](./images/image5.jpg) | ![detail](./images/image4.jpg) | ![detail](./images/image3.jpg) |
 
