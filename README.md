@@ -11,6 +11,9 @@
 ### 爬虫后台
 -  https://github.com/xiaojia21190/egg_crawel
 
+### 爬取漫画镇魂街到issue
+-  https://github.com/xiaojia21190/zhenhunjie
+
 ### 截图
 
 |           影视资源           |             详情页             |
