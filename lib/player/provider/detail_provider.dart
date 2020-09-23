@@ -1,4 +1,5 @@
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
+import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
 class DetailProvider extends ChangeNotifier {
@@ -7,6 +8,21 @@ class DetailProvider extends ChangeNotifier {
 
   String _playerUrl = "about:blank";
   String get playerUrl => _playerUrl;
+
+  List<String> _kanguojuji = [];
+  List<String> get kanguojuji => _kanguojuji;
+
+  setJuji() {
+    _kanguojuji = SpUtil.getStringList("KGjuji", defValue: []);
+  }
+
+  saveJuji(String juji) {
+    if (!_kanguojuji.contains(juji)) {
+      _kanguojuji.add(juji);
+      SpUtil.putStringList("KGjuji", _kanguojuji);
+      notifyListeners();
+    }
+  }
 
   setDetailResource(DetailReource detailReourceData) {
     _detailReource = detailReourceData;

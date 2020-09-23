@@ -31,7 +31,11 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     if (widget.flag == "1") {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+      SystemChrome.setEnabledSystemUIOverlays([]);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    } else {
+      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     }
     WidgetsBinding.instance.addObserver(this);
   }
@@ -71,6 +75,7 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                   return Future.value(false);
                 }
               }
+              SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
               SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
               return Future.value(true);
             },
@@ -78,8 +83,7 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                 backgroundColor: Colors.transparent,
                 body: Stack(
                   children: <Widget>[
-                    Expanded(
-                        child: WebView(
+                    WebView(
                       initialUrl: widget.url,
                       javascriptMode: JavascriptMode.unrestricted,
                       onPageStarted: (aa) {
@@ -98,7 +102,7 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                         _controller.complete(webViewController);
                         _webViewController = webViewController;
                       },
-                    )),
+                    ),
                     isLoading
                         ? Container(
                             color: Colors.black26,
@@ -121,26 +125,6 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                                     Navigator.maybePop(context);
                                   },
                                 ),
-                                widget.flag == "1"
-                                    ? IconButton(
-                                        onPressed: () {
-                                          if (!isLangu) {
-                                            isLangu = true;
-                                            SystemChrome.setPreferredOrientations(
-                                                [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-                                          } else {
-                                            isLangu = false;
-                                            SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                                          }
-                                        },
-                                        tooltip: '全屏',
-                                        padding: const EdgeInsets.all(12.0),
-                                        icon: Icon(
-                                          Icons.aspect_ratio,
-                                          color: Colors.redAccent,
-                                        ),
-                                      )
-                                    : Container()
                               ],
                             ),
                           ),

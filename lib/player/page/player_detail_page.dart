@@ -9,6 +9,7 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -36,11 +37,15 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
+  CollectProvider _collectProvider;
+
+  String actionName = "点击收藏";
 
   @override
   void initState() {
     super.initState();
-    context.read<CollectProvider>().setListDetailResource("collcetPlayer");
+    _collectProvider = context.read<CollectProvider>();
+    _collectProvider.setListDetailResource("collcetPlayer");
     initData();
   }
 
@@ -53,6 +58,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"key": "zuidazy", "url": widget.url},
         onSuccess: (data) {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
+      _detailProvider.setJuji();
       context.read<CollectProvider>().changeNoti();
     }, onError: (_, __) {});
   }
@@ -67,39 +73,29 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final bool isDark = themeData.brightness == Brightness.dark;
+
     return ChangeNotifierProvider<DetailProvider>(
         create: (_) => _detailProvider,
         child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: Colours.app_main,
-            title: Text(
-              widget.title,
-            ),
-            actions: <Widget>[
-              Consumer<CollectProvider>(builder: (_, provider, __) {
-                return IconButton(
-                    icon: getFilterData(_detailProvider.detailReource)
-                        ? Icon(
-                            Icons.turned_in,
-                            color: Colors.red,
-                          )
-                        : Icon(
-                            Icons.turned_in_not,
-                            color: Colors.red,
-                          ),
-                    onPressed: () {
-                      if (getFilterData(_detailProvider.detailReource)) {
-                        Log.d("点击取消");
-                        provider.removeResource(_detailProvider.detailReource.url);
-                      } else {
-                        Log.d("点击收藏");
-                        provider.addResource(_detailProvider.detailReource);
-                      }
-                    });
-              })
-            ],
-          ),
+          appBar: MyAppBar(
+              centerTitle: widget.title,
+              actionName: actionName,
+              onPressed: () {
+                if (getFilterData(_detailProvider.detailReource)) {
+                  Log.d("点击取消");
+                  _collectProvider.removeResource(_detailProvider.detailReource.url);
+                  actionName = "点击取消";
+                } else {
+                  Log.d("点击收藏");
+                  _collectProvider.addResource(
+                    _detailProvider.detailReource,
+                  );
+                  actionName = "点击收藏";
+                }
+                setState(() {});
+              }),
           body: Consumer<DetailProvider>(builder: (_, provider, __) {
             return provider.detailReource != null
                 ? CustomScrollView(
@@ -203,17 +199,24 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                                         alignment: WrapAlignment.start, //沿主轴方向居中
                                         children: List.generate(provider.detailReource.videoList.length, (index) {
                                           return Container(
-                                            width: ScreenUtil.getInstance().getWidth(70),
-                                            margin: EdgeInsets.only(right: 10),
-                                            child: MyButton(
-                                              onPressed: () {
-                                                NavigatorUtils.goWebViewPage(
-                                                    context, provider.detailReource.title, provider.detailReource.videoList[index],
-                                                    flag: "1");
-                                                Log.d(index.toString());
-                                              },
-                                              text: '第${index + 1}集',
-                                            ),
+                                            width: ScreenUtil.getInstance().getWidth(80),
+                                            padding: EdgeInsets.all(5),
+                                            color: _detailProvider.kanguojuji.contains("${widget.url}_$index") ? Colors.red : Colours.text_gray_c,
+                                            alignment: Alignment.center,
+                                            child: InkWell(
+                                                onTap: () {
+                                                  _detailProvider.saveJuji("${widget.url}_$index");
+                                                  NavigatorUtils.goWebViewPage(
+                                                      context, provider.detailReource.title, provider.detailReource.videoList[index],
+                                                      flag: "1");
+                                                  Log.d(index.toString());
+                                                },
+                                                child: Text(
+                                                  '第${index + 1}集',
+                                                  style: TextStyle(
+                                                    color: isDark ? Colours.dark_text : Colors.white,
+                                                  ),
+                                                )),
                                           );
                                         }),
                                       )
