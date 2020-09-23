@@ -3,10 +3,7 @@
 基于ZY-Player开发的Flutter版本视频播放器，免费无广告
 
 ### flutter 版本安装
-
-- v1.0.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.0.0/app-release.apk
-- v1.1.0 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.1.0/app-release.apk
-- v1.1.1 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.1.1/app-release.apk
+- v1.1.2 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.1.2/app-release.apk
 
 ### 爬虫后台
 -  https://github.com/xiaojia21190/egg_crawel
@@ -34,21 +31,9 @@
 
 ### 版本记录
 
-#### v1.0.0
-
-- 视频搜索（8个视频源）
-- 详情页
-- 视频播放
-- 外部浏览器播放
-- 收藏
-- 暗黑模式
-
-#### v1.1.0
-
-- 视频搜索（收藏）
-- 小说搜索（收藏）
-- 漫画搜索（收藏）
-- 外部浏览器播放
+#### v1.1.2
+1. 页面ui修改
+2. 播放默认全屏，防止后台自动暂停
 
 
 ### 重要:
