@@ -795,7 +795,7 @@ packages:
       name: webview_flutter
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.3.22+1"
+    version: "0.3.23"
   xdg_directories:
     dependency: transitive
     description:
