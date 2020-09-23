@@ -20,11 +20,11 @@ class WebViewPage extends StatefulWidget {
   _WebViewPageState createState() => _WebViewPageState();
 }
 
-class _WebViewPageState extends State<WebViewPage> {
+class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
   WebViewController _webViewController;
   final Completer<WebViewController> _controller = Completer<WebViewController>();
 
-  bool isLangu = false;
+  bool isLangu = true;
   bool isLoading = true;
 
   @override
@@ -32,6 +32,27 @@ class _WebViewPageState extends State<WebViewPage> {
     super.initState();
     if (widget.flag == "1") {
       SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    }
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("--" + state.toString());
+    switch (state) {
+      case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
+        break;
+      case AppLifecycleState.resumed: // 应用程序可见，前台
+        break;
+      case AppLifecycleState.paused: // 应用程序不可见，后台
+        _webViewController.evaluateJavascript('document.querySelector("#a1").getAttribute("class").indexOf("paused");').then((value) {
+          if (int.parse(value) == -1) {
+            _webViewController.evaluateJavascript('document.querySelector(".dplayer-play-icon").click()');
+          }
+        });
+        break;
+      case AppLifecycleState.detached:
+        break;
     }
   }
 
@@ -57,8 +78,8 @@ class _WebViewPageState extends State<WebViewPage> {
                 backgroundColor: Colors.transparent,
                 body: Stack(
                   children: <Widget>[
-                    WebView(
-                      initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
+                    Expanded(
+                        child: WebView(
                       initialUrl: widget.url,
                       javascriptMode: JavascriptMode.unrestricted,
                       onPageStarted: (aa) {
@@ -71,16 +92,16 @@ class _WebViewPageState extends State<WebViewPage> {
                           isLoading = false;
                         });
                         _webViewController.evaluateJavascript(
-                            'document.querySelector("#dibecjqswyi").style = "display:none";document.querySelector("#dompcejubvkui").style = "display:none"');
+                            'document.querySelector("#dibecjqswyi").style = "display:none";document.querySelector("#dompcejubvkui").style = "display:none";await document.body.requestFullscreen()');
                       },
                       onWebViewCreated: (WebViewController webViewController) {
                         _controller.complete(webViewController);
                         _webViewController = webViewController;
                       },
-                    ),
+                    )),
                     isLoading
                         ? Container(
-                            color: Colors.white,
+                            color: Colors.black26,
                             child: Center(
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.black26,
@@ -94,7 +115,7 @@ class _WebViewPageState extends State<WebViewPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 BackButton(
-                                  color: Colors.white,
+                                  color: Colors.redAccent,
                                   onPressed: () {
                                     FocusManager.instance.primaryFocus?.unfocus();
                                     Navigator.maybePop(context);
@@ -105,7 +126,8 @@ class _WebViewPageState extends State<WebViewPage> {
                                         onPressed: () {
                                           if (!isLangu) {
                                             isLangu = true;
-                                            SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+                                            SystemChrome.setPreferredOrientations(
+                                                [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
                                           } else {
                                             isLangu = false;
                                             SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -115,12 +137,13 @@ class _WebViewPageState extends State<WebViewPage> {
                                         padding: const EdgeInsets.all(12.0),
                                         icon: Icon(
                                           Icons.aspect_ratio,
-                                          color: Colors.red,
+                                          color: Colors.redAccent,
                                         ),
                                       )
                                     : Container()
                               ],
-                            )),
+                            ),
+                          ),
                   ],
                 )),
           );
