@@ -25,7 +25,6 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
   bool get wantKeepAlive => true;
   TabController _tabController;
   PageController _pageController;
-
   CollectProvider _collectProvider;
 
   @override
@@ -151,6 +150,17 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                                     icon: Icons.delete,
                                     onTap: () {
                                       // 取消收藏
+                                      if (pageIndex == 0) {
+                                        // 影视
+                                        _collectProvider.removeResource(list[index].url);
+                                      } else if (pageIndex == 1) {
+                                        // 小说
+                                        _collectProvider.removeXiaoshuoResource(list[index].url);
+                                      } else if (pageIndex == 2) {
+                                        // 漫画
+                                        _collectProvider.removeCatlogResource(list[index].url);
+                                      }
+                                      setState(() {});
                                     },
                                   ),
                                 ],
@@ -173,7 +183,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
         _collectProvider.getCollectData(_collectProvider.listDetailResource);
         break;
       case 1:
-        _collectProvider.getCollectData(_collectProvider.manhuaCatlog);
+        _collectProvider.getCollectData(_collectProvider.xiaoshuo);
         break;
       case 2:
         _collectProvider.getCollectData(_collectProvider.manhuaCatlog);

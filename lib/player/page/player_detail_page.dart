@@ -39,7 +39,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
   DetailProvider _detailProvider = DetailProvider();
   CollectProvider _collectProvider;
 
-  String actionName = "点击收藏";
+  String actionName = "";
 
   @override
   void initState() {
@@ -59,13 +59,19 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
         onSuccess: (data) {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
       _detailProvider.setJuji();
-      context.read<CollectProvider>().changeNoti();
+      _collectProvider.changeNoti();
+      if (getFilterData(_detailProvider.detailReource)) {
+        actionName = "点击取消";
+      } else {
+        actionName = "点击收藏";
+      }
+      setState(() {});
     }, onError: (_, __) {});
   }
 
   bool getFilterData(DetailReource data) {
     if (data != null) {
-      var result = context.read<CollectProvider>().listDetailResource.where((element) => element.url == data.url);
+      var result = _collectProvider.listDetailResource.where((element) => element.url == data.url).toList();
       return result.length > 0;
     }
     return false;
@@ -86,15 +92,15 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                 if (getFilterData(_detailProvider.detailReource)) {
                   Log.d("点击取消");
                   _collectProvider.removeResource(_detailProvider.detailReource.url);
-                  actionName = "点击取消";
+                  actionName = "点击收藏";
                 } else {
                   Log.d("点击收藏");
                   _collectProvider.addResource(
                     _detailProvider.detailReource,
                   );
-                  actionName = "点击收藏";
+                  actionName = "点击取消";
+                  setState(() {});
                 }
-                setState(() {});
               }),
           body: Consumer<DetailProvider>(builder: (_, provider, __) {
             return provider.detailReource != null

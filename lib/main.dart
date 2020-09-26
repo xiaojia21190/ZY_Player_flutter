@@ -89,42 +89,46 @@ class MyApp extends StatelessWidget {
           create: (_) => ThemeProvider(),
           child: Consumer<ThemeProvider>(
             builder: (_, provider, __) {
-              return MaterialApp(
-                title: 'Flutter Deer',
+              return Shortcuts(
+                  shortcuts: <LogicalKeySet, Intent>{
+                    LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
+                  },
+                  child: MaterialApp(
+                    title: 'Flutter Deer',
 //              showPerformanceOverlay: true, //显示性能标签
 //              debugShowCheckedModeBanner: false, // 去除右上角debug的标签
 //              checkerboardRasterCacheImages: true,
 //              showSemanticsDebugger: true, // 显示语义视图
 //              checkerboardOffscreenLayers: true, // 检查离屏渲染
-                theme: theme ?? provider.getTheme(),
-                darkTheme: provider.getTheme(isDarkMode: true),
-                themeMode: provider.getThemeMode(),
-                // home: home ?? SplashPage(),
-                home: Home(),
-                onGenerateRoute: Application.router.generator,
-                localizationsDelegates: const [
-                  AppLocalizationsDelegate(),
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
-                builder: (context, child) {
-                  /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
-                  return MediaQuery(
-                    data: MediaQuery.of(context).copyWith(
-                        textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
-                    child: child,
-                  );
-                },
+                    theme: theme ?? provider.getTheme(),
+                    darkTheme: provider.getTheme(isDarkMode: true),
+                    themeMode: provider.getThemeMode(),
+                    // home: home ?? SplashPage(),
+                    home: Home(),
+                    onGenerateRoute: Application.router.generator,
+                    localizationsDelegates: const [
+                      AppLocalizationsDelegate(),
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
+                    builder: (context, child) {
+                      /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
+                      return MediaQuery(
+                        data: MediaQuery.of(context).copyWith(
+                            textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                        child: child,
+                      );
+                    },
 
-                /// 因为使用了fluro，这里设置主要针对Web
-                onUnknownRoute: (_) {
-                  return MaterialPageRoute(
-                    builder: (BuildContext context) => PageNotFound(),
-                  );
-                },
-              );
+                    /// 因为使用了fluro，这里设置主要针对Web
+                    onUnknownRoute: (_) {
+                      return MaterialPageRoute(
+                        builder: (BuildContext context) => PageNotFound(),
+                      );
+                    },
+                  ));
             },
           ),
         ),

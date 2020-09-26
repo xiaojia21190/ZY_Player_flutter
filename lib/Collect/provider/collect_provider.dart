@@ -67,21 +67,30 @@ class CollectProvider extends ChangeNotifier {
   }
 
   addResource(DetailReource data) {
-    _listDetailResource.add(data);
-    SpUtil.putObjectList("collcetPlayer", _listDetailResource);
-    notifyListeners();
+    var glll = _listDetailResource.where((element) => element.url == data.url).toList().length;
+    if (glll == 0) {
+      _listDetailResource.add(data);
+      SpUtil.putObjectList("collcetPlayer", _listDetailResource);
+      notifyListeners();
+    }
   }
 
   addCatlogResource(ManhuaCatlogDetail data) {
-    _manhuaCatlog.add(data);
-    SpUtil.putObjectList("collcetManhua", _manhuaCatlog);
-    notifyListeners();
+    var glll = _manhuaCatlog.where((element) => element.url == data.url).toList().length;
+    if (glll == 0) {
+      _manhuaCatlog.add(data);
+      SpUtil.putObjectList("collcetManhua", _manhuaCatlog);
+      notifyListeners();
+    }
   }
 
   addXiaoshuoResource(XiaoshuoReource data) {
-    _xiaoshuos.add(data);
-    SpUtil.putObjectList("collcetXiaoshuo", _xiaoshuos);
-    notifyListeners();
+    var glll = _xiaoshuos.where((element) => element.url == data.url).toList().length;
+    if (glll == 0) {
+      _xiaoshuos.add(data);
+      SpUtil.putObjectList("collcetXiaoshuo", _xiaoshuos);
+      notifyListeners();
+    }
   }
 
   changeNoti() {

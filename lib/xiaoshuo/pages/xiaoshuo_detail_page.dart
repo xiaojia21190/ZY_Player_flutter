@@ -11,6 +11,7 @@ import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -38,11 +39,15 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
 
   List<XiaoshuoCatlog> nzjUrl = [];
   List<XiaoshuoCatlog> fyzjUrl = [];
+  CollectProvider _collectProvider;
+
+  String actionName = "";
 
   @override
   void initState() {
     super.initState();
-    context.read<CollectProvider>().setListDetailResource("collcetPlayer");
+    _collectProvider = context.read<CollectProvider>();
+    _collectProvider.setListDetailResource("collcetXiaoshuo");
     getFirstData();
   }
 
@@ -55,7 +60,11 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
         List.generate(data["nzjUrl"].length, (i) => nzjUrl.add(XiaoshuoCatlog.fromJson(data["nzjUrl"][i])));
         List.generate(data["fyzjUrl"].length, (i) => fyzjUrl.add(XiaoshuoCatlog.fromJson(data["fyzjUrl"][i])));
         _onRefresh();
-        setState(() {});
+        if (getFilterData(widget.xiaoshuoReource)) {
+          actionName = "点击取消";
+        } else {
+          actionName = "点击收藏";
+        }
       },
       onError: (code, msg) {},
     );
@@ -90,7 +99,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
 
   bool getFilterData(XiaoshuoReource data) {
     if (data != null) {
-      var result = context.read<CollectProvider>().xiaoshuo.where((element) => element.url == data.url);
+      var result = context.read<CollectProvider>().xiaoshuo.where((element) => element.url == data.url).toList();
       return result.length > 0;
     }
     return false;
@@ -99,36 +108,23 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colours.app_main,
-        title: Text(
-          widget.xiaoshuoReource.title,
-        ),
-        actions: <Widget>[
-          Consumer<CollectProvider>(builder: (_, provider, __) {
-            return IconButton(
-                icon: getFilterData(widget.xiaoshuoReource)
-                    ? Icon(
-                        Icons.turned_in,
-                        color: Colors.red,
-                      )
-                    : Icon(
-                        Icons.turned_in_not,
-                        color: Colors.red,
-                      ),
-                onPressed: () {
-                  if (getFilterData(widget.xiaoshuoReource)) {
-                    Log.d("点击取消");
-                    provider.removeXiaoshuoResource(widget.xiaoshuoReource.url);
-                  } else {
-                    Log.d("点击收藏");
-                    provider.addXiaoshuoResource(widget.xiaoshuoReource);
-                  }
-                });
-          })
-        ],
-      ),
+      appBar: MyAppBar(
+          centerTitle: widget.xiaoshuoReource.title,
+          actionName: actionName,
+          onPressed: () {
+            if (getFilterData(widget.xiaoshuoReource)) {
+              Log.d("点击取消");
+              _collectProvider.removeXiaoshuoResource(widget.xiaoshuoReource.url);
+              actionName = "点击收藏";
+            } else {
+              Log.d("点击收藏");
+              _collectProvider.addXiaoshuoResource(
+                widget.xiaoshuoReource,
+              );
+              actionName = "点击取消";
+            }
+            setState(() {});
+          }),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(

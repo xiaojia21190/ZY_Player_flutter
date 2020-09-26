@@ -37,7 +37,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
 
   ManhuaProvider _manhuaProvider;
   CollectProvider _collectProvider;
-  String actionName = "点击收藏";
+  String actionName = "";
 
   @override
   void initState() {
@@ -59,6 +59,12 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
       _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data));
       _collectProvider.changeNoti();
       _manhuaProvider.setZhanghjie();
+      if (getFilterData(_manhuaProvider.catLog)) {
+        actionName = "点击取消";
+      } else {
+        actionName = "点击收藏";
+      }
+      setState(() {});
     }, onError: (_, __) {
       _manhuaProvider.setStateType(StateType.network);
     });
@@ -66,7 +72,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
 
   bool getFilterData(ManhuaCatlogDetail data) {
     if (data != null) {
-      var result = _collectProvider.listDetailResource.where((element) => element.url == data.url);
+      var result = _collectProvider.listDetailResource.where((element) => element.url == data.url).toList();
       return result.length > 0;
     }
     return false;
@@ -84,13 +90,13 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
           if (getFilterData(_manhuaProvider.catLog)) {
             Log.d("点击取消");
             _collectProvider.removeCatlogResource(_manhuaProvider.catLog.url);
-            actionName = "点击取消";
+            actionName = "点击收藏";
           } else {
             Log.d("点击收藏");
             _collectProvider.addCatlogResource(
               _manhuaProvider.catLog,
             );
-            actionName = "点击收藏";
+            actionName = "点击取消";
           }
           setState(() {});
         },
