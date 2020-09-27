@@ -1,5 +1,6 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_search_page.dart';
+import 'package:ZY_Player_flutter/player/page/player_page.dart';
 import 'package:ZY_Player_flutter/player/page/player_search_page.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_search_page.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['最新', '小说', '动漫', '收藏'];
+  final List<String> _appBarTitles = ['影视', '热搜', '动漫', '收藏'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -34,7 +35,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [PlayerSearchPage(), XiaoShuoSearchPage(), ManhuaSearchPage(), CollectPage()];
+    _pageList = [PlayerPage(), XiaoShuoSearchPage(), ManhuaSearchPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {

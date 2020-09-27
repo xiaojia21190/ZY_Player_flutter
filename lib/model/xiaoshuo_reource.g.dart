@@ -16,7 +16,8 @@ XiaoshuoReource _$XiaoshuoReourceFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$XiaoshuoReourceToJson(XiaoshuoReource instance) => <String, dynamic>{
+Map<String, dynamic> _$XiaoshuoReourceToJson(XiaoshuoReource instance) =>
+    <String, dynamic>{
       'url': instance.url,
       'title': instance.title,
       'author': instance.author,

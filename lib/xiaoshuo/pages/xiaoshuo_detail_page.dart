@@ -6,8 +6,6 @@ import 'package:ZY_Player_flutter/model/xiaoshuo_reource.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
-import 'package:ZY_Player_flutter/res/colors.dart';
-import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';

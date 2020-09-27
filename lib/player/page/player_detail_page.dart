@@ -55,8 +55,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
   }
 
   Future initData() async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"key": "zuidazy", "url": widget.url},
-        onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": widget.url}, onSuccess: (data) {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
       _detailProvider.setJuji();
       _collectProvider.changeNoti();
@@ -85,7 +84,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
     return ChangeNotifierProvider<DetailProvider>(
         create: (_) => _detailProvider,
         child: Scaffold(
+          backgroundColor: Colors.blueGrey,
           appBar: MyAppBar(
+              backgroundColor: Colors.blueGrey,
               centerTitle: widget.title,
               actionName: actionName,
               onPressed: () {
@@ -112,7 +113,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                           elevation: 2,
                           child: Container(
                             width: MediaQuery.of(context).size.width,
-                            height: ScreenUtil.getInstance().getWidth(310),
+                            height: ScreenUtil.getInstance().getWidth(200),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,11 +136,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                                         provider.detailReource.title,
                                         maxLines: 2,
                                       ),
-                                      Text(
-                                        provider.detailReource.qingxi,
-                                        maxLines: 2,
-                                        style: TextStyle(color: Colours.text_gray, fontSize: 12),
-                                      ),
                                       Text(provider.detailReource.daoyan),
                                       Text(
                                         provider.detailReource.zhuyan,
@@ -149,15 +145,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                                       Text(provider.detailReource.leixing),
                                       Text(provider.detailReource.diqu),
                                       Text(provider.detailReource.yuyan),
-                                      Text(provider.detailReource.shangying),
-                                      Text(provider.detailReource.pianchang != null ? '${provider.detailReource.pianchang}分钟' : ""),
                                       MyButton(
+                                        height: 30,
+                                        width: 100,
                                         onPressed: () {
                                           NavigatorUtils.goWebViewPage(context, provider.detailReource.title, provider.detailReource.videoList[0],
                                               flag: "1");
                                         },
                                         text: "播放",
-                                        fontSize: Dimens.font_sp16,
                                       )
                                     ],
                                   ),
@@ -205,11 +200,13 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                                         alignment: WrapAlignment.start, //沿主轴方向居中
                                         children: List.generate(provider.detailReource.videoList.length, (index) {
                                           return Container(
-                                            width: ScreenUtil.getInstance().getWidth(80),
-                                            padding: EdgeInsets.all(5),
-                                            color: _detailProvider.kanguojuji.contains("${widget.url}_$index") ? Colors.red : Colours.text_gray_c,
+                                            width: ScreenUtil.getInstance().getWidth(100),
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                                color: _detailProvider.kanguojuji.contains("${widget.url}_$index") ? Colors.red : Colours.text_gray_c,
+                                                borderRadius: BorderRadius.all(Radius.circular(5))),
                                             alignment: Alignment.center,
-                                            child: InkWell(
+                                            child: GestureDetector(
                                                 onTap: () {
                                                   _detailProvider.saveJuji("${widget.url}_$index");
                                                   NavigatorUtils.goWebViewPage(

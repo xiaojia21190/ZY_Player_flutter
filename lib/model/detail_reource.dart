@@ -16,9 +16,6 @@ class DetailReource extends Object {
   @JsonKey(name: 'title')
   String title;
 
-  @JsonKey(name: 'qingxi')
-  String qingxi;
-
   @JsonKey(name: 'pingfen')
   String pingfen;
 
@@ -37,12 +34,6 @@ class DetailReource extends Object {
   @JsonKey(name: 'yuyan')
   String yuyan;
 
-  @JsonKey(name: 'shangying')
-  String shangying;
-
-  @JsonKey(name: 'pianchang')
-  String pianchang;
-
   @JsonKey(name: 'url')
   String url;
 
@@ -51,15 +42,12 @@ class DetailReource extends Object {
     this.content,
     this.cover,
     this.title,
-    this.qingxi,
     this.pingfen,
     this.daoyan,
     this.zhuyan,
     this.leixing,
     this.diqu,
     this.yuyan,
-    this.shangying,
-    this.pianchang,
     this.url,
   );
 

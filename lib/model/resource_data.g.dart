@@ -10,13 +10,12 @@ ResourceData _$ResourceDataFromJson(Map<String, dynamic> json) {
   return ResourceData(
     json['url'] as String,
     json['title'] as String,
-    json['type'] as String,
+    json['cover'] as String,
   );
 }
 
-Map<String, dynamic> _$ResourceDataToJson(ResourceData instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ResourceDataToJson(ResourceData instance) => <String, dynamic>{
       'url': instance.url,
       'title': instance.title,
-      'type': instance.type,
+      'cover': instance.cover,
     };

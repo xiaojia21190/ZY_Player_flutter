@@ -10,13 +10,13 @@ class ResourceData extends Object {
   @JsonKey(name: 'title')
   String title;
 
-  @JsonKey(name: 'type')
-  String type;
+  @JsonKey(name: 'cover')
+  String cover;
 
   ResourceData(
     this.url,
     this.title,
-    this.type,
+    this.cover,
   );
 
   factory ResourceData.fromJson(Map<String, dynamic> srcJson) => _$ResourceDataFromJson(srcJson);

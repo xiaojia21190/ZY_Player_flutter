@@ -13,7 +13,8 @@ XiaoshuoCatlog _$XiaoshuoCatlogFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$XiaoshuoCatlogToJson(XiaoshuoCatlog instance) => <String, dynamic>{
-      'ret': instance.url,
-      'resourceid': instance.title,
+Map<String, dynamic> _$XiaoshuoCatlogToJson(XiaoshuoCatlog instance) =>
+    <String, dynamic>{
+      'url': instance.url,
+      'title': instance.title,
     };
