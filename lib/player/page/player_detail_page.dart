@@ -45,7 +45,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   int currentVideoIndex = 0;
 
-  bool playState = false;
+  bool playState = true;
 
   @override
   void initState() {
@@ -126,9 +126,12 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
     if (benjuji.length == 0) {
       _player.setDataSource(_detailProvider.detailReource.videoList[currentVideoIndex]);
+      _detailProvider.saveJuji("${widget.url}_0");
     } else {
       _player.setDataSource(_detailProvider.detailReource.videoList[int.parse(benjuji[benjuji.length - 1].split("_")[1])]);
     }
+
+    setState(() {});
 
     await _player.applyOptions(FijkOption()
       ..setFormatOption('flush_packets', 1)
@@ -262,7 +265,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                         ),
                                       ),
                                       Wrap(
-                                        spacing: 4, // 主轴(水平)方向间距
+                                        spacing: 15, // 主轴(水平)方向间距
                                         runSpacing: 10, // 纵轴（垂直）方向间距
                                         alignment: WrapAlignment.start, //沿主轴方向居中
                                         children: List.generate(provider.detailReource.videoList.length, (index) {

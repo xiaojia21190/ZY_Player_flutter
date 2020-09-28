@@ -35,7 +35,11 @@ class _PlayerPageState extends State<PlayerPage> {
       HttpApi.getHotList,
       onSuccess: (data) {
         List.generate(data.length, (i) => _baseListProvider.list.add(PlayerHot.fromJson(data[i])));
-        _baseListProvider.setStateType(StateType.empty);
+        if (data.length == 0) {
+          _baseListProvider.setStateType(StateType.network);
+        } else {
+          _baseListProvider.setStateType(StateType.empty);
+        }
       },
       onError: (code, msg) {
         _baseListProvider.setStateType(StateType.network);
@@ -136,8 +140,8 @@ class _PlayerPageState extends State<PlayerPage> {
                                       ],
                                     ),
                                     onTap: () {
-                                      // NavigatorUtils.push(context,
-                                      // '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(provider.list[index].url)}&title=${Uri.encodeComponent(provider.list[index].title)}');
+                                      NavigatorUtils.push(context,
+                                          '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].title)}');
                                     },
                                   );
                                 },
