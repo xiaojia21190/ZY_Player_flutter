@@ -6,7 +6,7 @@
 <img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
 ### flutter 版本安装
-- v1.1.3 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.1.3/app-release.apk
+- v1.1.4 地址 https://github.com/xiaojia21190/ZY_Player_flutter/releases/download/1.1.4/app-release.apk
 
 ### 爬虫后台
 -  https://github.com/xiaojia21190/egg_crawel
@@ -40,6 +40,11 @@
 
 #### v1.1.3
 1. 收藏问题修改
+
+#### v1.1.4
+1. 影视改版（热门排行）
+2. 添加热门新闻搜索
+
 
 
 ### 重要:
