@@ -7,14 +7,13 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
-import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
-import 'package:ZY_Player_flutter/widgets/load_image.dart';
-import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
+import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/detail_reource.dart';
@@ -33,25 +32,77 @@ class PlayerDetailPage extends StatefulWidget {
   _PlayerDetailPageState createState() => _PlayerDetailPageState();
 }
 
-class _PlayerDetailPageState extends State<PlayerDetailPage> {
+class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBindingObserver {
+  final FijkPlayer _player = FijkPlayer();
+
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
   CollectProvider _collectProvider;
 
   String actionName = "";
+  bool _isFullscreen = false;
+
+  int currentVideoIndex = 0;
+
+  bool playState = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _collectProvider = context.read<CollectProvider>();
     _collectProvider.setListDetailResource("collcetPlayer");
+    _player.addListener(_fijkValueListener);
     initData();
+  }
+
+  Future _fijkValueListener() async {
+    FijkValue value = _player.value;
+
+    if (value.state == FijkState.completed) {
+      // 是否播放完成 完成后播放下一集
+      var currentIndex = currentVideoIndex + 1;
+      if (_detailProvider.detailReource.videoList.length >= currentIndex) return;
+      _player.reset();
+      _player.setDataSource(_detailProvider.detailReource.videoList[currentIndex]);
+      _detailProvider.saveJuji("${widget.url}_$currentIndex");
+    }
+    _isFullscreen = value.fullScreen;
+    if (value.state == FijkState.paused) {
+      // 暂停
+      playState = false;
+      _detailProvider.setPlayState(false);
+    }
+
+    if (value.state == FijkState.started) {
+      // 播放
+      playState = true;
+      _detailProvider.setPlayState(true);
+    }
+  }
+
+  void toggleFullscreen() {
+    _isFullscreen = !_isFullscreen;
+    _isFullscreen ? SystemChrome.setEnabledSystemUIOverlays([]) : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('app lifecycle state: $state');
+    if (state == AppLifecycleState.inactive) {
+      _player.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      _player.start();
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
   void dispose() {
     super.dispose();
+    _player.removeListener(_fijkValueListener);
+    _player.release();
   }
 
   Future initData() async {
@@ -59,6 +110,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
       _detailProvider.setJuji();
       _collectProvider.changeNoti();
+      setPlayerVideo();
       if (getFilterData(_detailProvider.detailReource)) {
         actionName = "点击取消";
       } else {
@@ -66,6 +118,32 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
       }
       setState(() {});
     }, onError: (_, __) {});
+  }
+
+  Future setPlayerVideo() async {
+    // 寻找最后的记录，从这里播放
+    var benjuji = _detailProvider.kanguojuji.where((element) => element.split("_")[0] == widget.url).toList();
+
+    if (benjuji.length == 0) {
+      _player.setDataSource(_detailProvider.detailReource.videoList[currentVideoIndex]);
+    } else {
+      _player.setDataSource(_detailProvider.detailReource.videoList[int.parse(benjuji[benjuji.length - 1].split("_")[1])]);
+    }
+
+    await _player.applyOptions(FijkOption()
+      ..setFormatOption('flush_packets', 1)
+      ..setFormatOption('analyzeduration', 1)
+      ..setCodecOption('skip_loop_filter', 48)
+      ..setCodecOption('request-screen-on', 1)
+      ..setCodecOption('request-audio-focus', 1)
+      ..setCodecOption('cover-after-prepared', 1)
+      ..setPlayerOption('start-on-prepared', 1)
+      ..setPlayerOption('packet-buffering', 0)
+      ..setPlayerOption('framedrop', 1)
+      ..setPlayerOption('enable-accurate-seek', 1)
+      ..setPlayerOption('find_stream_info', 0)
+      ..setPlayerOption('render-wait-start', 1));
+    await _player.prepareAsync();
   }
 
   bool getFilterData(DetailReource data) {
@@ -84,9 +162,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
     return ChangeNotifierProvider<DetailProvider>(
         create: (_) => _detailProvider,
         child: Scaffold(
-          backgroundColor: Colors.blueGrey,
           appBar: MyAppBar(
-              backgroundColor: Colors.blueGrey,
               centerTitle: widget.title,
               actionName: actionName,
               onPressed: () {
@@ -108,57 +184,48 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                 ? CustomScrollView(
                     slivers: <Widget>[
                       SliverToBoxAdapter(
-                        child: Card(
-                          shadowColor: Colors.blueAccent,
-                          elevation: 2,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: ScreenUtil.getInstance().getWidth(200),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: LoadImage(
-                                    provider.detailReource.cover,
-                                    width: 150,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                Expanded(
-                                    child: Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        provider.detailReource.title,
-                                        maxLines: 2,
-                                      ),
-                                      Text(provider.detailReource.daoyan),
-                                      Text(
-                                        provider.detailReource.zhuyan,
-                                        maxLines: 4,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(provider.detailReource.leixing),
-                                      Text(provider.detailReource.diqu),
-                                      Text(provider.detailReource.yuyan),
-                                      MyButton(
-                                        height: 30,
-                                        width: 100,
-                                        onPressed: () {
-                                          NavigatorUtils.goWebViewPage(context, provider.detailReource.title, provider.detailReource.videoList[0],
-                                              flag: "1");
-                                        },
-                                        text: "播放",
-                                      )
-                                    ],
-                                  ),
-                                ))
-                              ],
-                            ),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: ScreenUtil.getInstance().getWidth(200),
+                          child: Stack(
+                            children: [
+                              FijkView(
+                                player: _player,
+                                color: Colors.black,
+                                panelBuilder: fijkPanel2Builder(snapShot: true),
+                                fsFit: FijkFit.fill,
+                              ),
+                              !provider.playState
+                                  ? Stack(
+                                      children: [
+                                        Opacity(
+                                          opacity: 0.5,
+                                          child: Container(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (playState) {
+                                              _player.stop();
+                                            } else {
+                                              _player.start();
+                                            }
+                                          },
+                                          child: Container(
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.play_circle_filled,
+                                                color: Colors.white,
+                                                size: 50,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  : Container()
+                            ],
                           ),
                         ),
                       ),
@@ -209,10 +276,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                                             child: GestureDetector(
                                                 onTap: () {
                                                   _detailProvider.saveJuji("${widget.url}_$index");
-                                                  NavigatorUtils.goWebViewPage(
-                                                      context, provider.detailReource.title, provider.detailReource.videoList[index],
-                                                      flag: "1");
-                                                  Log.d(index.toString());
+                                                  _player.reset();
+                                                  _player.setDataSource(_detailProvider.detailReource.videoList[index]);
                                                 },
                                                 child: Text(
                                                   '第${index + 1}集',

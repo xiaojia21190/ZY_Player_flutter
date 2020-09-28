@@ -12,6 +12,14 @@ class DetailProvider extends ChangeNotifier {
   List<String> _kanguojuji = [];
   List<String> get kanguojuji => _kanguojuji;
 
+  bool _playState = false;
+  bool get playState => _playState;
+
+  setPlayState(bool state) {
+    _playState = state;
+    notifyListeners();
+  }
+
   setJuji() {
     _kanguojuji = SpUtil.getStringList("KGjuji", defValue: []);
   }

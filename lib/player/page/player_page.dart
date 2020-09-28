@@ -4,7 +4,6 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/persistent_header_delegate.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
@@ -114,7 +113,7 @@ class _PlayerPageState extends State<PlayerPage> {
                                 physics: NeverScrollableScrollPhysics(),
                                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 3, //每行几列
-                                    childAspectRatio: 0.62),
+                                    childAspectRatio: 0.6),
                                 itemCount: _baseListProvider.list[index].playlist.length,
                                 itemBuilder: (context, i) {
                                   //要返回的item样式

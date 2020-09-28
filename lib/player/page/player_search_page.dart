@@ -131,7 +131,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
                           physics: NeverScrollableScrollPhysics(),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3, //每行几列
-                              childAspectRatio: 0.62),
+                              childAspectRatio: 0.6),
                           itemCount: provider.list.length,
                           itemBuilder: (context, i) {
                             //要返回的item样式
