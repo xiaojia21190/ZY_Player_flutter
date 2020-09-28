@@ -1,7 +1,7 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
+import 'package:ZY_Player_flutter/hotseach/page/hot_search_page.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_search_page.dart';
 import 'package:ZY_Player_flutter/player/page/player_page.dart';
-import 'package:ZY_Player_flutter/player/page/player_search_page.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
@@ -19,7 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['影视', '热搜', '动漫', '收藏'];
+  final List<String> _appBarTitles = ['影视', '热搜', "小说", '动漫', '收藏'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [PlayerPage(), XiaoShuoSearchPage(), ManhuaSearchPage(), CollectPage()];
+    _pageList = [PlayerPage(), HotSearchPage(), XiaoShuoSearchPage(), ManhuaSearchPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {
@@ -43,54 +43,66 @@ class _HomeState extends State<Home> {
       var _tabImages = [
         [
           const LoadAssetImage(
-            'home/icon_order',
+            'home/video',
             width: 25.0,
             color: Colours.unselected_item_color,
           ),
           const LoadAssetImage(
-            'home/icon_order',
+            'home/video',
             width: 25.0,
             color: Colours.app_main,
           ),
         ],
         [
           const LoadAssetImage(
-            'home/icon_commodity',
+            'home/resou',
             width: 25.0,
             color: Colours.unselected_item_color,
           ),
           const LoadAssetImage(
-            'home/icon_commodity',
+            'home/resou',
             width: 25.0,
             color: Colours.app_main,
           ),
         ],
         [
           const LoadAssetImage(
-            'home/icon_statistics',
+            'home/xiaoshuo',
             width: 25.0,
             color: Colours.unselected_item_color,
           ),
           const LoadAssetImage(
-            'home/icon_statistics',
+            'home/xiaoshuo',
             width: 25.0,
             color: Colours.app_main,
           ),
         ],
         [
           const LoadAssetImage(
-            'home/icon_shop',
+            'home/dongman',
             width: 25.0,
             color: Colours.unselected_item_color,
           ),
           const LoadAssetImage(
-            'home/icon_shop',
+            'home/dongman',
+            width: 25.0,
+            color: Colours.app_main,
+          ),
+        ],
+        [
+          const LoadAssetImage(
+            'home/shoucang',
+            width: 25.0,
+            color: Colours.unselected_item_color,
+          ),
+          const LoadAssetImage(
+            'home/shoucang',
             width: 25.0,
             color: Colours.app_main,
           ),
         ]
       ];
-      _list = List.generate(4, (i) {
+      _list = List.generate(5, (i) {
         return BottomNavigationBarItem(
             icon: _tabImages[i][0],
             activeIcon: _tabImages[i][1],
@@ -110,40 +122,48 @@ class _HomeState extends State<Home> {
     if (_listDark == null) {
       var _tabImagesDark = [
         [
-          const LoadAssetImage('home/icon_order', width: 25.0),
+          const LoadAssetImage('home/video', width: 25.0),
           const LoadAssetImage(
-            'home/icon_order',
+            'home/video',
             width: 25.0,
             color: Colours.dark_app_main,
           ),
         ],
         [
-          const LoadAssetImage('home/icon_commodity', width: 25.0),
+          const LoadAssetImage('home/resou', width: 25.0),
           const LoadAssetImage(
-            'home/icon_commodity',
+            'home/resou',
             width: 25.0,
             color: Colours.dark_app_main,
           ),
         ],
         [
-          const LoadAssetImage('home/icon_statistics', width: 25.0),
+          const LoadAssetImage('home/xiaoshuo', width: 25.0),
           const LoadAssetImage(
-            'home/icon_statistics',
+            'home/xiaoshuo',
             width: 25.0,
             color: Colours.dark_app_main,
           ),
         ],
         [
-          const LoadAssetImage('home/icon_shop', width: 25.0),
+          const LoadAssetImage('home/dongman', width: 25.0),
           const LoadAssetImage(
-            'home/icon_shop',
+            'home/dongman',
+            width: 25.0,
+            color: Colours.dark_app_main,
+          ),
+        ],
+        [
+          const LoadAssetImage('home/shoucang', width: 25.0),
+          const LoadAssetImage(
+            'home/shoucang',
             width: 25.0,
             color: Colours.dark_app_main,
           ),
         ]
       ];
 
-      _listDark = List.generate(4, (i) {
+      _listDark = List.generate(5, (i) {
         return BottomNavigationBarItem(
             icon: _tabImagesDark[i][0],
             activeIcon: _tabImagesDark[i][1],

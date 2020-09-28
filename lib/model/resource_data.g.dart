@@ -14,7 +14,8 @@ ResourceData _$ResourceDataFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ResourceDataToJson(ResourceData instance) => <String, dynamic>{
+Map<String, dynamic> _$ResourceDataToJson(ResourceData instance) =>
+    <String, dynamic>{
       'url': instance.url,
       'title': instance.title,
       'cover': instance.cover,

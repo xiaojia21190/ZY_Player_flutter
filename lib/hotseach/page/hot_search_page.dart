@@ -1,46 +1,65 @@
-import 'package:ZY_Player_flutter/model/xiaoshuo_reource.dart';
+import 'package:ZY_Player_flutter/hotseach/provider/hot_search_provider.dart';
+import 'package:ZY_Player_flutter/model/hot_search.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
-import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
+import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
+import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_detail_page.dart';
-import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class XiaoShuoSearchPage extends StatefulWidget {
+class HotSearchPage extends StatefulWidget {
   @override
-  _XiaoShuoSearchPageState createState() => _XiaoShuoSearchPageState();
+  _HotSearchPageState createState() => _HotSearchPageState();
 }
 
-class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
-    with AutomaticKeepAliveClientMixin<XiaoShuoSearchPage>, SingleTickerProviderStateMixin {
+class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveClientMixin<HotSearchPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-  XiaoShuoProvider _xiaoShuoProvider = XiaoShuoProvider();
+  HotSearchProvider _hotSearchProvider = HotSearchProvider();
+  BaseListProvider<HotSearch> _baseListProvider = BaseListProvider();
+
+  int currentPage = 0;
+  String searchText = '抖音';
 
   @override
   void initState() {
     super.initState();
-    _xiaoShuoProvider.setWords();
+    _hotSearchProvider.setWords();
   }
 
   Future getData(String keywords) async {
-    _xiaoShuoProvider.list.clear();
-    _xiaoShuoProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchXiaoshuo, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
-      _xiaoShuoProvider.setStateType(StateType.empty);
-      List.generate(resultList.length, (i) => _xiaoShuoProvider.list.add(XiaoshuoReource.fromJson(resultList[i])));
-    }, onError: (_, __) {
-      _xiaoShuoProvider.setStateType(StateType.network);
-    });
+    _baseListProvider.setStateType(StateType.loading);
+    await DioUtils.instance.requestNetwork(
+      Method.get,
+      HttpApi.hotSearch,
+      queryParameters: {"search": keywords, "page": currentPage},
+      onSuccess: (data) {
+        List.generate(data.length, (i) => _baseListProvider.list.add(HotSearch.fromJson(data[i])));
+        _baseListProvider.setStateType(StateType.empty);
+      },
+      onError: (code, msg) {
+        _baseListProvider.setStateType(StateType.network);
+      },
+    );
+  }
+
+  Future _onRefresh() async {
+    _baseListProvider.clear();
+    // 默认搜索抖音
+    this.getData(searchText);
+  }
+
+  Future _loadMore() async {
+    currentPage++;
+    this.getData(searchText);
   }
 
   @override
@@ -53,23 +72,24 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
     super.build(context);
     final bool isDark = ThemeUtils.isDark(context);
 
-    return ChangeNotifierProvider<XiaoShuoProvider>(
-        create: (_) => _xiaoShuoProvider,
+    return ChangeNotifierProvider<HotSearchProvider>(
+        create: (_) => _hotSearchProvider,
         child: Scaffold(
           appBar: SearchBar(
-              hintText: '请输入小说名称查询',
+              hintText: '请输入热搜内容',
               onPressed: (text) {
                 Toast.show('搜索内容：$text');
                 if (text != null) {
-                  _xiaoShuoProvider.addWors(text);
+                  _hotSearchProvider.addWors(text);
                   this.getData(text);
+                  searchText = text;
                 }
               }),
           body: Container(
             height: MediaQuery.of(context).size.height,
             child: Column(
               children: <Widget>[
-                Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
+                Consumer<HotSearchProvider>(builder: (_, provider, __) {
                   return provider.words.length > 0
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -89,11 +109,11 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
                                     ),
                                     onPressed: () {
                                       Log.d("删除搜索");
-                                      _xiaoShuoProvider.clearWords();
+                                      _hotSearchProvider.clearWords();
                                     })
                               ],
                             ),
-                            Selector<XiaoShuoProvider, List>(
+                            Selector<HotSearchProvider, List>(
                                 builder: (_, words, __) {
                                   return Padding(
                                     padding: EdgeInsets.only(left: 10),
@@ -124,37 +144,30 @@ class _XiaoShuoSearchPageState extends State<XiaoShuoSearchPage>
                         )
                       : Container();
                 }),
-                Expanded(child: Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
-                  return provider.list.length > 0
-                      ? ListView.builder(
-                          itemCount: provider.list.length,
-                          itemBuilder: (_, index) {
-                            return ListTile(
-                              title: Text(provider.list[index].title),
-                              subtitle: Text(provider.list[index].author),
-                              leading: LoadImage(
-                                provider.list[index].cover,
-                                fit: BoxFit.cover,
-                              ),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: () {
-                                Log.d('前往详情页');
-                                Navigator.push(
-                                    context,
-                                    CupertinoPageRoute<dynamic>(
-                                        fullscreenDialog: true,
-                                        builder: (BuildContext context) {
-                                          return XiaoShuoDetailPage(
-                                            xiaoshuoReource: provider.list[index],
-                                          );
-                                        }));
-                              },
-                            );
-                          })
-                      : Center(
-                          child: StateLayout(type: provider.stateType),
-                        );
-                }))
+                Expanded(
+                    child: ChangeNotifierProvider<BaseListProvider<HotSearch>>(
+                        create: (_) => _baseListProvider,
+                        child: Consumer<BaseListProvider<HotSearch>>(builder: (_, _baseListProvider, __) {
+                          return DeerListView(
+                              itemCount: _baseListProvider.list.length,
+                              stateType: _baseListProvider.stateType,
+                              onRefresh: _onRefresh,
+                              loadMore: _loadMore,
+                              pageSize: _baseListProvider.list.length,
+                              hasMore: _baseListProvider.hasMore,
+                              itemBuilder: (_, index) {
+                                return ListTile(
+                                  title: Text(_baseListProvider.list[index].title),
+                                  subtitle: Text(_baseListProvider.list[index].tag),
+                                  trailing: Icon(Icons.keyboard_arrow_right),
+                                  onTap: () {
+                                    Log.d('前往详情页');
+                                    NavigatorUtils.goWebViewPage(context, _baseListProvider.list[index].title, _baseListProvider.list[index].url,
+                                        flag: "2");
+                                  },
+                                );
+                              });
+                        })))
               ],
             ),
           ),
