@@ -83,6 +83,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
             fontSize: Dimens.font_sp18,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
         margin: const EdgeInsets.symmetric(horizontal: 48.0),
       ),

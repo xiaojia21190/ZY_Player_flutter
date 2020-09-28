@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -37,27 +38,6 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
       SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     }
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("--" + state.toString());
-    switch (state) {
-      case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
-        break;
-      case AppLifecycleState.resumed: // 应用程序可见，前台
-        break;
-      case AppLifecycleState.paused: // 应用程序不可见，后台
-        _webViewController.evaluateJavascript('document.querySelector("#a1").getAttribute("class").indexOf("paused");').then((value) {
-          if (int.parse(value) == -1) {
-            _webViewController.evaluateJavascript('document.querySelector(".dplayer-play-icon").click()');
-          }
-        });
-        break;
-      case AppLifecycleState.detached:
-        break;
-    }
   }
 
   @override
@@ -81,7 +61,11 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
             },
             child: Scaffold(
                 backgroundColor: Colors.transparent,
-                body: Stack(
+                appBar: MyAppBar(
+                  title: widget.title,
+                ),
+                body: SafeArea(
+                    child: Stack(
                   children: <Widget>[
                     WebView(
                       initialUrl: widget.url,
@@ -112,24 +96,9 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                               ),
                             ),
                           )
-                        : Positioned(
-                            top: 20,
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                BackButton(
-                                  color: Colors.redAccent,
-                                  onPressed: () {
-                                    FocusManager.instance.primaryFocus?.unfocus();
-                                    Navigator.maybePop(context);
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                        : Container(),
                   ],
-                )),
+                ))),
           );
         });
   }
