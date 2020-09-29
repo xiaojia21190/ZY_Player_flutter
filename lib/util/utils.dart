@@ -2,7 +2,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:keyboard_actions/keyboard_action.dart';
+import 'package:keyboard_actions/keyboard_actions.dart' as keyboard;
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -49,7 +49,7 @@ class Utils {
       nextFocus: true,
       actions: List.generate(
           list.length,
-          (i) => KeyboardAction(
+          (i) => keyboard.KeyboardActionsItem(
                 focusNode: list[i],
                 toolbarButtons: [
                   (node) {
