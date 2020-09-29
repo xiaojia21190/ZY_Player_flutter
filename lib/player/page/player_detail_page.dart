@@ -119,6 +119,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
     if (benjuji.length == 0) {
       _player.setDataSource(_detailProvider.detailReource.videoList[currentVideoIndex], autoPlay: true);
+      //点击第一集
+      _detailProvider.saveJuji("${widget.url}_0");
     } else {
       benjuji.sort((a, b) => int.parse(a.split("_")[1]) - int.parse(b.split("_")[1]));
       _player.setDataSource(_detailProvider.detailReource.videoList[int.parse(benjuji[benjuji.length - 1].split("_")[1])], autoPlay: true);
