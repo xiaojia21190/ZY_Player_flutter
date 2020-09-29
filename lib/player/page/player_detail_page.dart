@@ -130,16 +130,15 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     Toast.show("开始播放第${currentVideoIndex + 1}集");
 
     await _player.applyOptions(FijkOption()
-      ..setFormatOption('flush_packets', 1)
-      ..setFormatOption('analyzeduration', 1)
-      ..setCodecOption('skip_loop_filter', 48)
+      ..setFormatOption('fflags', 'fastseek')
       ..setCodecOption('request-screen-on', 1)
-      ..setCodecOption('request-audio-focus', 1)
+      // ..setCodecOption('request-audio-focus', 1)
       ..setCodecOption('cover-after-prepared', 1)
-      ..setPlayerOption('packet-buffering', 0)
-      ..setPlayerOption('framedrop', 1)
+      ..setPlayerOption('framedrop', 5)
+      ..setPlayerOption('packet-buffering', 1)
+      ..setPlayerOption('mediacodec', 1)
       ..setPlayerOption('enable-accurate-seek', 1)
-      ..setPlayerOption('find_stream_info', 0)
+      ..setPlayerOption('reconnect', 5)
       ..setPlayerOption('render-wait-start', 1));
   }
 
