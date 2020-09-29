@@ -50,7 +50,10 @@ class _DeerListViewState extends State<DeerListView> {
     Widget child = RefreshIndicator(
       onRefresh: widget.onRefresh,
       child: widget.itemCount == 0
-          ? StateLayout(type: widget.stateType)
+          ? StateLayout(
+              type: widget.stateType,
+              onRefresh: widget.onRefresh,
+            )
           : ListView.builder(
               itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
               padding: widget.padding,
@@ -114,8 +117,7 @@ class MoreWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           if (hasMore) const CupertinoActivityIndicator(),
-          if (hasMore)
-            Gaps.hGap5,
+          if (hasMore) Gaps.hGap5,
 
           /// 只有一页的时候，就不显示FooterView了
           Text(hasMore ? '正在加载中...' : (itemCount < pageSize ? '' : '没有了呦~'), style: style),

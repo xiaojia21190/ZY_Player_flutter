@@ -1,4 +1,5 @@
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
+import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,14 @@ class DetailProvider extends ChangeNotifier {
 
   bool _playState = false;
   bool get playState => _playState;
+
+  StateType _stateType = StateType.empty;
+  StateType get stateType => _stateType;
+
+  void setStateType(StateType stateType) {
+    _stateType = stateType;
+    notifyListeners();
+  }
 
   setPlayState(bool state) {
     _playState = state;

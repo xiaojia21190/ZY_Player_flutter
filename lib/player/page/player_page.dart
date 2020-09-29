@@ -5,6 +5,7 @@ import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/persistent_header_delegate.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -124,11 +125,22 @@ class _PlayerPageState extends State<PlayerPage> {
                                   return GestureDetector(
                                     child: Column(
                                       children: [
-                                        LoadImage(
-                                          _baseListProvider.list[index].playlist[i].cover,
-                                          width: 110,
-                                          height: 150,
-                                          fit: BoxFit.cover,
+                                        Stack(
+                                          children: [
+                                            LoadImage(
+                                              _baseListProvider.list[index].playlist[i].cover,
+                                              width: 110,
+                                              height: 150,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            Positioned(
+                                                bottom: 0,
+                                                right: 0,
+                                                child: Text(
+                                                  _baseListProvider.list[index].playlist[i].gengxin,
+                                                  style: TextStyle(fontSize: 14, color: Colors.white),
+                                                ))
+                                          ],
                                         ),
                                         Container(
                                           height: 50,
@@ -140,8 +152,12 @@ class _PlayerPageState extends State<PlayerPage> {
                                       ],
                                     ),
                                     onTap: () {
-                                      NavigatorUtils.push(context,
-                                          '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].title)}');
+                                      if (_baseListProvider.list[index].playlist[i].gengxin == "预告") {
+                                        Toast.show("预告暂不支持播放!");
+                                      } else {
+                                        NavigatorUtils.push(context,
+                                            '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].title)}');
+                                      }
                                     },
                                   );
                                 },

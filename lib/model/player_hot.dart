@@ -31,10 +31,14 @@ class Playlist extends Object {
   @JsonKey(name: 'cover')
   String cover;
 
+  @JsonKey(name: 'gengxin')
+  String gengxin;
+
   Playlist(
     this.url,
     this.title,
     this.cover,
+    this.gengxin,
   );
 
   factory Playlist.fromJson(Map<String, dynamic> srcJson) => _$PlaylistFromJson(srcJson);

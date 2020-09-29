@@ -8,6 +8,7 @@ import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:fijkplayer/fijkplayer.dart';
@@ -45,8 +46,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   int currentVideoIndex = 0;
 
-  bool playState = true;
-
   @override
   void initState() {
     super.initState();
@@ -69,17 +68,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       _detailProvider.saveJuji("${widget.url}_$currentIndex");
     }
     _isFullscreen = value.fullScreen;
-    if (value.state == FijkState.paused) {
-      // 暂停
-      playState = false;
-      _detailProvider.setPlayState(false);
-    }
-
-    if (value.state == FijkState.started) {
-      // 播放
-      playState = true;
-      _detailProvider.setPlayState(true);
-    }
   }
 
   void toggleFullscreen() {
@@ -106,6 +94,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   Future initData() async {
+    _detailProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": widget.url}, onSuccess: (data) {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
       _detailProvider.setJuji();
@@ -116,22 +105,27 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       } else {
         actionName = "点击收藏";
       }
+      _detailProvider.setStateType(StateType.empty);
       setState(() {});
-    }, onError: (_, __) {});
+    }, onError: (_, __) {
+      _detailProvider.setStateType(StateType.network);
+    });
   }
 
   Future setPlayerVideo() async {
     // 寻找最后的记录，从这里播放
+
     var benjuji = _detailProvider.kanguojuji.where((element) => element.split("_")[0] == widget.url).toList();
 
     if (benjuji.length == 0) {
-      _player.setDataSource(_detailProvider.detailReource.videoList[currentVideoIndex]);
-      _detailProvider.saveJuji("${widget.url}_0");
+      _player.setDataSource(_detailProvider.detailReource.videoList[currentVideoIndex], autoPlay: true);
     } else {
-      _player.setDataSource(_detailProvider.detailReource.videoList[int.parse(benjuji[benjuji.length - 1].split("_")[1])]);
+      benjuji.sort((a, b) => int.parse(a.split("_")[1]) - int.parse(b.split("_")[1]));
+      _player.setDataSource(_detailProvider.detailReource.videoList[int.parse(benjuji[benjuji.length - 1].split("_")[1])], autoPlay: true);
+      currentVideoIndex = int.parse(benjuji[benjuji.length - 1].split("_")[1]);
     }
 
-    setState(() {});
+    Toast.show("开始播放第${currentVideoIndex + 1}集");
 
     await _player.applyOptions(FijkOption()
       ..setFormatOption('flush_packets', 1)
@@ -140,13 +134,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       ..setCodecOption('request-screen-on', 1)
       ..setCodecOption('request-audio-focus', 1)
       ..setCodecOption('cover-after-prepared', 1)
-      ..setPlayerOption('start-on-prepared', 1)
       ..setPlayerOption('packet-buffering', 0)
       ..setPlayerOption('framedrop', 1)
       ..setPlayerOption('enable-accurate-seek', 1)
       ..setPlayerOption('find_stream_info', 0)
       ..setPlayerOption('render-wait-start', 1));
-    await _player.prepareAsync();
   }
 
   bool getFilterData(DetailReource data) {
@@ -190,45 +182,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           height: ScreenUtil.getInstance().getWidth(200),
-                          child: Stack(
-                            children: [
-                              FijkView(
-                                player: _player,
-                                color: Colors.black,
-                                panelBuilder: fijkPanel2Builder(snapShot: true),
-                                fsFit: FijkFit.fill,
-                              ),
-                              !provider.playState
-                                  ? Stack(
-                                      children: [
-                                        Opacity(
-                                          opacity: 0.5,
-                                          child: Container(
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (playState) {
-                                              _player.stop();
-                                            } else {
-                                              _player.start();
-                                            }
-                                          },
-                                          child: Container(
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.play_circle_filled,
-                                                color: Colors.white,
-                                                size: 50,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  : Container()
-                            ],
+                          child: FijkView(
+                            player: _player,
+                            color: Colors.black,
+                            panelBuilder: fijkPanel2Builder(snapShot: true),
+                            fsFit: FijkFit.fill,
                           ),
                         ),
                       ),
@@ -278,9 +236,13 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                             alignment: Alignment.center,
                                             child: GestureDetector(
                                                 onTap: () {
+                                                  if (currentVideoIndex == index) return;
+                                                  currentVideoIndex = index;
                                                   _detailProvider.saveJuji("${widget.url}_$index");
-                                                  _player.reset();
-                                                  _player.setDataSource(_detailProvider.detailReource.videoList[index]);
+                                                  _player.reset().then((value) {
+                                                    _player.setDataSource(_detailProvider.detailReource.videoList[currentVideoIndex], autoPlay: true);
+                                                    Toast.show("开始播放第${currentVideoIndex + 1}集");
+                                                  });
                                                 },
                                                 child: Text(
                                                   '第${index + 1}集',
@@ -298,7 +260,10 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                       )
                     ],
                   )
-                : StateLayout(type: StateType.loading);
+                : StateLayout(
+                    type: provider.stateType,
+                    onRefresh: initData,
+                  );
           }),
         ));
   }
