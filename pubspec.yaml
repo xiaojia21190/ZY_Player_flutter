@@ -1,5 +1,5 @@
 name: ZY_Player_flutter
-description: A new Flutter project.
+description: 影视资源更新
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.1
+version: 1.1.4
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -68,6 +68,13 @@ dependencies:
   json_annotation: ^3.0.1
   #播放器
   fijkplayer: ^0.8.7
+  #更新
+  ota_update: ^2.4.1
+  package_info: ^0.4.3
+  flutter_update_dialog: ^1.0.0
+
+
+
 
 
 dev_dependencies:

@@ -4,7 +4,6 @@ import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/setting/widgets/exit_dialog.dart';
-import 'package:ZY_Player_flutter/setting/widgets/update_dialog.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
 
@@ -43,7 +42,7 @@ class _SettingPageState extends State<SettingPage> {
           ClickItem(title: '账号管理', onTap: () => NavigatorUtils.push(context, SettingRouter.accountManagerPage)),
           ClickItem(title: '清除缓存', content: '23.5MB', onTap: () {}),
           ClickItem(title: '夜间模式', content: themeMode, onTap: () => NavigatorUtils.push(context, SettingRouter.themePage)),
-          ClickItem(title: '检查更新', onTap: () => _showUpdateDialog()),
+          // ClickItem(title: '检查更新', onTap: () => _showUpdateDialog()),
           ClickItem(title: '关于我们', onTap: () => NavigatorUtils.push(context, SettingRouter.aboutPage)),
           ClickItem(
             title: '退出当前账号',
@@ -59,6 +58,6 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   void _showUpdateDialog() {
-    showDialog<void>(context: context, barrierDismissible: false, builder: (_) => UpdateDialog());
+    // showDialog<void>(context: context, barrierDismissible: false, builder: (_) => UpdateDialog());
   }
 }

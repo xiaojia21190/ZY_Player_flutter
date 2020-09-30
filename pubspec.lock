@@ -296,6 +296,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_update_dialog:
+    dependency: "direct main"
+    description:
+      name: flutter_update_dialog
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -455,6 +462,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.3.2"
+  ota_update:
+    dependency: "direct main"
+    description:
+      name: ota_update
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.4.1"
   package_config:
     dependency: transitive
     description:
@@ -462,6 +476,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.9.3"
+  package_info:
+    dependency: "direct main"
+    description:
+      name: package_info
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.3"
   path:
     dependency: transitive
     description:

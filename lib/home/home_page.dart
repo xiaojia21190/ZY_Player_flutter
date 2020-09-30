@@ -1,7 +1,12 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/hotseach/page/hot_search_page.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_search_page.dart';
+import 'package:ZY_Player_flutter/net/dio_utils.dart';
+import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/page/player_page.dart';
+import 'package:ZY_Player_flutter/util/device_utils.dart';
+import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
@@ -9,7 +14,10 @@ import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:ota_update/ota_update.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_update_dialog/flutter_update_dialog.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -27,11 +35,102 @@ class _HomeState extends State<Home> {
   List<BottomNavigationBarItem> _list;
   List<BottomNavigationBarItem> _listDark;
 
+  UpdateDialog dialog;
+  OtaEvent currentEvent;
+  String currentUpdateUrl = "";
+  String currentVersion = "";
+  String currentUpdateText = "";
+
   @override
   void initState() {
     super.initState();
+    // 获取更新数据
+    if (Device.isAndroid) {
+      checkUpDate();
+    } else {
+      // ios 应用商店
+    }
     // 获得Player数据
     initData();
+  }
+
+  Future checkUpDate() async {
+    await DioUtils.instance.requestNetwork(
+      Method.get,
+      HttpApi.updateApp,
+      onSuccess: (data) async {
+        // 获得本地version
+        PackageInfo packageInfo = await PackageInfo.fromPlatform();
+        String version = packageInfo.version;
+
+        // 对比version
+        var checkResult = compareVersion(data["appVersion"], "$version");
+        if (checkResult) {
+          // 更新
+          currentUpdateUrl = data["updateUrl"];
+          currentVersion = data["appVersion"];
+          currentUpdateText = data["updateText"];
+          openUpdateDiolog();
+        }
+      },
+      onError: (code, msg) {},
+    );
+  }
+
+  openUpdateDiolog() {
+    if (dialog != null && dialog.isShowing()) {
+      return;
+    }
+    dialog = UpdateDialog.showUpdate(context,
+        width: 250,
+        title: "是否升级到$currentVersion版本？",
+        updateContent: "$currentUpdateText",
+        titleTextSize: 14,
+        contentTextSize: 12,
+        buttonTextSize: 12,
+        topImage: Image.asset('assets/images/bg_update_top.png'),
+        extraHeight: 5,
+        radius: 8,
+        themeColor: Color(0xFFFFAC5D),
+        progressBackgroundColor: Color(0x5AFFAC5D),
+        isForce: true,
+        updateButtonText: '升级',
+        // ignoreButtonText: '忽略此版本',
+        enableIgnore: true, onIgnore: () {
+      Log.d("忽略");
+      dialog.dismiss();
+    }, onUpdate: tryOtaUpdate);
+  }
+
+  Future tryOtaUpdate() async {
+    try {
+      Toast.show("开始升级！");
+      OtaUpdate()
+          .execute(
+        currentUpdateUrl,
+        destinationFilename: 'app-release.apk',
+      )
+          .listen(
+        (OtaEvent event) {
+          if (event.status == OtaStatus.DOWNLOADING) {
+            dialog.update(double.parse(event.value) / 100);
+          } else if (event.status == OtaStatus.INSTALLING) {
+            Toast.show("升级成功！");
+          }
+        },
+      );
+    } catch (e) {
+      print('Failed to make OTA update. Details: $e');
+    }
+  }
+
+  bool compareVersion(String newVersion, String oldVersion) {
+    var result1 = newVersion.split(".").join("");
+    var result2 = oldVersion.split(".").join("");
+    if (int.parse(result1) > int.parse(result2)) {
+      return true;
+    }
+    return false;
   }
 
   void initData() {
