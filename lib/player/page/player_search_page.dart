@@ -24,6 +24,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
   bool get wantKeepAlive => true;
   PlayerProvider _playerProvider = PlayerProvider();
 
+  FocusNode focusNode = new FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +60,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
         child: Scaffold(
           appBar: SearchBar(
               hintText: '请输入资源名称查询',
+              isBack: true,
               onPressed: (text) {
                 Toast.show('搜索内容：$text');
                 if (text != null) {

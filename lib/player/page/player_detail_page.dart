@@ -44,7 +44,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   String actionName = "";
   bool _isFullscreen = false;
 
-  int currentVideoIndex = 0;
+  int currentVideoIndex = -1;
+
+  String currentUrl = "";
 
   @override
   void initState() {
@@ -58,15 +60,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   Future _fijkValueListener() async {
     FijkValue value = _player.value;
-
-    if (value.state == FijkState.completed) {
-      // 是否播放完成 完成后播放下一集
-      var currentIndex = currentVideoIndex + 1;
-      if (_detailProvider.detailReource.videoList.length >= currentIndex) return;
-      _player.reset();
-      _player.setDataSource(_detailProvider.detailReource.videoList[currentIndex]);
-      _detailProvider.saveJuji("${widget.url}_$currentIndex");
-    }
     _isFullscreen = value.fullScreen;
   }
 
@@ -93,6 +86,12 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     _player.release();
   }
 
+  Future getPlayVideoUrl(String videoUrl) async {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) {
+      currentUrl = data;
+    }, onError: (_, __) {});
+  }
+
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": widget.url}, onSuccess: (data) {
@@ -113,22 +112,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   Future setPlayerVideo() async {
-    // 寻找最后的记录，从这里播放
-
-    var benjuji = _detailProvider.kanguojuji.where((element) => element.split("_")[0] == widget.url).toList();
-
-    if (benjuji.length == 0) {
-      _player.setDataSource(_detailProvider.detailReource.videoList[currentVideoIndex], autoPlay: true);
-      //点击第一集
-      _detailProvider.saveJuji("${widget.url}_0");
-    } else {
-      benjuji.sort((a, b) => int.parse(a.split("_")[1]) - int.parse(b.split("_")[1]));
-      _player.setDataSource(_detailProvider.detailReource.videoList[int.parse(benjuji[benjuji.length - 1].split("_")[1])], autoPlay: true);
-      currentVideoIndex = int.parse(benjuji[benjuji.length - 1].split("_")[1]);
-    }
-
-    Toast.show("开始播放第${currentVideoIndex + 1}集");
-
     await _player.applyOptions(FijkOption()
       ..setFormatOption('fflags', 'fastseek')
       ..setCodecOption('request-screen-on', 1)
@@ -177,88 +160,101 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
               }),
           body: Consumer<DetailProvider>(builder: (_, provider, __) {
             return provider.detailReource != null
-                ? CustomScrollView(
-                    slivers: <Widget>[
-                      SliverToBoxAdapter(
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: ScreenUtil.getInstance().getWidth(200),
-                          child: FijkView(
-                            player: _player,
-                            color: Colors.black,
-                            panelBuilder: fijkPanel2Builder(snapShot: true),
-                            fsFit: FijkFit.fill,
-                          ),
+                ? Column(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: ScreenUtil.getInstance().getWidth(200),
+                        child: FijkView(
+                          player: _player,
+                          color: Colors.black,
+                          panelBuilder: fijkPanel2Builder(snapShot: true),
+                          fsFit: FijkFit.fill,
                         ),
                       ),
-                      SliverToBoxAdapter(
-                        child: Card(
-                          shadowColor: Colors.blueAccent,
-                          elevation: 2,
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[Text("剧情介绍"), Gaps.vGap10, Text(provider.detailReource.content)],
+                      Expanded(
+                          child: CustomScrollView(
+                        slivers: <Widget>[
+                          SliverToBoxAdapter(
+                            child: Card(
+                              shadowColor: Colors.blueAccent,
+                              elevation: 2,
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text("剧情介绍"),
+                                    Text(
+                                      provider.detailReource.content,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 10,
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: provider.detailReource.videoList.length > 1
-                            ? Card(
-                                shadowColor: Colors.blueAccent,
-                                elevation: 2,
-                                child: Container(
-                                  padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                                        child: Text(
-                                          "剧集选择",
-                                          style: TextStyle(fontSize: 15),
-                                        ),
+                          SliverToBoxAdapter(
+                            child: provider.detailReource.videoList.length > 1
+                                ? Card(
+                                    shadowColor: Colors.blueAccent,
+                                    elevation: 2,
+                                    child: Container(
+                                      padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                                            child: Text(
+                                              "剧集选择",
+                                              style: TextStyle(fontSize: 15),
+                                            ),
+                                          ),
+                                          Wrap(
+                                            spacing: 15, // 主轴(水平)方向间距
+                                            runSpacing: 10, // 纵轴（垂直）方向间距
+                                            alignment: WrapAlignment.start, //沿主轴方向居中
+                                            children: List.generate(provider.detailReource.videoList.length, (index) {
+                                              return Container(
+                                                width: ScreenUtil.getInstance().getWidth(100),
+                                                padding: EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                    color: _detailProvider.kanguojuji.contains("${widget.url}_$index")
+                                                        ? Colors.red
+                                                        : Colours.text_gray_c,
+                                                    borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                alignment: Alignment.center,
+                                                child: GestureDetector(
+                                                    onTap: () async {
+                                                      if (currentVideoIndex == index) return;
+                                                      currentVideoIndex = index;
+                                                      await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex]);
+                                                      _detailProvider.saveJuji("${widget.url}_$index");
+                                                      _player.reset().then((value) {
+                                                        _player.setDataSource(currentUrl, autoPlay: true);
+                                                        Toast.show("开始播放第${currentVideoIndex + 1}集");
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      '第${index + 1}集',
+                                                      style: TextStyle(
+                                                        color: isDark ? Colours.dark_text : Colors.white,
+                                                      ),
+                                                    )),
+                                              );
+                                            }),
+                                          )
+                                        ],
                                       ),
-                                      Wrap(
-                                        spacing: 15, // 主轴(水平)方向间距
-                                        runSpacing: 10, // 纵轴（垂直）方向间距
-                                        alignment: WrapAlignment.start, //沿主轴方向居中
-                                        children: List.generate(provider.detailReource.videoList.length, (index) {
-                                          return Container(
-                                            width: ScreenUtil.getInstance().getWidth(100),
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                                color: _detailProvider.kanguojuji.contains("${widget.url}_$index") ? Colors.red : Colours.text_gray_c,
-                                                borderRadius: BorderRadius.all(Radius.circular(5))),
-                                            alignment: Alignment.center,
-                                            child: GestureDetector(
-                                                onTap: () {
-                                                  if (currentVideoIndex == index) return;
-                                                  currentVideoIndex = index;
-                                                  _detailProvider.saveJuji("${widget.url}_$index");
-                                                  _player.reset().then((value) {
-                                                    _player.setDataSource(_detailProvider.detailReource.videoList[currentVideoIndex], autoPlay: true);
-                                                    Toast.show("开始播放第${currentVideoIndex + 1}集");
-                                                  });
-                                                },
-                                                child: Text(
-                                                  '第${index + 1}集',
-                                                  style: TextStyle(
-                                                    color: isDark ? Colours.dark_text : Colors.white,
-                                                  ),
-                                                )),
-                                          );
-                                        }),
-                                      )
-                                    ],
-                                  ),
-                                ))
-                            : Container(),
-                      )
+                                    ))
+                                : Container(),
+                          )
+                        ],
+                      ))
                     ],
                   )
                 : StateLayout(
