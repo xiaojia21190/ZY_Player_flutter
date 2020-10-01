@@ -81,8 +81,8 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
                 Toast.show('搜索内容：$text');
                 if (text != null) {
                   _hotSearchProvider.addWors(text);
-                  this.getData(text);
                   searchText = text;
+                  this._onRefresh();
                 }
               }),
           body: Container(

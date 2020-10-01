@@ -1,5 +1,4 @@
 import 'package:ZY_Player_flutter/model/hot_search.dart';
-import 'package:ZY_Player_flutter/model/xiaoshuo_reource.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +30,7 @@ class HotSearchProvider extends ChangeNotifier {
     var whereWord = _words.where((element) => element == word);
     if (whereWord.length == 0) {
       _words.add(word);
-      SpUtil.putStringList("xiaoshuoWords", _words);
+      SpUtil.putStringList("hotSearchWords", _words);
       notifyListeners();
     }
   }

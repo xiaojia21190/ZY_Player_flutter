@@ -94,9 +94,7 @@ class _HomeState extends State<Home> {
         themeColor: Color(0xFFFFAC5D),
         progressBackgroundColor: Color(0x5AFFAC5D),
         isForce: true,
-        updateButtonText: '升级',
-        // ignoreButtonText: '忽略此版本',
-        enableIgnore: true, onIgnore: () {
+        updateButtonText: '升级', onIgnore: () {
       Log.d("忽略");
       dialog.dismiss();
     }, onUpdate: tryOtaUpdate);
