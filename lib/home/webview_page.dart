@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,6 +33,7 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    if (Device.isAndroid) WebView.platform = SurfaceAndroidWebView();
     if (widget.flag == "1") {
       SystemChrome.setEnabledSystemUIOverlays([]);
       SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
