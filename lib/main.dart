@@ -3,7 +3,7 @@ import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/home/provider/player_resource_provider.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:dio/dio.dart';
-import 'package:fluro/fluro.dart';
+import 'package:fluro/fluro.dart' as Fluro;
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
   MyApp({this.home, this.theme}) {
     Log.init();
     initDio();
-    final Router router = Router();
+    final Fluro.Router router = Fluro.Router();
     Routes.configureRoutes(router);
     Application.router = router;
   }
