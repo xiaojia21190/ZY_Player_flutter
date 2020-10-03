@@ -219,33 +219,33 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                             runSpacing: 10, // 纵轴（垂直）方向间距
                                             alignment: WrapAlignment.start, //沿主轴方向居中
                                             children: List.generate(provider.detailReource.videoList.length, (index) {
-                                              return Container(
-                                                width: ScreenUtil.getInstance().getWidth(100),
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: _detailProvider.kanguojuji.contains("${widget.url}_$index")
-                                                        ? Colors.red
-                                                        : Colours.text_gray_c,
-                                                    borderRadius: BorderRadius.all(Radius.circular(5))),
-                                                alignment: Alignment.center,
-                                                child: GestureDetector(
-                                                    onTap: () async {
-                                                      if (currentVideoIndex == index) return;
-                                                      currentVideoIndex = index;
-                                                      await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex]);
-                                                      _detailProvider.saveJuji("${widget.url}_$index");
-                                                      _player.reset().then((value) {
-                                                        _player.setDataSource(currentUrl, autoPlay: true);
-                                                        Toast.show("开始播放第${currentVideoIndex + 1}集");
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      '第${index + 1}集',
-                                                      style: TextStyle(
-                                                        color: isDark ? Colours.dark_text : Colors.white,
-                                                      ),
-                                                    )),
-                                              );
+                                              return InkWell(
+                                                  onTap: () async {
+                                                    if (currentVideoIndex == index) return;
+                                                    currentVideoIndex = index;
+                                                    Toast.show("正在解析地址");
+                                                    await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex]);
+                                                    _detailProvider.saveJuji("${widget.url}_$index");
+                                                    _player.reset().then((value) {
+                                                      _player.setDataSource(currentUrl, autoPlay: true);
+                                                      Toast.show("开始播放第${currentVideoIndex + 1}集");
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                      width: ScreenUtil.getInstance().getWidth(100),
+                                                      padding: EdgeInsets.all(10),
+                                                      decoration: BoxDecoration(
+                                                          color: _detailProvider.kanguojuji.contains("${widget.url}_$index")
+                                                              ? Colors.redAccent
+                                                              : Colors.blueAccent,
+                                                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                      alignment: Alignment.center,
+                                                      child: Text(
+                                                        '第${index + 1}集',
+                                                        style: TextStyle(
+                                                          color: isDark ? Colours.dark_text : Colors.white,
+                                                        ),
+                                                      )));
                                             }),
                                           )
                                         ],

@@ -15,15 +15,12 @@ ManhuaCatlogDetail _$ManhuaCatlogDetailFromJson(Map<String, dynamic> json) {
     json['leixing'] as String,
     json['gengxinTime'] as String,
     json['content'] as String,
-    (json['catlogs'] as List)
-        ?.map((e) =>
-            e == null ? null : Catlogs.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['catlogs'] as List)?.map((e) => e == null ? null : Catlogs.fromJson(e as Map<String, dynamic>))?.toList(),
+    json['title'] as String,
   );
 }
 
-Map<String, dynamic> _$ManhuaCatlogDetailToJson(ManhuaCatlogDetail instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ManhuaCatlogDetailToJson(ManhuaCatlogDetail instance) => <String, dynamic>{
       'url': instance.url,
       'cover': instance.cover,
       'gengxin': instance.gengxin,
@@ -32,6 +29,7 @@ Map<String, dynamic> _$ManhuaCatlogDetailToJson(ManhuaCatlogDetail instance) =>
       'gengxinTime': instance.gengxinTime,
       'content': instance.content,
       'catlogs': instance.catlogs,
+      'title': instance.title,
     };
 
 Catlogs _$CatlogsFromJson(Map<String, dynamic> json) {

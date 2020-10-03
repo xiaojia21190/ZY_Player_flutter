@@ -24,6 +24,8 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   bool get wantKeepAlive => true;
   ManhuaProvider _searchProvider;
 
+  String currentSearchWords = "";
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +39,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   }
 
   Future getSearchWords(String keywords) async {
+    currentSearchWords = keywords;
     _searchProvider.list.clear();
     _searchProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
@@ -45,6 +48,10 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
     }, onError: (_, __) {
       _searchProvider.setStateType(StateType.network);
     });
+  }
+
+  Future refresh() async {
+    await getSearchWords(currentSearchWords);
   }
 
   @override
@@ -142,7 +149,10 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
                         );
                       })
                   : Center(
-                      child: StateLayout(type: provider.state),
+                      child: StateLayout(
+                        type: provider.state,
+                        onRefresh: refresh,
+                      ),
                     );
             }))
           ],

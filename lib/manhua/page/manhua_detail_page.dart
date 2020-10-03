@@ -70,6 +70,10 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     });
   }
 
+  Future refresh() async {
+    await initData();
+  }
+
   bool getFilterData(ManhuaCatlogDetail data) {
     if (data != null) {
       var result = _collectProvider.listDetailResource.where((element) => element.url == data.url).toList();
@@ -190,7 +194,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                   ),
                 ],
               )
-            : StateLayout(type: provider.state);
+            : StateLayout(type: provider.state, onRefresh: refresh);
       }),
     );
   }

@@ -7,7 +7,6 @@ import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_detail_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -30,7 +29,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
+    _tabController = TabController(vsync: this, length: 2);
     _pageController = PageController(initialPage: 0);
     _collectProvider = context.read<CollectProvider>();
     _collectProvider.setListDetailResource("collcetPlayer");
@@ -38,64 +37,23 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
   }
 
   Widget getData(data, int index) {
-    switch (index) {
-      case 0:
-        return ListTile(
-          title: Text(data.title),
-          subtitle: Text(data.leixing),
-          leading: LoadImage(
-            data.cover,
-            fit: BoxFit.cover,
-          ),
-          onTap: () {
-            Log.d('前往详情页');
-            NavigatorUtils.push(context, '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
-          },
-        );
-        break;
-      case 1:
-        return ListTile(
-          title: Text(data.title),
-          subtitle: Text(data.author),
-          onTap: () {
-            Log.d('前往详情页');
-            Navigator.push(
-                context,
-                CupertinoPageRoute<dynamic>(
-                    fullscreenDialog: true,
-                    builder: (BuildContext context) {
-                      return XiaoShuoDetailPage(
-                        xiaoshuoReource: data,
-                      );
-                    }));
-          },
-        );
-        break;
-      case 2:
-        return ListTile(
-          title: Text(data.title),
-          subtitle: Text(data.author),
-          trailing: Icon(Icons.keyboard_arrow_right),
-          leading: LoadImage(
-            data.cover,
-            fit: BoxFit.cover,
-          ),
-          onTap: () {
-            Log.d('前往详情页');
-            NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
-          },
-        );
-        break;
-      default:
-        return ListTile(
-          title: Text(data.title),
-          subtitle: Text(data.type),
-          trailing: Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            Log.d('前往详情页');
-          },
-        );
-    }
+    return ListTile(
+      title: Text(data.title),
+      subtitle: Text(data.leixing),
+      trailing: Icon(Icons.keyboard_arrow_right),
+      leading: LoadImage(
+        data.cover,
+        fit: BoxFit.cover,
+      ),
+      onTap: () {
+        Log.d('前往详情页');
+        if (index == 0) {
+          NavigatorUtils.push(context, '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+        } else {
+          NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+        }
+      },
+    );
   }
 
   @override
@@ -119,7 +77,6 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
           indicatorWeight: 3,
           tabs: const <Widget>[
             Text("影视"),
-            Text("小说"),
             Text("漫画"),
           ],
           onTap: (index) {
@@ -134,7 +91,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
         color: Color(0xfff5f5f5),
         child: PageView.builder(
             key: const Key('pageView'),
-            itemCount: 3,
+            itemCount: 2,
             onPageChanged: _onPageChange,
             controller: _pageController,
             itemBuilder: (_, pageIndex) {
@@ -159,9 +116,6 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                                         // 影视
                                         _collectProvider.removeResource(list[index].url);
                                       } else if (pageIndex == 1) {
-                                        // 小说
-                                        _collectProvider.removeXiaoshuoResource(list[index].url);
-                                      } else if (pageIndex == 2) {
                                         // 漫画
                                         _collectProvider.removeCatlogResource(list[index].url);
                                       }
@@ -183,18 +137,17 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
 
   _onPageChange(int index) async {
     // 加载不同的数据
+    _collectProvider.list.clear();
     switch (index) {
       case 0:
         _collectProvider.setListDetailResource("collcetPlayer");
         _collectProvider.getCollectData(_collectProvider.listDetailResource);
         break;
       case 1:
-        _collectProvider.setListDetailResource("collcetXiaoshuo");
-        _collectProvider.getCollectData(_collectProvider.xiaoshuo);
-        break;
-      case 2:
         _collectProvider.setListDetailResource("collcetManhua");
         _collectProvider.getCollectData(_collectProvider.manhuaCatlog);
+        break;
+      case 2:
         break;
       default:
     }

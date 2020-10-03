@@ -28,6 +28,9 @@ class ManhuaCatlogDetail extends Object {
   @JsonKey(name: 'catlogs')
   List<Catlogs> catlogs;
 
+  @JsonKey(name: 'title')
+  String title;
+
   ManhuaCatlogDetail(
     this.url,
     this.cover,
@@ -37,6 +40,7 @@ class ManhuaCatlogDetail extends Object {
     this.gengxinTime,
     this.content,
     this.catlogs,
+    this.title,
   );
 
   factory ManhuaCatlogDetail.fromJson(Map<String, dynamic> srcJson) => _$ManhuaCatlogDetailFromJson(srcJson);

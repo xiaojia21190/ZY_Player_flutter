@@ -7,7 +7,6 @@ import 'package:ZY_Player_flutter/player/page/player_page.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:ZY_Player_flutter/xiaoshuo/pages/xiaoshuo_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
@@ -27,7 +26,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['影视', '热搜', "小说", '动漫', '收藏'];
+  final List<String> _appBarTitles = ['影视', '热搜', '动漫', '收藏'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -132,7 +131,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [PlayerPage(), HotSearchPage(), XiaoShuoSearchPage(), ManhuaSearchPage(), CollectPage()];
+    _pageList = [PlayerPage(), HotSearchPage(), ManhuaSearchPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {
@@ -164,18 +163,6 @@ class _HomeState extends State<Home> {
         ],
         [
           const LoadAssetImage(
-            'home/xiaoshuo',
-            width: 25.0,
-            color: Colours.unselected_item_color,
-          ),
-          const LoadAssetImage(
-            'home/xiaoshuo',
-            width: 25.0,
-            color: Colours.app_main,
-          ),
-        ],
-        [
-          const LoadAssetImage(
             'home/dongman',
             width: 25.0,
             color: Colours.unselected_item_color,
@@ -199,7 +186,7 @@ class _HomeState extends State<Home> {
           ),
         ]
       ];
-      _list = List.generate(5, (i) {
+      _list = List.generate(4, (i) {
         return BottomNavigationBarItem(
             icon: _tabImages[i][0],
             activeIcon: _tabImages[i][1],
@@ -235,14 +222,6 @@ class _HomeState extends State<Home> {
           ),
         ],
         [
-          const LoadAssetImage('home/xiaoshuo', width: 25.0),
-          const LoadAssetImage(
-            'home/xiaoshuo',
-            width: 25.0,
-            color: Colours.dark_app_main,
-          ),
-        ],
-        [
           const LoadAssetImage('home/dongman', width: 25.0),
           const LoadAssetImage(
             'home/dongman',
@@ -260,7 +239,7 @@ class _HomeState extends State<Home> {
         ]
       ];
 
-      _listDark = List.generate(5, (i) {
+      _listDark = List.generate(4, (i) {
         return BottomNavigationBarItem(
             icon: _tabImagesDark[i][0],
             activeIcon: _tabImagesDark[i][1],
