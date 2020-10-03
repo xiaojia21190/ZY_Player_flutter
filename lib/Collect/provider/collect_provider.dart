@@ -28,12 +28,14 @@ class CollectProvider extends ChangeNotifier {
       case "collcetPlayer":
         var result = SpUtil.getObjList<DetailReource>(collect, (data) => DetailReource.fromJson(data));
         if (result.length > 0) {
+          _listDetailResource.clear();
           _listDetailResource.addAll(result);
         }
         break;
       case "collcetManhua":
         var result = SpUtil.getObjList<ManhuaCatlogDetail>(collect, (data) => ManhuaCatlogDetail.fromJson(data));
         if (result.length > 0) {
+          _manhuaCatlog.clear();
           _manhuaCatlog.addAll(result);
         }
         break;
@@ -41,6 +43,7 @@ class CollectProvider extends ChangeNotifier {
       case "collcetXiaoshuo":
         var result = SpUtil.getObjList<XiaoshuoReource>(collect, (data) => XiaoshuoReource.fromJson(data));
         if (result.length > 0) {
+          _xiaoshuos.clear();
           _xiaoshuos.addAll(result);
         }
         break;

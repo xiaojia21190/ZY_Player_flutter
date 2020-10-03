@@ -197,7 +197,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                             ),
                           ),
                           SliverToBoxAdapter(
-                            child: provider.detailReource.videoList.length > 1
+                            child: provider.detailReource.videoList.length > 0
                                 ? Card(
                                     shadowColor: Colors.blueAccent,
                                     elevation: 2,

@@ -33,6 +33,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     _tabController = TabController(vsync: this, length: 3);
     _pageController = PageController(initialPage: 0);
     _collectProvider = context.read<CollectProvider>();
+    _collectProvider.setListDetailResource("collcetPlayer");
     Future.microtask(() => _collectProvider.getCollectData(_collectProvider.listDetailResource));
   }
 
@@ -42,6 +43,10 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
         return ListTile(
           title: Text(data.title),
           subtitle: Text(data.leixing),
+          leading: LoadImage(
+            data.cover,
+            fit: BoxFit.cover,
+          ),
           onTap: () {
             Log.d('前往详情页');
             NavigatorUtils.push(context, '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
@@ -180,12 +185,15 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     // 加载不同的数据
     switch (index) {
       case 0:
+        _collectProvider.setListDetailResource("collcetPlayer");
         _collectProvider.getCollectData(_collectProvider.listDetailResource);
         break;
       case 1:
+        _collectProvider.setListDetailResource("collcetXiaoshuo");
         _collectProvider.getCollectData(_collectProvider.xiaoshuo);
         break;
       case 2:
+        _collectProvider.setListDetailResource("collcetManhua");
         _collectProvider.getCollectData(_collectProvider.manhuaCatlog);
         break;
       default:
