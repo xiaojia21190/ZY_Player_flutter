@@ -8,6 +8,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -26,7 +27,7 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
   HotSearchProvider _hotSearchProvider = HotSearchProvider();
   BaseListProvider<HotSearch> _baseListProvider = BaseListProvider();
 
-  int currentPage = 0;
+  int currentPage = 1;
   String searchText = '抖音';
 
   @override
@@ -40,10 +41,11 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
     await DioUtils.instance.requestNetwork(
       Method.get,
       HttpApi.hotSearch,
-      queryParameters: {"search": keywords, "page": currentPage},
+      queryParameters: {"keywords": keywords, "page": currentPage},
       onSuccess: (data) {
         List.generate(data.length, (i) => _baseListProvider.list.add(HotSearch.fromJson(data[i])));
         _baseListProvider.setStateType(StateType.empty);
+        _baseListProvider.setHasMore(false);
       },
       onError: (code, msg) {
         _baseListProvider.setStateType(StateType.network);
@@ -52,13 +54,9 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
   }
 
   Future _onRefresh() async {
+    currentPage = 1;
     _baseListProvider.clear();
     // 默认搜索抖音
-    this.getData(searchText);
-  }
-
-  Future _loadMore() async {
-    currentPage++;
     this.getData(searchText);
   }
 
@@ -153,14 +151,19 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
                               itemCount: _baseListProvider.list.length,
                               stateType: _baseListProvider.stateType,
                               onRefresh: _onRefresh,
-                              loadMore: _loadMore,
                               pageSize: _baseListProvider.list.length,
                               hasMore: _baseListProvider.hasMore,
                               itemBuilder: (_, index) {
                                 return ListTile(
                                   title: Text(_baseListProvider.list[index].title),
-                                  subtitle: Text(_baseListProvider.list[index].tag),
-                                  trailing: Icon(Icons.keyboard_arrow_right),
+                                  subtitle: Text(_baseListProvider.list[index].shuming),
+                                  trailing: Text(_baseListProvider.list[index].updatetime),
+                                  leading: LoadImage(
+                                    _baseListProvider.list[index].cover,
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
                                   onTap: () {
                                     Log.d('前往详情页');
                                     NavigatorUtils.goWebViewPage(context, _baseListProvider.list[index].title, _baseListProvider.list[index].url,

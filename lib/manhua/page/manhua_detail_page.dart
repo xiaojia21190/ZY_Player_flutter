@@ -60,11 +60,10 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
       _collectProvider.changeNoti();
       _manhuaProvider.setZhanghjie();
       if (getFilterData(_manhuaProvider.catLog)) {
-        actionName = "点击取消";
+        _manhuaProvider.setActionName("点击取消");
       } else {
-        actionName = "点击收藏";
+        _manhuaProvider.setActionName("点击收藏");
       }
-      setState(() {});
     }, onError: (_, __) {
       _manhuaProvider.setStateType(StateType.network);
     });
@@ -76,7 +75,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
 
   bool getFilterData(ManhuaCatlogDetail data) {
     if (data != null) {
-      var result = _collectProvider.listDetailResource.where((element) => element.url == data.url).toList();
+      var result = _collectProvider.manhuaCatlog.where((element) => element.url == data.url).toList();
       return result.length > 0;
     }
     return false;
@@ -87,24 +86,28 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     final ThemeData themeData = Theme.of(context);
     final bool isDark = themeData.brightness == Brightness.dark;
     return Scaffold(
-      appBar: MyAppBar(
-        centerTitle: widget.title,
-        actionName: actionName,
-        onPressed: () {
-          if (getFilterData(_manhuaProvider.catLog)) {
-            Log.d("点击取消");
-            _collectProvider.removeCatlogResource(_manhuaProvider.catLog.url);
-            actionName = "点击收藏";
-          } else {
-            Log.d("点击收藏");
-            _collectProvider.addCatlogResource(
-              _manhuaProvider.catLog,
-            );
-            actionName = "点击取消";
-          }
-          setState(() {});
-        },
-      ),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(48.0),
+          child: Selector<ManhuaProvider, String>(
+              builder: (_, actionName, __) {
+                return MyAppBar(
+                    centerTitle: widget.title,
+                    actionName: actionName,
+                    onPressed: () {
+                      if (getFilterData(_manhuaProvider.catLog)) {
+                        Log.d("点击取消");
+                        _collectProvider.removeCatlogResource(_manhuaProvider.catLog.url);
+                        _manhuaProvider.setActionName("点击收藏");
+                      } else {
+                        Log.d("点击收藏");
+                        _collectProvider.addCatlogResource(
+                          _manhuaProvider.catLog,
+                        );
+                        _manhuaProvider.setActionName("点击取消");
+                      }
+                    });
+              },
+              selector: (_, store) => store.actionName)),
       body: Consumer<ManhuaProvider>(builder: (_, provider, __) {
         return provider.catLog != null
             ? CustomScrollView(

@@ -6,7 +6,6 @@ import 'package:ZY_Player_flutter/res/dimens.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -33,7 +32,6 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     _pageController = PageController(initialPage: 0);
     _collectProvider = context.read<CollectProvider>();
     _collectProvider.setListDetailResource("collcetPlayer");
-    Future.microtask(() => _collectProvider.getCollectData(_collectProvider.listDetailResource));
   }
 
   Widget getData(data, int index) {
@@ -97,59 +95,50 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
             itemBuilder: (_, pageIndex) {
               return Selector<CollectProvider, dynamic>(
                   builder: (_, list, __) {
-                    return list.length > 0
-                        ? ListView.builder(
-                            itemCount: list.length,
-                            itemBuilder: (_, index) {
-                              return Slidable(
-                                child: getData(list[index], pageIndex),
-                                actionPane: SlidableDrawerActionPane(),
-                                actionExtentRatio: 0.25,
-                                secondaryActions: <Widget>[
-                                  IconSlideAction(
-                                    caption: '取消收藏',
-                                    color: Colors.red,
-                                    icon: Icons.delete,
-                                    onTap: () {
-                                      // 取消收藏
-                                      if (pageIndex == 0) {
-                                        // 影视
-                                        _collectProvider.removeResource(list[index].url);
-                                      } else if (pageIndex == 1) {
-                                        // 漫画
-                                        _collectProvider.removeCatlogResource(list[index].url);
-                                      }
-                                      setState(() {});
-                                    },
-                                  ),
-                                ],
-                              );
-                            })
-                        : StateLayout(
-                            type: StateType.empty,
+                    return ListView.builder(
+                        itemCount: list.length,
+                        itemBuilder: (_, index) {
+                          return Slidable(
+                            child: getData(list[index], pageIndex),
+                            actionPane: SlidableDrawerActionPane(),
+                            actionExtentRatio: 0.25,
+                            secondaryActions: <Widget>[
+                              IconSlideAction(
+                                caption: '取消收藏',
+                                color: Colors.red,
+                                icon: Icons.delete,
+                                onTap: () {
+                                  // 取消收藏
+                                  if (pageIndex == 0) {
+                                    // 影视
+                                    _collectProvider.removeResource(list[index].url);
+                                  } else if (pageIndex == 1) {
+                                    // 漫画
+                                    _collectProvider.removeCatlogResource(list[index].url);
+                                  }
+                                  setState(() {});
+                                },
+                              ),
+                            ],
                           );
+                        });
                   },
-                  selector: (_, store) => store.list);
+                  selector: (_, store) => pageIndex == 0 ? store.listDetailResource : store.manhuaCatlog);
             }),
       ),
     );
   }
 
   _onPageChange(int index) async {
-    // 加载不同的数据
-    _collectProvider.list.clear();
     switch (index) {
       case 0:
         _collectProvider.setListDetailResource("collcetPlayer");
-        _collectProvider.getCollectData(_collectProvider.listDetailResource);
         break;
       case 1:
         _collectProvider.setListDetailResource("collcetManhua");
-        _collectProvider.getCollectData(_collectProvider.manhuaCatlog);
-        break;
-      case 2:
         break;
       default:
+        break;
     }
     _tabController.animateTo(index);
   }

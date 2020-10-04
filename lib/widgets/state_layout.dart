@@ -22,7 +22,7 @@ class StateLayout extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         if (type == StateType.loading)
-          const CupertinoActivityIndicator(radius: 16.0)
+          const CircularProgressIndicator()
         else if (type != StateType.empty)
           Opacity(
             opacity: ThemeUtils.isDark(context) ? 0.5 : 1,

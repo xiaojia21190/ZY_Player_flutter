@@ -27,6 +27,14 @@ class ManhuaProvider extends ChangeNotifier {
     _kanguozhangjie = SpUtil.getStringList("KGzhangjie", defValue: []);
   }
 
+  String _actionName = "";
+  String get actionName => _actionName;
+
+  void setActionName(String actionName) {
+    _actionName = actionName;
+    notifyListeners();
+  }
+
   saveZhangjie(String zhangjie) {
     _kanguozhangjie.add(zhangjie);
     SpUtil.putStringList("KGzhangjie", _kanguozhangjie);

@@ -100,12 +100,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       _collectProvider.changeNoti();
       setPlayerVideo();
       if (getFilterData(_detailProvider.detailReource)) {
-        actionName = "点击取消";
+        _detailProvider.setActionName("点击取消");
       } else {
-        actionName = "点击收藏";
+        _detailProvider.setActionName("点击收藏");
       }
       _detailProvider.setStateType(StateType.empty);
-      setState(() {});
     }, onError: (_, __) {
       _detailProvider.setStateType(StateType.network);
     });
@@ -114,8 +113,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   Future setPlayerVideo() async {
     await _player.applyOptions(FijkOption()
       ..setFormatOption('fflags', 'fastseek')
-      ..setCodecOption('request-screen-on', 1)
-      // ..setCodecOption('request-audio-focus', 1)
+      ..setHostOption('request-screen-on', 1)
+      ..setHostOption('request-audio-focus', 1)
       ..setCodecOption('cover-after-prepared', 1)
       ..setPlayerOption('framedrop', 5)
       ..setPlayerOption('packet-buffering', 1)
@@ -141,23 +140,28 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     return ChangeNotifierProvider<DetailProvider>(
         create: (_) => _detailProvider,
         child: Scaffold(
-          appBar: MyAppBar(
-              centerTitle: widget.title,
-              actionName: actionName,
-              onPressed: () {
-                if (getFilterData(_detailProvider.detailReource)) {
-                  Log.d("点击取消");
-                  _collectProvider.removeResource(_detailProvider.detailReource.url);
-                  actionName = "点击收藏";
-                } else {
-                  Log.d("点击收藏");
-                  _collectProvider.addResource(
-                    _detailProvider.detailReource,
-                  );
-                  actionName = "点击取消";
-                  setState(() {});
-                }
-              }),
+          appBar: PreferredSize(
+              preferredSize: Size.fromHeight(48.0),
+              child: Selector<DetailProvider, String>(
+                  builder: (_, actionName, __) {
+                    return MyAppBar(
+                        centerTitle: widget.title,
+                        actionName: actionName,
+                        onPressed: () {
+                          if (getFilterData(_detailProvider.detailReource)) {
+                            Log.d("点击取消");
+                            _collectProvider.removeResource(_detailProvider.detailReource.url);
+                            _detailProvider.setActionName("点击收藏");
+                          } else {
+                            Log.d("点击收藏");
+                            _collectProvider.addResource(
+                              _detailProvider.detailReource,
+                            );
+                            _detailProvider.setActionName("点击取消");
+                          }
+                        });
+                  },
+                  selector: (_, store) => store.actionName)),
           body: Consumer<DetailProvider>(builder: (_, provider, __) {
             return provider.detailReource != null
                 ? Column(
@@ -229,6 +233,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                                     _player.reset().then((value) {
                                                       _player.setDataSource(currentUrl, autoPlay: true);
                                                       Toast.show("开始播放第${currentVideoIndex + 1}集");
+                                                      // 自动全屏
+                                                      _player.enterFullScreen();
                                                     });
                                                   },
                                                   child: Container(

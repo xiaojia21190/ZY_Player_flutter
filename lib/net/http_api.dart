@@ -9,7 +9,7 @@ class HttpApi {
   static const String detailManhua = 'getDetailManhua';
   static const String imageManhua = 'getImagesManhua';
   static const String searchXiaoshuo = 'getSearchXiaishuo';
-  static const String hotSearch = 'hotSearch';
+  static const String hotSearch = 'HotSearch';
   static const String searchXiaoshuozj = 'getSearchXszj';
   static const String getSearchXszjDetail = 'getSearchXszjDetail';
   static const String getHotList = "getHotZiyuan";

@@ -1,5 +1,4 @@
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
-import 'package:ZY_Player_flutter/model/xiaoshuo_reource.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
@@ -11,17 +10,6 @@ class CollectProvider extends ChangeNotifier {
 
   List<ManhuaCatlogDetail> _manhuaCatlog = [];
   List<ManhuaCatlogDetail> get manhuaCatlog => _manhuaCatlog;
-
-  List<XiaoshuoReource> _xiaoshuos = [];
-  List<XiaoshuoReource> get xiaoshuo => _xiaoshuos;
-
-  List<dynamic> _list = [];
-  List<dynamic> get list => _list;
-
-  getCollectData(List<dynamic> resultList) {
-    _list = resultList;
-    notifyListeners();
-  }
 
   setListDetailResource(String collect) {
     switch (collect) {
@@ -37,14 +25,6 @@ class CollectProvider extends ChangeNotifier {
         if (result.length > 0) {
           _manhuaCatlog.clear();
           _manhuaCatlog.addAll(result);
-        }
-        break;
-
-      case "collcetXiaoshuo":
-        var result = SpUtil.getObjList<XiaoshuoReource>(collect, (data) => XiaoshuoReource.fromJson(data));
-        if (result.length > 0) {
-          _xiaoshuos.clear();
-          _xiaoshuos.addAll(result);
         }
         break;
       default:
@@ -63,12 +43,6 @@ class CollectProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  removeXiaoshuoResource(String url) {
-    _xiaoshuos.removeWhere((element) => element.url == url);
-    SpUtil.putObjectList("collcetXiaoshuo", _xiaoshuos);
-    notifyListeners();
-  }
-
   addResource(DetailReource data) {
     var glll = _listDetailResource.where((element) => element.url == data.url).toList().length;
     if (glll == 0) {
@@ -83,15 +57,6 @@ class CollectProvider extends ChangeNotifier {
     if (glll == 0) {
       _manhuaCatlog.add(data);
       SpUtil.putObjectList("collcetManhua", _manhuaCatlog);
-      notifyListeners();
-    }
-  }
-
-  addXiaoshuoResource(XiaoshuoReource data) {
-    var glll = _xiaoshuos.where((element) => element.url == data.url).toList().length;
-    if (glll == 0) {
-      _xiaoshuos.add(data);
-      SpUtil.putObjectList("collcetXiaoshuo", _xiaoshuos);
       notifyListeners();
     }
   }

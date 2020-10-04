@@ -122,7 +122,7 @@ class _PlayerPageState extends State<PlayerPage> {
                                 itemCount: _baseListProvider.list[index].playlist.length,
                                 itemBuilder: (context, i) {
                                   //要返回的item样式
-                                  return GestureDetector(
+                                  return InkWell(
                                     child: Column(
                                       children: [
                                         Stack(

@@ -19,6 +19,14 @@ class DetailProvider extends ChangeNotifier {
   StateType _stateType = StateType.empty;
   StateType get stateType => _stateType;
 
+  String _actionName = "";
+  String get actionName => _actionName;
+
+  void setActionName(String actionName) {
+    _actionName = actionName;
+    notifyListeners();
+  }
+
   void setStateType(StateType stateType) {
     _stateType = stateType;
     notifyListeners();
