@@ -32,6 +32,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     _pageController = PageController(initialPage: 0);
     _collectProvider = context.read<CollectProvider>();
     _collectProvider.setListDetailResource("collcetPlayer");
+    _collectProvider.setListDetailResource("collcetManhua");
   }
 
   Widget getData(data, int index) {
