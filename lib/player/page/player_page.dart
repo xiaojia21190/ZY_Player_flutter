@@ -20,7 +20,9 @@ class PlayerPage extends StatefulWidget {
   _PlayerPageState createState() => _PlayerPageState();
 }
 
-class _PlayerPageState extends State<PlayerPage> {
+class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMixin<PlayerPage>, SingleTickerProviderStateMixin {
+  @override
+  bool get wantKeepAlive => true;
   BaseListProvider<PlayerHot> _baseListProvider = BaseListProvider();
 
   @override
@@ -55,6 +57,7 @@ class _PlayerPageState extends State<PlayerPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: SafeArea(
           child: CustomScrollView(

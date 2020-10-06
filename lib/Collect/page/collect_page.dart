@@ -6,6 +6,7 @@ import 'package:ZY_Player_flutter/res/dimens.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -30,7 +31,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     super.initState();
     _tabController = TabController(vsync: this, length: 2);
     _pageController = PageController(initialPage: 0);
-    _collectProvider = context.read<CollectProvider>();
+    _collectProvider = Store.value<CollectProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
     _collectProvider.setListDetailResource("collcetManhua");
   }

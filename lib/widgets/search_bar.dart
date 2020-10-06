@@ -6,17 +6,14 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 
 /// 搜索页的AppBar
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
-  const SearchBar({
-    Key key,
-    this.hintText = '',
-    this.backImg = 'assets/images/ic_back_black.png',
-    this.onPressed,
-    this.isBack = false,
-  }) : super(key: key);
+  const SearchBar(
+      {Key key, this.hintText = '', this.backImg = 'assets/images/ic_back_black.png', this.onPressed, this.isBack = false, this.isFocus = false})
+      : super(key: key);
 
   final String backImg;
   final String hintText;
   final bool isBack;
+  final bool isFocus;
   final Function(String) onPressed;
 
   @override
@@ -29,6 +26,11 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {

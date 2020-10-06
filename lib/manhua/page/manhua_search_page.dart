@@ -1,3 +1,4 @@
+import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
 import 'package:ZY_Player_flutter/model/manhua_detail.dart';
@@ -8,6 +9,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -29,7 +31,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   @override
   void initState() {
     super.initState();
-    _searchProvider = context.read<ManhuaProvider>();
+    _searchProvider = Store.value<ManhuaProvider>(context);
     _searchProvider.setWords();
   }
 
@@ -44,6 +46,11 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
     _searchProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(resultList.length, (index) => ManhuaDetail.fromJson(resultList[index]));
+      if (data.length == 0) {
+        _searchProvider.setStateType(StateType.order);
+      } else {
+        _searchProvider.setStateType(StateType.empty);
+      }
       _searchProvider.setList(data);
     }, onError: (_, __) {
       _searchProvider.setStateType(StateType.network);
@@ -51,6 +58,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   }
 
   Future refresh() async {
+    if (_searchProvider.state == StateType.loading) return;
     await getSearchWords(currentSearchWords);
   }
 

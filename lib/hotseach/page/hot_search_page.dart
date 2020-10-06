@@ -37,6 +37,10 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
   }
 
   Future getData(String keywords) async {
+    if (_baseListProvider.stateType == StateType.loading) {
+      Toast.show("正在搜索内容，请稍后");
+      return;
+    }
     _baseListProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(
       Method.get,
@@ -45,6 +49,11 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
       onSuccess: (data) {
         List.generate(data.length, (i) => _baseListProvider.list.add(HotSearch.fromJson(data[i])));
         _baseListProvider.setStateType(StateType.empty);
+        if (data.length == 0) {
+          _baseListProvider.setStateType(StateType.order);
+        } else {
+          _baseListProvider.setStateType(StateType.empty);
+        }
         _baseListProvider.setHasMore(false);
       },
       onError: (code, msg) {

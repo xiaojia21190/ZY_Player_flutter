@@ -8,6 +8,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -19,27 +20,30 @@ class PlayerSearchPage extends StatefulWidget {
   _PlayerSearchPageState createState() => _PlayerSearchPageState();
 }
 
-class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepAliveClientMixin<PlayerSearchPage>, SingleTickerProviderStateMixin {
-  @override
-  bool get wantKeepAlive => true;
-  PlayerProvider _playerProvider = PlayerProvider();
-
-  FocusNode focusNode = new FocusNode();
-
+class _PlayerSearchPageState extends State<PlayerSearchPage> {
+  PlayerProvider _playerProvider;
   @override
   void initState() {
-    super.initState();
-    context.read<PlayerProvider>().setWords();
+    _playerProvider = Store.value<PlayerProvider>(context);
     _playerProvider.setWords();
+    super.initState();
   }
 
   Future getData(String keywords) async {
+    if (_playerProvider.stateType == StateType.loading) {
+      Toast.show("正在搜索内容，请稍后");
+      return;
+    }
     _playerProvider.list.clear();
     _playerProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1},
         onSuccess: (resultList) {
-      _playerProvider.setStateType(StateType.empty);
       List.generate(resultList.length, (i) => _playerProvider.list.add(ResourceData.fromJson(resultList[i])));
+      if (resultList.length == 0) {
+        _playerProvider.setStateType(StateType.order);
+      } else {
+        _playerProvider.setStateType(StateType.empty);
+      }
     }, onError: (_, __) {
       _playerProvider.setStateType(StateType.network);
     });
@@ -52,124 +56,122 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> with AutomaticKeepA
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final bool isDark = ThemeUtils.isDark(context);
 
-    return ChangeNotifierProvider<PlayerProvider>(
-        create: (_) => _playerProvider,
-        child: Scaffold(
-          appBar: SearchBar(
-              hintText: '请输入资源名称查询',
-              isBack: true,
-              onPressed: (text) {
-                Toast.show('搜索内容：$text');
-                if (text != null) {
-                  _playerProvider.addWors(text);
-                  this.getData(text);
-                }
-              }),
-          body: Container(
-            child: Column(
-              children: <Widget>[
-                Consumer<PlayerProvider>(builder: (_, provider, __) {
-                  return provider.words.length > 0
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      appBar: SearchBar(
+          isFocus: true,
+          hintText: '请输入资源名称查询',
+          isBack: true,
+          onPressed: (text) {
+            Toast.show('搜索内容：$text');
+            if (text != null) {
+              _playerProvider.addWors(text);
+              this.getData(text);
+            }
+          }),
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Consumer<PlayerProvider>(builder: (_, provider, __) {
+              return provider.words.length > 0
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: Text("历史搜索"),
-                                ),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.delete_forever,
-                                      color: isDark ? Colours.dark_red : Colours.dark_bg_gray,
-                                    ),
-                                    onPressed: () {
-                                      Log.d("删除搜索");
-                                      _playerProvider.clearWords();
-                                    })
-                              ],
+                            Padding(
+                              padding: EdgeInsets.only(left: 20),
+                              child: Text("历史搜索"),
                             ),
-                            Selector<PlayerProvider, List>(
-                                builder: (_, words, __) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Wrap(
-                                        spacing: 10,
-                                        runSpacing: 5,
-                                        children: words.map<Widget>((s) {
-                                          return InkWell(
-                                            child: Container(
-                                              padding: EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                              child: Text('$s'),
-                                            ),
-                                            onTap: () {
-                                              //搜索关键词
-                                              this.getData(s);
-                                            },
-                                          );
-                                        }).toList()),
-                                  );
-                                },
-                                selector: (_, store) => store.words)
+                            IconButton(
+                                icon: Icon(
+                                  Icons.delete_forever,
+                                  color: isDark ? Colours.dark_red : Colours.dark_bg_gray,
+                                ),
+                                onPressed: () {
+                                  Log.d("删除搜索");
+                                  _playerProvider.clearWords();
+                                })
                           ],
-                        )
-                      : Container();
-                }),
-                Expanded(child: Consumer<PlayerProvider>(builder: (_, provider, __) {
-                  return provider.list.length > 0
-                      ? GridView.builder(
-                          //将所有子控件在父控件中填满
-                          shrinkWrap: true,
-                          //解决ListView嵌套GridView滑动冲突问题
-                          physics: NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3, //每行几列
-                              childAspectRatio: 0.6),
-                          itemCount: provider.list.length,
-                          itemBuilder: (context, i) {
-                            //要返回的item样式
-                            return GestureDetector(
-                              child: Column(
-                                children: [
-                                  LoadImage(
-                                    provider.list[i].cover,
-                                    width: 110,
-                                    height: 150,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    child: Text(
-                                      provider.list[i].title,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )
-                                ],
+                        ),
+                        Selector<PlayerProvider, List>(
+                            builder: (_, words, __) {
+                              return Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Wrap(
+                                    spacing: 10,
+                                    runSpacing: 5,
+                                    children: words.map<Widget>((s) {
+                                      return InkWell(
+                                        child: Container(
+                                          padding: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Text('$s'),
+                                        ),
+                                        onTap: () {
+                                          //搜索关键词
+                                          this.getData(s);
+                                        },
+                                      );
+                                    }).toList()),
+                              );
+                            },
+                            selector: (_, store) => store.words)
+                      ],
+                    )
+                  : Container();
+            }),
+            Expanded(child: Consumer<PlayerProvider>(builder: (_, provider, __) {
+              return provider.list.length > 0
+                  ? GridView.builder(
+                      //将所有子控件在父控件中填满
+                      shrinkWrap: true,
+                      //解决ListView嵌套GridView滑动冲突问题
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3, //每行几列
+                          childAspectRatio: 0.6),
+                      itemCount: provider.list.length,
+                      itemBuilder: (context, i) {
+                        //要返回的item样式
+                        return GestureDetector(
+                          child: Column(
+                            children: [
+                              LoadImage(
+                                provider.list[i].cover,
+                                width: 110,
+                                height: 150,
+                                fit: BoxFit.cover,
                               ),
-                              onTap: () {
-                                NavigatorUtils.push(context,
-                                    '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(provider.list[i].url)}&title=${Uri.encodeComponent(provider.list[i].title)}');
-                              },
-                            );
+                              Container(
+                                height: 50,
+                                child: Text(
+                                  provider.list[i].title,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
+                            ],
+                          ),
+                          onTap: () {
+                            NavigatorUtils.push(context,
+                                '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(provider.list[i].url)}&title=${Uri.encodeComponent(provider.list[i].title)}');
                           },
-                        )
-                      : Center(
-                          child: StateLayout(type: provider.stateType),
                         );
-                }))
-              ],
-            ),
-          ),
-        ));
+                      },
+                    )
+                  : Center(
+                      child: StateLayout(type: provider.stateType),
+                    );
+            }))
+          ],
+        ),
+      ),
+    );
   }
 }

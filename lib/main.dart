@@ -1,7 +1,5 @@
-import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/home/home_page.dart';
-import 'package:ZY_Player_flutter/home/provider/player_resource_provider.dart';
-import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:fluro/fluro.dart' as Fluro;
 import 'package:flustars/flustars.dart';
@@ -22,8 +20,6 @@ import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 
-import 'manhua/provider/manhua_provider.dart';
-
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
 //  debugPaintLayerBordersEnabled = true;
@@ -33,15 +29,7 @@ Future<void> main() async {
 
   /// sp初始化
   await SpUtil.getInstance();
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider<PlayerResourceProvider>(create: (_) => PlayerResourceProvider()),
-      ChangeNotifierProvider<CollectProvider>(create: (_) => CollectProvider()),
-      ChangeNotifierProvider<ManhuaProvider>(create: (_) => ManhuaProvider()),
-      ChangeNotifierProvider<PlayerProvider>(create: (_) => PlayerProvider()),
-    ],
-    child: MyApp(),
-  ));
+  runApp(Store.init(MyApp()));
   // 透明状态栏
   if (Device.isAndroid) {
     final SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
@@ -137,6 +125,6 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.black54,
         textPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         radius: 20.0,
-        position: ToastPosition.bottom);
+        position: ToastPosition.center);
   }
 }

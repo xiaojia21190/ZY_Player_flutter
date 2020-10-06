@@ -93,7 +93,7 @@ class _HomeState extends State<Home> {
         themeColor: Color(0xFFFFAC5D),
         progressBackgroundColor: Color(0x5AFFAC5D),
         isForce: true,
-        updateButtonText: '升级', onIgnore: () {
+        updateButtonText: '开始升级', onIgnore: () {
       Log.d("忽略");
       dialog.dismiss();
     }, onUpdate: tryOtaUpdate);
@@ -101,7 +101,7 @@ class _HomeState extends State<Home> {
 
   Future tryOtaUpdate() async {
     try {
-      Toast.show("开始升级！");
+      Toast.show("开始升级");
       OtaUpdate()
           .execute(
         currentUpdateUrl,
@@ -112,7 +112,7 @@ class _HomeState extends State<Home> {
           if (event.status == OtaStatus.DOWNLOADING) {
             dialog.update(double.parse(event.value) / 100);
           } else if (event.status == OtaStatus.INSTALLING) {
-            Toast.show("升级成功！");
+            Toast.show("升级成功");
           }
         },
       );

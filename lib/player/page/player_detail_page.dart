@@ -9,7 +9,9 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
+import 'package:ZY_Player_flutter/widgets/my_card.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flustars/flustars.dart';
@@ -52,7 +54,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _collectProvider = context.read<CollectProvider>();
+    _collectProvider = Store.value<CollectProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
     _player.addListener(_fijkValueListener);
     initData();
@@ -180,9 +182,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                           child: CustomScrollView(
                         slivers: <Widget>[
                           SliverToBoxAdapter(
-                            child: Card(
-                              shadowColor: Colors.blueAccent,
-                              elevation: 2,
+                            child: MyCard(
                               child: Container(
                                 padding: EdgeInsets.all(10),
                                 child: Column(
@@ -202,61 +202,59 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                           ),
                           SliverToBoxAdapter(
                             child: provider.detailReource.videoList.length > 0
-                                ? Card(
-                                    shadowColor: Colors.blueAccent,
-                                    elevation: 2,
+                                ? MyCard(
                                     child: Container(
-                                      padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10, bottom: 10),
-                                            child: Text(
-                                              "剧集选择",
-                                              style: TextStyle(fontSize: 15),
-                                            ),
+                                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                                          child: Text(
+                                            "剧集选择",
+                                            style: TextStyle(fontSize: 15),
                                           ),
-                                          Wrap(
-                                            spacing: 15, // 主轴(水平)方向间距
-                                            runSpacing: 10, // 纵轴（垂直）方向间距
-                                            alignment: WrapAlignment.start, //沿主轴方向居中
-                                            children: List.generate(provider.detailReource.videoList.length, (index) {
-                                              return InkWell(
-                                                  onTap: () async {
-                                                    if (currentVideoIndex == index) return;
-                                                    currentVideoIndex = index;
-                                                    Toast.show("正在解析地址");
-                                                    await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex]);
-                                                    _detailProvider.saveJuji("${widget.url}_$index");
-                                                    _player.reset().then((value) {
-                                                      _player.setDataSource(currentUrl, autoPlay: true);
-                                                      Toast.show("开始播放第${currentVideoIndex + 1}集");
-                                                      // 自动全屏
-                                                      _player.enterFullScreen();
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                      width: ScreenUtil.getInstance().getWidth(100),
-                                                      padding: EdgeInsets.all(10),
-                                                      decoration: BoxDecoration(
-                                                          color: _detailProvider.kanguojuji.contains("${widget.url}_$index")
-                                                              ? Colors.redAccent
-                                                              : Colors.blueAccent,
-                                                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                                                      alignment: Alignment.center,
-                                                      child: Text(
-                                                        '第${index + 1}集',
-                                                        style: TextStyle(
-                                                          color: isDark ? Colours.dark_text : Colors.white,
-                                                        ),
-                                                      )));
-                                            }),
-                                          )
-                                        ],
-                                      ),
-                                    ))
+                                        ),
+                                        Wrap(
+                                          spacing: 15, // 主轴(水平)方向间距
+                                          runSpacing: 10, // 纵轴（垂直）方向间距
+                                          alignment: WrapAlignment.start, //沿主轴方向居中
+                                          children: List.generate(provider.detailReource.videoList.length, (index) {
+                                            return InkWell(
+                                                onTap: () async {
+                                                  if (currentVideoIndex == index) return;
+                                                  currentVideoIndex = index;
+                                                  Toast.show("正在解析地址");
+                                                  await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex]);
+                                                  _detailProvider.saveJuji("${widget.url}_$index");
+                                                  _player.reset().then((value) {
+                                                    _player.setDataSource(currentUrl, autoPlay: true);
+                                                    Toast.show("开始播放第${currentVideoIndex + 1}集");
+                                                    // 自动全屏
+                                                    _player.enterFullScreen();
+                                                  });
+                                                },
+                                                child: Container(
+                                                    width: ScreenUtil.getInstance().getWidth(100),
+                                                    padding: EdgeInsets.all(10),
+                                                    decoration: BoxDecoration(
+                                                        color: _detailProvider.kanguojuji.contains("${widget.url}_$index")
+                                                            ? Colors.redAccent
+                                                            : Colors.blueAccent,
+                                                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      '第${index + 1}集',
+                                                      style: TextStyle(
+                                                        color: isDark ? Colours.dark_text : Colors.white,
+                                                      ),
+                                                    )));
+                                          }),
+                                        )
+                                      ],
+                                    ),
+                                  ))
                                 : Container(),
                           )
                         ],

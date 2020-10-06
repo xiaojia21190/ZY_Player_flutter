@@ -11,6 +11,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:ZY_Player_flutter/widgets/my_card.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -113,9 +114,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
             ? CustomScrollView(
                 slivers: <Widget>[
                   SliverToBoxAdapter(
-                    child: Card(
-                      shadowColor: Colors.blueAccent,
-                      elevation: 2,
+                    child: MyCard(
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         height: ScreenUtil.getInstance().getWidth(100),
@@ -151,9 +150,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: Card(
-                      shadowColor: Colors.blueAccent,
-                      elevation: 2,
+                    child: MyCard(
                       child: Container(
                         padding: EdgeInsets.all(10),
                         child: Column(
@@ -177,7 +174,9 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         (BuildContext context, int index) {
                           //创建子widget
                           return Container(
-                              color: _manhuaProvider.kanguozhangjie.contains("${widget.url}_$index") ? Colours.dark_text_gray : Colours.text_gray_c,
+                              decoration: BoxDecoration(
+                                  color: _manhuaProvider.kanguozhangjie.contains("${widget.url}_$index") ? Colors.redAccent : Colors.blueAccent,
+                                  borderRadius: BorderRadius.all(Radius.circular(5))),
                               alignment: Alignment.center,
                               child: InkWell(
                                   onTap: () {
