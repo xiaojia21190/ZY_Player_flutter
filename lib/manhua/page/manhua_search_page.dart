@@ -25,6 +25,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   @override
   bool get wantKeepAlive => true;
   ManhuaProvider _searchProvider;
+  final FocusNode _focus = FocusNode();
 
   String currentSearchWords = "";
 
@@ -69,6 +70,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
 
     return Scaffold(
       appBar: SearchBar(
+          focus: _focus,
           isBack: false,
           hintText: '请输入漫画名称查询',
           onPressed: (text) {
@@ -125,6 +127,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
                                         onTap: () {
                                           //搜索关键词
                                           Toast.show('搜索内容：$s');
+                                          _focus.unfocus();
                                           getSearchWords(s);
                                         },
                                       );

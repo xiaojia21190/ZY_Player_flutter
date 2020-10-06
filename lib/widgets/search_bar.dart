@@ -7,13 +7,13 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 /// 搜索页的AppBar
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   const SearchBar(
-      {Key key, this.hintText = '', this.backImg = 'assets/images/ic_back_black.png', this.onPressed, this.isBack = false, this.isFocus = false})
+      {Key key, this.hintText = '', this.backImg = 'assets/images/ic_back_black.png', this.onPressed, this.isBack = false, @required this.focus})
       : super(key: key);
 
   final String backImg;
   final String hintText;
   final bool isBack;
-  final bool isFocus;
+  final FocusNode focus;
   final Function(String) onPressed;
 
   @override
@@ -25,7 +25,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
-  final FocusNode _focus = FocusNode();
+  // final FocusNode _focus = FocusNode();
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _SearchBarState extends State<SearchBar> {
 
   @override
   void dispose() {
-    _focus.dispose();
+    widget.focus.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -51,7 +51,7 @@ class _SearchBarState extends State<SearchBar> {
         height: 48.0,
         child: InkWell(
           onTap: () {
-            _focus.unfocus();
+            widget.focus.unfocus();
             Navigator.maybePop(context);
           },
           borderRadius: BorderRadius.circular(24.0),
@@ -76,13 +76,13 @@ class _SearchBarState extends State<SearchBar> {
         ),
         child: TextField(
           key: const Key('search_text_field'),
-//          autofocus: true,
+          autofocus: true,
           controller: _controller,
-          focusNode: _focus,
+          focusNode: widget.focus,
           maxLines: 1,
           textInputAction: TextInputAction.search,
           onSubmitted: (val) {
-            _focus.unfocus();
+            widget.focus.unfocus();
             // 点击软键盘的动作按钮时的回调
             widget.onPressed(val);
           },
@@ -133,7 +133,7 @@ class _SearchBarState extends State<SearchBar> {
         textColor: isDark ? Colours.dark_button_text : Colors.white,
         color: isDark ? Colours.dark_app_main : Colours.app_main,
         onPressed: () {
-          _focus.unfocus();
+          widget.focus.unfocus();
           widget.onPressed(_controller.text);
         },
         child: Text('搜索', style: TextStyle(fontSize: Dimens.font_sp14)),

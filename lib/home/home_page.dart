@@ -101,7 +101,7 @@ class _HomeState extends State<Home> {
 
   Future tryOtaUpdate() async {
     try {
-      Toast.show("开始升级");
+      Toast.show("开始下载版本");
       OtaUpdate()
           .execute(
         currentUpdateUrl,

@@ -109,8 +109,8 @@ class _MyTextFieldState extends State<MyTextField> {
       keyboardType: widget.keyboardType,
       // 数字、手机号限制格式为0到9(白名单)， 密码限制不包含汉字（黑名单）
       inputFormatters: (widget.keyboardType == TextInputType.number || widget.keyboardType == TextInputType.phone)
-          ? [WhitelistingTextInputFormatter(RegExp('[0-9]'))]
-          : [BlacklistingTextInputFormatter(RegExp('[\u4e00-\u9fa5]'))],
+          ? [FilteringTextInputFormatter.allow(RegExp('[0-9]'))]
+          : [FilteringTextInputFormatter.allow(RegExp('[\u4e00-\u9fa5]'))],
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
         hintText: widget.hintText,

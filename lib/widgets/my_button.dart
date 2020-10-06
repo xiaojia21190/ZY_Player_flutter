@@ -21,13 +21,14 @@ class MyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
-    return FlatButton(
+    return TextButton(
       onPressed: onPressed,
-      textColor: isDark ? Colours.dark_button_text : Colors.white,
-      color: isDark ? Colours.dark_app_main : Colours.app_main,
-      disabledTextColor: isDark ? Colours.dark_text_disabled : Colours.text_disabled,
-      disabledColor: isDark ? Colours.dark_button_disabled : Colours.button_disabled,
-      //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      style: ButtonStyle(
+          textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(
+            color: isDark ? Colours.dark_button_text : Colors.white,
+          )),
+          backgroundColor: isDark ? MaterialStateProperty.all<Color>(Colours.dark_app_main) : MaterialStateProperty.all<Color>(Colours.app_main),
+          shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)))),
       child: Container(
         height: this.height,
         width: this.width,

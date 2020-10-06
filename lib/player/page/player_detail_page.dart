@@ -217,7 +217,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                           ),
                                         ),
                                         Wrap(
-                                          spacing: 15, // 主轴(水平)方向间距
+                                          spacing: 20, // 主轴(水平)方向间距
                                           runSpacing: 10, // 纵轴（垂直）方向间距
                                           alignment: WrapAlignment.start, //沿主轴方向居中
                                           children: List.generate(provider.detailReource.videoList.length, (index) {

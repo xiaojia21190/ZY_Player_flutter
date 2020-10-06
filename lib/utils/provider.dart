@@ -1,4 +1,5 @@
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
+import 'package:ZY_Player_flutter/hotseach/provider/hot_search_provider.dart';
 import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class Store {
         ChangeNotifierProvider<CollectProvider>(create: (_) => CollectProvider()),
         ChangeNotifierProvider<ManhuaProvider>(create: (_) => ManhuaProvider()),
         ChangeNotifierProvider<PlayerProvider>(create: (_) => PlayerProvider()),
+        ChangeNotifierProvider<HotSearchProvider>(create: (_) => HotSearchProvider()),
       ],
       child: child,
     );

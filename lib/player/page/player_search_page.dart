@@ -22,6 +22,9 @@ class PlayerSearchPage extends StatefulWidget {
 
 class _PlayerSearchPageState extends State<PlayerSearchPage> {
   PlayerProvider _playerProvider;
+
+  final FocusNode _focus = FocusNode();
+
   @override
   void initState() {
     _playerProvider = Store.value<PlayerProvider>(context);
@@ -60,7 +63,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
 
     return Scaffold(
       appBar: SearchBar(
-          isFocus: true,
+          focus: _focus,
           hintText: '请输入资源名称查询',
           isBack: true,
           onPressed: (text) {
@@ -116,6 +119,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                                         ),
                                         onTap: () {
                                           //搜索关键词
+                                          _focus.unfocus();
                                           this.getData(s);
                                         },
                                       );
