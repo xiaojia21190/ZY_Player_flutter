@@ -102,28 +102,33 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                         ),
                         Selector<PlayerProvider, List>(
                             builder: (_, words, __) {
+                              var startLen = words.length - 5 > 0 ? words.length - 5 : 0;
+                              var endLen = words.length;
                               return Padding(
                                 padding: EdgeInsets.only(left: 10),
                                 child: Wrap(
                                     spacing: 10,
                                     runSpacing: 5,
-                                    children: words.map<Widget>((s) {
-                                      return InkWell(
-                                        child: Container(
-                                          padding: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: Text('$s'),
-                                        ),
-                                        onTap: () {
-                                          //搜索关键词
-                                          _focus.unfocus();
-                                          this.getData(s);
-                                        },
-                                      );
-                                    }).toList()),
+                                    children: words
+                                        .map<Widget>((s) {
+                                          return InkWell(
+                                            child: Container(
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Text('$s'),
+                                            ),
+                                            onTap: () {
+                                              //搜索关键词
+                                              _focus.unfocus();
+                                              this.getData(s);
+                                            },
+                                          );
+                                        })
+                                        .toList()
+                                        .sublist(startLen, endLen)),
                               );
                             },
                             selector: (_, store) => store.words)

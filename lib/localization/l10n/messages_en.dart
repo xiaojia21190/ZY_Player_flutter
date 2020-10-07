@@ -20,24 +20,24 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-  static _notInlinedMessages(_) => <String, Function> {
-    "forgotPasswordLink" : MessageLookupByLibrary.simpleMessage("Forgot Password"),
-    "inputPasswordHint" : MessageLookupByLibrary.simpleMessage("Please enter the password"),
-    "inputPhoneHint" : MessageLookupByLibrary.simpleMessage("Please enter phone number"),
-    "inputPhoneInvalid" : MessageLookupByLibrary.simpleMessage("Please input valid mobile phone number"),
-    "inputUsernameHint" : MessageLookupByLibrary.simpleMessage("Please input Username"),
-    "inputVerificationCodeHint" : MessageLookupByLibrary.simpleMessage("Please enter verification code"),
-    "login" : MessageLookupByLibrary.simpleMessage("Login"),
-    "noAccountRegisterLink" : MessageLookupByLibrary.simpleMessage("No account yet? Register now"),
-    "openYourAccount" : MessageLookupByLibrary.simpleMessage("Open your account"),
-    "passwordLogin" : MessageLookupByLibrary.simpleMessage("Password Login"),
-    "register" : MessageLookupByLibrary.simpleMessage("Register"),
-    "title" : MessageLookupByLibrary.simpleMessage("Flutter Deer"),
-    "verificationButton" : MessageLookupByLibrary.simpleMessage("Not really sent, just log in!"),
-    "verificationCodeLogin" : MessageLookupByLibrary.simpleMessage("Verification Code Login"),
-    "getVerificationCode" : MessageLookupByLibrary.simpleMessage("Get verification code"),
-    "confirm" : MessageLookupByLibrary.simpleMessage("Confirm"),
-    "resetLoginPassword" : MessageLookupByLibrary.simpleMessage("Reset Login Password"),
-    "registeredTips" : MessageLookupByLibrary.simpleMessage("Unregistered mobile phone number, please ")
-  };
+  static _notInlinedMessages(_) => <String, Function>{
+        "forgotPasswordLink": MessageLookupByLibrary.simpleMessage("Forgot Password"),
+        "inputPasswordHint": MessageLookupByLibrary.simpleMessage("Please enter the password"),
+        "inputPhoneHint": MessageLookupByLibrary.simpleMessage("Please enter phone number"),
+        "inputPhoneInvalid": MessageLookupByLibrary.simpleMessage("Please input valid mobile phone number"),
+        "inputUsernameHint": MessageLookupByLibrary.simpleMessage("Please input Username"),
+        "inputVerificationCodeHint": MessageLookupByLibrary.simpleMessage("Please enter verification code"),
+        "login": MessageLookupByLibrary.simpleMessage("Login"),
+        "noAccountRegisterLink": MessageLookupByLibrary.simpleMessage("No account yet? Register now"),
+        "openYourAccount": MessageLookupByLibrary.simpleMessage("Open your account"),
+        "passwordLogin": MessageLookupByLibrary.simpleMessage("Password Login"),
+        "register": MessageLookupByLibrary.simpleMessage("Register"),
+        "title": MessageLookupByLibrary.simpleMessage("ZY_Player_flutter"),
+        "verificationButton": MessageLookupByLibrary.simpleMessage("Not really sent, just log in!"),
+        "verificationCodeLogin": MessageLookupByLibrary.simpleMessage("Verification Code Login"),
+        "getVerificationCode": MessageLookupByLibrary.simpleMessage("Get verification code"),
+        "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+        "resetLoginPassword": MessageLookupByLibrary.simpleMessage("Reset Login Password"),
+        "registeredTips": MessageLookupByLibrary.simpleMessage("Unregistered mobile phone number, please ")
+      };
 }

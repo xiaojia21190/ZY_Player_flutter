@@ -7,18 +7,19 @@ import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 
 /// 封装下拉刷新与加载更多
 class DeerListView extends StatefulWidget {
-  const DeerListView({
-    Key key,
-    @required this.itemCount,
-    @required this.itemBuilder,
-    @required this.onRefresh,
-    this.loadMore,
-    this.hasMore = false,
-    this.stateType = StateType.empty,
-    this.pageSize = 10,
-    this.padding,
-    this.itemExtent,
-  }) : super(key: key);
+  const DeerListView(
+      {Key key,
+      @required this.itemCount,
+      @required this.itemBuilder,
+      @required this.onRefresh,
+      this.loadMore,
+      this.hasMore = false,
+      this.stateType = StateType.empty,
+      this.pageSize = 10,
+      this.padding,
+      this.itemExtent,
+      this.scrollDirection = Axis.vertical})
+      : super(key: key);
 
   final RefreshCallback onRefresh;
   final LoadMoreCallback loadMore;
@@ -26,6 +27,7 @@ class DeerListView extends StatefulWidget {
   final bool hasMore;
   final IndexedWidgetBuilder itemBuilder;
   final StateType stateType;
+  final Axis scrollDirection;
 
   /// 一页的数量，默认为10
   final int pageSize;
@@ -55,6 +57,7 @@ class _DeerListViewState extends State<DeerListView> {
               onRefresh: widget.onRefresh,
             )
           : ListView.builder(
+              scrollDirection: widget.scrollDirection,
               itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
               padding: widget.padding,
               itemExtent: widget.itemExtent,

@@ -1,6 +1,7 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
+import 'package:ZY_Player_flutter/hotseach/page/hot_page.dart';
 import 'package:ZY_Player_flutter/hotseach/page/hot_search_page.dart';
-import 'package:ZY_Player_flutter/manhua/page/manhua_search_page.dart';
+import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/page/player_page.dart';
@@ -131,7 +132,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [PlayerPage(), HotSearchPage(), ManhuaSearchPage(), CollectPage()];
+    _pageList = [PlayerPage(), HotPage(), ManhuaPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {

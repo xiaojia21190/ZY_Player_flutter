@@ -20,24 +20,24 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-  static _notInlinedMessages(_) => <String, Function> {
-    "forgotPasswordLink" : MessageLookupByLibrary.simpleMessage("忘记密码"),
-    "inputPasswordHint" : MessageLookupByLibrary.simpleMessage("请输入密码"),
-    "inputPhoneHint" : MessageLookupByLibrary.simpleMessage("请输入手机号"),
-    "inputPhoneInvalid" : MessageLookupByLibrary.simpleMessage("请输入有效的手机号"),
-    "inputUsernameHint" : MessageLookupByLibrary.simpleMessage("请输入账号"),
-    "inputVerificationCodeHint" : MessageLookupByLibrary.simpleMessage("请输入验证码"),
-    "login" : MessageLookupByLibrary.simpleMessage("登录"),
-    "noAccountRegisterLink" : MessageLookupByLibrary.simpleMessage("还没账号？快去注册"),
-    "openYourAccount" : MessageLookupByLibrary.simpleMessage("开启你的账号"),
-    "passwordLogin" : MessageLookupByLibrary.simpleMessage("密码登录"),
-    "register" : MessageLookupByLibrary.simpleMessage("注册"),
-    "title" : MessageLookupByLibrary.simpleMessage("Flutter Deer"),
-    "verificationButton" : MessageLookupByLibrary.simpleMessage("并没有真正发送哦，直接登录吧！"),
-    "verificationCodeLogin" : MessageLookupByLibrary.simpleMessage("验证码登录"),
-    "getVerificationCode" : MessageLookupByLibrary.simpleMessage("获取验证码"),
-    "confirm" : MessageLookupByLibrary.simpleMessage("确认"),
-    "resetLoginPassword" : MessageLookupByLibrary.simpleMessage("重置登录密码"),
-    "registeredTips" : MessageLookupByLibrary.simpleMessage("提示：未注册账号的手机号，请先")
-  };
+  static _notInlinedMessages(_) => <String, Function>{
+        "forgotPasswordLink": MessageLookupByLibrary.simpleMessage("忘记密码"),
+        "inputPasswordHint": MessageLookupByLibrary.simpleMessage("请输入密码"),
+        "inputPhoneHint": MessageLookupByLibrary.simpleMessage("请输入手机号"),
+        "inputPhoneInvalid": MessageLookupByLibrary.simpleMessage("请输入有效的手机号"),
+        "inputUsernameHint": MessageLookupByLibrary.simpleMessage("请输入账号"),
+        "inputVerificationCodeHint": MessageLookupByLibrary.simpleMessage("请输入验证码"),
+        "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "noAccountRegisterLink": MessageLookupByLibrary.simpleMessage("还没账号？快去注册"),
+        "openYourAccount": MessageLookupByLibrary.simpleMessage("开启你的账号"),
+        "passwordLogin": MessageLookupByLibrary.simpleMessage("密码登录"),
+        "register": MessageLookupByLibrary.simpleMessage("注册"),
+        "title": MessageLookupByLibrary.simpleMessage("ZY_Player_flutter"),
+        "verificationButton": MessageLookupByLibrary.simpleMessage("并没有真正发送哦，直接登录吧！"),
+        "verificationCodeLogin": MessageLookupByLibrary.simpleMessage("验证码登录"),
+        "getVerificationCode": MessageLookupByLibrary.simpleMessage("获取验证码"),
+        "confirm": MessageLookupByLibrary.simpleMessage("确认"),
+        "resetLoginPassword": MessageLookupByLibrary.simpleMessage("重置登录密码"),
+        "registeredTips": MessageLookupByLibrary.simpleMessage("提示：未注册账号的手机号，请先")
+      };
 }

@@ -1,3 +1,4 @@
+import 'package:ZY_Player_flutter/hotseach/hot_router.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:fluro/fluro.dart' as Fluro;
@@ -40,6 +41,7 @@ class Routes {
     _listRouter.add(SettingRouter());
     _listRouter.add(PlayerRouter());
     _listRouter.add(ManhuaRouter());
+    _listRouter.add(HotRouter());
 
     /// 初始化路由
     _listRouter.forEach((routerProvider) {

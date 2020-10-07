@@ -86,6 +86,7 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
       appBar: SearchBar(
           focus: _focus,
           hintText: '请输入热搜内容',
+          isBack: true,
           onPressed: (text) {
             Toast.show('搜索内容：$text');
             if (text != null) {
@@ -124,30 +125,35 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
                         ),
                         Selector<HotSearchProvider, List>(
                             builder: (_, words, __) {
+                              var startLen = words.length - 5 > 0 ? words.length - 5 : 0;
+                              var endLen = words.length;
                               return Padding(
                                 padding: EdgeInsets.only(left: 10),
                                 child: Wrap(
                                     spacing: 10,
                                     runSpacing: 5,
-                                    children: words.map<Widget>((s) {
-                                      return InkWell(
-                                        child: Container(
-                                          padding: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: Text('$s'),
-                                        ),
-                                        onTap: () {
-                                          //搜索关键词
-                                          Toast.show('搜索内容：$s');
-                                          searchText = s;
-                                          _focus.unfocus();
-                                          this._onRefresh();
-                                        },
-                                      );
-                                    }).toList()),
+                                    children: words
+                                        .map<Widget>((s) {
+                                          return InkWell(
+                                            child: Container(
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Text('$s'),
+                                            ),
+                                            onTap: () {
+                                              //搜索关键词
+                                              Toast.show('搜索内容：$s');
+                                              searchText = s;
+                                              _focus.unfocus();
+                                              this._onRefresh();
+                                            },
+                                          );
+                                        })
+                                        .toList()
+                                        .sublist(startLen, endLen)),
                               );
                             },
                             selector: (_, store) => store.words)

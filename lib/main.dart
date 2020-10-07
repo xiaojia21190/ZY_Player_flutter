@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
                     LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
                   },
                   child: MaterialApp(
-                    title: 'Flutter Deer',
+                    title: 'ZY_Player_flutter',
 //              showPerformanceOverlay: true, //显示性能标签
 //              debugShowCheckedModeBanner: false, // 去除右上角debug的标签
 //              checkerboardRasterCacheImages: true,

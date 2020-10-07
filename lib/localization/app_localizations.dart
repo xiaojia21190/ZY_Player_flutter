@@ -27,7 +27,7 @@ class AppLocalizations {
 
   String get title {
     return Intl.message(
-      'Flutter Deer',
+      'ZY_Player_flutter',
       name: 'title',
       desc: 'Title for the application',
       locale: localeName,
@@ -35,21 +35,11 @@ class AppLocalizations {
   }
 
   String get verificationCodeLogin {
-    return Intl.message(
-      'Verification Code Login',
-      name: 'verificationCodeLogin',
-      desc: 'Title for the Login page',
-      locale: localeName
-    );
+    return Intl.message('Verification Code Login', name: 'verificationCodeLogin', desc: 'Title for the Login page', locale: localeName);
   }
 
   String get passwordLogin {
-    return Intl.message(
-      'Password Login',
-      name: 'passwordLogin',
-      desc: 'Password Login',
-      locale: localeName
-    );
+    return Intl.message('Password Login', name: 'passwordLogin', desc: 'Password Login', locale: localeName);
   }
 
   String get login {
@@ -62,84 +52,51 @@ class AppLocalizations {
   }
 
   String get forgotPasswordLink {
-    return Intl.message(
-      'Forgot Password',
-      name: 'forgotPasswordLink',
-      desc: 'Forgot Password',
-      locale: localeName
-    );
+    return Intl.message('Forgot Password', name: 'forgotPasswordLink', desc: 'Forgot Password', locale: localeName);
   }
 
   String get inputPasswordHint {
-    return Intl.message(
-      'Please enter the password',
-      name: 'inputPasswordHint',
-      desc: 'Please enter the password',
-      locale: localeName
-    );
+    return Intl.message('Please enter the password', name: 'inputPasswordHint', desc: 'Please enter the password', locale: localeName);
   }
 
   String get inputUsernameHint {
-    return Intl.message(
-      'Please input Username',
-      name: 'inputUsernameHint',
-      desc: 'Please input Username',
-      locale: localeName
-    );
+    return Intl.message('Please input Username', name: 'inputUsernameHint', desc: 'Please input Username', locale: localeName);
   }
 
   String get noAccountRegisterLink {
-    return Intl.message(
-      'No account yet? Register now',
-      name: 'noAccountRegisterLink',
-      desc: 'No account yet? Register now',
-      locale: localeName
-    );
+    return Intl.message('No account yet? Register now', name: 'noAccountRegisterLink', desc: 'No account yet? Register now', locale: localeName);
   }
-  
+
   String get register {
-    return Intl.message(
-      'Register',
-      name: 'register',
-      desc: 'Register',
-      locale: localeName
-    );
+    return Intl.message('Register', name: 'register', desc: 'Register', locale: localeName);
   }
 
   String get openYourAccount {
-    return Intl.message(
-      'Open your account', // 开启你的账号 
-      name: 'openYourAccount',
-      desc: 'Open your account',
-      locale: localeName
-    );
+    return Intl.message('Open your account', // 开启你的账号
+        name: 'openYourAccount',
+        desc: 'Open your account',
+        locale: localeName);
   }
 
   String get inputPhoneHint {
-    return Intl.message(
-      'Please enter phone number', // 请输入手机号
-      name: 'inputPhoneHint',
-      desc: 'Please enter phone number',
-      locale: localeName
-    );
+    return Intl.message('Please enter phone number', // 请输入手机号
+        name: 'inputPhoneHint',
+        desc: 'Please enter phone number',
+        locale: localeName);
   }
 
   String get inputVerificationCodeHint {
-    return Intl.message(
-      'Please enter verification code', // 请输入验证码
-      name: 'inputVerificationCodeHint',
-      desc: 'Please enter verification code',
-      locale: localeName
-    );
+    return Intl.message('Please enter verification code', // 请输入验证码
+        name: 'inputVerificationCodeHint',
+        desc: 'Please enter verification code',
+        locale: localeName);
   }
 
   String get inputPhoneInvalid {
-    return Intl.message(
-      'Please input valid mobile phone number', // 请输入有效的手机号
-      name: 'inputPhoneInvalid',
-      desc: 'Please input valid mobile phone number',
-      locale: localeName
-    );
+    return Intl.message('Please input valid mobile phone number', // 请输入有效的手机号
+        name: 'inputPhoneInvalid',
+        desc: 'Please input valid mobile phone number',
+        locale: localeName);
   }
 
   String get verificationButton {
@@ -168,16 +125,12 @@ class AppLocalizations {
       locale: localeName,
     );
   }
+
   //Note: Unregistered mobile phone number, please
   String get registeredTips {
-    return Intl.message(
-        'Unregistered mobile phone number, please ',
-        name: 'registeredTips',
-        desc: 'Registered Tips',
-        locale: localeName
-    );
+    return Intl.message('Unregistered mobile phone number, please ', name: 'registeredTips', desc: 'Registered Tips', locale: localeName);
   }
-  
+
   String get confirm {
     return Intl.message(
       'Confirm',

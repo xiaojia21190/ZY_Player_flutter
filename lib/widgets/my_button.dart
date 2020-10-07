@@ -6,7 +6,7 @@ class MyButton extends StatelessWidget {
   const MyButton({
     Key key,
     this.text = '',
-    this.fontSize = Dimens.font_sp12,
+    this.fontSize = Dimens.font_sp14,
     this.height = 48,
     this.width = double.infinity,
     @required this.onPressed,
@@ -28,14 +28,14 @@ class MyButton extends StatelessWidget {
             color: isDark ? Colours.dark_button_text : Colors.white,
           )),
           backgroundColor: isDark ? MaterialStateProperty.all<Color>(Colours.dark_app_main) : MaterialStateProperty.all<Color>(Colours.app_main),
-          shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)))),
+          shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
       child: Container(
         height: this.height,
         width: this.width,
         alignment: Alignment.center,
         child: Text(
           text,
-          style: TextStyle(fontSize: this.fontSize),
+          style: TextStyle(fontSize: this.fontSize, color: isDark ? Colours.dark_button_text : Colors.white),
         ),
       ),
     );
