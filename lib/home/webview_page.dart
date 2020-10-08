@@ -73,6 +73,14 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                     WebView(
                       initialUrl: widget.url,
                       javascriptMode: JavascriptMode.unrestricted,
+                      navigationDelegate: (NavigationRequest request) {
+                        if (request.url.contains("http://")) {
+                          return NavigationDecision.navigate;
+                        } else if (request.url.contains("https://")) {
+                          return NavigationDecision.navigate;
+                        }
+                        return NavigationDecision.prevent;
+                      },
                       onPageStarted: (aa) {
                         setState(() {
                           isLoading = true;
