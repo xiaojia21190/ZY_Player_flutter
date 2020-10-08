@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ZY_Player_flutter/hotseach/hot_router.dart';
 import 'package:ZY_Player_flutter/model/hot_home.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
@@ -8,7 +10,6 @@ import 'package:ZY_Player_flutter/util/persistent_header_delegate.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -104,79 +105,27 @@ class _HotPageState extends State<HotPage> with AutomaticKeepAliveClientMixin<Ho
                       pageSize: _baseListProvider.list.length,
                       hasMore: _baseListProvider.hasMore,
                       itemBuilder: (_, i) {
-                        return Card(
-                          color: Colors.deepOrange,
-                          elevation: 10,
-                          shadowColor: Colors.blueGrey[100],
-                          margin: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                          child: Container(
-                            height: ScreenUtil.getInstance().getWidth(500),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          LoadImage(
-                                            _baseListProvider.list[i].zongheicon,
-                                            width: 25,
-                                            height: 25,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 10),
-                                            child: Text(
-                                              _baseListProvider.list[i].zonghetitle,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  shadows: [Shadow(color: Colors.redAccent, offset: Offset(6, 3), blurRadius: 10)]),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        _baseListProvider.list[i].update,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                    child: ListView.builder(
-                                        physics: ClampingScrollPhysics(),
-                                        itemCount: _baseListProvider.list[i].contentList.length,
-                                        itemBuilder: (_, index) {
-                                          return ListTile(
-                                            title: Text(
-                                              _baseListProvider.list[i].contentList[index].title,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            subtitle: Text(
-                                              _baseListProvider.list[i].contentList[index].redu,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            trailing: Icon(
-                                              Icons.keyboard_arrow_right,
-                                              color: Colors.white,
-                                            ),
-                                            onTap: () {
-                                              NavigatorUtils.goWebViewPage(context, _baseListProvider.list[i].contentList[index].title,
-                                                  _baseListProvider.list[i].contentList[index].url,
-                                                  flag: "2");
-                                            },
-                                          );
-                                        })),
-                              ],
-                            ),
+                        return ListTile(
+                          title: Text(
+                            _baseListProvider.list[i].zonghetitle,
                           ),
+                          subtitle: Text(
+                            _baseListProvider.list[i].update,
+                          ),
+                          trailing: Icon(
+                            Icons.keyboard_arrow_right,
+                          ),
+                          leading: LoadImage(
+                            _baseListProvider.list[i].zongheicon,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                          onTap: () {
+                            String jsonString = jsonEncode(_baseListProvider.list[i].contentList);
+                            NavigatorUtils.push(context,
+                                '${HotRouter.hotDetailPage}?contentList=${Uri.encodeComponent(jsonString)}&title=${Uri.encodeComponent(_baseListProvider.list[i].zonghetitle)}');
+                          },
                         );
                       });
                 })),

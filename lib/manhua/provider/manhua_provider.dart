@@ -20,7 +20,7 @@ class ManhuaProvider extends ChangeNotifier {
   List<String> _kanguozhangjie = [];
   List<String> get kanguozhangjie => _kanguozhangjie;
 
-  StateType _state = StateType.empty;
+  StateType _state = StateType.loading;
   StateType get state => _state;
 
   setZhanghjie() {

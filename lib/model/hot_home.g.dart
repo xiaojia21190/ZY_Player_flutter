@@ -31,7 +31,7 @@ ContentList _$ContentListFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$ContentListToJson(ContentList instance) => <String, dynamic>{
-      'title': instance.url,
+      'title': instance.title,
       'url': instance.url,
       'redu': instance.redu,
     };

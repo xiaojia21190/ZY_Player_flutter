@@ -47,19 +47,20 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     _manhuaProvider = Store.value<ManhuaProvider>(context);
     _collectProvider = Store.value<CollectProvider>(context);
     _collectProvider.setListDetailResource("collcetManhua");
-    refresh();
+    initData();
   }
 
   @override
   void dispose() {
+    _manhuaProvider.setActionName("");
+    _manhuaProvider.setManhuaDetail(null);
+    _manhuaProvider.setStateType(StateType.loading);
     super.dispose();
   }
 
   Future initData() async {
-    _manhuaProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url}, onSuccess: (data) {
       _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data));
-      _collectProvider.changeNoti();
       _manhuaProvider.setZhanghjie();
       if (getFilterData(_manhuaProvider.catLog)) {
         _manhuaProvider.setActionName("点击取消");
@@ -72,6 +73,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   }
 
   Future refresh() async {
+    _manhuaProvider.setStateType(StateType.loading);
     await initData();
   }
 
