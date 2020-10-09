@@ -12,6 +12,7 @@ import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:ZY_Player_flutter/widgets/my_card.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
@@ -47,6 +48,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     _manhuaProvider = Store.value<ManhuaProvider>(context);
     _collectProvider = Store.value<CollectProvider>(context);
     _collectProvider.setListDetailResource("collcetManhua");
+    _manhuaProvider.setShunxu(widget.url);
     initData();
   }
 
@@ -67,6 +69,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
       } else {
         _manhuaProvider.setActionName("点击收藏");
       }
+      _manhuaProvider.changeShunxu(widget.url, _manhuaProvider.currentOrder);
     }, onError: (_, __) {
       _manhuaProvider.setStateType(StateType.network);
     });
@@ -159,7 +162,19 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[Text(provider.catLog.content)],
+                          children: <Widget>[
+                            Text(provider.catLog.content),
+                            Row(
+                              children: [
+                                Text(provider.shunxuText),
+                                IconButton(
+                                    icon: Icon(provider.currentOrder ? Icons.vertical_align_bottom_rounded : Icons.vertical_align_top_rounded),
+                                    onPressed: () {
+                                      provider.changeShunxu(widget.url, !provider.currentOrder);
+                                    })
+                              ],
+                            )
+                          ],
                         ),
                       ),
                     ),
@@ -169,9 +184,9 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                     sliver: SliverGrid(
                       //Grid
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4, //Grid按两列显示
+                        crossAxisCount: 5, //Grid按两列显示
                         mainAxisSpacing: 1,
-                        crossAxisSpacing: 1,
+                        crossAxisSpacing: 1.5,
                       ),
                       delegate: SliverChildBuilderDelegate(
                         (BuildContext context, int index) {

@@ -8,6 +8,7 @@ import 'package:ZY_Player_flutter/player/page/player_page.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
@@ -70,7 +71,10 @@ class _HomeState extends State<Home> {
           currentUpdateUrl = data["updateUrl"];
           currentVersion = data["appVersion"];
           currentUpdateText = data["updateText"];
-          openUpdateDiolog();
+          String ignoreBb = SpUtil.getString("ignoreBb");
+          if (currentVersion != ignoreBb) {
+            openUpdateDiolog();
+          }
         }
       },
       onError: (code, msg) {},
@@ -93,9 +97,12 @@ class _HomeState extends State<Home> {
         radius: 8,
         themeColor: Color(0xFFFFAC5D),
         progressBackgroundColor: Color(0x5AFFAC5D),
-        isForce: true,
-        updateButtonText: '开始升级', onIgnore: () {
+        isForce: false,
+        enableIgnore: true,
+        updateButtonText: '开始升级',
+        ignoreButtonText: '忽略此版本', onIgnore: () {
       Log.d("忽略");
+      SpUtil.putString("ignoreBb", currentVersion);
       dialog.dismiss();
     }, onUpdate: tryOtaUpdate);
   }
@@ -106,7 +113,7 @@ class _HomeState extends State<Home> {
       OtaUpdate()
           .execute(
         currentUpdateUrl,
-        destinationFilename: 'app-release.apk',
+        destinationFilename: 'ZY_Player_flutter',
       )
           .listen(
         (OtaEvent event) {
@@ -114,10 +121,19 @@ class _HomeState extends State<Home> {
             dialog.update(double.parse(event.value) / 100);
           } else if (event.status == OtaStatus.INSTALLING) {
             Toast.show("升级成功");
+          } else if (event.status == OtaStatus.PERMISSION_NOT_GRANTED_ERROR) {
+            tryOtaUpdate();
+          } else {
+            Toast.show("升级失败，请从新下载");
+            dialog.dismiss();
+            openUpdateDiolog();
           }
         },
       );
     } catch (e) {
+      Toast.show("升级失败，请从新下载");
+      dialog.dismiss();
+      openUpdateDiolog();
       print('Failed to make OTA update. Details: $e');
     }
   }

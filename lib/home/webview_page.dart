@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ZY_Player_flutter/util/device_utils.dart';
+import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -74,14 +75,20 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                       initialUrl: widget.url,
                       javascriptMode: JavascriptMode.unrestricted,
                       navigationDelegate: (NavigationRequest request) {
-                        if (request.url.contains("http://")) {
+                        if (request.url.contains("https://m.weibo.cn/login")) {
+                          // 微博禁止跳转
+                          return NavigationDecision.prevent;
+                        } else if (request.url.contains("open=1&utm_medium=QA&utm_content=expand_answer1")) {
+                          // 知乎禁止跳转
+                          return NavigationDecision.prevent;
+                        } else if (request.url.contains("http://")) {
                           return NavigationDecision.navigate;
                         } else if (request.url.contains("https://")) {
                           return NavigationDecision.navigate;
                         }
                         return NavigationDecision.prevent;
                       },
-                      onPageStarted: (aa) {
+                      onPageStarted: (String url) {
                         setState(() {
                           isLoading = true;
                         });
@@ -90,8 +97,7 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                         setState(() {
                           isLoading = false;
                         });
-                        _webViewController.evaluateJavascript(
-                            'document.querySelector("#dibecjqswyi").style = "display:none";document.querySelector("#dompcejubvkui").style = "display:none";await document.body.requestFullscreen()');
+                        // _webViewController.evaluateJavascript("document.querySelector('.ModalWrap').style = 'display:none'");
                       },
                       onWebViewCreated: (WebViewController webViewController) {
                         _controller.complete(webViewController);
