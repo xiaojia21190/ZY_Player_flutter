@@ -1,6 +1,5 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/hotseach/page/hot_page.dart';
-import 'package:ZY_Player_flutter/hotseach/page/hot_search_page.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';

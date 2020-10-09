@@ -48,7 +48,6 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     _manhuaProvider = Store.value<ManhuaProvider>(context);
     _collectProvider = Store.value<CollectProvider>(context);
     _collectProvider.setListDetailResource("collcetManhua");
-    _manhuaProvider.setShunxu(widget.url);
     initData();
   }
 
@@ -57,6 +56,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     _manhuaProvider.setActionName("");
     _manhuaProvider.setManhuaDetail(null);
     _manhuaProvider.setStateType(StateType.loading);
+    _manhuaProvider.changeShunxu(false);
     super.dispose();
   }
 
@@ -69,7 +69,6 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
       } else {
         _manhuaProvider.setActionName("点击收藏");
       }
-      _manhuaProvider.changeShunxu(widget.url, _manhuaProvider.currentOrder);
     }, onError: (_, __) {
       _manhuaProvider.setStateType(StateType.network);
     });
@@ -170,7 +169,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                 IconButton(
                                     icon: Icon(provider.currentOrder ? Icons.vertical_align_bottom_rounded : Icons.vertical_align_top_rounded),
                                     onPressed: () {
-                                      provider.changeShunxu(widget.url, !provider.currentOrder);
+                                      provider.changeShunxu(!provider.currentOrder);
                                     })
                               ],
                             )
@@ -184,8 +183,8 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                     sliver: SliverGrid(
                       //Grid
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5, //Grid按两列显示
-                        mainAxisSpacing: 1,
+                        crossAxisCount: 4, //Grid按两列显示
+                        mainAxisSpacing: 2,
                         crossAxisSpacing: 1.5,
                       ),
                       delegate: SliverChildBuilderDelegate(
@@ -203,6 +202,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                   },
                                   child: Text(
                                     '${provider.catLog.catlogs[index].text}',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: isDark ? Colours.dark_text : Colors.white,
                                     ),

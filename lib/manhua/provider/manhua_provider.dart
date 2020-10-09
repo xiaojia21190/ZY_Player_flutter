@@ -33,20 +33,15 @@ class ManhuaProvider extends ChangeNotifier {
     _kanguozhangjie = SpUtil.getStringList("KGzhangjie", defValue: []);
   }
 
-  setShunxu(String url) {
-    _currentOrder = SpUtil.getBool("$url-shunxu", defValue: false);
-    _shunxuText = _currentOrder ? "漫画章节顺序-正序" : "漫画章节顺序-倒序";
-  }
-
-  changeShunxu(String url, bool shuxu) {
+  changeShunxu(bool shuxu) {
     _currentOrder = shuxu;
     if (shuxu) {
       _shunxuText = "漫画章节顺序-正序";
     } else {
       _shunxuText = "漫画章节顺序-倒序";
     }
-    SpUtil.putBool("$url-shunxu", shuxu);
     _catLog.catlogs = _catLog.catlogs.reversed.toList();
+
     notifyListeners();
   }
 
