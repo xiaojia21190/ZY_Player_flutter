@@ -5,7 +5,7 @@ part 'detail_reource.g.dart';
 @JsonSerializable()
 class DetailReource extends Object {
   @JsonKey(name: 'videoList')
-  List<String> videoList;
+  List<VideoList> videoList;
 
   @JsonKey(name: 'content')
   String content;
@@ -54,4 +54,22 @@ class DetailReource extends Object {
   factory DetailReource.fromJson(Map<String, dynamic> srcJson) => _$DetailReourceFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$DetailReourceToJson(this);
+}
+
+@JsonSerializable()
+class VideoList extends Object {
+  @JsonKey(name: 'url')
+  String url;
+
+  @JsonKey(name: 'title')
+  String title;
+
+  VideoList(
+    this.url,
+    this.title,
+  );
+
+  factory VideoList.fromJson(Map<String, dynamic> srcJson) => _$VideoListFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$VideoListToJson(this);
 }

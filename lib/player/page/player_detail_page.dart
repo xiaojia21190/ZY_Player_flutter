@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:collection';
+import 'dart:math';
+import 'dart:ui';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
+import 'package:ZY_Player_flutter/provider/theme_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
@@ -42,6 +46,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   DetailProvider _detailProvider = DetailProvider();
   CollectProvider _collectProvider;
+  ThemeProvider _themeProvider;
+  StreamSubscription _currentPosSubs;
 
   String actionName = "";
   bool _isFullscreen = false;
@@ -52,12 +58,21 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   @override
   void initState() {
-    super.initState();
     WidgetsBinding.instance.addObserver(this);
     _collectProvider = Store.value<CollectProvider>(context);
+    _themeProvider = Store.value<ThemeProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
     _player.addListener(_fijkValueListener);
+
     initData();
+    huanchong();
+    super.initState();
+  }
+
+  void huanchong() {
+    _currentPosSubs = _player.onBufferStateUpdate.listen((v) {
+      _detailProvider.setBufferState(v);
+    });
   }
 
   Future _fijkValueListener() async {
@@ -86,6 +101,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     super.dispose();
     _player.removeListener(_fijkValueListener);
     _player.release();
+    _currentPosSubs?.cancel();
   }
 
   Future getPlayVideoUrl(String videoUrl) async {
@@ -168,15 +184,24 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
             return provider.detailReource != null
                 ? Column(
                     children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: ScreenUtil.getInstance().getWidth(200),
-                        child: FijkView(
-                          player: _player,
-                          color: Colors.black,
-                          panelBuilder: fijkPanel2Builder(snapShot: true),
-                          fsFit: FijkFit.fill,
-                        ),
+                      Stack(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: ScreenUtil.getInstance().getWidth(230),
+                            child: FijkView(
+                              player: _player,
+                              color: Colors.black,
+                              panelBuilder: fijkPanel2Builder(
+                                  snapShot: true,
+                                  fill: true,
+                                  onBack: () {
+                                    _player.exitFullScreen();
+                                  }),
+                              fsFit: FijkFit.fill,
+                            ),
+                          ),
+                        ],
                       ),
                       Expanded(
                           child: CustomScrollView(
@@ -225,12 +250,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                                 onTap: () async {
                                                   if (currentVideoIndex == index) return;
                                                   currentVideoIndex = index;
+                                                  _themeProvider.setloadingState(true);
                                                   Toast.show("正在解析地址");
-                                                  await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex]);
+                                                  await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex].url);
                                                   _detailProvider.saveJuji("${widget.url}_$index");
                                                   _player.reset().then((value) {
                                                     _player.setDataSource(currentUrl, autoPlay: true);
                                                     Toast.show("开始播放第${currentVideoIndex + 1}集");
+                                                    _themeProvider.setloadingState(false);
                                                     // 自动全屏
                                                     _player.enterFullScreen();
                                                   });
@@ -245,7 +272,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                                         borderRadius: BorderRadius.all(Radius.circular(5))),
                                                     alignment: Alignment.center,
                                                     child: Text(
-                                                      '第${index + 1}集',
+                                                      '${_detailProvider.detailReource.videoList[index].title}',
                                                       style: TextStyle(
                                                         color: isDark ? Colours.dark_text : Colors.white,
                                                       ),

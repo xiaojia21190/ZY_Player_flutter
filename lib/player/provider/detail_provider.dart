@@ -7,9 +7,6 @@ class DetailProvider extends ChangeNotifier {
   DetailReource _detailReource;
   DetailReource get detailReource => _detailReource;
 
-  String _playerUrl = "about:blank";
-  String get playerUrl => _playerUrl;
-
   List<String> _kanguojuji = [];
   List<String> get kanguojuji => _kanguojuji;
 
@@ -21,6 +18,15 @@ class DetailProvider extends ChangeNotifier {
 
   String _actionName = "";
   String get actionName => _actionName;
+
+  bool _isBuffering = false;
+
+  bool get isBuffering => _isBuffering;
+
+  void setBufferState(bool state) {
+    _isBuffering = state;
+    notifyListeners();
+  }
 
   void setActionName(String actionName) {
     _actionName = actionName;
@@ -51,7 +57,6 @@ class DetailProvider extends ChangeNotifier {
 
   setDetailResource(DetailReource detailReourceData) {
     _detailReource = detailReourceData;
-    _playerUrl = detailReourceData.videoList[0];
     notifyListeners();
   }
 }

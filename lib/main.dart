@@ -64,8 +64,8 @@ class MyApp extends StatelessWidget {
     }
 
     setInitDio(
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://140.143.207.151:7001/',
-      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
+      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://140.143.207.151:7001/',
+      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
       interceptors: interceptors,
     );
   }
@@ -81,41 +81,60 @@ class MyApp extends StatelessWidget {
                   shortcuts: <LogicalKeySet, Intent>{
                     LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
                   },
-                  child: MaterialApp(
-                    title: 'ZY_Player_flutter',
-//              showPerformanceOverlay: true, //显示性能标签
-//              debugShowCheckedModeBanner: false, // 去除右上角debug的标签
-//              checkerboardRasterCacheImages: true,
-//              showSemanticsDebugger: true, // 显示语义视图
-//              checkerboardOffscreenLayers: true, // 检查离屏渲染
-                    theme: theme ?? provider.getTheme(),
-                    darkTheme: provider.getTheme(isDarkMode: true),
-                    themeMode: provider.getThemeMode(),
-                    // home: home ?? SplashPage(),
-                    home: Home(),
-                    onGenerateRoute: Application.router.generator,
-                    localizationsDelegates: const [
-                      AppLocalizationsDelegate(),
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
-                    builder: (context, child) {
-                      /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
-                      return MediaQuery(
-                        data: MediaQuery.of(context).copyWith(
-                            textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
-                        child: child,
-                      );
-                    },
+                  child: Stack(
+                    children: [
+                      MaterialApp(
+                        title: 'ZY_Player_flutter',
+                        theme: theme ?? provider.getTheme(),
+                        darkTheme: provider.getTheme(isDarkMode: true),
+                        themeMode: provider.getThemeMode(),
+                        // home: home ?? SplashPage(),
+                        home: Home(),
+                        onGenerateRoute: Application.router.generator,
+                        localizationsDelegates: const [
+                          AppLocalizationsDelegate(),
+                          GlobalMaterialLocalizations.delegate,
+                          GlobalWidgetsLocalizations.delegate,
+                          GlobalCupertinoLocalizations.delegate,
+                        ],
+                        supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
+                        builder: (context, child) {
+                          /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
+                          return MediaQuery(
+                            data: MediaQuery.of(context).copyWith(
+                                textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                            child: child,
+                          );
+                        },
 
-                    /// 因为使用了fluro，这里设置主要针对Web
-                    onUnknownRoute: (_) {
-                      return MaterialPageRoute(
-                        builder: (BuildContext context) => PageNotFound(),
-                      );
-                    },
+                        /// 因为使用了fluro，这里设置主要针对Web
+                        onUnknownRoute: (_) {
+                          return MaterialPageRoute(
+                            builder: (BuildContext context) => PageNotFound(),
+                          );
+                        },
+                      ),
+                      provider.loadingState
+                          ? Container(
+                              color: Colors.black45,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Center(
+                                    child: CircularProgressIndicator(
+                                      backgroundColor: Colors.black26,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Text(
+                                      "正在加载中.....",
+                                    ),
+                                  )
+                                ],
+                              ))
+                          : Container(),
+                    ],
                   ));
             },
           ),
@@ -125,6 +144,6 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.black54,
         textPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         radius: 20.0,
-        position: ToastPosition.center);
+        position: ToastPosition.bottom);
   }
 }

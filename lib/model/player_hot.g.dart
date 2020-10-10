@@ -9,7 +9,10 @@ part of 'player_hot.dart';
 PlayerHot _$PlayerHotFromJson(Map<String, dynamic> json) {
   return PlayerHot(
     json['type'] as String,
-    (json['playlist'] as List)?.map((e) => e == null ? null : Playlist.fromJson(e as Map<String, dynamic>))?.toList(),
+    (json['playlist'] as List)
+        ?.map((e) =>
+            e == null ? null : Playlist.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 

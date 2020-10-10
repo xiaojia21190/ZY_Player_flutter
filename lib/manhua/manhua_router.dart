@@ -12,7 +12,8 @@ class ManhuaRouter implements IRouterProvider {
   @override
   void initRouter(Router router) {
     router.define(searchPage, handler: Handler(handlerFunc: (_, __) => ManhuaSearchPage()));
-    router.define(imagesPage, handler: Handler(handlerFunc: (_, params) => ManhuaImagePage(index: params['index']?.first)));
+    router.define(imagesPage,
+        handler: Handler(handlerFunc: (_, params) => ManhuaImagePage(url: params['url']?.first, title: params['title']?.first)));
     router.define(detailPage,
         handler: Handler(handlerFunc: (_, params) => ManhuaDetailPage(url: params['url']?.first, title: params['title']?.first)));
   }

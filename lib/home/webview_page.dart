@@ -79,7 +79,10 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                           // 微博禁止跳转
                           return NavigationDecision.prevent;
                         } else if (request.url.contains("open=1&utm_medium=QA&utm_content=expand_answer1")) {
-                          // 知乎禁止跳转
+                          // 知乎禁止跳转 oia/answers
+                          return NavigationDecision.prevent;
+                        } else if (request.url.contains("oia/answers")) {
+                          // 知乎禁止跳转 oia/answers
                           return NavigationDecision.prevent;
                         } else if (request.url.contains("http://")) {
                           return NavigationDecision.navigate;

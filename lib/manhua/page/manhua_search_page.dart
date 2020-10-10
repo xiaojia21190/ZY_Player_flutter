@@ -4,6 +4,7 @@ import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
 import 'package:ZY_Player_flutter/model/manhua_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
+import 'package:ZY_Player_flutter/provider/theme_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
@@ -26,6 +27,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   bool get wantKeepAlive => true;
   ManhuaProvider _searchProvider;
   final FocusNode _focus = FocusNode();
+  ThemeProvider _themeProvider;
 
   String currentSearchWords = "";
 
@@ -33,6 +35,8 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   void initState() {
     super.initState();
     _searchProvider = Store.value<ManhuaProvider>(context);
+    _themeProvider = Store.value<ThemeProvider>(context);
+
     _searchProvider.setWords();
   }
 
@@ -44,7 +48,9 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
   Future getSearchWords(String keywords) async {
     currentSearchWords = keywords;
     _searchProvider.list.clear();
-    _searchProvider.setStateType(StateType.loading);
+    // _searchProvider.setStateType(StateType.loading);
+    _themeProvider.setloadingState(true);
+
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(resultList.length, (index) => ManhuaDetail.fromJson(resultList[index]));
       if (data.length == 0) {
@@ -53,8 +59,10 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
         _searchProvider.setStateType(StateType.empty);
       }
       _searchProvider.setList(data);
+      _themeProvider.setloadingState(false);
     }, onError: (_, __) {
       _searchProvider.setStateType(StateType.network);
+      _themeProvider.setloadingState(false);
     });
   }
 

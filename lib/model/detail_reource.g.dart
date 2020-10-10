@@ -8,7 +8,10 @@ part of 'detail_reource.dart';
 
 DetailReource _$DetailReourceFromJson(Map<String, dynamic> json) {
   return DetailReource(
-    (json['videoList'] as List)?.map((e) => e as String)?.toList(),
+    (json['videoList'] as List)
+        ?.map((e) =>
+            e == null ? null : VideoList.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
     json['content'] as String,
     json['cover'] as String,
     json['title'] as String,
@@ -35,4 +38,16 @@ Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) =>
       'diqu': instance.diqu,
       'yuyan': instance.yuyan,
       'url': instance.url,
+    };
+
+VideoList _$VideoListFromJson(Map<String, dynamic> json) {
+  return VideoList(
+    json['url'] as String,
+    json['title'] as String,
+  );
+}
+
+Map<String, dynamic> _$VideoListToJson(VideoList instance) => <String, dynamic>{
+      'url': instance.url,
+      'title': instance.title,
     };

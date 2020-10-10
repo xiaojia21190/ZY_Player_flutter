@@ -1,4 +1,3 @@
-import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -13,27 +12,23 @@ import 'package:provider/provider.dart';
 class ManhuaImagePage extends StatefulWidget {
   const ManhuaImagePage({
     Key key,
-    @required this.index,
+    @required this.url,
+    @required this.title,
   }) : super(key: key);
 
-  final String index;
+  final String url;
+  final String title;
 
   @override
   _ManhuaImagePageState createState() => _ManhuaImagePageState();
 }
 
 class _ManhuaImagePageState extends State<ManhuaImagePage> {
-  ManhuaProvider _manhuaProvider;
-  Catlogs catlogs;
   BaseListProvider<String> _baseListProvider = BaseListProvider();
-  int currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    _manhuaProvider = context.read<ManhuaProvider>();
-    currentPage = int.parse(widget.index);
-    catlogs = _manhuaProvider.catLog.catlogs[currentPage];
     _onRefresh();
   }
 
@@ -42,7 +37,7 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
     await DioUtils.instance.requestNetwork(
       Method.get,
       HttpApi.imageManhua,
-      queryParameters: {"url": catlogs.url},
+      queryParameters: {"url": widget.url},
       onSuccess: (data) {
         _baseListProvider.addAll(List.generate(data.length, (index) => data[index]));
         _baseListProvider.setHasMore(true);
@@ -58,28 +53,21 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
     this.getData();
   }
 
-  Future _loadMore() async {
-    currentPage++;
-    catlogs = _manhuaProvider.catLog.catlogs[currentPage];
-    this.getData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<BaseListProvider<String>>(
         create: (_) => _baseListProvider,
         child: Scaffold(
             appBar: MyAppBar(
-              title: catlogs.text,
+              title: widget.title,
             ),
             body: Consumer<BaseListProvider<String>>(builder: (_, _baseListProvider, __) {
               return DeerListView(
                   itemCount: _baseListProvider.list.length,
                   stateType: _baseListProvider.stateType,
                   onRefresh: _onRefresh,
-                  loadMore: _loadMore,
                   pageSize: _baseListProvider.list.length,
-                  hasMore: _baseListProvider.hasMore,
+                  hasMore: false,
                   itemBuilder: (_, index) {
                     return LoadImage(_baseListProvider.list[index]);
                   });

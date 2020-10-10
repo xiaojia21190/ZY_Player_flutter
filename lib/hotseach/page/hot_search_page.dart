@@ -3,6 +3,7 @@ import 'package:ZY_Player_flutter/model/hot_search.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
+import 'package:ZY_Player_flutter/provider/theme_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
@@ -28,6 +29,7 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
   HotSearchProvider _hotSearchProvider;
   BaseListProvider<HotSearch> _baseListProvider = BaseListProvider();
   final FocusNode _focus = FocusNode();
+  ThemeProvider _themeProvider;
 
   int currentPage = 1;
   String searchText = '抖音';
@@ -36,6 +38,8 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
   void initState() {
     super.initState();
     _hotSearchProvider = Store.value<HotSearchProvider>(context);
+    _themeProvider = Store.value<ThemeProvider>(context);
+
     _hotSearchProvider.setWords();
   }
 
@@ -44,7 +48,8 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
       Toast.show("正在搜索内容，请稍后");
       return;
     }
-    _baseListProvider.setStateType(StateType.loading);
+    _themeProvider.setloadingState(true);
+    // _baseListProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(
       Method.get,
       HttpApi.hotSearch,
@@ -58,9 +63,11 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
           _baseListProvider.setStateType(StateType.empty);
         }
         _baseListProvider.setHasMore(false);
+        _themeProvider.setloadingState(false);
       },
       onError: (code, msg) {
         _baseListProvider.setStateType(StateType.network);
+        _themeProvider.setloadingState(false);
       },
     );
   }
