@@ -1,12 +1,6 @@
-import 'package:ZY_Player_flutter/home/home_page.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
-import 'package:dio/dio.dart';
-import 'package:fluro/fluro.dart' as Fluro;
-import 'package:flustars/flustars.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
+import 'package:ZY_Player_flutter/home/home_page.dart';
+import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/intercept.dart';
 import 'package:ZY_Player_flutter/provider/theme_provider.dart';
@@ -15,10 +9,16 @@ import 'package:ZY_Player_flutter/routes/application.dart';
 import 'package:ZY_Player_flutter/routes/routers.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:dio/dio.dart';
+import 'package:fluro/fluro.dart' as Fluro;
+import 'package:flustars/flustars.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
-import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
     }
 
     setInitDio(
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://140.143.207.151:7001/',
+      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
       // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
       interceptors: interceptors,
     );

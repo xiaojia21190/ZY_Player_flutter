@@ -1,4 +1,3 @@
-import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
@@ -40,7 +39,11 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
       queryParameters: {"url": widget.url},
       onSuccess: (data) {
         _baseListProvider.addAll(List.generate(data.length, (index) => data[index]));
-        _baseListProvider.setHasMore(true);
+        if (_baseListProvider.list.length == 0) {
+          _baseListProvider.setStateType(StateType.order);
+        } else {
+          _baseListProvider.setStateType(StateType.empty);
+        }
       },
       onError: (code, msg) {
         _baseListProvider.setStateType(StateType.network);
