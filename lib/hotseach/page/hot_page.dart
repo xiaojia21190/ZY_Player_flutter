@@ -11,6 +11,7 @@ import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
 class HotPage extends StatefulWidget {
@@ -105,27 +106,36 @@ class _HotPageState extends State<HotPage> with AutomaticKeepAliveClientMixin<Ho
                       pageSize: _baseListProvider.list.length,
                       hasMore: _baseListProvider.hasMore,
                       itemBuilder: (_, i) {
-                        return ListTile(
-                          title: Text(
-                            _baseListProvider.list[i].zonghetitle,
+                        return AnimationConfiguration.staggeredList(
+                          position: i,
+                          duration: const Duration(milliseconds: 375),
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: ListTile(
+                                title: Text(
+                                  _baseListProvider.list[i].zonghetitle,
+                                ),
+                                subtitle: Text(
+                                  _baseListProvider.list[i].update,
+                                ),
+                                trailing: Icon(
+                                  Icons.keyboard_arrow_right,
+                                ),
+                                leading: LoadImage(
+                                  _baseListProvider.list[i].zongheicon,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                ),
+                                onTap: () {
+                                  String jsonString = jsonEncode(_baseListProvider.list[i].contentList);
+                                  NavigatorUtils.push(context,
+                                      '${HotRouter.hotDetailPage}?contentList=${Uri.encodeComponent(jsonString)}&title=${Uri.encodeComponent(_baseListProvider.list[i].zonghetitle)}');
+                                },
+                              ),
+                            ),
                           ),
-                          subtitle: Text(
-                            _baseListProvider.list[i].update,
-                          ),
-                          trailing: Icon(
-                            Icons.keyboard_arrow_right,
-                          ),
-                          leading: LoadImage(
-                            _baseListProvider.list[i].zongheicon,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                          ),
-                          onTap: () {
-                            String jsonString = jsonEncode(_baseListProvider.list[i].contentList);
-                            NavigatorUtils.push(context,
-                                '${HotRouter.hotDetailPage}?contentList=${Uri.encodeComponent(jsonString)}&title=${Uri.encodeComponent(_baseListProvider.list[i].zonghetitle)}');
-                          },
                         );
                       });
                 })),

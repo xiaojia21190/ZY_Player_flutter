@@ -64,8 +64,8 @@ class MyApp extends StatelessWidget {
     }
 
     setInitDio(
-      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://140.143.207.151:7001/',
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
+      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://140.143.207.151:7001/',
+      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
       interceptors: interceptors,
     );
   }

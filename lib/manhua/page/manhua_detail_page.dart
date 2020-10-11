@@ -18,6 +18,7 @@ import 'package:ZY_Player_flutter/widgets/my_card.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
 import '../manhua_router.dart';
@@ -179,36 +180,51 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                       ),
                       SliverPadding(
                         padding: const EdgeInsets.all(5),
-                        sliver: SliverGrid(
-                          //Grid
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4, //Grid按两列显示
-                            mainAxisSpacing: 2,
-                            crossAxisSpacing: 1.5,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              //创建子widget
-                              return Container(
-                                  decoration: BoxDecoration(
-                                      color: _manhuaProvider.kanguozhangjie.contains("${widget.url}_$index") ? Colors.redAccent : Colors.blueAccent,
-                                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                                  alignment: Alignment.center,
-                                  child: InkWell(
-                                      onTap: () {
-                                        _manhuaProvider.saveZhangjie("${widget.url}_$index");
-                                        NavigatorUtils.push(context,
-                                            '${ManhuaRouter.imagesPage}?title=${Uri.encodeComponent(provider.catLog.catlogs[index].text)}&url=${Uri.encodeComponent(provider.catLog.catlogs[index].url)}');
-                                      },
-                                      child: Text(
-                                        '${provider.catLog.catlogs[index].text}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: isDark ? Colours.dark_text : Colors.white,
-                                        ),
-                                      )));
-                            },
-                            childCount: provider.catLog.catlogs.length,
+                        sliver: AnimationLimiter(
+                          child: SliverGrid(
+                            //Grid
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4, //Grid按两列显示
+                              mainAxisSpacing: 2,
+                              crossAxisSpacing: 1.5,
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index) {
+                                return AnimationConfiguration.staggeredGrid(
+                                  position: index,
+                                  duration: const Duration(milliseconds: 375),
+                                  columnCount: provider.catLog.catlogs.length,
+                                  child: ScaleAnimation(
+                                    child: FadeInAnimation(
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              color: _manhuaProvider.kanguozhangjie.contains(
+                                                      "${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}")
+                                                  ? Colors.redAccent
+                                                  : Colors.blueAccent,
+                                              borderRadius: BorderRadius.all(Radius.circular(5))),
+                                          alignment: Alignment.center,
+                                          child: InkWell(
+                                              onTap: () {
+                                                _manhuaProvider.saveZhangjie(
+                                                    "${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}");
+                                                NavigatorUtils.push(context,
+                                                    '${ManhuaRouter.imagesPage}?title=${Uri.encodeComponent(provider.catLog.catlogs[index].text)}&url=${Uri.encodeComponent(provider.catLog.catlogs[index].url)}');
+                                              },
+                                              child: Text(
+                                                '${provider.catLog.catlogs[index].text}',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: isDark ? Colours.dark_text : Colors.white,
+                                                ),
+                                              ))),
+                                    ),
+                                  ),
+                                );
+                                //创建子widget
+                              },
+                              childCount: provider.catLog.catlogs.length,
+                            ),
                           ),
                         ),
                       ),

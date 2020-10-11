@@ -11,6 +11,7 @@ import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
 class PlayerPage extends StatefulWidget {
@@ -96,77 +97,86 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
                       pageSize: _baseListProvider.list.length,
                       hasMore: _baseListProvider.hasMore,
                       itemBuilder: (_, index) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              child: Text(
-                                _baseListProvider.list[index].type,
-                                style: TextStyle(
-                                  shadows: [Shadow(color: Colors.black, offset: Offset(6, 3), blurRadius: 10)],
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.redAccent,
-                                  decorationStyle: TextDecorationStyle.solid,
-                                ),
-                              ),
-                              padding: EdgeInsets.all(10),
-                            ),
-                            Container(
-                              height: ScreenUtil.getInstance().getWidth(380),
-                              child: GridView.builder(
-                                //将所有子控件在父控件中填满
-                                shrinkWrap: true,
-                                //解决ListView嵌套GridView滑动冲突问题
-                                physics: NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3, //每行几列
-                                    childAspectRatio: 0.6),
-                                itemCount: _baseListProvider.list[index].playlist.length,
-                                itemBuilder: (context, i) {
-                                  //要返回的item样式
-                                  return InkWell(
-                                    child: Column(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            LoadImage(
-                                              _baseListProvider.list[index].playlist[i].cover,
-                                              width: 110,
-                                              height: 150,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            Positioned(
-                                                bottom: 0,
-                                                right: 0,
-                                                child: Text(
-                                                  _baseListProvider.list[index].playlist[i].gengxin,
-                                                  style: TextStyle(fontSize: 14, color: Colors.white),
-                                                ))
-                                          ],
-                                        ),
-                                        Container(
-                                          height: 50,
-                                          child: Text(
-                                            _baseListProvider.list[index].playlist[i].title,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        )
-                                      ],
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 375),
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Text(
+                                      _baseListProvider.list[index].type,
+                                      style: TextStyle(
+                                        shadows: [Shadow(color: Colors.black, offset: Offset(6, 3), blurRadius: 10)],
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: Colors.redAccent,
+                                        decorationStyle: TextDecorationStyle.solid,
+                                      ),
                                     ),
-                                    onTap: () {
-                                      if (_baseListProvider.list[index].playlist[i].gengxin == "预告") {
-                                        Toast.show("预告暂不支持播放!");
-                                      } else {
-                                        NavigatorUtils.push(context,
-                                            '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].title)}');
-                                      }
-                                    },
-                                  );
-                                },
+                                    padding: EdgeInsets.all(10),
+                                  ),
+                                  Container(
+                                    height: ScreenUtil.getInstance().getWidth(380),
+                                    child: GridView.builder(
+                                      //将所有子控件在父控件中填满
+                                      shrinkWrap: true,
+                                      //解决ListView嵌套GridView滑动冲突问题
+                                      physics: NeverScrollableScrollPhysics(),
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3, //每行几列
+                                          childAspectRatio: 0.6),
+                                      itemCount: _baseListProvider.list[index].playlist.length,
+                                      itemBuilder: (context, i) {
+                                        //要返回的item样式
+                                        return InkWell(
+                                          child: Column(
+                                            children: [
+                                              Stack(
+                                                children: [
+                                                  LoadImage(
+                                                    _baseListProvider.list[index].playlist[i].cover,
+                                                    width: 110,
+                                                    height: 150,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                  Positioned(
+                                                      bottom: 0,
+                                                      right: 0,
+                                                      child: Text(
+                                                        _baseListProvider.list[index].playlist[i].gengxin,
+                                                        style: TextStyle(fontSize: 14, color: Colors.white),
+                                                      ))
+                                                ],
+                                              ),
+                                              Container(
+                                                height: 50,
+                                                child: Text(
+                                                  _baseListProvider.list[index].playlist[i].title,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          onTap: () {
+                                            if (_baseListProvider.list[index].playlist[i].gengxin == "预告") {
+                                              Toast.show("预告暂不支持播放!");
+                                            } else {
+                                              NavigatorUtils.push(context,
+                                                  '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].title)}');
+                                            }
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
+                            ),
+                          ),
                         );
                       });
                 })),

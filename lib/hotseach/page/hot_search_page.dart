@@ -16,6 +16,7 @@ import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
 class HotSearchPage extends StatefulWidget {
@@ -179,21 +180,30 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
                           pageSize: _baseListProvider.list.length,
                           hasMore: _baseListProvider.hasMore,
                           itemBuilder: (_, index) {
-                            return ListTile(
-                              title: Text(_baseListProvider.list[index].title),
-                              subtitle: Text(_baseListProvider.list[index].shuming),
-                              trailing: Text(_baseListProvider.list[index].updatetime),
-                              leading: LoadImage(
-                                _baseListProvider.list[index].cover,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 375),
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: ListTile(
+                                    title: Text(_baseListProvider.list[index].title),
+                                    subtitle: Text(_baseListProvider.list[index].shuming),
+                                    trailing: Text(_baseListProvider.list[index].updatetime),
+                                    leading: LoadImage(
+                                      _baseListProvider.list[index].cover,
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    onTap: () {
+                                      Log.d('前往详情页');
+                                      NavigatorUtils.goWebViewPage(context, _baseListProvider.list[index].title, _baseListProvider.list[index].url,
+                                          flag: "2");
+                                    },
+                                  ),
+                                ),
                               ),
-                              onTap: () {
-                                Log.d('前往详情页');
-                                NavigatorUtils.goWebViewPage(context, _baseListProvider.list[index].title, _baseListProvider.list[index].url,
-                                    flag: "2");
-                              },
                             );
                           });
                     })))

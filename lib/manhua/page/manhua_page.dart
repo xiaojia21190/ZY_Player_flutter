@@ -9,6 +9,7 @@ import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
 class ManhuaPage extends StatefulWidget {
@@ -94,20 +95,29 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                       pageSize: _baseListProvider.list.length,
                       hasMore: _baseListProvider.hasMore,
                       itemBuilder: (_, i) {
-                        return ListTile(
-                          title: Text(_baseListProvider.list[i].title),
-                          subtitle: Text(_baseListProvider.list[i].author),
-                          trailing: Icon(Icons.keyboard_arrow_right),
-                          leading: LoadImage(
-                            _baseListProvider.list[i].cover,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
+                        return AnimationConfiguration.staggeredList(
+                          position: i,
+                          duration: const Duration(milliseconds: 375),
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: ListTile(
+                                title: Text(_baseListProvider.list[i].title),
+                                subtitle: Text(_baseListProvider.list[i].author),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                                leading: LoadImage(
+                                  _baseListProvider.list[i].cover,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                ),
+                                onTap: () {
+                                  NavigatorUtils.push(context,
+                                      '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[i].title)}');
+                                },
+                              ),
+                            ),
                           ),
-                          onTap: () {
-                            NavigatorUtils.push(context,
-                                '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[i].title)}');
-                          },
                         );
                       });
                 })),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 /// 封装下拉刷新与加载更多
 class DeerListView extends StatefulWidget {
@@ -56,21 +57,23 @@ class _DeerListViewState extends State<DeerListView> {
               type: widget.stateType,
               onRefresh: widget.onRefresh,
             )
-          : ListView.builder(
-              scrollDirection: widget.scrollDirection,
-              itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
-              padding: widget.padding,
-              itemExtent: widget.itemExtent,
-              itemBuilder: (BuildContext context, int index) {
-                /// 不需要加载更多则不需要添加FootView
-                if (widget.loadMore == null) {
-                  return widget.itemBuilder(context, index);
-                } else {
-                  return index < widget.itemCount
-                      ? widget.itemBuilder(context, index)
-                      : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
-                }
-              },
+          : AnimationLimiter(
+              child: ListView.builder(
+                scrollDirection: widget.scrollDirection,
+                itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
+                padding: widget.padding,
+                itemExtent: widget.itemExtent,
+                itemBuilder: (BuildContext context, int index) {
+                  /// 不需要加载更多则不需要添加FootView
+                  if (widget.loadMore == null) {
+                    return widget.itemBuilder(context, index);
+                  } else {
+                    return index < widget.itemCount
+                        ? widget.itemBuilder(context, index)
+                        : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
+                  }
+                },
+              ),
             ),
     );
     return SafeArea(
