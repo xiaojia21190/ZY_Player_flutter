@@ -45,8 +45,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
     // _playerProvider.setStateType(StateType.loading);
     _themeProvider.setloadingState(true);
 
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1},
-        onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource,
+        queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1}, onSuccess: (resultList) {
       List.generate(resultList.length, (i) => _playerProvider.list.add(ResourceData.fromJson(resultList[i])));
       if (resultList.length == 0) {
         _playerProvider.setStateType(StateType.order);
@@ -150,7 +150,6 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                       //将所有子控件在父控件中填满
                       shrinkWrap: true,
                       //解决ListView嵌套GridView滑动冲突问题
-                      physics: NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3, //每行几列
                           childAspectRatio: 0.6),
