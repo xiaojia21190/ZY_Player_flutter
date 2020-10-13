@@ -29,13 +29,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.5.0-nullsafety.1"
-  azlistview:
-    dependency: "direct main"
-    description:
-      name: azlistview
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.1.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -698,13 +691,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.10.0-nullsafety.1"
-  sticky_headers:
-    dependency: "direct main"
-    description:
-      name: sticky_headers
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.1.8+1"
   stream_channel:
     dependency: transitive
     description:

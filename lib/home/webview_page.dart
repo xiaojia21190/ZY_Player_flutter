@@ -51,14 +51,14 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
         builder: (context, snapshot) {
           return WillPopScope(
             onWillPop: () async {
-              if (snapshot.hasData) {
-                var canGoBack = await snapshot.data.canGoBack();
-                if (canGoBack) {
-                  // 网页可以返回时，优先返回上一页
-                  await snapshot.data.goBack();
-                  return Future.value(false);
-                }
-              }
+              // if (snapshot.hasData) {
+              //   var canGoBack = await snapshot.data.canGoBack();
+              //   if (canGoBack) {
+              //     // 网页可以返回时，优先返回上一页
+              //     await snapshot.data.goBack();
+              //     return Future.value(false);
+              //   }
+              // }
               SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
               SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
               return Future.value(true);
