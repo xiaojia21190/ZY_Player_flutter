@@ -112,7 +112,6 @@ class _HomeState extends State<Home> {
       OtaUpdate()
           .execute(
         currentUpdateUrl,
-        destinationFilename: 'ZY_Player_flutter.apk',
       )
           .listen(
         (OtaEvent event) {
