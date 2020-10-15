@@ -37,3 +37,18 @@
 
 所有资源来自网上, 该软件不参与任何制作, 上传, 储存, 下载等内容. 该软件仅供学习参考, 请于安装后24小时内删除.
 
+###  鸣谢
+
+特别感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 为本开源项目提供免费的 [IntelliJ GoLand](https://www.jetbrains.com/go/?from=ferry) 授权
+
+<p>
+ <a href="https://www.jetbrains.com/?from=ferry">
+   <img height="200" src="https://www.fdevops.com/wp-content/uploads/2020/09/1599213857-jetbrains-variant-4.png">
+ </a>
+</p>
+
+
+### License
+
+[MIT](LICENSE)
+
