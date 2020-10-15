@@ -41,4 +41,15 @@ class Colours {
   static const Color dark_bg_gray_ = Color(0xFF242526);
 
   static const Color red_selected_line = Color(0xffF96634);
+
+  static Color primary = Color(0xFF23B38E);
+  static Color secondary = Color(0xFF51DEC6);
+  static Color orange = Color(0xFFF67264);
+  static Color white = Color(0xFFFFFFFF);
+  static Color paper = Color(0xFFF5F5F5);
+  static Color lightGray = Color(0xFFEEEEEE);
+  static Color darkGray = Color(0xFF333333);
+  static Color gray = Color(0xFF888888);
+  static Color blue = Color(0xFF3688FF);
+  static Color golden = Color(0xff8B7961);
 }

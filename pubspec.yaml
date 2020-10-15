@@ -70,6 +70,9 @@ dependencies:
   flutter_update_dialog: ^1.0.0
   #动画
   flutter_staggered_animations: "^0.1.2"
+  ##
+  device_info: ^0.4.2+9
+  battery: ^1.0.7
 
 
 
