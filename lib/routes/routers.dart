@@ -1,7 +1,7 @@
 import 'package:ZY_Player_flutter/hotseach/hot_router.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
-import 'package:fluro/fluro.dart' as Fluro;
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/routes/404.dart';
 import 'package:ZY_Player_flutter/login/login_router.dart';
@@ -18,16 +18,16 @@ class Routes {
 
   static final List<IRouterProvider> _listRouter = [];
 
-  static void configureRoutes(Fluro.Router router) {
+  static void configureRoutes(FluroRouter router) {
     /// 指定路由跳转错误返回页
-    router.notFoundHandler = Fluro.Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       debugPrint('未找到目标页');
       return PageNotFound();
     });
 
-    router.define(home, handler: Fluro.Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) => Home()));
+    router.define(home, handler: Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) => Home()));
 
-    router.define(webViewPage, handler: Fluro.Handler(handlerFunc: (_, params) {
+    router.define(webViewPage, handler: Handler(handlerFunc: (_, params) {
       final String title = params['title']?.first;
       final String url = params['url']?.first;
       final String flag = params['flag']?.first;

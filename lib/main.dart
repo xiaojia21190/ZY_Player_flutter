@@ -11,7 +11,7 @@ import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:dio/dio.dart';
-import 'package:fluro/fluro.dart' as Fluro;
+import 'package:fluro/fluro.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
   MyApp({this.home, this.theme}) {
     Log.init();
     initDio();
-    final Fluro.Router router = Fluro.Router();
+    final FluroRouter router = FluroRouter();
     Routes.configureRoutes(router);
     Application.router = router;
   }

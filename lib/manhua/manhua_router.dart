@@ -10,7 +10,7 @@ class ManhuaRouter implements IRouterProvider {
   static String imagesPage = '/manhuaImage';
 
   @override
-  void initRouter(Router router) {
+  void initRouter(FluroRouter router) {
     router.define(searchPage, handler: Handler(handlerFunc: (_, __) => ManhuaSearchPage()));
     router.define(imagesPage,
         handler: Handler(handlerFunc: (_, params) => ManhuaImagePage(url: params['url']?.first, title: params['title']?.first)));

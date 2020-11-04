@@ -8,7 +8,7 @@ class HotRouter implements IRouterProvider {
   static String hotDetailPage = '/hot_detail_page';
 
   @override
-  void initRouter(Router router) {
+  void initRouter(FluroRouter router) {
     router.define(searchPage, handler: Handler(handlerFunc: (_, params) => HotSearchPage()));
     router.define(hotDetailPage,
         handler: Handler(

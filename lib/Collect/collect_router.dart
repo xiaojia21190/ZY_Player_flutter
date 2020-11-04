@@ -6,7 +6,7 @@ class CollectRouter implements IRouterProvider {
   static String collectPage = '/collect';
 
   @override
-  void initRouter(Router router) {
+  void initRouter(FluroRouter router) {
     router.define(collectPage, handler: Handler(handlerFunc: (_, __) => CollectPage()));
   }
 }

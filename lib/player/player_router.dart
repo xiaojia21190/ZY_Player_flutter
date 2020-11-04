@@ -8,7 +8,7 @@ class PlayerRouter implements IRouterProvider {
   static String detailPage = '/player_detail';
 
   @override
-  void initRouter(Router router) {
+  void initRouter(FluroRouter router) {
     router.define(searchPage, handler: Handler(handlerFunc: (_, __) => PlayerSearchPage()));
     router.define(detailPage,
         handler: Handler(handlerFunc: (_, params) => PlayerDetailPage(title: params['title']?.first, url: params['url']?.first)));
