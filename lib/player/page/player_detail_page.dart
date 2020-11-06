@@ -480,13 +480,9 @@ class __FijkPanel2State extends State<_FijkPanel2> {
     });
 
     _isBufferPosSubs = player.onBufferStateUpdate.listen((v) {
-      if (_hideStuff == false) {
-        setState(() {
-          _isBuffer = v;
-        });
-      } else {
+      setState(() {
         _isBuffer = v;
-      }
+      });
     });
 
     player.addListener(_playerValueChanged);
