@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dlna/flutter_dlna.dart';
 
 class Constant {
   /// debug开关，上线需要关闭
@@ -20,6 +21,8 @@ class Constant {
 
   static const String theme = 'AppTheme';
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static FlutterDlna dlnaManager = FlutterDlna();
+  static List dlnaDevices = [];
 }
 
 NavigatorState get navigatorState => Constant.navigatorKey.currentState;

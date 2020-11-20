@@ -7,7 +7,7 @@ class DetailProvider extends ChangeNotifier {
   DetailReource _detailReource;
   DetailReource get detailReource => _detailReource;
 
-  List<String> _kanguojuji = [];
+  List<String> _kanguojuji = []; // 已经看过的剧集列表
   List<String> get kanguojuji => _kanguojuji;
 
   bool _playState = false;

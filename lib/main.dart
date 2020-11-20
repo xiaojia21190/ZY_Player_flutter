@@ -20,6 +20,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
+import 'event/event_bus.dart';
+
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
 //  debugPaintLayerBordersEnabled = true;
@@ -32,7 +34,8 @@ Future<void> main() async {
   runApp(Store.init(MyApp()));
   // 透明状态栏
   if (Device.isAndroid) {
-    final SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+    final SystemUiOverlayStyle systemUiOverlayStyle =
+        SystemUiOverlayStyle(statusBarColor: Colors.transparent);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
 }
@@ -44,6 +47,14 @@ class MyApp extends StatelessWidget {
   MyApp({this.home, this.theme}) {
     Log.init();
     initDio();
+    Constant.dlnaManager.init();
+    Constant.dlnaManager.setSearchCallback((devices) {
+      if (devices != null && devices.length > 0) {
+        Constant.dlnaDevices = devices;
+        ApplicationEvent.event.fire(DeviceEvent(devices));
+      }
+    });
+    Constant.dlnaManager.search();
     final FluroRouter router = FluroRouter();
     Routes.configureRoutes(router);
     Application.router = router;
@@ -65,7 +76,9 @@ class MyApp extends StatelessWidget {
 
     setInitDio(
       // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://140.143.207.151:7001/',
+      baseUrl: Constant.inProduction
+          ? 'http://140.143.207.151:7001/'
+          : 'http://140.143.207.151:7001/',
       interceptors: interceptors,
     );
   }
@@ -97,12 +110,16 @@ class MyApp extends StatelessWidget {
                           GlobalWidgetsLocalizations.delegate,
                           GlobalCupertinoLocalizations.delegate,
                         ],
-                        supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
+                        supportedLocales: const <Locale>[
+                          Locale('zh', 'CN'),
+                          Locale('en', 'US')
+                        ],
                         builder: (context, child) {
                           /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
                           return MediaQuery(
                             data: MediaQuery.of(context).copyWith(
-                                textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                                textScaleFactor:
+                                    1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
                             child: child,
                           );
                         },
@@ -142,7 +159,8 @@ class MyApp extends StatelessWidget {
 
         /// Toast 配置
         backgroundColor: Colors.black54,
-        textPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        textPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         radius: 20.0,
         position: ToastPosition.bottom);
   }

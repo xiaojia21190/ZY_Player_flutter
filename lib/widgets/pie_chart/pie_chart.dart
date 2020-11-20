@@ -32,7 +32,8 @@ class PieChart extends StatefulWidget {
   _PieChartState createState() => _PieChartState();
 }
 
-class _PieChartState extends State<PieChart> with SingleTickerProviderStateMixin {
+class _PieChartState extends State<PieChart>
+    with SingleTickerProviderStateMixin {
   int count;
   Animation<double> animation;
   AnimationController controller;
@@ -42,8 +43,10 @@ class _PieChartState extends State<PieChart> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
 
-    controller = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
-    final Animation<double> curve = CurvedAnimation(parent: controller, curve: Curves.decelerate);
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 800), vsync: this);
+    final Animation<double> curve =
+        CurvedAnimation(parent: controller, curve: Curves.decelerate);
     animation = Tween<double>(begin: 0, end: 1).animate(curve);
     controller.forward(from: 0);
   }
@@ -71,13 +74,19 @@ class _PieChartState extends State<PieChart> with SingleTickerProviderStateMixin
       count += widget.data[i].number;
     }
     final Color bgColor = ThemeUtils.getBackgroundColor(context);
-    final Color shadowColor = ThemeUtils.isDark(context) ? Colours.dark_bg_gray : const Color(0x80C8DAFA);
+    final Color shadowColor = ThemeUtils.isDark(context)
+        ? Colours.dark_bg_gray
+        : const Color(0x80C8DAFA);
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: bgColor,
         boxShadow: <BoxShadow>[
-          BoxShadow(color: shadowColor, offset: const Offset(0.0, 4.0), blurRadius: 8.0, spreadRadius: 0.0),
+          BoxShadow(
+              color: shadowColor,
+              offset: const Offset(0.0, 4.0),
+              blurRadius: 8.0,
+              spreadRadius: 0.0),
         ],
       ),
       child: RepaintBoundary(
@@ -85,7 +94,8 @@ class _PieChartState extends State<PieChart> with SingleTickerProviderStateMixin
             animation: animation,
             builder: (_, child) {
               return CustomPaint(
-                painter: PieChartPainter(widget.data, animation.value, bgColor, widget.name, count),
+                painter: PieChartPainter(
+                    widget.data, animation.value, bgColor, widget.name, count),
                 child: child,
               );
             },
@@ -93,7 +103,11 @@ class _PieChartState extends State<PieChart> with SingleTickerProviderStateMixin
               child: ExcludeSemantics(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[Text(widget.name, style: TextStyles.textBold16), Gaps.vGap4, Text('$count件')],
+                  children: <Widget>[
+                    Text(widget.name, style: TextStyles.textBold16),
+                    Gaps.vGap4,
+                    Text('$count件')
+                  ],
                 ),
               ),
             )),
@@ -103,7 +117,8 @@ class _PieChartState extends State<PieChart> with SingleTickerProviderStateMixin
 }
 
 class PieChartPainter extends CustomPainter {
-  PieChartPainter(this.data, double angleFactor, this.bgColor, this.name, this.count) {
+  PieChartPainter(
+      this.data, double angleFactor, this.bgColor, this.name, this.count) {
     if (data.length == null || data.isEmpty) {
       return;
     }
@@ -167,17 +182,21 @@ class PieChartPainter extends CustomPainter {
       _mPaint
         ..color = data[i].color
         ..style = PaintingStyle.fill;
-      canvas.drawArc(mCircle, prevAngle, totalAngle * data[i].percentage, true, _mPaint);
+      canvas.drawArc(
+          mCircle, prevAngle, totalAngle * data[i].percentage, true, _mPaint);
       prevAngle = prevAngle + totalAngle * data[i].percentage;
     }
     // 为了文字不被覆盖，在绘制完扇形后绘制文字
     prevAngle = -math.pi;
     for (int i = 0; i < data.length; i++) {
       //计算扇形中心点的坐标
-      final double x = (size.height * 0.74 / 2) * math.cos(prevAngle + (totalAngle * data[i].percentage / 2));
-      final double y = (size.height * 0.74 / 2) * math.sin(prevAngle + (totalAngle * data[i].percentage / 2));
+      final double x = (size.height * 0.74 / 2) *
+          math.cos(prevAngle + (totalAngle * data[i].percentage / 2));
+      final double y = (size.height * 0.74 / 2) *
+          math.sin(prevAngle + (totalAngle * data[i].percentage / 2));
       // 保留一位小数
-      final String percentage = (data[i].percentage * 100).toStringAsFixed(1) + '%';
+      final String percentage =
+          (data[i].percentage * 100).toStringAsFixed(1) + '%';
       drawPercentage(canvas, percentage, x, y, size);
       prevAngle = prevAngle + totalAngle * data[i].percentage;
     }
@@ -197,11 +216,20 @@ class PieChartPainter extends CustomPainter {
     canvas.restore();
   }
 
-  void drawPercentage(Canvas context, String percentage, double x, double y, Size size) {
-    final TextSpan span = TextSpan(style: TextStyle(color: Colors.white, fontSize: Dimens.font_sp12), text: percentage);
-    final TextPainter tp = TextPainter(text: span, textAlign: TextAlign.left, textDirection: TextDirection.rtl);
+  void drawPercentage(
+      Canvas context, String percentage, double x, double y, Size size) {
+    final TextSpan span = TextSpan(
+        style: TextStyle(color: Colors.white, fontSize: Dimens.font_sp12),
+        text: percentage);
+    final TextPainter tp = TextPainter(
+        text: span,
+        textAlign: TextAlign.left,
+        textDirection: TextDirection.rtl);
     tp.layout();
-    tp.paint(context, Offset(size.width / 2 + x - (tp.width / 2), size.height / 2 + y - (tp.height / 2)));
+    tp.paint(
+        context,
+        Offset(size.width / 2 + x - (tp.width / 2),
+            size.height / 2 + y - (tp.height / 2)));
   }
 
   @override
@@ -218,7 +246,8 @@ class PieChartPainter extends CustomPainter {
     final List<CustomPainterSemantics> nodes = <CustomPainterSemantics>[];
     final double height = size.height / data.length;
     for (int i = 0; i < data.length; i++) {
-      final String percentage = (data[i].percentage * 100).toStringAsFixed(1) + '%';
+      final String percentage =
+          (data[i].percentage * 100).toStringAsFixed(1) + '%';
       final CustomPainterSemantics node = CustomPainterSemantics(
         rect: Rect.fromLTRB(
           0,
