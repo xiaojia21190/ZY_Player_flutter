@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 import 'dart:ui';
-import 'package:ZY_Player_flutter/common/common.dart';
-import 'package:ZY_Player_flutter/event/event_bus.dart';
-import 'package:flutter_picker/flutter_picker.dart';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
+import 'package:ZY_Player_flutter/common/common.dart';
+import 'package:ZY_Player_flutter/event/event_bus.dart';
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -24,6 +23,7 @@ import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/detail_reource.dart';
@@ -42,8 +42,7 @@ class PlayerDetailPage extends StatefulWidget {
   _PlayerDetailPageState createState() => _PlayerDetailPageState();
 }
 
-class _PlayerDetailPageState extends State<PlayerDetailPage>
-    with WidgetsBindingObserver {
+class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBindingObserver {
   final FijkPlayer _player = FijkPlayer();
 
   bool startedPlaying = false;
@@ -82,11 +81,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
     }
     List<PickerItem<String>> videos = [];
     for (VideoList item in _detailProvider.detailReource.videoList) {
-      videos.add(PickerItem(
-          text: Text("${item.title}"), value: item.url, children: devices));
+      videos.add(PickerItem(text: Text("${item.title}"), value: item.url, children: devices));
     }
-    PickerDataAdapter<String> _adapter =
-        PickerDataAdapter<String>(data: videos);
+    PickerDataAdapter<String> _adapter = PickerDataAdapter<String>(data: videos);
 
     // 处理更新设备信息的逻辑
     if (_picker != null) {
@@ -99,12 +96,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
     }
 
     // 显示picker窗口
-    _picker = Picker(
-        adapter: _adapter,
-        title: Text("请选择推送内容"),
-        cancelText: "取消",
-        confirmText: "确认",
-        onConfirm: onConfirm);
+    _picker = Picker(adapter: _adapter, title: Text("请选择推送内容"), cancelText: "取消", confirmText: "确认", onConfirm: onConfirm);
     _picker.show(_scaffoldKey.currentState);
   }
 
@@ -130,9 +122,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
         currentVideoIndex += 1;
         _themeProvider.setloadingState(true);
         Toast.show("正在解析地址,开始播放下一集");
-        await getPlayVideoUrl(
-            _detailProvider.detailReource.videoList[currentVideoIndex].url,
-            currentVideoIndex);
+        await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex].url, currentVideoIndex);
         _detailProvider.saveJuji("${widget.url}_$currentVideoIndex");
         _player.reset().then((value) {
           _player.setDataSource(currentUrl, autoPlay: true);
@@ -147,9 +137,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
 
   void toggleFullscreen() {
     _isFullscreen = !_isFullscreen;
-    _isFullscreen
-        ? SystemChrome.setEnabledSystemUIOverlays([])
-        : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    _isFullscreen ? SystemChrome.setEnabledSystemUIOverlays([]) : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
 
   @override
@@ -173,8 +161,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
   }
 
   Future getPlayVideoUrl(String videoUrl, int index) async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl,
-        queryParameters: {"url": videoUrl}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) {
       currentUrl = data;
     }, onError: (_, __) {
       currentVideoIndex = index;
@@ -183,8 +170,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
 
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource,
-        queryParameters: {"url": widget.url}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": widget.url}, onSuccess: (data) {
       _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
       _detailProvider.setJuji();
       _collectProvider.changeNoti();
@@ -220,9 +206,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
 
   bool getFilterData(DetailReource data) {
     if (data != null) {
-      var result = _collectProvider.listDetailResource
-          .where((element) => element.url == data.url)
-          .toList();
+      var result = _collectProvider.listDetailResource.where((element) => element.url == data.url).toList();
       return result.length > 0;
     }
     return false;
@@ -271,8 +255,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
 
             Toast.show("推送视频 $videoTitle 到设备：${device['name']}");
             await Constant.dlnaManager.setDevice(device["id"]);
-            await Constant.dlnaManager
-                .setVideoUrlAndName(currentUrl, videoTitle);
+            await Constant.dlnaManager.setVideoUrlAndName(currentUrl, videoTitle);
             _themeProvider.setloadingState(false);
           });
           _picker = null;
@@ -293,10 +276,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
               currentVideoIndex = index;
               _themeProvider.setloadingState(true);
               Toast.show("正在解析地址");
-              await getPlayVideoUrl(
-                  _detailProvider
-                      .detailReource.videoList[currentVideoIndex].url,
-                  currentVideoIndex);
+              await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex].url, currentVideoIndex);
               _detailProvider.saveJuji("${widget.url}_$currentVideoIndex");
               _player.reset().then((value) {
                 _player.setDataSource(currentUrl, autoPlay: true);
@@ -308,10 +288,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
                 width: ScreenUtil.getInstance().getWidth(100),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: _detailProvider.kanguojuji
-                            .contains("${widget.url}_$index")
-                        ? Colors.redAccent
-                        : Colors.blueAccent,
+                    color: _detailProvider.kanguojuji.contains("${widget.url}_$index") ? Colors.redAccent : Colors.blueAccent,
                     borderRadius: BorderRadius.all(Radius.circular(5))),
                 alignment: Alignment.center,
                 child: Text(
@@ -348,8 +325,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
                         onPressed: () {
                           if (getFilterData(_detailProvider.detailReource)) {
                             Log.d("点击取消");
-                            _collectProvider.removeResource(
-                                _detailProvider.detailReource.url);
+                            _collectProvider.removeResource(_detailProvider.detailReource.url);
                             _detailProvider.setActionName("点击收藏");
                           } else {
                             Log.d("点击收藏");
@@ -373,8 +349,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
                             child: FijkView(
                               player: _player,
                               color: Colors.black,
-                              panelBuilder: (player, data, BuildContext context,
-                                  Size viewSize, Rect texturePos) {
+                              panelBuilder: (player, data, BuildContext context, Size viewSize, Rect texturePos) {
                                 return _FijkPanel2(
                                   player: player,
                                   onBack: () {
@@ -382,10 +357,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
                                   },
                                   onError: () {
                                     _player.reset().then((value) {
-                                      _player.setDataSource(currentUrl,
-                                          autoPlay: true);
-                                      Toast.show(
-                                          "开始播放第${currentVideoIndex + 1}集");
+                                      _player.setDataSource(currentUrl, autoPlay: true);
+                                      Toast.show("开始播放第${currentVideoIndex + 1}集");
                                       _themeProvider.setloadingState(false);
                                     });
                                   },
@@ -398,7 +371,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
                                   hideDuration: duration,
                                 );
                               },
-                              fsFit: FijkFit.fill,
+                              fsFit: FijkFit.ar16_9,
                             ),
                           ),
                         ],
@@ -429,17 +402,13 @@ class _PlayerDetailPageState extends State<PlayerDetailPage>
                             child: provider.detailReource.videoList.length > 0
                                 ? MyCard(
                                     child: Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10, right: 10, bottom: 10),
+                                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 10, bottom: 10),
+                                          padding: EdgeInsets.only(top: 10, bottom: 10),
                                           child: Row(
                                             children: [
                                               Text(
@@ -504,9 +473,7 @@ String _duration2String(Duration duration) {
   String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
   String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
   int inHours = duration.inHours;
-  return inHours > 0
-      ? "$inHours:$twoDigitMinutes:$twoDigitSeconds"
-      : "$twoDigitMinutes:$twoDigitSeconds";
+  return inHours > 0 ? "$inHours:$twoDigitMinutes:$twoDigitSeconds" : "$twoDigitMinutes:$twoDigitSeconds";
 }
 
 class _FijkPanel2 extends StatefulWidget {
@@ -534,8 +501,7 @@ class _FijkPanel2 extends StatefulWidget {
       this.snapShot,
       this.texPos})
       : assert(player != null),
-        assert(
-            hideDuration != null && hideDuration > 0 && hideDuration < 10000),
+        assert(hideDuration != null && hideDuration > 0 && hideDuration < 10000),
         super(key: key);
 
   @override
@@ -661,9 +627,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
     }
     bool playing = (value.state == FijkState.started);
     bool prepared = value.prepared;
-    if (playing != _playing ||
-        prepared != _prepared ||
-        value.state == FijkState.asyncPreparing) {
+    if (playing != _playing || prepared != _prepared || value.state == FijkState.asyncPreparing) {
       setState(() {
         _playing = playing;
         _prepared = prepared;
@@ -710,8 +674,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
       // right, volume
       _dragLeft = false;
       FijkVolume.getVol().then((v) {
-        if (widget.data != null &&
-            !widget.data.contains(_FijkData._fijkViewPanelVolume)) {
+        if (widget.data != null && !widget.data.contains(_FijkData._fijkViewPanelVolume)) {
           widget.data.setValue(_FijkData._fijkViewPanelVolume, v);
         }
         setState(() {
@@ -723,8 +686,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
       // left, brightness
       _dragLeft = true;
       FijkPlugin.screenBrightness().then((v) {
-        if (widget.data != null &&
-            !widget.data.contains(_FijkData._fijkViewPanelBrightness)) {
+        if (widget.data != null && !widget.data.contains(_FijkData._fijkViewPanelBrightness)) {
           widget.data.setValue(_FijkData._fijkViewPanelBrightness, v);
         }
         setState(() {
@@ -769,9 +731,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
   }
 
   Widget buildPlayButton(BuildContext context, double height) {
-    Icon icon = (player.state == FijkState.started)
-        ? Icon(Icons.pause)
-        : Icon(Icons.play_arrow);
+    Icon icon = (player.state == FijkState.started) ? Icon(Icons.pause) : Icon(Icons.play_arrow);
     bool fullScreen = player.value.fullScreen;
     return IconButton(
       padding: EdgeInsets.all(0),
@@ -783,9 +743,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
   }
 
   Widget buildFullScreenButton(BuildContext context, double height) {
-    Icon icon = player.value.fullScreen
-        ? Icon(Icons.fullscreen_exit)
-        : Icon(Icons.fullscreen);
+    Icon icon = player.value.fullScreen ? Icon(Icons.fullscreen_exit) : Icon(Icons.fullscreen);
     bool fullScreen = player.value.fullScreen;
     return IconButton(
       padding: EdgeInsets.all(0),
@@ -793,16 +751,13 @@ class __FijkPanel2State extends State<_FijkPanel2> {
       color: Color(0xFFFFFFFF),
       icon: icon,
       onPressed: () {
-        player.value.fullScreen
-            ? player.exitFullScreen()
-            : player.enterFullScreen();
+        player.value.fullScreen ? player.exitFullScreen() : player.enterFullScreen();
       },
     );
   }
 
   Widget buildTimeText(BuildContext context, double height) {
-    String text =
-        "${_duration2String(_currentPos)}" + "/${_duration2String(_duration)}";
+    String text = "${_duration2String(_currentPos)}" + "/${_duration2String(_duration)}";
     return Text(text, style: TextStyle(fontSize: 12, color: Color(0xFFFFFFFF)));
   }
 
@@ -972,10 +927,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
   Rect panelRect() {
     Rect rect = player.value.fullScreen || (true == widget.fill)
         ? Rect.fromLTWH(0, 0, widget.viewSize.width, widget.viewSize.height)
-        : Rect.fromLTRB(
-            max(0.0, widget.texPos.left),
-            max(0.0, widget.texPos.top),
-            min(widget.viewSize.width, widget.texPos.right),
+        : Rect.fromLTRB(max(0.0, widget.texPos.left), max(0.0, widget.texPos.top), min(widget.viewSize.width, widget.texPos.right),
             min(widget.viewSize.height, widget.texPos.bottom));
     return rect;
   }
@@ -984,8 +936,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
     if (player.value.fullScreen || (true == widget.fill)) {
       return widget.viewSize.height;
     } else {
-      return min(widget.viewSize.height, widget.texPos.bottom) -
-          max(0.0, widget.texPos.top);
+      return min(widget.viewSize.height, widget.texPos.bottom) - max(0.0, widget.texPos.top);
     }
   }
 
@@ -993,8 +944,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
     if (player.value.fullScreen || (true == widget.fill)) {
       return widget.viewSize.width;
     } else {
-      return min(widget.viewSize.width, widget.texPos.right) -
-          max(0.0, widget.texPos.left);
+      return min(widget.viewSize.width, widget.texPos.right) - max(0.0, widget.texPos.left);
     }
   }
 
@@ -1013,9 +963,8 @@ class __FijkPanel2State extends State<_FijkPanel2> {
 
   Widget buildStateless() {
     if (_volume != null || _brightness != null) {
-      Widget toast = _volume == null
-          ? defaultFijkBrightnessToast(_brightness, _valController.stream)
-          : defaultFijkVolumeToast(_volume, _valController.stream);
+      Widget toast =
+          _volume == null ? defaultFijkBrightnessToast(_brightness, _valController.stream) : defaultFijkVolumeToast(_volume, _valController.stream);
       return IgnorePointer(
         child: AnimatedOpacity(
           opacity: 1,
@@ -1030,8 +979,7 @@ class __FijkPanel2State extends State<_FijkPanel2> {
         child: SizedBox(
           width: 30,
           height: 30,
-          child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(Colors.white)),
+          child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.white)),
         ),
       );
     } else if (player.state == FijkState.error) {
@@ -1069,10 +1017,8 @@ class __FijkPanel2State extends State<_FijkPanel2> {
       return Center(
         child: IgnorePointer(
           child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.yellowAccent, width: 3)),
-            child:
-                Image(height: 200, fit: BoxFit.contain, image: _imageProvider),
+            decoration: BoxDecoration(border: Border.all(color: Colors.yellowAccent, width: 3)),
+            child: Image(height: 200, fit: BoxFit.contain, image: _imageProvider),
           ),
         ),
       );
@@ -1214,14 +1160,10 @@ class FijkSliderColors {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is FijkSliderColors &&
-          runtimeType == other.runtimeType &&
-          hashCode == other.hashCode;
+      identical(this, other) || other is FijkSliderColors && runtimeType == other.runtimeType && hashCode == other.hashCode;
 
   @override
-  int get hashCode =>
-      hashValues(playedColor, bufferedColor, cursorColor, baselineColor);
+  int get hashCode => hashValues(playedColor, bufferedColor, cursorColor, baselineColor);
 }
 
 class _SliderPainter extends CustomPainter {
@@ -1233,8 +1175,7 @@ class _SliderPainter extends CustomPainter {
 
   final FijkSliderColors colors;
 
-  _SliderPainter(this.v, this.cv, this.dragging,
-      {this.colors = const FijkSliderColors()})
+  _SliderPainter(this.v, this.cv, this.dragging, {this.colors = const FijkSliderColors()})
       : assert(colors != null),
         assert(v != null),
         assert(cv != null);
@@ -1299,9 +1240,7 @@ class _SliderPainter extends CustomPainter {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _SliderPainter && hashCode == other.hashCode;
+  bool operator ==(Object other) => identical(this, other) || other is _SliderPainter && hashCode == other.hashCode;
 
   @override
   int get hashCode => hashValues(v, cv, dragging, colors);
