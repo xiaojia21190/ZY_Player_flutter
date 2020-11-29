@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:janalytics_fluttify/janalytics_fluttify.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +38,11 @@ Future<void> main() async {
     final SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
+
+  JAnalytics.init(iosKey: '*****************');
+  JAnalytics.setDebugEnable(true);
+  JAnalytics.startCrashHandler();
+  JAnalytics.setReportPeriod(Duration(seconds: 60));
 }
 
 class MyApp extends StatelessWidget {

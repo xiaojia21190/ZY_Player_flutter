@@ -204,6 +204,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
+  core_location_fluttify:
+    dependency: transitive
+    description:
+      name: core_location_fluttify
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.6.0"
   crypto:
     dependency: transitive
     description:
@@ -394,6 +401,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  foundation_fluttify:
+    dependency: transitive
+    description:
+      name: foundation_fluttify
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.11.1"
   glob:
     dependency: transitive
     description:
@@ -457,6 +471,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.3.4"
+  janalytics_fluttify:
+    dependency: "direct main"
+    description:
+      name: janalytics_fluttify
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.2+1"
+  jcore_fluttify:
+    dependency: transitive
+    description:
+      name: jcore_fluttify
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.0"
   js:
     dependency: transitive
     description:
