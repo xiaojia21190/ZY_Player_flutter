@@ -7,7 +7,7 @@
 
 ### flutter 版本安装
 - v1.3.3 地址 https://jizutang.oss-cn-beijing.aliyuncs.com/admin/app-release.apk
--
+
 ### 爬虫后台
 -  https://github.com/xiaojia21190/egg_crawel
 
