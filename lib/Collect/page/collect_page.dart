@@ -6,6 +6,7 @@ import 'package:ZY_Player_flutter/res/dimens.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = ThemeUtils.isDark(context);
     super.build(context);
     return Scaffold(
       appBar: AppBar(
@@ -88,7 +90,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
         ),
       ),
       body: Container(
-        color: Color(0xfff5f5f5),
+        color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
         child: PageView.builder(
             key: const Key('pageView'),
             itemCount: 2,
