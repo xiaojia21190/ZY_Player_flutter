@@ -21,8 +21,6 @@ import 'package:janalytics_fluttify/janalytics_fluttify.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
-import 'event/event_bus.dart';
-
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
 //  debugPaintLayerBordersEnabled = true;
@@ -39,7 +37,7 @@ Future<void> main() async {
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
 
-  JAnalytics.init(iosKey: '*****************');
+  JAnalytics.init(iosKey: '*****');
   JAnalytics.setDebugEnable(true);
   JAnalytics.startCrashHandler();
   JAnalytics.setReportPeriod(Duration(seconds: 60));
@@ -52,14 +50,7 @@ class MyApp extends StatelessWidget {
   MyApp({this.home, this.theme}) {
     Log.init();
     initDio();
-    Constant.dlnaManager.init();
-    Constant.dlnaManager.setSearchCallback((devices) {
-      if (devices != null && devices.length > 0) {
-        Constant.dlnaDevices = devices;
-        ApplicationEvent.event.fire(DeviceEvent(devices));
-      }
-    });
-    Constant.dlnaManager.search();
+
     final FluroRouter router = FluroRouter();
     Routes.configureRoutes(router);
     Application.router = router;
@@ -144,7 +135,7 @@ class MyApp extends StatelessWidget {
                                   Padding(
                                     padding: EdgeInsets.only(top: 10),
                                     child: Text(
-                                      "正在加载中.....",
+                                      provider.loadingText ?? "正在加载中.....",
                                     ),
                                   )
                                 ],

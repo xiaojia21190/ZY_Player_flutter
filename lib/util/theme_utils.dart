@@ -1,8 +1,9 @@
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ThemeUtils {
   static bool isDark(BuildContext context) {
@@ -56,4 +57,10 @@ class ThemeUtils {
       SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     }
   }
+}
+
+extension ThemeExtension on BuildContext {
+  bool get isDark => ThemeUtils.isDark(this);
+  Color get backgroundColor => Theme.of(this).scaffoldBackgroundColor;
+  Color get dialogBackgroundColor => Theme.of(this).canvasColor;
 }

@@ -1,18 +1,18 @@
-import 'package:ZY_Player_flutter/routes/routers.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flustars/flustars.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 import 'package:ZY_Player_flutter/login/widgets/my_text_field.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
+import 'package:ZY_Player_flutter/routes/routers.dart';
 import 'package:ZY_Player_flutter/util/change_notifier_manage.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
-import 'package:ZY_Player_flutter/widgets/app_bar.dart';
+import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
+import 'package:flustars/flustars.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../login_router.dart';
 

@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:ZY_Player_flutter/util/device_utils.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:ZY_Player_flutter/widgets/app_bar.dart';
+import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';

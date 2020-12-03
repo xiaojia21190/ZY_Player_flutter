@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:ZY_Player_flutter/widgets/app_bar.dart';
+import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
+import 'package:flutter/material.dart';
 
 class PageNotFound extends StatelessWidget {
   @override

@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/widgets/app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
+import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
+import 'package:flutter/material.dart';
 
 class AboutPage extends StatefulWidget {
   @override

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
-import 'package:flustars/flustars.dart';
 import 'package:ZY_Player_flutter/provider/theme_provider.dart';
-import 'package:ZY_Player_flutter/widgets/app_bar.dart';
+import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
+import 'package:flustars/flustars.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ThemePage extends StatefulWidget {

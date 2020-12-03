@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:ZY_Player_flutter/model/hot_home.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/widgets/app_bar.dart';
+import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class HotDetailPage extends StatefulWidget {
