@@ -244,7 +244,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                         QrImage(
                                           padding: EdgeInsets.all(ScreenUtil.getInstance().getWidth(7)),
                                           backgroundColor: Colors.white,
-                                          data: "www.baidu.com",
+                                          data: "https://xiaojia21190.github.io/ZY_Player_flutter/",
                                           size: ScreenUtil.getInstance().getWidth(120),
                                         ),
                                       ],
@@ -260,7 +260,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                               TextButton(
                                 child: const Text('点击复制链接'),
                                 onPressed: () {
-                                  Clipboard.setData(ClipboardData(text: "123121"));
+                                  Clipboard.setData(ClipboardData(text: "https://xiaojia21190.github.io/ZY_Player_flutter/"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
@@ -290,67 +290,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         icon: Icon(Icons.share),
         label: Text("分享"));
   }
-
-  // Future pickerDevices() async {
-  //   List<PickerItem<String>> devices = [];
-  //   if (Constant.dlnaDevices.length == 0) {
-  //     devices.add(PickerItem(text: Text("正在搜寻...")));
-  //   } else {
-  //     for (var item in Constant.dlnaDevices) {
-  //       devices.add(PickerItem(text: Text(item["name"]), value: item["id"]));
-  //     }
-  //   }
-  //   List<PickerItem<String>> videos = [];
-  //   for (VideoList item in _detailProvider.detailReource.videoList) {
-  //     videos.add(PickerItem(text: Text("${item.title}"), value: item.url, children: devices));
-  //   }
-  //   PickerDataAdapter<String> _adapter = PickerDataAdapter<String>(data: videos);
-  //
-  //   // 显示picker窗口
-  //   _picker = Picker(
-  //       adapter: _adapter,
-  //       title: Text("请选择推送内容"),
-  //       cancelText: "取消",
-  //       confirmText: "确认",
-  //       onConfirm: (Picker picker, List<int> selecteds) {
-  //         List selected = picker.adapter.getSelectedValues();
-  //         String videoUrl = selected[0];
-  //         String deviceUuid = selected[1];
-  //         if (deviceUuid == null || videoUrl == null) {
-  //           return;
-  //         }
-  //         var device;
-  //         for (var item in Constant.dlnaDevices) {
-  //           if (item['id'] == deviceUuid) {
-  //             device = item;
-  //             break;
-  //           }
-  //         }
-  //         String videoTitle;
-  //         for (var item in _detailProvider.detailReource.videoList) {
-  //           if (item.url == videoUrl) {
-  //             videoTitle = item.title;
-  //             break;
-  //           }
-  //         }
-  //         if (device == null || videoTitle == null) {
-  //           return;
-  //         }
-  //         appStateProvider.setloadingState(true);
-  //         Toast.show("正在解析地址");
-  //         getPlayVideoUrl(videoUrl, currentVideoIndex).then((value) async {
-  //           print("推送视频 $videoTitle $currentUrl 到设备：${device['name']}");
-  //
-  //           Toast.show("推送视频 $videoTitle 到设备：${device['name']}");
-  //           await Constant.dlnaManager.setDevice(device["id"]);
-  //           await Constant.dlnaManager.setVideoUrlAndName(currentUrl, videoTitle);
-  //           appStateProvider.setloadingState(false);
-  //           _picker.onCancel();
-  //         });
-  //         _picker = null;
-  //       });
-  //   _picker.show(_scaffoldKey.currentState);
-  // }
 
   Wrap buildJuJi(var provider, var isDark) {
     return Wrap(
