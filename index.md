@@ -1,18 +1,16 @@
-# ZY Player Flutter 资源播放  如果喜欢，麻烦点个star吧！谢谢！！
+# ZY Player Flutter 资源播放
 
 基于ZY-Player开发的Flutter版本视频播放器，免费无广告
 
-### 订阅新版本
-<img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
-
 ### flutter 版本安装
-- v1.3.3 地址 https://jizutang.oss-cn-beijing.aliyuncs.com/admin/app-release.apk
+- [android下载]([url](https://jizutang.oss-cn-beijing.aliyuncs.com/admin/app-release.apk))
 
-### 爬虫后台
--  https://github.com/xiaojia21190/egg_crawel
 
-### 爬取漫画镇魂街到issue
--  https://github.com/xiaojia21190/zhenhunjie
+### 主要功能
+- 播放视频(支持投屏) 全网免费电影
+- 全网热搜
+- 免费看漫画
+- 收藏
 
 ### 截图
 
@@ -27,10 +25,6 @@
 |           漫画资源           |             详情页             |             漫画页             |
 | :--------------------------: | :----------------------------: | :----------------------------: |
 | ![home](./images/image5.jpg) | ![detail](./images/image4.jpg) | ![detail](./images/image3.jpg) |
-
-
-
-
 
 
 ### 重要:
