@@ -9,18 +9,6 @@ import 'package:flutter/material.dart';
 class ThemeProvider extends ChangeNotifier {
   static const Map<ThemeMode, String> themes = {ThemeMode.dark: 'Dark', ThemeMode.light: 'Light', ThemeMode.system: 'System'};
 
-  bool _loadingState = false;
-  bool get loadingState => _loadingState;
-
-  String _loadingText = "";
-  String get loadingText => _loadingText;
-
-  void setloadingState(bool state, [String text]) {
-    _loadingState = state;
-    _loadingText = text;
-    notifyListeners();
-  }
-
   void syncTheme() {
     final String theme = SpUtil.getString(Constant.theme);
     if (theme.isNotEmpty && theme != themes[ThemeMode.system]) {

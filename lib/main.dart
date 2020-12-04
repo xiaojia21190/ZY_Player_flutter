@@ -3,6 +3,7 @@ import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/intercept.dart';
+import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/provider/theme_provider.dart';
 import 'package:ZY_Player_flutter/routes/404.dart';
 import 'package:ZY_Player_flutter/routes/application.dart';
@@ -80,71 +81,68 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OKToast(
-        child: ChangeNotifierProvider<ThemeProvider>(
-          create: (_) => ThemeProvider(),
-          child: Consumer<ThemeProvider>(
-            builder: (_, provider, __) {
-              return Shortcuts(
-                  shortcuts: <LogicalKeySet, Intent>{
-                    LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
-                  },
-                  child: Stack(
-                    children: [
-                      MaterialApp(
-                        title: 'ZY_Player_flutter',
-                        theme: theme ?? provider.getTheme(),
-                        darkTheme: provider.getTheme(isDarkMode: true),
-                        themeMode: provider.getThemeMode(),
-                        // home: home ?? SplashPage(),
-                        home: Home(),
-                        onGenerateRoute: Application.router.generator,
-                        localizationsDelegates: const [
-                          AppLocalizationsDelegate(),
-                          GlobalMaterialLocalizations.delegate,
-                          GlobalWidgetsLocalizations.delegate,
-                          GlobalCupertinoLocalizations.delegate,
-                        ],
-                        supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
-                        builder: (context, child) {
-                          /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
-                          return MediaQuery(
-                            data: MediaQuery.of(context).copyWith(
-                                textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
-                            child: child,
-                          );
-                        },
+        child: Consumer2<ThemeProvider, AppStateProvider>(
+          builder: (_, provider, appStateProvider, __) {
+            return Shortcuts(
+                shortcuts: <LogicalKeySet, Intent>{
+                  LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
+                },
+                child: Stack(
+                  children: [
+                    MaterialApp(
+                      title: 'ZY_Player_flutter',
+                      theme: theme ?? provider.getTheme(),
+                      darkTheme: provider.getTheme(isDarkMode: true),
+                      themeMode: provider.getThemeMode(),
+                      // home: home ?? SplashPage(),
+                      home: Home(),
+                      onGenerateRoute: Application.router.generator,
+                      localizationsDelegates: const [
+                        AppLocalizationsDelegate(),
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                      ],
+                      supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
+                      builder: (context, child) {
+                        /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
+                        return MediaQuery(
+                          data: MediaQuery.of(context).copyWith(
+                              textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                          child: child,
+                        );
+                      },
 
-                        /// 因为使用了fluro，这里设置主要针对Web
-                        onUnknownRoute: (_) {
-                          return MaterialPageRoute(
-                            builder: (BuildContext context) => PageNotFound(),
-                          );
-                        },
-                      ),
-                      provider.loadingState
-                          ? Container(
-                              color: Colors.black45,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Center(
-                                    child: CircularProgressIndicator(
-                                      backgroundColor: Colors.black26,
-                                    ),
+                      /// 因为使用了fluro，这里设置主要针对Web
+                      onUnknownRoute: (_) {
+                        return MaterialPageRoute(
+                          builder: (BuildContext context) => PageNotFound(),
+                        );
+                      },
+                    ),
+                    appStateProvider.loadingState
+                        ? Container(
+                            color: Colors.black45,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: Colors.black26,
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 10),
-                                    child: Text(
-                                      provider.loadingText ?? "正在加载中.....",
-                                    ),
-                                  )
-                                ],
-                              ))
-                          : Container(),
-                    ],
-                  ));
-            },
-          ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    appStateProvider.loadingText ?? "正在加载中.....",
+                                  ),
+                                )
+                              ],
+                            ))
+                        : Container(),
+                  ],
+                ));
+          },
         ),
 
         /// Toast 配置

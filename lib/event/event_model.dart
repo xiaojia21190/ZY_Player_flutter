@@ -1,11 +1,12 @@
-class AuthEvent {
-  final String code;
-  AuthEvent(this.code);
-}
-
 class TabBarChangeIndex {
   int index;
   TabBarChangeIndex({this.index});
+}
+
+class DeviceEvent {
+  String devicesId;
+  String devicesName;
+  DeviceEvent(this.devicesId, this.devicesName);
 }
 
 class WebViewEvent {

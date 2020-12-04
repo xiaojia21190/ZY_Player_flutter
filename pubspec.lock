@@ -333,15 +333,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.0.3"
-  flutter_picker:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: e95d121f54faba889fbf8a850c86dd5cf4aa5c5a
-      url: "git://github.com/yangyxd/flutter_picker.git"
-    source: git
-    version: "1.1.5"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:

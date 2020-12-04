@@ -2,6 +2,7 @@ import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/hotseach/provider/hot_search_provider.dart';
 import 'package:ZY_Player_flutter/manhua/provider/manhua_provider.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
+import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ class Store {
         ChangeNotifierProvider<PlayerProvider>(create: (_) => PlayerProvider()),
         ChangeNotifierProvider<HotSearchProvider>(create: (_) => HotSearchProvider()),
         ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider<AppStateProvider>(create: (_) => AppStateProvider()),
       ],
       child: child,
     );

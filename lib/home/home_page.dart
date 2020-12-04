@@ -1,23 +1,25 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
+import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/hotseach/page/hot_page.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/page/player_page.dart';
+import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
+import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
+import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
-import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
-import 'package:ZY_Player_flutter/res/resources.dart';
-import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
-import 'package:ZY_Player_flutter/util/theme_utils.dart';
-import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:flutter_update_dialog/flutter_update_dialog.dart';
 import 'package:ota_update/ota_update.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_update_dialog/flutter_update_dialog.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -52,6 +54,8 @@ class _HomeState extends State<Home> {
     }
     // 获得Player数据
     initData();
+    // 初始化投屏数据
+    Store.value<AppStateProvider>(context).initDlnaManager();
   }
 
   Future checkUpDate() async {

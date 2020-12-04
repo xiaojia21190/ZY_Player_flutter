@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
-import 'package:ZY_Player_flutter/common/common.dart';
+import 'package:ZY_Player_flutter/event/event_bus.dart';
+import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
 import 'package:ZY_Player_flutter/player/widget/diy_fijkPanel.dart';
-import 'package:ZY_Player_flutter/provider/theme_provider.dart';
+import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
@@ -25,8 +26,6 @@ import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_picker/flutter_picker.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -51,7 +50,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   DetailProvider _detailProvider = DetailProvider();
   CollectProvider _collectProvider;
-  ThemeProvider _themeProvider;
+  AppStateProvider appStateProvider;
   StreamSubscription _currentPosSubs;
 
   String actionName = "";
@@ -61,19 +60,25 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   Timer searchTimer;
 
   String currentUrl = "";
-  Picker _picker;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     _collectProvider = Store.value<CollectProvider>(context);
-    _themeProvider = Store.value<ThemeProvider>(context);
+    appStateProvider = Store.value<AppStateProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
     _player.addListener(_fijkValueListener);
 
     initData();
-    initDlna();
+
+    ApplicationEvent.event.on<DeviceEvent>().listen((event) async {
+      Toast.show("推送视频 ${_detailProvider.detailReource.videoList[currentVideoIndex].title} 到设备：${event.devicesName}");
+      await appStateProvider.dlnaManager.setDevice(event.devicesId);
+      await appStateProvider.dlnaManager.setVideoUrlAndName(currentUrl, _detailProvider.detailReource.videoList[currentVideoIndex].title);
+      appStateProvider.setloadingState(false);
+    });
+
     super.initState();
   }
 
@@ -85,14 +90,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     if (value.state == FijkState.completed) {
       if (_detailProvider.detailReource.videoList.length > 1) {
         currentVideoIndex += 1;
-        _themeProvider.setloadingState(true);
+        appStateProvider.setloadingState(true);
         Toast.show("正在解析地址,开始播放下一集");
         await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex].url, currentVideoIndex);
         _detailProvider.saveJuji("${widget.url}_$currentVideoIndex");
         _player.reset().then((value) {
           _player.setDataSource(currentUrl, autoPlay: true);
           Toast.show("开始播放第${currentVideoIndex + 1}集");
-          _themeProvider.setloadingState(false);
+          appStateProvider.setloadingState(false);
         });
       } else {
         Toast.show("已播放完成");
@@ -148,47 +153,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     }, onError: (_, __) {
       _detailProvider.setStateType(StateType.network);
     });
-  }
-
-  Future initDlna() async {
-    Constant.dlnaManager.init();
-    // 5秒后返回搜索结果
-    Constant.dlnaManager.setSearchCallback((devices) {
-      // 成功之后回调
-      _themeProvider.setloadingState(false);
-      if (devices != null && devices.length > 0) {
-        Constant.dlnaDevices = devices;
-      } else {
-        searchDialog();
-      }
-    });
-  }
-
-  searchDialog() {
-    // 提示是否继续搜索
-    showDialog(
-        context: context,
-        builder: (_) => FlareGiffyDialog(
-              flarePath: 'assets/images/space_demo.flr',
-              flareAnimation: 'loading',
-              title: Text('设备搜索超时', textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
-              description: Text(
-                '请打开相关设备后点击重新搜索',
-                textAlign: TextAlign.center,
-              ),
-              entryAnimation: EntryAnimation.BOTTOM,
-              buttonOkText: Text("重新搜索"),
-              buttonCancelText: Text("停止搜索"),
-              onOkButtonPressed: () {
-                Navigator.pop(context);
-                _themeProvider.setloadingState(true, "正在搜索设备");
-                Constant.dlnaManager.search();
-              },
-              onCancelButtonPressed: () {
-                Navigator.pop(context);
-                Constant.dlnaManager.stop();
-              },
-            ));
   }
 
   Future setPlayerVideo() async {
@@ -327,83 +291,66 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         label: Text("分享"));
   }
 
-  Future pickerDevices() async {
-    List<PickerItem<String>> devices = [];
-    if (Constant.dlnaDevices.length == 0) {
-      devices.add(PickerItem(text: Text("正在搜寻...")));
-    } else {
-      for (var item in Constant.dlnaDevices) {
-        devices.add(PickerItem(text: Text(item["name"]), value: item["id"]));
-      }
-    }
-    List<PickerItem<String>> videos = [];
-    for (VideoList item in _detailProvider.detailReource.videoList) {
-      videos.add(PickerItem(text: Text("${item.title}"), value: item.url, children: devices));
-    }
-    PickerDataAdapter<String> _adapter = PickerDataAdapter<String>(data: videos);
-
-    // 显示picker窗口
-    _picker = Picker(
-        adapter: _adapter,
-        title: Text("请选择推送内容"),
-        cancelText: "取消",
-        confirmText: "确认",
-        onConfirm: (Picker picker, List<int> selecteds) {
-          List selected = picker.adapter.getSelectedValues();
-          String videoUrl = selected[0];
-          String deviceUuid = selected[1];
-          if (deviceUuid == null || videoUrl == null) {
-            return;
-          }
-          var device;
-          for (var item in Constant.dlnaDevices) {
-            if (item['id'] == deviceUuid) {
-              device = item;
-              break;
-            }
-          }
-          String videoTitle;
-          for (var item in _detailProvider.detailReource.videoList) {
-            if (item.url == videoUrl) {
-              videoTitle = item.title;
-              break;
-            }
-          }
-          if (device == null || videoTitle == null) {
-            return;
-          }
-          _themeProvider.setloadingState(true);
-          Toast.show("正在解析地址");
-          getPlayVideoUrl(videoUrl, currentVideoIndex).then((value) async {
-            print("推送视频 $videoTitle $currentUrl 到设备：${device['name']}");
-
-            Toast.show("推送视频 $videoTitle 到设备：${device['name']}");
-            await Constant.dlnaManager.setDevice(device["id"]);
-            await Constant.dlnaManager.setVideoUrlAndName(currentUrl, videoTitle);
-            _themeProvider.setloadingState(false);
-            _picker.onCancel();
-          });
-          _picker = null;
-        });
-    _picker.show(_scaffoldKey.currentState);
-  }
-
-  Widget buildTuiSong() {
-    return FlatButton.icon(
-        onPressed: () async {
-          _player.pause();
-          _themeProvider.setloadingState(false);
-          // 强制重新搜寻设备
-          if (Constant.dlnaDevices.length == 0) {
-            _themeProvider.setloadingState(true, "正在搜索设备");
-            Constant.dlnaManager.search();
-          } else {
-            await pickerDevices();
-          }
-        },
-        icon: Icon(Icons.present_to_all_sharp),
-        label: Text("投屏"));
-  }
+  // Future pickerDevices() async {
+  //   List<PickerItem<String>> devices = [];
+  //   if (Constant.dlnaDevices.length == 0) {
+  //     devices.add(PickerItem(text: Text("正在搜寻...")));
+  //   } else {
+  //     for (var item in Constant.dlnaDevices) {
+  //       devices.add(PickerItem(text: Text(item["name"]), value: item["id"]));
+  //     }
+  //   }
+  //   List<PickerItem<String>> videos = [];
+  //   for (VideoList item in _detailProvider.detailReource.videoList) {
+  //     videos.add(PickerItem(text: Text("${item.title}"), value: item.url, children: devices));
+  //   }
+  //   PickerDataAdapter<String> _adapter = PickerDataAdapter<String>(data: videos);
+  //
+  //   // 显示picker窗口
+  //   _picker = Picker(
+  //       adapter: _adapter,
+  //       title: Text("请选择推送内容"),
+  //       cancelText: "取消",
+  //       confirmText: "确认",
+  //       onConfirm: (Picker picker, List<int> selecteds) {
+  //         List selected = picker.adapter.getSelectedValues();
+  //         String videoUrl = selected[0];
+  //         String deviceUuid = selected[1];
+  //         if (deviceUuid == null || videoUrl == null) {
+  //           return;
+  //         }
+  //         var device;
+  //         for (var item in Constant.dlnaDevices) {
+  //           if (item['id'] == deviceUuid) {
+  //             device = item;
+  //             break;
+  //           }
+  //         }
+  //         String videoTitle;
+  //         for (var item in _detailProvider.detailReource.videoList) {
+  //           if (item.url == videoUrl) {
+  //             videoTitle = item.title;
+  //             break;
+  //           }
+  //         }
+  //         if (device == null || videoTitle == null) {
+  //           return;
+  //         }
+  //         appStateProvider.setloadingState(true);
+  //         Toast.show("正在解析地址");
+  //         getPlayVideoUrl(videoUrl, currentVideoIndex).then((value) async {
+  //           print("推送视频 $videoTitle $currentUrl 到设备：${device['name']}");
+  //
+  //           Toast.show("推送视频 $videoTitle 到设备：${device['name']}");
+  //           await Constant.dlnaManager.setDevice(device["id"]);
+  //           await Constant.dlnaManager.setVideoUrlAndName(currentUrl, videoTitle);
+  //           appStateProvider.setloadingState(false);
+  //           _picker.onCancel();
+  //         });
+  //         _picker = null;
+  //       });
+  //   _picker.show(_scaffoldKey.currentState);
+  // }
 
   Wrap buildJuJi(var provider, var isDark) {
     return Wrap(
@@ -415,14 +362,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
             onTap: () async {
               if (currentVideoIndex == index) return;
               currentVideoIndex = index;
-              _themeProvider.setloadingState(true);
+              appStateProvider.setloadingState(true);
               Toast.show("正在解析地址");
               await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex].url, currentVideoIndex);
               _detailProvider.saveJuji("${widget.url}_$currentVideoIndex");
               _player.reset().then((value) {
                 _player.setDataSource(currentUrl, autoPlay: true);
                 Toast.show("开始播放第${currentVideoIndex + 1}集");
-                _themeProvider.setloadingState(false);
+                appStateProvider.setloadingState(false);
               });
             },
             child: Container(
@@ -500,7 +447,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                     _player.reset().then((value) {
                                       _player.setDataSource(currentUrl, autoPlay: true);
                                       Toast.show("开始播放第${currentVideoIndex + 1}集");
-                                      _themeProvider.setloadingState(false);
+                                      appStateProvider.setloadingState(false);
                                     });
                                   },
                                   data: data,
@@ -556,7 +503,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                                 "剧集选择",
                                                 style: TextStyle(fontSize: 15),
                                               ),
-                                              buildTuiSong(),
                                               buildShare(provider.detailReource.cover, provider.detailReource.title)
                                             ],
                                           ),

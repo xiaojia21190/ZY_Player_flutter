@@ -3,7 +3,7 @@ import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
-import 'package:ZY_Player_flutter/provider/theme_provider.dart';
+import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
@@ -25,12 +25,12 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
   PlayerProvider _playerProvider;
 
   final FocusNode _focus = FocusNode();
-  ThemeProvider _themeProvider;
+  AppStateProvider _appStateProvider;
 
   @override
   void initState() {
     _playerProvider = Store.value<PlayerProvider>(context);
-    _themeProvider = Store.value<ThemeProvider>(context);
+    _appStateProvider = Store.value<AppStateProvider>(context);
 
     _playerProvider.setWords();
     super.initState();
@@ -43,20 +43,20 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
     }
     _playerProvider.list.clear();
     // _playerProvider.setStateType(StateType.loading);
-    _themeProvider.setloadingState(true);
+    _appStateProvider.setloadingState(true);
 
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource,
-        queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1}, onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1},
+        onSuccess: (resultList) {
       List.generate(resultList.length, (i) => _playerProvider.list.add(ResourceData.fromJson(resultList[i])));
       if (resultList.length == 0) {
         _playerProvider.setStateType(StateType.order);
       } else {
         _playerProvider.setStateType(StateType.empty);
       }
-      _themeProvider.setloadingState(false);
+      _appStateProvider.setloadingState(false);
     }, onError: (_, __) {
       _playerProvider.setStateType(StateType.network);
-      _themeProvider.setloadingState(false);
+      _appStateProvider.setloadingState(false);
     });
   }
 
