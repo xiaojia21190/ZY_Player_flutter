@@ -50,4 +50,9 @@ class AppStateProvider extends ChangeNotifier {
     await dlnaManager.search();
     notifyListeners();
   }
+
+  setSearchText(String text) {
+    _searchText = text;
+    notifyListeners();
+  }
 }

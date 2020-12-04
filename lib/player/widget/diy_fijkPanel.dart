@@ -708,6 +708,7 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
 
   searchDialog() {
     // 提示是否继续搜索
+    appStateProvider.setSearchText("设备搜索超时");
     showDialog(
         context: context,
         builder: (_) => Selector<AppStateProvider, String>(
