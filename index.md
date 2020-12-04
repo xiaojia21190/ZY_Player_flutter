@@ -1,37 +1,54 @@
-## Welcome to GitHub Pages
+# ZY Player Flutter 资源播放  如果喜欢，麻烦点个star吧！谢谢！！
 
-You can use the [editor on GitHub](https://github.com/xiaojia21190/ZY_Player_flutter/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+基于ZY-Player开发的Flutter版本视频播放器，免费无广告
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### 订阅新版本
+<img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
-### Markdown
+### flutter 版本安装
+- v1.3.3 地址 https://jizutang.oss-cn-beijing.aliyuncs.com/admin/app-release.apk
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### 爬虫后台
+-  https://github.com/xiaojia21190/egg_crawel
 
-```markdown
-Syntax highlighted code block
+### 爬取漫画镇魂街到issue
+-  https://github.com/xiaojia21190/zhenhunjie
 
-# Header 1
-## Header 2
-### Header 3
+### 截图
 
-- Bulleted
-- List
+|         影视热门列表          |           影视资源           |             详情页             |
+| :---------------------------: | :--------------------------: | :----------------------------: |
+| ![home](./images/image10.jpg) | ![home](./images/image6.jpg) | ![detail](./images/image9.jpg) |
 
-1. Numbered
-2. List
+|             热搜              |             详情页              |
+| :---------------------------: | :-----------------------------: |
+| ![home](./images/image11.jpg) | ![detail](./images/image12.jpg) |
 
-**Bold** and _Italic_ and `Code` text
+|           漫画资源           |             详情页             |             漫画页             |
+| :--------------------------: | :----------------------------: | :----------------------------: |
+| ![home](./images/image5.jpg) | ![detail](./images/image4.jpg) | ![detail](./images/image3.jpg) |
 
-[Link](url) and ![Image](src)
-```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
-### Jekyll Themes
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/xiaojia21190/ZY_Player_flutter/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
-### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### 重要:
+
+所有资源来自网上, 该软件不参与任何制作, 上传, 储存, 下载等内容. 该软件仅供学习参考, 请于安装后24小时内删除.
+
+###  鸣谢
+
+特别感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 为本开源项目提供免费的 [IntelliJ GoLand](https://www.jetbrains.com/go/?from=ferry) 授权
+
+<p>
+ <a href="https://www.jetbrains.com/?from=ferry">
+   <img height="200" src="https://www.fdevops.com/wp-content/uploads/2020/09/1599213857-jetbrains-variant-4.png">
+ </a>
+</p>
+
+
+### License
+
+[MIT](LICENSE)
+
