@@ -15,6 +15,7 @@ import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
+import 'package:provider/provider.dart';
 
 class _FijkData {
   static String _fijkViewPanelVolume = "__fijkview_panel_init_volume";
@@ -626,6 +627,7 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
           FlatButton.icon(
               onPressed: () async {
                 // 点击显示投屏数据
+                player.stop();
                 if (appStateProvider.dlnaDevices.length == 0) {
                   // 没有搜索到
                   searchDialog();
@@ -649,58 +651,54 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
         return Material(
           type: MaterialType.transparency,
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: context.dialogBackgroundColor,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  width: 270.0,
-                  height: ScreenUtil.getInstance().getWidth(400),
-                  // padding: const EdgeInsets.only(top: 24.0),
-                  child: TextButtonTheme(
-                    data: TextButtonThemeData(
-                        style: ButtonStyle(
-                      // 文字颜色
-                      foregroundColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-                      // 按下高亮颜色
-                      shadowColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor.withOpacity(0.2)),
-                      // 按钮大小
-                      minimumSize: MaterialStateProperty.all<Size>(const Size(double.infinity, double.infinity)),
-                      // 修改默认圆角
-                      shape: MaterialStateProperty.all<OutlinedBorder>(buttonShape),
-                    )),
-                    child: Column(
-                      children: <Widget>[
-                        const Text(
-                          '可以投屏的设备',
-                          style: TextStyles.textBold18,
-                        ),
-                        Gaps.vGap16,
-                        Column(
-                          children: List.generate(
-                            appStateProvider.dlnaDevices.length,
-                            (index) => Column(children: [
-                              Gaps.line,
-                              Expanded(
-                                child: TextButton(
-                                  child: Text(appStateProvider.dlnaDevices[index].deviceName),
-                                  onPressed: () {
-                                    ApplicationEvent.event
-                                        .fire(DeviceEvent(appStateProvider.dlnaDevices[index].uuid, appStateProvider.dlnaDevices[index].deviceName));
-                                  },
-                                ),
-                              )
-                            ]),
-                          ).toList(),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.dialogBackgroundColor,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              width: 270.0,
+              height: ScreenUtil.getInstance().getWidth(300),
+              padding: const EdgeInsets.only(top: 24.0),
+              child: TextButtonTheme(
+                  data: TextButtonThemeData(
+                      style: ButtonStyle(
+                    // 文字颜色
+                    foregroundColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+                    // 按下高亮颜色
+                    shadowColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor.withOpacity(0.2)),
+                    // 按钮大小
+                    minimumSize: MaterialStateProperty.all<Size>(const Size(double.infinity, double.infinity)),
+                    // 修改默认圆角
+                    shape: MaterialStateProperty.all<OutlinedBorder>(buttonShape),
+                  )),
+                  child: Column(
+                    children: <Widget>[
+                      const Text(
+                        '可以投屏的设备',
+                        style: TextStyles.textBold18,
+                      ),
+                      Gaps.vGap16,
+                      Expanded(
+                        child: Selector<AppStateProvider, List>(
+                            builder: (_, devices, __) {
+                              return Column(
+                                children: List.generate(
+                                  devices.length,
+                                  (index) => Expanded(
+                                    child: TextButton(
+                                      child: Text(devices[index].deviceName),
+                                      onPressed: () {
+                                        ApplicationEvent.event.fire(DeviceEvent(devices[index].uuid, devices[index].deviceName));
+                                      },
+                                    ),
+                                  ),
+                                ).toList(),
+                              );
+                            },
+                            selector: (_, store) => store.dlnaDevices),
+                      )
+                    ],
+                  )),
             ),
           ),
         );
@@ -712,27 +710,29 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
     // 提示是否继续搜索
     showDialog(
         context: context,
-        builder: (_) => FlareGiffyDialog(
-              flarePath: 'assets/images/space_demo.flr',
-              flareAnimation: 'loading',
-              title: Text('设备搜索超时', textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
-              description: Text(
-                '请打开相关设备后点击重新搜索',
-                textAlign: TextAlign.center,
-              ),
-              entryAnimation: EntryAnimation.BOTTOM,
-              buttonOkText: Text("重新搜索"),
-              buttonCancelText: Text("停止搜索"),
-              onOkButtonPressed: () {
-                Navigator.pop(context);
-                appStateProvider.setloadingState(true, "正在搜索设备");
-                appStateProvider.dlnaManager.search();
-              },
-              onCancelButtonPressed: () {
-                Navigator.pop(context);
-                appStateProvider.dlnaManager.stop();
-              },
-            ));
+        builder: (_) => Selector<AppStateProvider, String>(
+            builder: (_, words, __) {
+              return FlareGiffyDialog(
+                flarePath: 'assets/images/space_demo.flr',
+                flareAnimation: 'loading',
+                title: Text(words, textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+                description: Text(
+                  '请打开相关设备后点击重新搜索',
+                  textAlign: TextAlign.center,
+                ),
+                entryAnimation: EntryAnimation.BOTTOM,
+                buttonOkText: Text("重新搜索"),
+                buttonCancelText: Text("停止搜索"),
+                onOkButtonPressed: () async {
+                  await appStateProvider.searchDlna();
+                },
+                onCancelButtonPressed: () async {
+                  Navigator.pop(context);
+                  await appStateProvider.dlnaManager.stop();
+                },
+              );
+            },
+            selector: (_, store) => store.searchText));
   }
 
   Widget buildStateless() {

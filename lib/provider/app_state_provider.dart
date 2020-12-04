@@ -26,17 +26,28 @@ class AppStateProvider extends ChangeNotifier {
   FlutterDlna _dlnaManager = FlutterDlna();
   FlutterDlna get dlnaManager => _dlnaManager;
 
+  String _searchText = "设备搜索超时";
+  String get searchText => _searchText;
+
   Future initDlnaManager() async {
     await dlnaManager.init();
     dlnaManager.setSearchCallback((devices) {
       // 成功之后回调
       if (devices != null && devices.length > 0) {
-        _dlnaDevices = devices;
+        _searchText = "搜索成功，点击投屏按钮继续投屏";
+        setDlnaDevices(devices);
       } else {
-        _dlnaDevices = [];
+        _searchText = "设备搜索超时";
+        setDlnaDevices([]);
       }
+      notifyListeners();
     });
+    await searchDlna();
+  }
 
-    dlnaManager.search();
+  Future searchDlna() async {
+    _searchText = "正在搜索设备...";
+    await dlnaManager.search();
+    notifyListeners();
   }
 }

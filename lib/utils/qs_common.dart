@@ -45,14 +45,13 @@ class QSCommon {
   static Future<Null> handlePhotosPermission() async {
     // 判断是否有权限
     Map<Permission, PermissionStatus> statuses = await [
-      Permission.camera,
-      Permission.photos,
+      // Permission.camera,
+      // Permission.photos,
       Permission.storage,
     ].request();
-
-    if (statuses[Permission.camera] == PermissionStatus.denied ||
-        statuses[Permission.photos] == PermissionStatus.denied ||
-        statuses[Permission.storage] == PermissionStatus.denied) {
+    //statuses[Permission.camera] == PermissionStatus.denied ||
+    //         statuses[Permission.photos] == PermissionStatus.denied ||
+    if (statuses[Permission.storage] == PermissionStatus.denied) {
       // 无权限的话就显示设置页面
       openAppSettings();
       Log.d("无权限");
