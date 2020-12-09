@@ -78,7 +78,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> with AutomaticKeepA
     return Scaffold(
       appBar: SearchBar(
           focus: _focus,
-          isBack: false,
+          isBack: true,
           hintText: '请输入漫画名称查询',
           onPressed: (text) {
             Toast.show('搜索内容：$text');

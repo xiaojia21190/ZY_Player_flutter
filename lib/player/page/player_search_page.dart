@@ -15,6 +15,7 @@ import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ZY_Player_flutter/res/gaps.dart';
 
 class PlayerSearchPage extends StatefulWidget {
   @override
@@ -144,6 +145,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                     )
                   : Container();
             }),
+            Gaps.vGap10,
             Expanded(child: Consumer<PlayerProvider>(builder: (_, provider, __) {
               return provider.list.length > 0
                   ? GridView.builder(
