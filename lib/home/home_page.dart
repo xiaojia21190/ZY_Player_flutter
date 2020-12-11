@@ -1,6 +1,5 @@
 import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
-import 'package:ZY_Player_flutter/hotseach/page/hot_page.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -14,6 +13,7 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:ZY_Player_flutter/zhibo/page/zhibo_page.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_update_dialog/flutter_update_dialog.dart';
@@ -29,7 +29,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['影视', '热搜', '动漫', '收藏'];
+  final List<String> _appBarTitles = ['影视', '直播', '动漫', '收藏'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -150,7 +150,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [PlayerPage(), HotPage(), ManhuaPage(), CollectPage()];
+    _pageList = [PlayerPage(), ZhiboPage(), ManhuaPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {

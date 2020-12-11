@@ -3,6 +3,7 @@ import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
+import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/persistent_header_delegate.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
@@ -152,6 +153,7 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
                                                       ))
                                                 ],
                                               ),
+                                              Gaps.vGap8,
                                               Container(
                                                 height: 50,
                                                 child: Text(

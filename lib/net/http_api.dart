@@ -17,4 +17,5 @@ class HttpApi {
   static const String getHomeManhua = "getHomeManhua";
   static const String updateApp = "updateApp";
   static const String getPlayVideoUrl = "getPlayVideoUrl";
+  static const String getZhiboList = "getZhiboList";
 }

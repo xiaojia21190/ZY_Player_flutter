@@ -1,15 +1,15 @@
-import 'package:ZY_Player_flutter/hotseach/hot_router.dart';
-import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
-import 'package:ZY_Player_flutter/player/player_router.dart';
-import 'package:fluro/fluro.dart';
-import 'package:flutter/material.dart';
-import 'package:ZY_Player_flutter/routes/404.dart';
-import 'package:ZY_Player_flutter/login/login_router.dart';
-import 'package:ZY_Player_flutter/routes/router_init.dart';
-
 import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/home/webview_page.dart';
+import 'package:ZY_Player_flutter/hotseach/hot_router.dart';
+import 'package:ZY_Player_flutter/login/login_router.dart';
+import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
+import 'package:ZY_Player_flutter/player/player_router.dart';
+import 'package:ZY_Player_flutter/routes/404.dart';
+import 'package:ZY_Player_flutter/routes/router_init.dart';
 import 'package:ZY_Player_flutter/setting/setting_router.dart';
+import 'package:ZY_Player_flutter/zhibo/zhibo_router.dart';
+import 'package:fluro/fluro.dart';
+import 'package:flutter/material.dart';
 
 // ignore: avoid_classes_with_only_static_members
 class Routes {
@@ -42,6 +42,7 @@ class Routes {
     _listRouter.add(PlayerRouter());
     _listRouter.add(ManhuaRouter());
     _listRouter.add(HotRouter());
+    _listRouter.add(ZhiboRouter());
 
     /// 初始化路由
     _listRouter.forEach((routerProvider) {

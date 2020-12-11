@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:ZY_Player_flutter/event/event_bus.dart';
 import 'package:ZY_Player_flutter/event/event_model.dart';
@@ -66,6 +67,7 @@ class DiyFijkPanel extends StatefulWidget {
   final bool doubleTap;
   final bool snapShot;
   final int hideDuration;
+  final bool isZhibo;
 
   const DiyFijkPanel(
       {Key key,
@@ -78,6 +80,7 @@ class DiyFijkPanel extends StatefulWidget {
       this.hideDuration,
       this.doubleTap,
       this.snapShot,
+      this.isZhibo = false,
       this.texPos})
       : assert(player != null),
         assert(hideDuration != null && hideDuration > 0 && hideDuration < 10000),
@@ -612,7 +615,7 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
   }
 
   Widget buildBack(BuildContext context) {
-    if (_duration != null && _duration.inMilliseconds > 0) {
+    if ((_duration != null && _duration.inMilliseconds > 0) || widget.isZhibo) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -627,7 +630,9 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
           FlatButton.icon(
               onPressed: () async {
                 // 点击显示投屏数据
-                player.stop();
+                if (!widget.isZhibo) {
+                  player.stop();
+                }
                 if (appStateProvider.dlnaDevices.length == 0) {
                   // 没有搜索到
                   searchDialog();
@@ -636,8 +641,14 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
                   dlnaDevicesDialog();
                 }
               },
-              icon: Icon(Icons.present_to_all_sharp),
-              label: Text("投屏"))
+              icon: Icon(
+                Icons.present_to_all_sharp,
+                color: Colors.white,
+              ),
+              label: Text(
+                "投屏",
+                style: TextStyle(color: Colors.white),
+              ))
         ],
       );
     }
@@ -771,8 +782,9 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
                 size: 30,
                 color: Color(0x99FFFFFF),
               ),
+              Gaps.vGap8,
               Text(
-                "点击刷新",
+                "播放源已损坏",
                 style: TextStyle(color: Colors.white),
               )
             ],
