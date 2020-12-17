@@ -13,7 +13,6 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
-import 'package:ZY_Player_flutter/zhibo/page/zhibo_page.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_update_dialog/flutter_update_dialog.dart';
@@ -146,7 +145,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [PlayerPage(), ZhiboPage(), ManhuaPage(), CollectPage()];
+    _pageList = [PlayerPage(), ManhuaPage(), ManhuaPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {

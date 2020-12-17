@@ -1,4 +1,5 @@
-import 'package:ZY_Player_flutter/model/resource_data.dart';
+import 'package:ZY_Player_flutter/model/player_hot.dart';
+import 'package:ZY_Player_flutter/model/zhibo_resource.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,11 @@ class PlayerProvider extends ChangeNotifier {
   List<String> _words = [];
   List<String> get words => _words;
 
-  List<ResourceData> _list = [];
-  List<ResourceData> get list => _list;
+  List<SwiperList> _swiperList = [];
+  List<SwiperList> get swiperList => _swiperList;
+
+  List<M3uResult> _zhiboList = [];
+  List<M3uResult> get zhiboList => _zhiboList;
 
   StateType _stateType = StateType.empty;
   StateType get stateType => _stateType;
@@ -35,8 +39,13 @@ class PlayerProvider extends ChangeNotifier {
     }
   }
 
-  setResource(List<ResourceData> list) {
-    _list = list;
+  setSwiperList(List<SwiperList> list) {
+    _swiperList = list;
+    notifyListeners();
+  }
+
+  setZhiboList(List<M3uResult> list) {
+    _zhiboList = list;
     notifyListeners();
   }
 

@@ -11,10 +11,11 @@ class DeerListView extends StatefulWidget {
       {Key key,
       @required this.itemCount,
       @required this.itemBuilder,
-      @required this.onRefresh,
       @required this.physics,
       this.loadMore,
+      this.onRefresh,
       this.hasMore = false,
+      this.hasRefresh = true,
       this.stateType = StateType.empty,
       this.pageSize = 10,
       this.padding,
@@ -26,6 +27,7 @@ class DeerListView extends StatefulWidget {
   final LoadMoreCallback loadMore;
   final int itemCount;
   final bool hasMore;
+  final bool hasRefresh;
   final dynamic physics;
   final IndexedWidgetBuilder itemBuilder;
   final StateType stateType;
@@ -51,33 +53,64 @@ class _DeerListViewState extends State<DeerListView> {
 
   @override
   Widget build(BuildContext context) {
-    Widget child = RefreshIndicator(
-      onRefresh: widget.onRefresh,
-      child: widget.itemCount == 0
-          ? StateLayout(
-              type: widget.stateType,
-              onRefresh: widget.onRefresh,
-            )
-          : AnimationLimiter(
-              child: ListView.builder(
-                scrollDirection: widget.scrollDirection,
-                physics: widget.physics,
-                itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
-                padding: widget.padding,
-                itemExtent: widget.itemExtent,
-                itemBuilder: (BuildContext context, int index) {
-                  /// 不需要加载更多则不需要添加FootView
-                  if (widget.loadMore == null) {
-                    return widget.itemBuilder(context, index);
-                  } else {
-                    return index < widget.itemCount
-                        ? widget.itemBuilder(context, index)
-                        : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
-                  }
-                },
+    Widget child;
+    if (widget.hasRefresh) {
+      child = RefreshIndicator(
+        onRefresh: widget.onRefresh,
+        child: widget.itemCount == 0
+            ? StateLayout(
+                type: widget.stateType,
+                onRefresh: widget.onRefresh,
+              )
+            : AnimationLimiter(
+                child: ListView.builder(
+                  scrollDirection: widget.scrollDirection,
+                  physics: widget.physics,
+                  itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
+                  padding: widget.padding,
+                  itemExtent: widget.itemExtent,
+                  itemBuilder: (BuildContext context, int index) {
+                    /// 不需要加载更多则不需要添加FootView
+                    if (widget.loadMore == null) {
+                      return widget.itemBuilder(context, index);
+                    } else {
+                      return index < widget.itemCount
+                          ? widget.itemBuilder(context, index)
+                          : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
+                    }
+                  },
+                ),
               ),
-            ),
-    );
+      );
+    } else {
+      child = Container(
+        child: widget.itemCount == 0
+            ? StateLayout(
+                type: widget.stateType,
+                onRefresh: widget.onRefresh,
+              )
+            : AnimationLimiter(
+                child: ListView.builder(
+                  scrollDirection: widget.scrollDirection,
+                  physics: widget.physics,
+                  itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
+                  padding: widget.padding,
+                  itemExtent: widget.itemExtent,
+                  itemBuilder: (BuildContext context, int index) {
+                    /// 不需要加载更多则不需要添加FootView
+                    if (widget.loadMore == null) {
+                      return widget.itemBuilder(context, index);
+                    } else {
+                      return index < widget.itemCount
+                          ? widget.itemBuilder(context, index)
+                          : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
+                    }
+                  },
+                ),
+              ),
+      );
+    }
+
     return NotificationListener(
       onNotification: (ScrollEndNotification note) {
         /// 确保是垂直方向滚动，且滑动至底部

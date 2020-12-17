@@ -7,7 +7,6 @@ import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/routes/404.dart';
 import 'package:ZY_Player_flutter/routes/router_init.dart';
 import 'package:ZY_Player_flutter/setting/setting_router.dart';
-import 'package:ZY_Player_flutter/zhibo/zhibo_router.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +41,6 @@ class Routes {
     _listRouter.add(PlayerRouter());
     _listRouter.add(ManhuaRouter());
     _listRouter.add(HotRouter());
-    _listRouter.add(ZhiboRouter());
 
     /// 初始化路由
     _listRouter.forEach((routerProvider) {

@@ -4,18 +4,21 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
+import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
+import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
-import 'package:ZY_Player_flutter/res/gaps.dart';
 
 class PlayerSearchPage extends StatefulWidget {
   @override
@@ -24,9 +27,12 @@ class PlayerSearchPage extends StatefulWidget {
 
 class _PlayerSearchPageState extends State<PlayerSearchPage> {
   PlayerProvider _playerProvider;
+  BaseListProvider<ResourceData> _baseListProvider = BaseListProvider();
 
   final FocusNode _focus = FocusNode();
   AppStateProvider _appStateProvider;
+  int page = 1;
+  String keywords = "";
 
   @override
   void initState() {
@@ -37,18 +43,11 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
     super.initState();
   }
 
-  Future getData(String keywords) async {
-    if (_playerProvider.stateType == StateType.loading) {
-      Toast.show("正在搜索内容，请稍后");
-      return;
-    }
-    _playerProvider.list.clear();
-    // _playerProvider.setStateType(StateType.loading);
+  Future getData() async {
     _appStateProvider.setloadingState(true);
-
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "key": "zuidazy", "page": 1},
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "page": page},
         onSuccess: (resultList) {
-      List.generate(resultList.length, (i) => _playerProvider.list.add(ResourceData.fromJson(resultList[i])));
+      List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
       if (resultList.length == 0) {
         _playerProvider.setStateType(StateType.order);
       } else {
@@ -59,6 +58,11 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
       _playerProvider.setStateType(StateType.network);
       _appStateProvider.setloadingState(false);
     });
+  }
+
+  Future _onLoadMore() async {
+    page++;
+    this.getData();
   }
 
   @override
@@ -79,7 +83,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
             Toast.show('搜索内容：$text');
             if (text != null) {
               _playerProvider.addWors(text);
-              this.getData(text);
+              keywords = text;
+              this.getData();
             }
           }),
       body: Container(
@@ -132,7 +137,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                                             onTap: () {
                                               //搜索关键词
                                               _focus.unfocus();
-                                              this.getData(s);
+                                              keywords = s;
+                                              this.getData();
                                             },
                                           );
                                         })
@@ -146,47 +152,64 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                   : Container();
             }),
             Gaps.vGap10,
-            Expanded(child: Consumer<PlayerProvider>(builder: (_, provider, __) {
-              return provider.list.length > 0
-                  ? GridView.builder(
-                      //将所有子控件在父控件中填满
-                      shrinkWrap: true,
-                      //解决ListView嵌套GridView滑动冲突问题
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3, //每行几列
-                          childAspectRatio: 0.6),
-                      itemCount: provider.list.length,
-                      itemBuilder: (context, i) {
-                        //要返回的item样式
-                        return GestureDetector(
-                          child: Column(
-                            children: [
-                              LoadImage(
-                                provider.list[i].cover,
-                                width: 110,
-                                height: 150,
-                                fit: BoxFit.cover,
-                              ),
-                              Container(
-                                height: 50,
-                                child: Text(
-                                  provider.list[i].title,
-                                  overflow: TextOverflow.ellipsis,
+            Expanded(
+                child: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
+                    create: (_) => _baseListProvider,
+                    child: Consumer<BaseListProvider<ResourceData>>(builder: (_, _baseListProvider, __) {
+                      return DeerListView(
+                          itemCount: 1,
+                          stateType: _baseListProvider.stateType,
+                          hasRefresh: false,
+                          loadMore: _onLoadMore,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          pageSize: 10,
+                          hasMore: _baseListProvider.hasMore,
+                          itemBuilder: (_, index) {
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 375),
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: GridView.builder(
+                                    //将所有子控件在父控件中填满
+                                    shrinkWrap: true,
+                                    //解决ListView嵌套GridView滑动冲突问题
+                                    physics: NeverScrollableScrollPhysics(),
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3, //每行几列
+                                        childAspectRatio: 0.69),
+                                    itemCount: _baseListProvider.list.length,
+                                    itemBuilder: (context, i) {
+                                      //要返回的item样式
+                                      return InkWell(
+                                        child: Column(
+                                          children: [
+                                            LoadImage(
+                                              _baseListProvider.list[i].cover,
+                                              width: 140,
+                                              height: 200,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            Gaps.vGap8,
+                                            Text(
+                                              _baseListProvider.list[i].title,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          NavigatorUtils.push(context,
+                                              '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[i].title)}');
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
-                              )
-                            ],
-                          ),
-                          onTap: () {
-                            NavigatorUtils.push(context,
-                                '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(provider.list[i].url)}&title=${Uri.encodeComponent(provider.list[i].title)}');
-                          },
-                        );
-                      },
-                    )
-                  : Center(
-                      child: StateLayout(type: provider.stateType),
-                    );
-            }))
+                              ),
+                            );
+                          });
+                    })))
           ],
         ),
       ),
