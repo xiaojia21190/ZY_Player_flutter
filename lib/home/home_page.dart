@@ -29,7 +29,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['影视', '直播', '动漫', '收藏'];
+  final List<String> _appBarTitles = ['影视', '小说', '动漫', '收藏'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -113,11 +113,7 @@ class _HomeState extends State<Home> {
   Future tryOtaUpdate() async {
     try {
       Toast.show("开始下载版本");
-      OtaUpdate()
-          .execute(
-        currentUpdateUrl,
-      )
-          .listen(
+      OtaUpdate().execute(currentUpdateUrl, destinationFilename: "虱子聚合").listen(
         (OtaEvent event) {
           if (event.status == OtaStatus.DOWNLOADING) {
             dialog.update(double.parse(event.value) / 100);

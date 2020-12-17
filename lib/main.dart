@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
                 child: Stack(
                   children: [
                     MaterialApp(
-                      title: 'ZY_Player_flutter',
+                      title: '虱子聚合',
                       theme: theme ?? provider.getTheme(),
                       darkTheme: provider.getTheme(isDarkMode: true),
                       themeMode: provider.getThemeMode(),

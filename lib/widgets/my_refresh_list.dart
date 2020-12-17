@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 /// 封装下拉刷新与加载更多
@@ -13,6 +12,7 @@ class DeerListView extends StatefulWidget {
       @required this.itemCount,
       @required this.itemBuilder,
       @required this.onRefresh,
+      @required this.physics,
       this.loadMore,
       this.hasMore = false,
       this.stateType = StateType.empty,
@@ -26,6 +26,7 @@ class DeerListView extends StatefulWidget {
   final LoadMoreCallback loadMore;
   final int itemCount;
   final bool hasMore;
+  final dynamic physics;
   final IndexedWidgetBuilder itemBuilder;
   final StateType stateType;
   final Axis scrollDirection;
@@ -60,6 +61,7 @@ class _DeerListViewState extends State<DeerListView> {
           : AnimationLimiter(
               child: ListView.builder(
                 scrollDirection: widget.scrollDirection,
+                physics: widget.physics,
                 itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
                 padding: widget.padding,
                 itemExtent: widget.itemExtent,
@@ -76,17 +78,16 @@ class _DeerListViewState extends State<DeerListView> {
               ),
             ),
     );
-    return SafeArea(
-      child: NotificationListener(
-        onNotification: (ScrollEndNotification note) {
-          /// 确保是垂直方向滚动，且滑动至底部
-          if (note.metrics.pixels == note.metrics.maxScrollExtent && note.metrics.axis == Axis.vertical) {
-            _loadMore();
-          }
-          return true;
-        },
-        child: child,
-      ),
+    return NotificationListener(
+      onNotification: (ScrollEndNotification note) {
+        /// 确保是垂直方向滚动，且滑动至底部
+        if (note.metrics.pixels == note.metrics.maxScrollExtent && note.metrics.axis == Axis.vertical) {
+          _loadMore();
+        }
+
+        return false;
+      },
+      child: child,
     );
   }
 
