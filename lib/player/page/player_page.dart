@@ -15,6 +15,7 @@ import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:provider/provider.dart';
 
 class PlayerPage extends StatefulWidget {
@@ -28,6 +29,7 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<Types> _baseListProvider = BaseListProvider();
+  List<SwiperList> _list = [];
   TabController _tabController;
   PageController _pageController;
 
@@ -65,7 +67,9 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
       Method.get,
       HttpApi.getHotList,
       onSuccess: (data) {
-        List.generate(data.length, (i) => _baseListProvider.list.add(Types.fromJson(data["types"][i])));
+        List.generate(data["types"].length, (i) => _baseListProvider.list.add(Types.fromJson(data["types"][i])));
+        List.generate(data["swiper"].length, (i) => _list.add(SwiperList.fromJson(data["swiper"][i])));
+        setState(() {});
         if (data["types"].length == 0) {
           _baseListProvider.setStateType(StateType.network);
         } else {
@@ -99,17 +103,13 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
                 snap: true,
                 expandedHeight: 300.0,
                 elevation: 10,
-                // flexibleSpace: Swipper.Swiper(
-                //   itemBuilder: (BuildContext context, int index) {
-                //     return new Image.network(
-                //       "http://via.placeholder.com/350x150",
-                //       fit: BoxFit.fill,
-                //     );
-                //   },
-                //   itemCount: 3,
-                //   pagination: new Swipper.SwiperPagination(),
-                //   control: new Swipper.SwiperControl(),
-                // ),
+                flexibleSpace: Swiper(
+                  itemBuilder: (BuildContext context, int index) {
+                    return LoadImage(_list[index].cover);
+                  },
+                  itemCount: _list.length,
+                  pagination: SwiperPagination.fraction,
+                ),
                 actions: [
                   TextButton(
                       onPressed: () {
@@ -117,11 +117,11 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
                       },
                       child: Icon(
                         Icons.search_sharp,
-                        color: Colors.redAccent,
+                        color: Colors.black,
                       ))
                 ],
                 // bottom: PreferredSize(
-                //     child: Swipper.Swiper(
+                //     child: Swiper(
                 //       itemBuilder: (BuildContext context, int index) {
                 //         return new Image.network(
                 //           "http://via.placeholder.com/350x150",
@@ -129,8 +129,8 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
                 //         );
                 //       },
                 //       itemCount: 3,
-                //       pagination: new Swipper.SwiperPagination(),
-                //       control: new Swipper.SwiperControl(),
+                //       pagination: SwiperPagination(),
+                //       control: SwiperControl(),
                 //     ),
                 //     preferredSize: Size.fromHeight(48.0)),
               ),

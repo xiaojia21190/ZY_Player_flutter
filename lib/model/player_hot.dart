@@ -5,13 +5,13 @@ part 'player_hot.g.dart';
 @JsonSerializable()
 class PlayerHot extends Object {
   @JsonKey(name: 'swiper')
-  List<Swiper> swiper;
+  List<SwiperList> swipera;
 
   @JsonKey(name: 'types')
   List<Types> types;
 
   PlayerHot(
-    this.swiper,
+    this.swipera,
     this.types,
   );
 
@@ -21,7 +21,7 @@ class PlayerHot extends Object {
 }
 
 @JsonSerializable()
-class Swiper extends Object {
+class SwiperList extends Object {
   @JsonKey(name: 'url')
   String url;
 
@@ -31,13 +31,13 @@ class Swiper extends Object {
   @JsonKey(name: 'title')
   String title;
 
-  Swiper(
+  SwiperList(
     this.url,
     this.cover,
     this.title,
   );
 
-  factory Swiper.fromJson(Map<String, dynamic> srcJson) => _$SwiperFromJson(srcJson);
+  factory SwiperList.fromJson(Map<String, dynamic> srcJson) => _$SwiperFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SwiperToJson(this);
 }

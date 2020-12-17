@@ -8,31 +8,25 @@ part of 'player_hot.dart';
 
 PlayerHot _$PlayerHotFromJson(Map<String, dynamic> json) {
   return PlayerHot(
-    (json['swiper'] as List)
-        ?.map((e) =>
-            e == null ? null : Swiper.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
-    (json['types'] as List)
-        ?.map(
-            (e) => e == null ? null : Types.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['swiper'] as List)?.map((e) => e == null ? null : SwiperList.fromJson(e as Map<String, dynamic>))?.toList(),
+    (json['types'] as List)?.map((e) => e == null ? null : Types.fromJson(e as Map<String, dynamic>))?.toList(),
   );
 }
 
 Map<String, dynamic> _$PlayerHotToJson(PlayerHot instance) => <String, dynamic>{
-      'swiper': instance.swiper,
+      'swiper': instance.swipera,
       'types': instance.types,
     };
 
-Swiper _$SwiperFromJson(Map<String, dynamic> json) {
-  return Swiper(
+SwiperList _$SwiperFromJson(Map<String, dynamic> json) {
+  return SwiperList(
     json['url'] as String,
     json['cover'] as String,
     json['title'] as String,
   );
 }
 
-Map<String, dynamic> _$SwiperToJson(Swiper instance) => <String, dynamic>{
+Map<String, dynamic> _$SwiperToJson(SwiperList instance) => <String, dynamic>{
       'url': instance.url,
       'cover': instance.cover,
       'title': instance.title,
@@ -41,10 +35,7 @@ Map<String, dynamic> _$SwiperToJson(Swiper instance) => <String, dynamic>{
 Types _$TypesFromJson(Map<String, dynamic> json) {
   return Types(
     json['type'] as String,
-    (json['playlist'] as List)
-        ?.map((e) =>
-            e == null ? null : Playlist.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['playlist'] as List)?.map((e) => e == null ? null : Playlist.fromJson(e as Map<String, dynamic>))?.toList(),
   );
 }
 

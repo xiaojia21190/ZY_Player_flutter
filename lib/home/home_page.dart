@@ -292,7 +292,7 @@ class _HomeState extends State<Home> {
                   unselectedFontSize: Dimens.font_sp10,
                   selectedItemColor: Theme.of(context).primaryColor,
                   unselectedItemColor: isDark ? Colours.dark_unselected_item_color : Colours.unselected_item_color,
-                  onTap: (index) => _pageController.jumpToPage(index),
+                  onTap: (index) => _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease),
                 );
               },
             ),
