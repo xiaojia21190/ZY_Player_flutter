@@ -4,8 +4,8 @@ import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
 class DetailProvider extends ChangeNotifier {
-  DetailReource _detailReource;
-  DetailReource get detailReource => _detailReource;
+  List<DetailReource> _detailReource;
+  List<DetailReource> get detailReource => _detailReource;
 
   List<String> _kanguojuji = []; // 已经看过的剧集列表
   List<String> get kanguojuji => _kanguojuji;
@@ -55,8 +55,8 @@ class DetailProvider extends ChangeNotifier {
     }
   }
 
-  setDetailResource(DetailReource detailReourceData) {
-    _detailReource = detailReourceData;
+  addDetailResource(DetailReource detailReourceData) {
+    _detailReource.add(detailReourceData);
     notifyListeners();
   }
 }

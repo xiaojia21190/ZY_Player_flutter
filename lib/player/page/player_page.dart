@@ -38,87 +38,91 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
     super.build(context);
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: TabBar(
-          labelPadding: const EdgeInsets.symmetric(horizontal: 20),
-          controller: _tabController,
-          labelColor: Colours.red_selected_line,
-          unselectedLabelColor: Colors.black45,
-          labelStyle: TextStyles.textBold24,
-          unselectedLabelStyle: const TextStyle(
-            fontSize: Dimens.font_sp16,
-            color: Colours.red_selected_line,
-          ),
-          indicatorSize: TabBarIndicatorSize.label,
-          indicatorColor: Colours.red_selected_line,
-          indicatorWeight: 1,
-          tabs: const <Widget>[
-            Text("影视"),
-            Text("直播"),
-          ],
-          onTap: (index) {
-            if (!mounted) {
-              return;
-            }
-            _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
-          },
-        ),
-        actions: [
-          TextButton(
-              onPressed: () {
-                NavigatorUtils.push(context, PlayerRouter.searchPage);
-              },
-              child: Icon(
-                Icons.search_sharp,
-                color: Colors.black,
-              ))
-        ],
-      ),
-      body: SafeArea(
-          child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Selector<PlayerProvider, List<SwiperList>>(
-                builder: (_, list, __) {
-                  return list.length > 0
-                      ? Container(
-                          height: ScreenUtil.getInstance().getWidth(150),
-                          width: MediaQuery.of(context).size.width,
-                          child: Swiper(
-                            autoplay: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              return LoadImage(
-                                list[index].cover,
-                                fit: BoxFit.cover,
-                              );
-                            },
-                            itemCount: list.length,
-                            pagination: SwiperPagination.fraction,
-                          ),
-                        )
-                      : Container();
-                },
-                selector: (_, store) => store.swiperList),
-          ),
-          SliverFillRemaining(
-              child: Container(
-            color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
-            child: PageView.builder(
-                key: const Key('pageView'),
-                itemCount: 2,
-                onPageChanged: _onPageChange,
-                controller: _pageController,
-                itemBuilder: (_, pageIndex) {
-                  if (pageIndex == 0) {
-                    return PlayerListPage();
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return [
+          SliverAppBar(
+            forceElevated: innerBoxIsScrolled,
+            centerTitle: true,
+            floating: false,
+            pinned: true,
+            snap: false,
+            expandedHeight: ScreenUtil.getInstance().getWidth(150),
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: TabBar(
+                labelPadding: const EdgeInsets.symmetric(horizontal: 20),
+                controller: _tabController,
+                labelColor: Colours.red_selected_line,
+                unselectedLabelColor: Colors.amberAccent,
+                labelStyle: TextStyles.textBold24,
+                unselectedLabelStyle: const TextStyle(
+                  fontSize: Dimens.font_sp16,
+                  color: Colours.red_selected_line,
+                ),
+                indicatorSize: TabBarIndicatorSize.label,
+                indicatorColor: Colours.red_selected_line,
+                indicatorWeight: 1,
+                tabs: const <Widget>[
+                  Text("影视"),
+                  Text("直播"),
+                ],
+                onTap: (index) {
+                  if (!mounted) {
+                    return;
                   }
-                  return ZhiboListPage();
-                }),
-          ))
-        ],
-      )),
+                  _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                },
+              ),
+              background: Selector<PlayerProvider, List<SwiperList>>(
+                  builder: (_, list, __) {
+                    return list.length > 0
+                        ? Container(
+                            height: ScreenUtil.getInstance().getWidth(150),
+                            width: MediaQuery.of(context).size.width,
+                            child: Swiper(
+                              autoplay: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                return LoadImage(
+                                  list[index].cover,
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                              itemCount: list.length,
+                              pagination: SwiperPagination.fraction,
+                            ),
+                          )
+                        : Container();
+                  },
+                  selector: (_, store) => store.swiperList),
+            ),
+            actions: [
+              TextButton.icon(
+                  onPressed: () {
+                    NavigatorUtils.push(context, PlayerRouter.searchPage);
+                  },
+                  label: Text("搜索"),
+                  icon: Icon(
+                    Icons.search_sharp,
+                  ))
+            ],
+          ),
+        ];
+      },
+      body: Container(
+        color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
+        child: PageView.builder(
+            key: const Key('pageView'),
+            itemCount: 2,
+            onPageChanged: _onPageChange,
+            controller: _pageController,
+            itemBuilder: (_, pageIndex) {
+              if (pageIndex == 0) {
+                return PlayerListPage();
+              }
+              return ZhiboListPage();
+            }),
+      ),
     );
   }
 

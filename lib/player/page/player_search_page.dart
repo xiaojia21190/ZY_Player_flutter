@@ -38,7 +38,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
   void initState() {
     _playerProvider = Store.value<PlayerProvider>(context);
     _appStateProvider = Store.value<AppStateProvider>(context);
-
+    _baseListProvider.setStateType(StateType.empty);
     _playerProvider.setWords();
     super.initState();
   }
@@ -49,13 +49,13 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
         onSuccess: (resultList) {
       List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
       if (resultList.length == 0) {
-        _playerProvider.setStateType(StateType.order);
+        _baseListProvider.setStateType(StateType.order);
       } else {
-        _playerProvider.setStateType(StateType.empty);
+        _baseListProvider.setStateType(StateType.empty);
       }
       _appStateProvider.setloadingState(false);
     }, onError: (_, __) {
-      _playerProvider.setStateType(StateType.network);
+      _baseListProvider.setStateType(StateType.network);
       _appStateProvider.setloadingState(false);
     });
   }
@@ -157,7 +157,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                     create: (_) => _baseListProvider,
                     child: Consumer<BaseListProvider<ResourceData>>(builder: (_, _baseListProvider, __) {
                       return DeerListView(
-                          itemCount: 1,
+                          itemCount: _baseListProvider.list.length,
                           stateType: _baseListProvider.stateType,
                           hasRefresh: false,
                           loadMore: _onLoadMore,
@@ -169,43 +169,23 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                               position: index,
                               duration: const Duration(milliseconds: 375),
                               child: SlideAnimation(
-                                verticalOffset: 50.0,
+                                verticalOffset: 60.0,
                                 child: FadeInAnimation(
-                                  child: GridView.builder(
-                                    //将所有子控件在父控件中填满
-                                    shrinkWrap: true,
-                                    //解决ListView嵌套GridView滑动冲突问题
-                                    physics: NeverScrollableScrollPhysics(),
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3, //每行几列
-                                        childAspectRatio: 0.69),
-                                    itemCount: _baseListProvider.list.length,
-                                    itemBuilder: (context, i) {
-                                      //要返回的item样式
-                                      return InkWell(
-                                        child: Column(
-                                          children: [
-                                            LoadImage(
-                                              _baseListProvider.list[i].cover,
-                                              width: 140,
-                                              height: 200,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            Gaps.vGap8,
-                                            Text(
-                                              _baseListProvider.list[i].title,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {
-                                          NavigatorUtils.push(context,
-                                              '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[i].title)}');
-                                        },
-                                      );
-                                    },
+                                    child: ListTile(
+                                  contentPadding: EdgeInsets.all(10),
+                                  leading: LoadImage(
+                                    _baseListProvider.list[index].cover,
+                                    fit: BoxFit.cover,
                                   ),
-                                ),
+                                  title: Text(
+                                    _baseListProvider.list[index].title,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  onTap: () {
+                                    NavigatorUtils.push(context,
+                                        '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].title)}');
+                                  },
+                                )),
                               ),
                             );
                           });

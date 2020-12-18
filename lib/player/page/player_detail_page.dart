@@ -34,10 +34,12 @@ class PlayerDetailPage extends StatefulWidget {
     Key key,
     @required this.url,
     @required this.title,
+    @required this.cover,
   }) : super(key: key);
 
   final String url;
   final String title;
+  final String cover;
 
   @override
   _PlayerDetailPageState createState() => _PlayerDetailPageState();
@@ -140,7 +142,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": widget.url}, onSuccess: (data) {
-      _detailProvider.setDetailResource(DetailReource.fromJson(data[0]));
+      List.generate(data.length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data[index])));
       _detailProvider.setJuji();
       _collectProvider.changeNoti();
       setPlayerVideo();
@@ -169,7 +171,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       ..setPlayerOption('render-wait-start', 1));
   }
 
-  bool getFilterData(DetailReource data) {
+  bool getFilterData(List<DetailReource> data) {
     if (data != null) {
       var result = _collectProvider.listDetailResource.where((element) => element.url == data.url).toList();
       return result.length > 0;
@@ -407,26 +409,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                           child: CustomScrollView(
                         slivers: <Widget>[
                           SliverToBoxAdapter(
-                            child: MyCard(
-                              child: Container(
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text("剧情介绍"),
-                                    Text(
-                                      provider.detailReource.content,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 10,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: provider.detailReource.videoList.length > 0
+                            child: provider.detailReource.length > 0
                                 ? MyCard(
                                     child: Container(
                                     padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -442,7 +425,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                                 "剧集选择",
                                                 style: TextStyle(fontSize: 15),
                                               ),
-                                              buildShare(provider.detailReource.cover, provider.detailReource.title)
+                                              buildShare(widget.cover, widget.title)
+                                              //源切换
+                                              DropdownButton(onChanged: (value) {  }, items: [],)
                                             ],
                                           ),
                                         ),

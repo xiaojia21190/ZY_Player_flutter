@@ -4,51 +4,15 @@ part 'detail_reource.g.dart';
 
 @JsonSerializable()
 class DetailReource extends Object {
-  @JsonKey(name: 'videoList')
-  List<VideoList> videoList;
+  @JsonKey(name: 'ziyuanName')
+  String ziyuanName;
 
-  @JsonKey(name: 'content')
-  String content;
-
-  @JsonKey(name: 'cover')
-  String cover;
-
-  @JsonKey(name: 'title')
-  String title;
-
-  @JsonKey(name: 'pingfen')
-  String pingfen;
-
-  @JsonKey(name: 'daoyan')
-  String daoyan;
-
-  @JsonKey(name: 'zhuyan')
-  String zhuyan;
-
-  @JsonKey(name: 'leixing')
-  String leixing;
-
-  @JsonKey(name: 'diqu')
-  String diqu;
-
-  @JsonKey(name: 'yuyan')
-  String yuyan;
-
-  @JsonKey(name: 'url')
-  String url;
+  @JsonKey(name: 'ziyuanUrl')
+  List<ZiyuanUrl> ziyuanUrl;
 
   DetailReource(
-    this.videoList,
-    this.content,
-    this.cover,
-    this.title,
-    this.pingfen,
-    this.daoyan,
-    this.zhuyan,
-    this.leixing,
-    this.diqu,
-    this.yuyan,
-    this.url,
+    this.ziyuanName,
+    this.ziyuanUrl,
   );
 
   factory DetailReource.fromJson(Map<String, dynamic> srcJson) => _$DetailReourceFromJson(srcJson);
@@ -57,19 +21,19 @@ class DetailReource extends Object {
 }
 
 @JsonSerializable()
-class VideoList extends Object {
+class ZiyuanUrl extends Object {
   @JsonKey(name: 'url')
   String url;
 
   @JsonKey(name: 'title')
   String title;
 
-  VideoList(
+  ZiyuanUrl(
     this.url,
     this.title,
   );
 
-  factory VideoList.fromJson(Map<String, dynamic> srcJson) => _$VideoListFromJson(srcJson);
+  factory ZiyuanUrl.fromJson(Map<String, dynamic> srcJson) => _$ZiyuanUrlFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$VideoListToJson(this);
+  Map<String, dynamic> toJson() => _$ZiyuanUrlToJson(this);
 }

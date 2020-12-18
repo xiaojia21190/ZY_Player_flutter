@@ -37,9 +37,9 @@ class SwiperList extends Object {
     this.title,
   );
 
-  factory SwiperList.fromJson(Map<String, dynamic> srcJson) => _$SwiperFromJson(srcJson);
+  factory SwiperList.fromJson(Map<String, dynamic> srcJson) => _$SwiperListFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$SwiperToJson(this);
+  Map<String, dynamic> toJson() => _$SwiperListToJson(this);
 }
 
 @JsonSerializable()
