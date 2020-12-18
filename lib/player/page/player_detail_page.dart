@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/event/event_bus.dart';
 import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
+import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
@@ -21,6 +23,7 @@ import 'package:ZY_Player_flutter/utils/qs_common.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_card.dart';
+import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flustars/flustars.dart';
@@ -32,14 +35,10 @@ import 'package:qr_flutter/qr_flutter.dart';
 class PlayerDetailPage extends StatefulWidget {
   const PlayerDetailPage({
     Key key,
-    @required this.url,
-    @required this.title,
-    @required this.cover,
+    @required this.playerList,
   }) : super(key: key);
 
-  final String url;
-  final String title;
-  final String cover;
+  final String playerList;
 
   @override
   _PlayerDetailPageState createState() => _PlayerDetailPageState();
@@ -64,9 +63,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   String currentUrl = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Playlist _playlist;
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    var result = jsonDecode(widget.playerList);
+    _playlist = Playlist.fromJson(result);
+
     _collectProvider = Store.value<CollectProvider>(context);
     appStateProvider = Store.value<AppStateProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
@@ -75,9 +79,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     initData();
 
     ApplicationEvent.event.on<DeviceEvent>().listen((event) async {
-      Toast.show("推送视频 ${_detailProvider.detailReource.videoList[currentVideoIndex].title} 到设备：${event.devicesName}");
+      Toast.show(
+          "推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${event.devicesName}");
       await appStateProvider.dlnaManager.setDevice(event.devicesId);
-      await appStateProvider.dlnaManager.setVideoUrlAndName(currentUrl, _detailProvider.detailReource.videoList[currentVideoIndex].title);
+      await appStateProvider.dlnaManager.setVideoUrlAndName(currentUrl,
+          _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
       appStateProvider.setloadingState(false);
     });
 
@@ -90,12 +96,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     // 播放完成 是否从新播放下一集 completed
     Log.d(value.duration.inMilliseconds.toString());
     if (value.state == FijkState.completed) {
-      if (_detailProvider.detailReource.videoList.length > 1) {
+      if (_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl.length > 1) {
         currentVideoIndex += 1;
         appStateProvider.setloadingState(true);
         Toast.show("正在解析地址,开始播放下一集");
-        await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex].url, currentVideoIndex);
-        _detailProvider.saveJuji("${widget.url}_$currentVideoIndex");
+        await getPlayVideoUrl(
+            _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].url,
+            currentVideoIndex);
+        _detailProvider.saveJuji("${_playlist.url}_${_detailProvider.chooseYuanIndex}_$currentVideoIndex");
         _player.reset().then((value) {
           _player.setDataSource(currentUrl, autoPlay: true);
           Toast.show("开始播放第${currentVideoIndex + 1}集");
@@ -109,7 +117,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   void toggleFullscreen() {
     _isFullscreen = !_isFullscreen;
-    _isFullscreen ? SystemChrome.setEnabledSystemUIOverlays([]) : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    _isFullscreen
+        ? SystemChrome.setEnabledSystemUIOverlays([])
+        : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
 
   @override
@@ -132,7 +142,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   Future getPlayVideoUrl(String videoUrl, int index) async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl},
+        onSuccess: (data) {
       currentUrl = data;
     }, onError: (_, __) {
       currentVideoIndex = index;
@@ -141,12 +152,18 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": widget.url}, onSuccess: (data) {
-      List.generate(data.length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data[index])));
-      _detailProvider.setJuji();
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist.url},
+        onSuccess: (data) {
+      if (data.length > 0) {
+        List.generate(data.length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data[index])));
+        _detailProvider.setJuji();
+      } else {
+        _detailProvider.setStateType(StateType.network);
+      }
+
       _collectProvider.changeNoti();
       setPlayerVideo();
-      if (getFilterData(_detailProvider.detailReource)) {
+      if (getFilterData(_playlist.url)) {
         _detailProvider.setActionName("点击取消");
       } else {
         _detailProvider.setActionName("点击收藏");
@@ -171,14 +188,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       ..setPlayerOption('render-wait-start', 1));
   }
 
-  bool getFilterData(List<DetailReource> data) {
-    if (data != null) {
-      var result = _collectProvider.listDetailResource.where((element) => element.url == data.url).toList();
-      return result.length > 0;
-    }
-    return false;
-  }
-
   Widget buildShare(String image, String title) {
     GlobalKey haibaoKey = GlobalKey();
     return FlatButton.icon(
@@ -186,7 +195,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
               showElasticDialog<void>(
                 context: context,
                 builder: (BuildContext context) {
-                  const OutlinedBorder buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0)));
+                  const OutlinedBorder buttonShape =
+                      RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0)));
                   return Material(
                     type: MaterialType.transparency,
                     child: Center(
@@ -209,9 +219,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                   // 文字颜色
                                   foregroundColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
                                   // 按下高亮颜色
-                                  shadowColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor.withOpacity(0.2)),
+                                  shadowColor:
+                                      MaterialStateProperty.all<Color>(Theme.of(context).primaryColor.withOpacity(0.2)),
                                   // 按钮大小
-                                  minimumSize: MaterialStateProperty.all<Size>(const Size(double.infinity, double.infinity)),
+                                  minimumSize:
+                                      MaterialStateProperty.all<Size>(const Size(double.infinity, double.infinity)),
                                   // 修改默认圆角
                                   shape: MaterialStateProperty.all<OutlinedBorder>(buttonShape),
                                 )),
@@ -262,7 +274,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                               TextButton(
                                 child: const Text('点击复制链接'),
                                 onPressed: () {
-                                  Clipboard.setData(ClipboardData(text: "https://xiaojia21190.github.io/ZY_Player_flutter/"));
+                                  Clipboard.setData(
+                                      ClipboardData(text: "https://xiaojia21190.github.io/ZY_Player_flutter/"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
@@ -293,20 +306,20 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         label: Text("分享"));
   }
 
-  Wrap buildJuJi(var provider, var isDark) {
+  Wrap buildJuJi(List<ZiyuanUrl> urls, int chooseIndex, var isDark) {
     return Wrap(
       spacing: 20, // 主轴(水平)方向间距
       runSpacing: 10, // 纵轴（垂直）方向间距
       alignment: WrapAlignment.start, //沿主轴方向居中
-      children: List.generate(provider.detailReource.videoList.length, (index) {
+      children: List.generate(urls.length, (index) {
         return InkWell(
             onTap: () async {
               if (currentVideoIndex == index) return;
               currentVideoIndex = index;
               appStateProvider.setloadingState(true);
               Toast.show("正在解析地址");
-              await getPlayVideoUrl(_detailProvider.detailReource.videoList[currentVideoIndex].url, currentVideoIndex);
-              _detailProvider.saveJuji("${widget.url}_$currentVideoIndex");
+              await getPlayVideoUrl(urls[currentVideoIndex].url, currentVideoIndex);
+              _detailProvider.saveJuji("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
               _player.reset().then((value) {
                 _player.setDataSource(currentUrl, autoPlay: true);
                 Toast.show("开始播放第${currentVideoIndex + 1}集");
@@ -317,17 +330,36 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                 width: ScreenUtil.getInstance().getWidth(100),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: _detailProvider.kanguojuji.contains("${widget.url}_$index") ? Colors.redAccent : Colors.blueAccent,
+                    color: _detailProvider.kanguojuji.contains("${_playlist.url}_${chooseIndex}_$index")
+                        ? Colors.redAccent
+                        : Colors.blueAccent,
                     borderRadius: BorderRadius.all(Radius.circular(5))),
                 alignment: Alignment.center,
                 child: Text(
-                  '${_detailProvider.detailReource.videoList[index].title}',
+                  '${urls[index].title}',
                   style: TextStyle(
                     color: isDark ? Colours.dark_text : Colors.white,
                   ),
                 )));
       }),
     );
+  }
+
+  List<Widget> textWidget(provider) {
+    return List.generate(
+        provider.detailReource.length,
+        (index) => DropdownMenuItem(
+              child: Text(provider.detailReource[index].ziyuanName),
+              value: index,
+            )).toList();
+  }
+
+  bool getFilterData(String url) {
+    if (url != null) {
+      var result = _collectProvider.listDetailResource.where((element) => element.url == url).toList();
+      return result.length > 0;
+    }
+    return false;
   }
 
   @override
@@ -349,103 +381,106 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
               child: Selector<DetailProvider, String>(
                   builder: (_, actionName, __) {
                     return MyAppBar(
-                        centerTitle: widget.title,
+                        centerTitle: _playlist.title,
                         actionName: actionName,
                         onPressed: () {
-                          if (getFilterData(_detailProvider.detailReource)) {
+                          if (getFilterData(_playlist.url)) {
                             Log.d("点击取消");
-                            _collectProvider.removeResource(_detailProvider.detailReource.url);
+                            _collectProvider.removeResource(_playlist.url);
                             _detailProvider.setActionName("点击收藏");
                           } else {
                             Log.d("点击收藏");
                             _collectProvider.addResource(
-                              _detailProvider.detailReource,
+                              _playlist,
                             );
                             _detailProvider.setActionName("点击取消");
                           }
                         });
                   },
                   selector: (_, store) => store.actionName)),
-          body: Consumer<DetailProvider>(builder: (_, provider, __) {
-            return provider.detailReource != null
-                ? Column(
-                    children: [
-                      Stack(
+          body: Column(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: ScreenUtil.getInstance().getWidth(230),
+                    child: FijkView(
+                      player: _player,
+                      color: Colors.black,
+                      panelBuilder: (player, data, BuildContext context, Size viewSize, Rect texturePos) {
+                        return DiyFijkPanel(
+                          player: player,
+                          onBack: () {
+                            player.exitFullScreen();
+                          },
+                          onError: () {
+                            // _player.reset().then((value) {
+                            //   _player.setDataSource(currentUrl, autoPlay: true);
+                            //   Toast.show("开始播放第${currentVideoIndex + 1}集");
+                            //   appStateProvider.setloadingState(false);
+                            // });
+                          },
+                          data: data,
+                          viewSize: viewSize,
+                          texPos: texturePos,
+                          fill: fill,
+                          doubleTap: doubleTap,
+                          snapShot: snapShot,
+                          hideDuration: duration,
+                        );
+                      },
+                      fsFit: FijkFit.ar16_9,
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(child: Consumer<DetailProvider>(builder: (_, provider, __) {
+                return provider.detailReource != null && provider.detailReource.length > 0
+                    ? MyScrollView(
                         children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: ScreenUtil.getInstance().getWidth(230),
-                            child: FijkView(
-                              player: _player,
-                              color: Colors.black,
-                              panelBuilder: (player, data, BuildContext context, Size viewSize, Rect texturePos) {
-                                return DiyFijkPanel(
-                                  player: player,
-                                  onBack: () {
-                                    player.exitFullScreen();
-                                  },
-                                  onError: () {
-                                    _player.reset().then((value) {
-                                      _player.setDataSource(currentUrl, autoPlay: true);
-                                      Toast.show("开始播放第${currentVideoIndex + 1}集");
-                                      appStateProvider.setloadingState(false);
-                                    });
-                                  },
-                                  data: data,
-                                  viewSize: viewSize,
-                                  texPos: texturePos,
-                                  fill: fill,
-                                  doubleTap: doubleTap,
-                                  snapShot: snapShot,
-                                  hideDuration: duration,
-                                );
-                              },
-                              fsFit: FijkFit.ar16_9,
+                          MyCard(
+                              child: Container(
+                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Text(
+                                        "剧集选择",
+                                        style: TextStyle(fontSize: 15),
+                                      ),
+                                      buildShare(_playlist.cover, _playlist.title),
+                                      //源切换
+                                      DropdownButton(
+                                        onChanged: (value) {
+                                          provider.setChooseYuanIndex(value);
+                                        },
+                                        items: textWidget(provider),
+                                        value: provider.chooseYuanIndex,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl,
+                                    provider.chooseYuanIndex, isDark),
+                              ],
                             ),
-                          ),
+                          ))
                         ],
-                      ),
-                      Expanded(
-                          child: CustomScrollView(
-                        slivers: <Widget>[
-                          SliverToBoxAdapter(
-                            child: provider.detailReource.length > 0
-                                ? MyCard(
-                                    child: Container(
-                                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 10, bottom: 10),
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "剧集选择",
-                                                style: TextStyle(fontSize: 15),
-                                              ),
-                                              buildShare(widget.cover, widget.title)
-                                              //源切换
-                                              DropdownButton(onChanged: (value) {  }, items: [],)
-                                            ],
-                                          ),
-                                        ),
-                                        buildJuJi(provider, isDark),
-                                      ],
-                                    ),
-                                  ))
-                                : Container(),
-                          )
-                        ],
-                      ))
-                    ],
-                  )
-                : StateLayout(
-                    type: provider.stateType,
-                    onRefresh: initData,
-                  );
-          }),
+                      )
+                    : StateLayout(
+                        type: provider.stateType,
+                        onRefresh: initData,
+                      );
+              }))
+            ],
+          ),
         ));
   }
 }

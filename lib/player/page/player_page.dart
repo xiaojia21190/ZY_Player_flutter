@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
@@ -21,7 +23,8 @@ class PlayerPage extends StatefulWidget {
   _PlayerPageState createState() => _PlayerPageState();
 }
 
-class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMixin<PlayerPage>, SingleTickerProviderStateMixin {
+class _PlayerPageState extends State<PlayerPage>
+    with AutomaticKeepAliveClientMixin<PlayerPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   TabController _tabController;
@@ -90,6 +93,11 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
                               },
                               itemCount: list.length,
                               pagination: SwiperPagination.fraction,
+                              onTap: (index) {
+                                String jsonString = jsonEncode(list[index]);
+                                NavigatorUtils.push(context,
+                                    '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                              },
                             ),
                           )
                         : Container();

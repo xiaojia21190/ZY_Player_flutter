@@ -60,9 +60,9 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     initData();
 
     ApplicationEvent.event.on<DeviceEvent>().listen((event) async {
-      Toast.show("推送视频 ${_detailProvider.detailReource.videoList[currentVideoIndex].title} 到设备：${event.devicesName}");
+      Toast.show("推送视频 ${widget.title} 到设备：${event.devicesName}");
       await appStateProvider.dlnaManager.setDevice(event.devicesId);
-      await appStateProvider.dlnaManager.setVideoUrlAndName(currentUrl, _detailProvider.detailReource.videoList[currentVideoIndex].title);
+      await appStateProvider.dlnaManager.setVideoUrlAndName(widget.url, widget.title);
       appStateProvider.setloadingState(false);
     });
 
@@ -76,7 +76,9 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
 
   void toggleFullscreen() {
     _isFullscreen = !_isFullscreen;
-    _isFullscreen ? SystemChrome.setEnabledSystemUIOverlays([]) : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    _isFullscreen
+        ? SystemChrome.setEnabledSystemUIOverlays([])
+        : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   }
 
   @override
@@ -115,14 +117,6 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
       ..setPlayerOption('enable-accurate-seek', 1)
       ..setPlayerOption('reconnect', 5)
       ..setPlayerOption('render-wait-start', 1));
-  }
-
-  bool getFilterData(DetailReource data) {
-    if (data != null) {
-      var result = _collectProvider.listDetailResource.where((element) => element.url == data.url).toList();
-      return result.length > 0;
-    }
-    return false;
   }
 
   @override

@@ -1,11 +1,15 @@
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
+import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
 class DetailProvider extends ChangeNotifier {
-  List<DetailReource> _detailReource;
+  List<DetailReource> _detailReource = [];
   List<DetailReource> get detailReource => _detailReource;
+
+  List<Playlist> _playerList;
+  List<Playlist> get playerList => _playerList;
 
   List<String> _kanguojuji = []; // 已经看过的剧集列表
   List<String> get kanguojuji => _kanguojuji;
@@ -22,6 +26,14 @@ class DetailProvider extends ChangeNotifier {
   bool _isBuffering = false;
 
   bool get isBuffering => _isBuffering;
+
+  int _chooseYuanIndex = 0;
+  int get chooseYuanIndex => _chooseYuanIndex;
+
+  void setChooseYuanIndex(int index) {
+    _chooseYuanIndex = index;
+    notifyListeners();
+  }
 
   void setBufferState(bool state) {
     _isBuffering = state;

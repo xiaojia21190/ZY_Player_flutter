@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -19,7 +21,8 @@ class PlayerListPage extends StatefulWidget {
   _PlayerListPageState createState() => _PlayerListPageState();
 }
 
-class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAliveClientMixin<PlayerListPage>, SingleTickerProviderStateMixin {
+class _PlayerListPageState extends State<PlayerListPage>
+    with AutomaticKeepAliveClientMixin<PlayerListPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<Types> _baseListProvider = BaseListProvider();
@@ -150,8 +153,9 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                   ],
                                 ),
                                 onTap: () {
+                                  String jsonString = jsonEncode(_baseListProvider.list[index].playlist[i]);
                                   NavigatorUtils.push(context,
-                                      '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].title)}&cover=${Uri.encodeComponent(_baseListProvider.list[index].playlist[i].cover)}');
+                                      '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                 },
                               );
                             },

@@ -1,4 +1,5 @@
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
+import 'package:ZY_Player_flutter/model/player_hot.dart';
 // import 'package:ZY_Player_flutter/model/xiaoshuo_resource.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,8 @@ import 'package:flutter/material.dart';
 import '../../model/detail_reource.dart';
 
 class CollectProvider extends ChangeNotifier {
-  List<DetailReource> _listDetailResource = [];
-  List<DetailReource> get listDetailResource => _listDetailResource;
+  List<Playlist> _listDetailResource = [];
+  List<Playlist> get listDetailResource => _listDetailResource;
 
   List<ManhuaCatlogDetail> _manhuaCatlog = [];
   List<ManhuaCatlogDetail> get manhuaCatlog => _manhuaCatlog;
@@ -18,7 +19,7 @@ class CollectProvider extends ChangeNotifier {
   setListDetailResource(String collect) {
     switch (collect) {
       case "collcetPlayer":
-        var result = SpUtil.getObjList<DetailReource>(collect, (data) => DetailReource.fromJson(data));
+        var result = SpUtil.getObjList<Playlist>(collect, (data) => Playlist.fromJson(data));
         if (result.length > 0) {
           _listDetailResource.clear();
           _listDetailResource.addAll(result);
@@ -59,7 +60,7 @@ class CollectProvider extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  addResource(DetailReource data) {
+  addResource(Playlist data) {
     var glll = _listDetailResource.where((element) => element.url == data.url).toList().length;
     if (glll == 0) {
       _listDetailResource.add(data);

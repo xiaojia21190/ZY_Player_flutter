@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
@@ -20,7 +22,8 @@ class CollectPage extends StatefulWidget {
   _CollectPageState createState() => _CollectPageState();
 }
 
-class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
+class _CollectPageState extends State<CollectPage>
+    with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   TabController _tabController;
@@ -40,18 +43,26 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
   Widget getData(data, int index) {
     return ListTile(
       title: Text(data.title),
-      subtitle: Text(data.leixing),
+      subtitle: index == 0 ? null : Text(data.leixing),
       trailing: Icon(Icons.keyboard_arrow_right),
-      leading: LoadImage(
-        data.cover,
-        fit: BoxFit.cover,
+      leading: Container(
+        // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
+        height: 200,
+        width: 100,
+        padding: EdgeInsets.all(5),
+        child: LoadImage(
+          data.cover,
+          fit: BoxFit.fill,
+        ),
       ),
       onTap: () {
         Log.d('前往详情页');
         if (index == 0) {
-          NavigatorUtils.push(context, '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+          String jsonString = jsonEncode(data);
+          NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
         } else {
-          NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+          NavigatorUtils.push(context,
+              '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
         }
       },
     );

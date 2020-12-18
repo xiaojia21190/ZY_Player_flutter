@@ -269,7 +269,7 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
     _moveFromPos = _currentPos;
     _moveToMs = _moveFromPos.inMilliseconds.toDouble();
     _moveDelta = 0;
-    _maxMoveMs = 5 * 60 * 1000; // 每次最多滑动5分钟
+    _maxMoveMs = 12 * 60 * 1000; // 每次最多滑动12分钟
     if (_maxMoveMs > player.value.duration.inMilliseconds) {
       _maxMoveMs = player.value.duration.inMilliseconds;
     }
@@ -288,7 +288,7 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
     // 累计计算偏移量
     _moveDelta += details.delta.dx;
     // 用百分比计算出当前的时间
-    _moveToMs = _moveFromPos.inMilliseconds + (_moveDelta / panelWidth()) * _maxMoveMs;
+    _moveToMs = _moveFromPos.inMilliseconds + (_moveDelta / panelWidth() * 2) * _maxMoveMs;
     String currentSecond = DateUtil.formatDateMs(
       (_moveToMs).toInt(),
       isUtc: true,
@@ -500,7 +500,7 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
       child: Container(
         child: Text(
           _moveToTime,
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(color: Colors.black, fontSize: 16),
         ),
       ),
     );
@@ -593,8 +593,8 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
   Rect panelRect() {
     Rect rect = player.value.fullScreen || (true == widget.fill)
         ? Rect.fromLTWH(0, 0, widget.viewSize.width, widget.viewSize.height)
-        : Rect.fromLTRB(max(0.0, widget.texPos.left), max(0.0, widget.texPos.top), min(widget.viewSize.width, widget.texPos.right),
-            min(widget.viewSize.height, widget.texPos.bottom));
+        : Rect.fromLTRB(max(0.0, widget.texPos.left), max(0.0, widget.texPos.top),
+            min(widget.viewSize.width, widget.texPos.right), min(widget.viewSize.height, widget.texPos.bottom));
     return rect;
   }
 
@@ -699,7 +699,8 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
                                     child: TextButton(
                                       child: Text(devices[index].deviceName),
                                       onPressed: () {
-                                        ApplicationEvent.event.fire(DeviceEvent(devices[index].uuid, devices[index].deviceName));
+                                        ApplicationEvent.event
+                                            .fire(DeviceEvent(devices[index].uuid, devices[index].deviceName));
                                       },
                                     ),
                                   ),
@@ -727,7 +728,8 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
               return FlareGiffyDialog(
                 flarePath: 'assets/images/space_demo.flr',
                 flareAnimation: 'loading',
-                title: Text(words, textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+                title: Text(words,
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
                 description: Text(
                   '请打开相关设备后点击重新搜索',
                   textAlign: TextAlign.center,
@@ -749,8 +751,9 @@ class _DiyFijkPanelState extends State<DiyFijkPanel> {
 
   Widget buildStateless() {
     if (_volume != null || _brightness != null) {
-      Widget toast =
-          _volume == null ? defaultFijkBrightnessToast(_brightness, _valController.stream) : defaultFijkVolumeToast(_volume, _valController.stream);
+      Widget toast = _volume == null
+          ? defaultFijkBrightnessToast(_brightness, _valController.stream)
+          : defaultFijkVolumeToast(_volume, _valController.stream);
       return IgnorePointer(
         child: AnimatedOpacity(
           opacity: 1,
@@ -947,7 +950,8 @@ class FijkSliderColors {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is FijkSliderColors && runtimeType == other.runtimeType && hashCode == other.hashCode;
+      identical(this, other) ||
+      other is FijkSliderColors && runtimeType == other.runtimeType && hashCode == other.hashCode;
 
   @override
   int get hashCode => hashValues(playedColor, bufferedColor, cursorColor, baselineColor);
@@ -1020,7 +1024,7 @@ class _SliderPainter extends CustomPainter {
     pt.color = colors.cursorColor;
     pt.color = pt.color.withAlpha(max(0, pt.color.alpha - 50));
     radius = min(size.height / 2, dragging ? 10 : 5);
-    canvas.drawCircle(Offset(value, size.height / 2), 10, pt);
+    canvas.drawCircle(Offset(value, size.height / 2), radius, pt);
     pt.color = colors.cursorColor;
     radius = min(size.height / 2, dragging ? 6 : 3);
     canvas.drawCircle(Offset(value, size.height / 2), radius, pt);
