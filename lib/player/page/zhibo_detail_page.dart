@@ -3,18 +3,19 @@ import 'dart:async';
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/event/event_bus.dart';
 import 'package:ZY_Player_flutter/event/event_model.dart';
-import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
-import 'package:ZY_Player_flutter/player/widget/diy_fijkPanel.dart';
+import 'package:ZY_Player_flutter/player/widget/my_controller.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
-import 'package:fijkplayer/fijkplayer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 
 class ZhiboDetailPage extends StatefulWidget {
   const ZhiboDetailPage({
@@ -31,8 +32,6 @@ class ZhiboDetailPage extends StatefulWidget {
 }
 
 class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingObserver {
-  final FijkPlayer _player = FijkPlayer();
-
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
@@ -49,13 +48,15 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
   String currentUrl = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  VideoPlayerController _videoPlayerController;
+  ChewieController _chewieController;
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     _collectProvider = Store.value<CollectProvider>(context);
     appStateProvider = Store.value<AppStateProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
-    _player.addListener(_fijkValueListener);
 
     initData();
 
@@ -69,65 +70,47 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     super.initState();
   }
 
-  Future _fijkValueListener() async {
-    FijkValue value = _player.value;
-    _isFullscreen = value.fullScreen;
-  }
-
-  void toggleFullscreen() {
-    _isFullscreen = !_isFullscreen;
-    _isFullscreen
-        ? SystemChrome.setEnabledSystemUIOverlays([])
-        : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print('app lifecycle state: $state');
-    if (state == AppLifecycleState.inactive) {
-      _player.pause();
-    } else if (state == AppLifecycleState.resumed) {
-      _player.start();
-    }
-    super.didChangeAppLifecycleState(state);
-  }
-
   @override
   void dispose() {
     super.dispose();
-    _player.removeListener(_fijkValueListener);
-    _player.release();
+
+    _videoPlayerController?.dispose();
+    _videoPlayerController?.removeListener(_videoListener);
+    _chewieController?.dispose();
     _currentPosSubs?.cancel();
   }
 
-  Future initData() async {
-    await setPlayerVideo();
-    _player.setDataSource(widget.url, autoPlay: true);
+  void _videoListener() async {
+    if (_videoPlayerController.value.initialized) {
+      _detailProvider.setInitPlayer(true);
+      appStateProvider.setloadingState(false);
+    }
   }
 
-  Future setPlayerVideo() async {
-    await _player.applyOptions(FijkOption()
-      ..setFormatOption('fflags', 'fastseek')
-      ..setHostOption('request-screen-on', 1)
-      ..setHostOption('request-audio-focus', 1)
-      ..setCodecOption('cover-after-prepared', 1)
-      ..setPlayerOption('framedrop', 5)
-      ..setPlayerOption('packet-buffering', 1)
-      ..setPlayerOption('mediacodec', 1)
-      ..setPlayerOption('enable-accurate-seek', 1)
-      ..setPlayerOption('reconnect', 5)
-      ..setPlayerOption('render-wait-start', 1));
+  Future initData() async {
+    _videoPlayerController?.removeListener(_videoListener);
+    _videoPlayerController?.pause();
+    appStateProvider.setloadingState(true);
+
+    _videoPlayerController = VideoPlayerController.network(widget.url);
+    await _videoPlayerController.initialize();
+    _videoPlayerController.addListener(_videoListener);
+    _chewieController = ChewieController(
+      customControls: MyControls(widget.title),
+      videoPlayerController: _videoPlayerController,
+      autoPlay: false,
+      allowedScreenSleep: false,
+      looping: false,
+      aspectRatio: _videoPlayerController.value.aspectRatio,
+      placeholder: CachedNetworkImage(imageUrl: 'https://tva2.sinaimg.cn/large/007UW77jly1g5elwuwv4rj30sg0g0wfo.jpg'),
+      autoInitialize: true,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final bool isDark = themeData.brightness == Brightness.dark;
-
-    final bool fill = true;
-    final int duration = 4000;
-    final bool doubleTap = true;
-    final bool snapShot = true;
 
     return ChangeNotifierProvider<DetailProvider>(
       create: (_) => _detailProvider,
@@ -142,27 +125,25 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: ScreenUtil.getInstance().getWidth(230),
-              child: FijkView(
-                player: _player,
-                color: Colors.black,
-                panelBuilder: (player, data, BuildContext context, Size viewSize, Rect texturePos) {
-                  return DiyFijkPanel(
-                    player: player,
-                    onBack: () {
-                      player.exitFullScreen();
-                    },
-                    data: data,
-                    viewSize: viewSize,
-                    texPos: texturePos,
-                    fill: fill,
-                    doubleTap: doubleTap,
-                    snapShot: snapShot,
-                    hideDuration: duration,
-                    isZhibo: true,
-                  );
-                },
-                fsFit: FijkFit.ar16_9,
-              ),
+              child: Selector<DetailProvider, bool>(
+                  builder: (_, isplayer, __) {
+                    return isplayer
+                        ? Chewie(
+                            controller: _chewieController,
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              CircularProgressIndicator(),
+                              SizedBox(height: 20),
+                              Text(
+                                'Loading',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          );
+                  },
+                  selector: (_, store) => store.isInitPlayer),
             ),
           )),
     );

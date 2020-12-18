@@ -10,7 +10,7 @@ import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
-import 'package:ZY_Player_flutter/player/widget/diy_fijkPanel.dart';
+import 'package:ZY_Player_flutter/player/widget/my_controller.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
@@ -25,12 +25,14 @@ import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_card.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:fijkplayer/fijkplayer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 class PlayerDetailPage extends StatefulWidget {
   const PlayerDetailPage({
@@ -45,8 +47,6 @@ class PlayerDetailPage extends StatefulWidget {
 }
 
 class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBindingObserver {
-  final FijkPlayer _player = FijkPlayer();
-
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
@@ -55,7 +55,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   StreamSubscription _currentPosSubs;
 
   String actionName = "";
-  bool _isFullscreen = false;
 
   int currentVideoIndex = -1;
   Timer searchTimer;
@@ -64,6 +63,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Playlist _playlist;
+
+  VideoPlayerController _videoPlayerController;
+  ChewieController _chewieController;
 
   @override
   void initState() {
@@ -74,7 +76,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     _collectProvider = Store.value<CollectProvider>(context);
     appStateProvider = Store.value<AppStateProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
-    _player.addListener(_fijkValueListener);
 
     initData();
 
@@ -82,53 +83,21 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       Toast.show(
           "推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${event.devicesName}");
       await appStateProvider.dlnaManager.setDevice(event.devicesId);
-      await appStateProvider.dlnaManager.setVideoUrlAndName(currentUrl,
-          _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
+      await appStateProvider.dlnaManager
+          .setVideoUrlAndName(currentUrl, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
       appStateProvider.setloadingState(false);
     });
 
     super.initState();
   }
 
-  Future _fijkValueListener() async {
-    FijkValue value = _player.value;
-    _isFullscreen = value.fullScreen;
-    // 播放完成 是否从新播放下一集 completed
-    Log.d(value.duration.inMilliseconds.toString());
-    if (value.state == FijkState.completed) {
-      if (_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl.length > 1) {
-        currentVideoIndex += 1;
-        appStateProvider.setloadingState(true);
-        Toast.show("正在解析地址,开始播放下一集");
-        await getPlayVideoUrl(
-            _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].url,
-            currentVideoIndex);
-        _detailProvider.saveJuji("${_playlist.url}_${_detailProvider.chooseYuanIndex}_$currentVideoIndex");
-        _player.reset().then((value) {
-          _player.setDataSource(currentUrl, autoPlay: true);
-          Toast.show("开始播放第${currentVideoIndex + 1}集");
-          appStateProvider.setloadingState(false);
-        });
-      } else {
-        Toast.show("已播放完成");
-      }
-    }
-  }
-
-  void toggleFullscreen() {
-    _isFullscreen = !_isFullscreen;
-    _isFullscreen
-        ? SystemChrome.setEnabledSystemUIOverlays([])
-        : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-  }
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print('app lifecycle state: $state');
     if (state == AppLifecycleState.inactive) {
-      _player.pause();
+      _videoPlayerController.pause();
     } else if (state == AppLifecycleState.resumed) {
-      _player.start();
+      _videoPlayerController.play();
     }
     super.didChangeAppLifecycleState(state);
   }
@@ -136,14 +105,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   @override
   void dispose() {
     super.dispose();
-    _player.removeListener(_fijkValueListener);
-    _player.release();
+    _videoPlayerController?.dispose();
+    _videoPlayerController?.removeListener(_videoListener);
+    _chewieController?.dispose();
     _currentPosSubs?.cancel();
   }
 
   Future getPlayVideoUrl(String videoUrl, int index) async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl},
-        onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) {
       currentUrl = data;
     }, onError: (_, __) {
       currentVideoIndex = index;
@@ -152,17 +121,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist.url},
-        onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist.url}, onSuccess: (data) {
       if (data.length > 0) {
         List.generate(data.length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data[index])));
         _detailProvider.setJuji();
       } else {
         _detailProvider.setStateType(StateType.network);
       }
-
       _collectProvider.changeNoti();
-      setPlayerVideo();
       if (getFilterData(_playlist.url)) {
         _detailProvider.setActionName("点击取消");
       } else {
@@ -174,20 +140,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     });
   }
 
-  Future setPlayerVideo() async {
-    await _player.applyOptions(FijkOption()
-      ..setFormatOption('fflags', 'fastseek')
-      ..setHostOption('request-screen-on', 1)
-      ..setHostOption('request-audio-focus', 1)
-      ..setCodecOption('cover-after-prepared', 1)
-      ..setPlayerOption('framedrop', 5)
-      ..setPlayerOption('packet-buffering', 1)
-      ..setPlayerOption('mediacodec', 1)
-      ..setPlayerOption('enable-accurate-seek', 1)
-      ..setPlayerOption('reconnect', 5)
-      ..setPlayerOption('render-wait-start', 1));
-  }
-
   Widget buildShare(String image, String title) {
     GlobalKey haibaoKey = GlobalKey();
     return FlatButton.icon(
@@ -195,8 +147,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
               showElasticDialog<void>(
                 context: context,
                 builder: (BuildContext context) {
-                  const OutlinedBorder buttonShape =
-                      RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0)));
+                  const OutlinedBorder buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0)));
                   return Material(
                     type: MaterialType.transparency,
                     child: Center(
@@ -219,11 +170,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                   // 文字颜色
                                   foregroundColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
                                   // 按下高亮颜色
-                                  shadowColor:
-                                      MaterialStateProperty.all<Color>(Theme.of(context).primaryColor.withOpacity(0.2)),
+                                  shadowColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor.withOpacity(0.2)),
                                   // 按钮大小
-                                  minimumSize:
-                                      MaterialStateProperty.all<Size>(const Size(double.infinity, double.infinity)),
+                                  minimumSize: MaterialStateProperty.all<Size>(const Size(double.infinity, double.infinity)),
                                   // 修改默认圆角
                                   shape: MaterialStateProperty.all<OutlinedBorder>(buttonShape),
                                 )),
@@ -274,8 +223,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                               TextButton(
                                 child: const Text('点击复制链接'),
                                 onPressed: () {
-                                  Clipboard.setData(
-                                      ClipboardData(text: "https://xiaojia21190.github.io/ZY_Player_flutter/"));
+                                  Clipboard.setData(ClipboardData(text: "https://xiaojia21190.github.io/ZY_Player_flutter/"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
@@ -306,6 +254,13 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         label: Text("分享"));
   }
 
+  void _videoListener() async {
+    if (_videoPlayerController.value.initialized) {
+      _detailProvider.setInitPlayer(true);
+      appStateProvider.setloadingState(false);
+    }
+  }
+
   Wrap buildJuJi(List<ZiyuanUrl> urls, int chooseIndex, var isDark) {
     return Wrap(
       spacing: 20, // 主轴(水平)方向间距
@@ -315,24 +270,32 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         return InkWell(
             onTap: () async {
               if (currentVideoIndex == index) return;
+              _videoPlayerController?.removeListener(_videoListener);
+              _videoPlayerController?.pause();
               currentVideoIndex = index;
               appStateProvider.setloadingState(true);
               Toast.show("正在解析地址");
               await getPlayVideoUrl(urls[currentVideoIndex].url, currentVideoIndex);
               _detailProvider.saveJuji("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
-              _player.reset().then((value) {
-                _player.setDataSource(currentUrl, autoPlay: true);
-                Toast.show("开始播放第${currentVideoIndex + 1}集");
-                appStateProvider.setloadingState(false);
-              });
+              _videoPlayerController = VideoPlayerController.network(currentUrl);
+              await _videoPlayerController.initialize();
+              _videoPlayerController.addListener(_videoListener);
+              _chewieController = ChewieController(
+                customControls: MyControls(_playlist.title),
+                videoPlayerController: _videoPlayerController,
+                autoPlay: false,
+                allowedScreenSleep: false,
+                looping: false,
+                aspectRatio: _videoPlayerController.value.aspectRatio,
+                placeholder: CachedNetworkImage(imageUrl: 'https://tva2.sinaimg.cn/large/007UW77jly1g5elwuwv4rj30sg0g0wfo.jpg'),
+                autoInitialize: true,
+              );
             },
             child: Container(
                 width: ScreenUtil.getInstance().getWidth(100),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: _detailProvider.kanguojuji.contains("${_playlist.url}_${chooseIndex}_$index")
-                        ? Colors.redAccent
-                        : Colors.blueAccent,
+                    color: _detailProvider.kanguojuji.contains("${_playlist.url}_${chooseIndex}_$index") ? Colors.redAccent : Colors.blueAccent,
                     borderRadius: BorderRadius.all(Radius.circular(5))),
                 alignment: Alignment.center,
                 child: Text(
@@ -367,11 +330,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     final ThemeData themeData = Theme.of(context);
     final bool isDark = themeData.brightness == Brightness.dark;
 
-    final bool fill = true;
-    final int duration = 4000;
-    final bool doubleTap = true;
-    final bool snapShot = true;
-
     return ChangeNotifierProvider<DetailProvider>(
         create: (_) => _detailProvider,
         child: Scaffold(
@@ -403,36 +361,28 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
               Stack(
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: ScreenUtil.getInstance().getWidth(230),
-                    child: FijkView(
-                      player: _player,
                       color: Colors.black,
-                      panelBuilder: (player, data, BuildContext context, Size viewSize, Rect texturePos) {
-                        return DiyFijkPanel(
-                          player: player,
-                          onBack: () {
-                            player.exitFullScreen();
+                      width: MediaQuery.of(context).size.width,
+                      height: ScreenUtil.getInstance().getWidth(210),
+                      child: Selector<DetailProvider, bool>(
+                          builder: (_, isplayer, __) {
+                            return isplayer
+                                ? Chewie(
+                                    controller: _chewieController,
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      CircularProgressIndicator(),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        'Loading',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  );
                           },
-                          onError: () {
-                            // _player.reset().then((value) {
-                            //   _player.setDataSource(currentUrl, autoPlay: true);
-                            //   Toast.show("开始播放第${currentVideoIndex + 1}集");
-                            //   appStateProvider.setloadingState(false);
-                            // });
-                          },
-                          data: data,
-                          viewSize: viewSize,
-                          texPos: texturePos,
-                          fill: fill,
-                          doubleTap: doubleTap,
-                          snapShot: snapShot,
-                          hideDuration: duration,
-                        );
-                      },
-                      fsFit: FijkFit.ar16_9,
-                    ),
-                  ),
+                          selector: (_, store) => store.isInitPlayer)),
                 ],
               ),
               Expanded(child: Consumer<DetailProvider>(builder: (_, provider, __) {
@@ -467,8 +417,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                     ],
                                   ),
                                 ),
-                                buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl,
-                                    provider.chooseYuanIndex, isDark),
+                                buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl, provider.chooseYuanIndex, isDark),
                               ],
                             ),
                           ))

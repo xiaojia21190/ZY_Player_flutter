@@ -23,9 +23,9 @@ class DetailProvider extends ChangeNotifier {
   String _actionName = "";
   String get actionName => _actionName;
 
-  bool _isBuffering = false;
+  bool _isInitPlayer = false;
 
-  bool get isBuffering => _isBuffering;
+  bool get isInitPlayer => _isInitPlayer;
 
   int _chooseYuanIndex = 0;
   int get chooseYuanIndex => _chooseYuanIndex;
@@ -35,8 +35,8 @@ class DetailProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setBufferState(bool state) {
-    _isBuffering = state;
+  void setInitPlayer(bool state) {
+    _isInitPlayer = state;
     notifyListeners();
   }
 
