@@ -17,7 +17,8 @@ class ZhiboListPage extends StatefulWidget {
   _ZhiboListPageState createState() => _ZhiboListPageState();
 }
 
-class _ZhiboListPageState extends State<ZhiboListPage> with AutomaticKeepAliveClientMixin<ZhiboListPage>, SingleTickerProviderStateMixin {
+class _ZhiboListPageState extends State<ZhiboListPage>
+    with AutomaticKeepAliveClientMixin<ZhiboListPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<M3uResult> _zhiboListProvider = BaseListProvider();
@@ -34,7 +35,8 @@ class _ZhiboListPageState extends State<ZhiboListPage> with AutomaticKeepAliveCl
       Method.get,
       HttpApi.getZhiboList,
       onSuccess: (data) {
-        List.generate(data[0]["m3uResult"].length, (i) => _zhiboListProvider.list.add(M3uResult.fromJson(data[0]["m3uResult"][i])));
+        List.generate(data[0]["m3uResult"].length,
+            (i) => _zhiboListProvider.list.add(M3uResult.fromJson(data[0]["m3uResult"][i])));
         if (data.length == 0) {
           _zhiboListProvider.setStateType(StateType.network);
         } else {
@@ -55,43 +57,47 @@ class _ZhiboListPageState extends State<ZhiboListPage> with AutomaticKeepAliveCl
     return ChangeNotifierProvider<BaseListProvider<M3uResult>>(
         create: (_) => _zhiboListProvider,
         child: Consumer<BaseListProvider<M3uResult>>(builder: (_, _zhiboListProvider, __) {
-          return GridView.builder(
-            //将所有子控件在父控件中填满
-            shrinkWrap: true,
-            //解决ListView嵌套GridView滑动冲突问题
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7, //每行几列
-                childAspectRatio: 1),
-            itemCount: _zhiboListProvider.list.length,
-            itemBuilder: (context, index) {
-              //要返回的item样式
-              return AnimationConfiguration.staggeredGrid(
-                position: index,
-                duration: const Duration(milliseconds: 100),
-                columnCount: _zhiboListProvider.list.length,
-                child: ScaleAnimation(
-                  child: FadeInAnimation(
-                    child: Container(
-                        decoration: BoxDecoration(color: Colors.blueAccent, borderRadius: BorderRadius.all(Radius.circular(5))),
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.all(5),
-                        child: InkWell(
-                            onTap: () {
-                              NavigatorUtils.push(context,
-                                  '${PlayerRouter.detailZhiboPage}?url=${Uri.encodeComponent(_zhiboListProvider.list[index].url)}&title=${Uri.encodeComponent(_zhiboListProvider.list[index].title)}');
-                            },
-                            child: Text(
-                              '${_zhiboListProvider.list[index].title}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: isDark ? Colours.dark_text : Colors.white,
-                              ),
-                            ))),
-                  ),
-                ),
-              );
-            },
-          );
+          return MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: GridView.builder(
+                //将所有子控件在父控件中填满
+                shrinkWrap: true,
+                //解决ListView嵌套GridView滑动冲突问题
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7, //每行几列
+                    childAspectRatio: 1),
+                itemCount: _zhiboListProvider.list.length,
+                itemBuilder: (context, index) {
+                  //要返回的item样式
+                  return AnimationConfiguration.staggeredGrid(
+                    position: index,
+                    duration: const Duration(milliseconds: 100),
+                    columnCount: _zhiboListProvider.list.length,
+                    child: ScaleAnimation(
+                      child: FadeInAnimation(
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.blueAccent, borderRadius: BorderRadius.all(Radius.circular(5))),
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.all(5),
+                            child: InkWell(
+                                onTap: () {
+                                  NavigatorUtils.push(context,
+                                      '${PlayerRouter.detailZhiboPage}?url=${Uri.encodeComponent(_zhiboListProvider.list[index].url)}&title=${Uri.encodeComponent(_zhiboListProvider.list[index].title)}');
+                                },
+                                child: Text(
+                                  '${_zhiboListProvider.list[index].title}',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: isDark ? Colours.dark_text : Colors.white,
+                                  ),
+                                ))),
+                      ),
+                    ),
+                  );
+                },
+              ));
         }));
   }
 }

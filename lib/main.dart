@@ -72,8 +72,8 @@ class MyApp extends StatelessWidget {
     }
 
     setInitDio(
-      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
+      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
+      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
       interceptors: interceptors,
     );
   }
@@ -108,7 +108,8 @@ class MyApp extends StatelessWidget {
                         /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
                         return MediaQuery(
                           data: MediaQuery.of(context).copyWith(
-                              textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                              textScaleFactor:
+                                  1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
                           child: child,
                         );
                       },

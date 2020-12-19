@@ -12,6 +12,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:flustars/flustars.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +59,7 @@ class _PlayerPageState extends State<PlayerPage>
                 controller: _tabController,
                 labelColor: Colours.red_selected_line,
                 unselectedLabelColor: Colors.amberAccent,
-                labelStyle: TextStyles.textBold24,
+                labelStyle: TextStyles.textBold16,
                 unselectedLabelStyle: const TextStyle(
                   fontSize: Dimens.font_sp16,
                   color: Colours.red_selected_line,
@@ -81,7 +82,6 @@ class _PlayerPageState extends State<PlayerPage>
                   builder: (_, list, __) {
                     return list.length > 0
                         ? Container(
-                            height: ScreenUtil.getInstance().getWidth(150),
                             width: MediaQuery.of(context).size.width,
                             child: Swiper(
                               autoplay: true,
@@ -105,13 +105,13 @@ class _PlayerPageState extends State<PlayerPage>
                   selector: (_, store) => store.swiperList),
             ),
             actions: [
-              TextButton.icon(
+              TextButton(
                   onPressed: () {
                     NavigatorUtils.push(context, PlayerRouter.searchPage);
                   },
-                  label: Text("搜索"),
-                  icon: Icon(
+                  child: Icon(
                     Icons.search_sharp,
+                    color: Colors.yellowAccent,
                   ))
             ],
           ),
