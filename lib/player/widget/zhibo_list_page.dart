@@ -65,7 +65,7 @@ class _ZhiboListPageState extends State<ZhiboListPage>
                 shrinkWrap: true,
                 //解决ListView嵌套GridView滑动冲突问题
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7, //每行几列
+                    crossAxisCount: 6, //每行几列
                     childAspectRatio: 1),
                 itemCount: _zhiboListProvider.list.length,
                 itemBuilder: (context, index) {

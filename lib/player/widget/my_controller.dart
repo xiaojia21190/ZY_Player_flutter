@@ -5,6 +5,7 @@ import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
+import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
@@ -86,6 +87,9 @@ class _MyMaterialControlsState extends State<MyControls> {
         onHorizontalDragStart: _onHorizontalDragStart,
         onHorizontalDragUpdate: _onHorizontalDragUpdate,
         onHorizontalDragEnd: _onHorizontalDragEnd,
+        onDoubleTap: () {
+          controller.pause();
+        },
         onTap: () => _cancelAndRestartTimer(),
         child: AbsorbPointer(
             absorbing: _hideStuff,

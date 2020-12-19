@@ -95,9 +95,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print('app lifecycle state: $state');
     if (state == AppLifecycleState.inactive) {
-      _videoPlayerController.pause();
+      _videoPlayerController?.pause();
     } else if (state == AppLifecycleState.resumed) {
-      _videoPlayerController.play();
+      _videoPlayerController?.play();
     }
     super.didChangeAppLifecycleState(state);
   }
