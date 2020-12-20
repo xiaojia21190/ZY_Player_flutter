@@ -8,8 +8,8 @@ class ManhuaProvider extends ChangeNotifier {
   List<String> _words = [];
   List<String> get words => _words;
 
-  List<ManhuaDetail> _list = [];
-  List<ManhuaDetail> get list => _list;
+  List<Types> _list = [];
+  List<Types> get list => _list;
 
   ManhuaCatlogDetail _catLog;
   ManhuaCatlogDetail get catLog => _catLog;
@@ -32,7 +32,7 @@ class ManhuaProvider extends ChangeNotifier {
     _words = SpUtil.getStringList("ManHuaWords", defValue: []);
   }
 
-  setList(List<ManhuaDetail> list) {
+  setList(List<Types> list) {
     _list = list;
     notifyListeners();
   }

@@ -24,8 +24,7 @@ class PlayerPage extends StatefulWidget {
   _PlayerPageState createState() => _PlayerPageState();
 }
 
-class _PlayerPageState extends State<PlayerPage>
-    with AutomaticKeepAliveClientMixin<PlayerPage>, SingleTickerProviderStateMixin {
+class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMixin<PlayerPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   TabController _tabController;
@@ -48,6 +47,7 @@ class _PlayerPageState extends State<PlayerPage>
           SliverAppBar(
             forceElevated: innerBoxIsScrolled,
             centerTitle: true,
+            elevation: 0,
             floating: false,
             pinned: true,
             snap: false,
@@ -58,7 +58,7 @@ class _PlayerPageState extends State<PlayerPage>
                 labelPadding: const EdgeInsets.symmetric(horizontal: 20),
                 controller: _tabController,
                 labelColor: Colours.red_selected_line,
-                unselectedLabelColor: Colors.amberAccent,
+                unselectedLabelColor: Colours.text_gray,
                 labelStyle: TextStyles.textBold16,
                 unselectedLabelStyle: const TextStyle(
                   fontSize: Dimens.font_sp16,
@@ -95,8 +95,7 @@ class _PlayerPageState extends State<PlayerPage>
                               pagination: SwiperPagination.fraction,
                               onTap: (index) {
                                 String jsonString = jsonEncode(list[index]);
-                                NavigatorUtils.push(context,
-                                    '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                               },
                             ),
                           )
@@ -111,7 +110,7 @@ class _PlayerPageState extends State<PlayerPage>
                   },
                   child: Icon(
                     Icons.search_sharp,
-                    color: Colors.yellowAccent,
+                    color: Colours.text,
                   ))
             ],
           ),

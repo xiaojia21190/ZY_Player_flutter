@@ -5,7 +5,6 @@ import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
@@ -98,8 +97,7 @@ class _MyMaterialControlsState extends State<MyControls> {
                 Column(
                   children: <Widget>[
                     _buildHeader(context, this.widget.title),
-                    _latestValue != null && !_latestValue.isPlaying && _latestValue.duration == null ||
-                            _latestValue.isBuffering
+                    _latestValue != null && !_latestValue.isPlaying && _latestValue.duration == null || _latestValue.isBuffering
                         ? const Expanded(
                             child: const Center(
                               child: const CircularProgressIndicator(),
@@ -199,8 +197,7 @@ class _MyMaterialControlsState extends State<MyControls> {
                                     child: TextButton(
                                       child: Text(devices[index].deviceName),
                                       onPressed: () {
-                                        ApplicationEvent.event
-                                            .fire(DeviceEvent(devices[index].uuid, devices[index].deviceName));
+                                        ApplicationEvent.event.fire(DeviceEvent(devices[index].uuid, devices[index].deviceName));
                                       },
                                     ),
                                   ),
@@ -228,8 +225,7 @@ class _MyMaterialControlsState extends State<MyControls> {
               return FlareGiffyDialog(
                 flarePath: 'assets/images/space_demo.flr',
                 flareAnimation: 'loading',
-                title: Text(words,
-                    textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+                title: Text(words, textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
                 description: Text(
                   '请打开相关设备后点击重新搜索',
                   textAlign: TextAlign.center,
@@ -331,9 +327,7 @@ class _MyMaterialControlsState extends State<MyControls> {
           ),
           child: Center(
             child: ImageIcon(
-              AssetImage(chewieController.isFullScreen
-                  ? "assets/images/fullscreen_exit.png"
-                  : "assets/images/fullscreen_enter.png"),
+              AssetImage(chewieController.isFullScreen ? "assets/images/fullscreen_exit.png" : "assets/images/fullscreen_enter.png"),
               size: 32.0,
               color: Colors.white,
             ),
@@ -413,9 +407,7 @@ class _MyMaterialControlsState extends State<MyControls> {
                 right: 8.0,
               ),
               child: ImageIcon(
-                AssetImage((_latestValue != null && _latestValue.volume > 0)
-                    ? "assets/images/voice_ok.png"
-                    : "assets/images/voice_stop.png"),
+                AssetImage((_latestValue != null && _latestValue.volume > 0) ? "assets/images/voice_ok.png" : "assets/images/voice_stop.png"),
                 size: 32.0,
                 color: Colors.white,
               ),

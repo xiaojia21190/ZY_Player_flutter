@@ -8,6 +8,22 @@ part of 'manhua_detail.dart';
 
 ManhuaDetail _$ManhuaDetailFromJson(Map<String, dynamic> json) {
   return ManhuaDetail(
+    json['name'] as String,
+    (json['types'] as List)
+        ?.map(
+            (e) => e == null ? null : Types.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
+}
+
+Map<String, dynamic> _$ManhuaDetailToJson(ManhuaDetail instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'types': instance.types,
+    };
+
+Types _$TypesFromJson(Map<String, dynamic> json) {
+  return Types(
     json['url'] as String,
     json['title'] as String,
     json['author'] as String,
@@ -15,8 +31,7 @@ ManhuaDetail _$ManhuaDetailFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ManhuaDetailToJson(ManhuaDetail instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TypesToJson(Types instance) => <String, dynamic>{
       'url': instance.url,
       'title': instance.title,
       'author': instance.author,

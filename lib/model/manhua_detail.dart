@@ -4,6 +4,24 @@ part 'manhua_detail.g.dart';
 
 @JsonSerializable()
 class ManhuaDetail extends Object {
+  @JsonKey(name: 'name')
+  String name;
+
+  @JsonKey(name: 'types')
+  List<Types> types;
+
+  ManhuaDetail(
+    this.name,
+    this.types,
+  );
+
+  factory ManhuaDetail.fromJson(Map<String, dynamic> srcJson) => _$ManhuaDetailFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$ManhuaDetailToJson(this);
+}
+
+@JsonSerializable()
+class Types extends Object {
   @JsonKey(name: 'url')
   String url;
 
@@ -16,14 +34,14 @@ class ManhuaDetail extends Object {
   @JsonKey(name: 'cover')
   String cover;
 
-  ManhuaDetail(
+  Types(
     this.url,
     this.title,
     this.author,
     this.cover,
   );
 
-  factory ManhuaDetail.fromJson(Map<String, dynamic> srcJson) => _$ManhuaDetailFromJson(srcJson);
+  factory Types.fromJson(Map<String, dynamic> srcJson) => _$TypesFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$ManhuaDetailToJson(this);
+  Map<String, dynamic> toJson() => _$TypesToJson(this);
 }

@@ -15,7 +15,7 @@ class MyCard extends StatelessWidget {
     Color _shadowColor;
     final bool isDark = ThemeUtils.isDark(context);
     if (color == null) {
-      _backgroundColor = isDark ? Colours.dark_bg_gray_ : Colors.white;
+      _backgroundColor = isDark ? Colours.dark_bg_gray_ : Colors.orange;
     } else {
       _backgroundColor = color;
     }

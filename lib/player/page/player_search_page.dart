@@ -53,6 +53,11 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
       } else {
         _baseListProvider.setStateType(StateType.empty);
       }
+      if (resultList.length < 10) {
+        _baseListProvider.setHasMore(false);
+      } else {
+        _baseListProvider.setHasMore(true);
+      }
       _appStateProvider.setloadingState(false);
     }, onError: (_, __) {
       _baseListProvider.setStateType(StateType.network);
@@ -82,117 +87,51 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
           onPressed: (text) {
             Toast.show('搜索内容：$text');
             if (text != null) {
-              _playerProvider.addWors(text);
               keywords = text;
               this.getData();
             }
           }),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Consumer<PlayerProvider>(builder: (_, provider, __) {
-              return provider.words.length > 0
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(left: 20),
-                              child: Text("历史搜索"),
-                            ),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.delete_forever,
-                                  color: isDark ? Colours.dark_red : Colours.dark_bg_gray,
+      body: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
+          create: (_) => _baseListProvider,
+          child: Consumer<BaseListProvider<ResourceData>>(builder: (_, _baseListProvider, __) {
+            return DeerListView(
+                itemCount: _baseListProvider.list.length,
+                stateType: _baseListProvider.stateType,
+                hasRefresh: false,
+                loadMore: _onLoadMore,
+                physics: AlwaysScrollableScrollPhysics(),
+                pageSize: 10,
+                hasMore: _baseListProvider.hasMore,
+                itemBuilder: (_, index) {
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 375),
+                    child: SlideAnimation(
+                      verticalOffset: 60.0,
+                      child: FadeInAnimation(
+                          child: Card(
+                              elevation: 2,
+                              color: Colours.orange,
+                              margin: EdgeInsets.all(10),
+                              child: ListTile(
+                                contentPadding: EdgeInsets.all(10),
+                                leading: LoadImage(
+                                  _baseListProvider.list[index].cover,
+                                  fit: BoxFit.cover,
                                 ),
-                                onPressed: () {
-                                  Log.d("删除搜索");
-                                  _playerProvider.clearWords();
-                                })
-                          ],
-                        ),
-                        Selector<PlayerProvider, List>(
-                            builder: (_, words, __) {
-                              var startLen = words.length - 5 > 0 ? words.length - 5 : 0;
-                              var endLen = words.length;
-                              return Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Wrap(
-                                    spacing: 10,
-                                    runSpacing: 5,
-                                    children: words
-                                        .map<Widget>((s) {
-                                          return InkWell(
-                                            child: Container(
-                                              padding: EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                color: isDark ? Colours.dark_material_bg : Colours.bg_gray,
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                              child: Text('$s'),
-                                            ),
-                                            onTap: () {
-                                              //搜索关键词
-                                              _focus.unfocus();
-                                              keywords = s;
-                                              this.getData();
-                                            },
-                                          );
-                                        })
-                                        .toList()
-                                        .sublist(startLen, endLen)),
-                              );
-                            },
-                            selector: (_, store) => store.words)
-                      ],
-                    )
-                  : Container();
-            }),
-            Gaps.vGap10,
-            Expanded(
-                child: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
-                    create: (_) => _baseListProvider,
-                    child: Consumer<BaseListProvider<ResourceData>>(builder: (_, _baseListProvider, __) {
-                      return DeerListView(
-                          itemCount: _baseListProvider.list.length,
-                          stateType: _baseListProvider.stateType,
-                          hasRefresh: false,
-                          loadMore: _onLoadMore,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          pageSize: 10,
-                          hasMore: _baseListProvider.hasMore,
-                          itemBuilder: (_, index) {
-                            return AnimationConfiguration.staggeredList(
-                              position: index,
-                              duration: const Duration(milliseconds: 375),
-                              child: SlideAnimation(
-                                verticalOffset: 60.0,
-                                child: FadeInAnimation(
-                                    child: ListTile(
-                                  contentPadding: EdgeInsets.all(10),
-                                  leading: LoadImage(
-                                    _baseListProvider.list[index].cover,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  title: Text(
-                                    _baseListProvider.list[index].title,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  onTap: () {
-                                    NavigatorUtils.push(context,
-                                        '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].title)}');
-                                  },
-                                )),
-                              ),
-                            );
-                          });
-                    })))
-          ],
-        ),
-      ),
+                                title: Text(
+                                  _baseListProvider.list[index].title,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                onTap: () {
+                                  NavigatorUtils.push(context,
+                                      '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].title)}');
+                                },
+                              ))),
+                    ),
+                  );
+                });
+          })),
     );
   }
 }

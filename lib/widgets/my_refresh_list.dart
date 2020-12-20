@@ -11,7 +11,7 @@ class DeerListView extends StatefulWidget {
       {Key key,
       @required this.itemCount,
       @required this.itemBuilder,
-      @required this.physics,
+      this.physics = const BouncingScrollPhysics(),
       this.loadMore,
       this.onRefresh,
       this.hasMore = false,

@@ -95,6 +95,7 @@ flutter:
     - assets/images/login/
     - assets/images/home/
     - assets/images/state/
+    - assets/images/book/
 
   fonts:
     - family: xuifont  #指定一个字体名
