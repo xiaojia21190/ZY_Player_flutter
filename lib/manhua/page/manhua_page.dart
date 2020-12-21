@@ -20,7 +20,8 @@ class ManhuaPage extends StatefulWidget {
   _ManhuaPageState createState() => _ManhuaPageState();
 }
 
-class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMixin<ManhuaPage>, SingleTickerProviderStateMixin {
+class _ManhuaPageState extends State<ManhuaPage>
+    with AutomaticKeepAliveClientMixin<ManhuaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<ManhuaDetail> _baseListProvider = BaseListProvider();
@@ -28,7 +29,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
   @override
   void initState() {
     super.initState();
-    _onRefresh();
+    getData();
   }
 
   Future getData() async {
@@ -50,11 +51,6 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
     );
   }
 
-  Future _onRefresh() async {
-    _baseListProvider.clear();
-    this.getData();
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -74,7 +70,8 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                   child: Container(
                     height: 50,
                     margin: EdgeInsets.all(5),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.all(Radius.circular(5))),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black), borderRadius: BorderRadius.all(Radius.circular(5))),
                     child: Center(
                       child: Text("点击搜索漫画",
                           style: TextStyle(
@@ -93,7 +90,8 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                   return DeerListView(
                     itemCount: _baseListProvider.list.length,
                     stateType: _baseListProvider.stateType,
-                    onRefresh: _onRefresh,
+                    // onRefresh: _onRefresh,
+                    hasRefresh: false,
                     pageSize: _baseListProvider.list.length,
                     hasMore: _baseListProvider.hasMore,
                     itemBuilder: (_, index) {
@@ -127,7 +125,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 3, //每行几列
-                                      childAspectRatio: 0.65),
+                                      childAspectRatio: 0.58),
                                   itemCount: _baseListProvider.list[index].types.length,
                                   itemBuilder: (context, i) {
                                     //要返回的item样式

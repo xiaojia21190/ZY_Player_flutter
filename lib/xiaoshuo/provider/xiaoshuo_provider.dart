@@ -2,7 +2,7 @@ import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class XiaoShuoProvider extends ChangeNotifier {
   List<XiaoshuoDetail> _xiaoshuos = [];
@@ -16,6 +16,39 @@ class XiaoShuoProvider extends ChangeNotifier {
 
   XiaoshuoChap _chplist;
   XiaoshuoChap get chplist => _chplist;
+
+  bool _currentOrder = false;
+  bool get currentOrder => _currentOrder;
+
+  String _shunxuText = "小说章节顺序-正序";
+  String get shunxuText => _shunxuText;
+
+  List<XiaoshuoList> _readList = [];
+  List<XiaoshuoList> get readList => _readList;
+
+  setReadList(XiaoshuoList xiaoshuoList) {
+    _readList.add(xiaoshuoList);
+    SpUtil.putObjectList("readXiaoshuo", _readList);
+    notifyListeners();
+  }
+
+  getReadList() {
+    var result = SpUtil.getObjList<XiaoshuoList>("readXiaoshuo", (data) => XiaoshuoList.fromJson(data));
+    if (result.length > 0) {
+      _readList.addAll(result);
+    }
+  }
+
+  changeShunxu(bool shuxu) {
+    _currentOrder = shuxu;
+    if (shuxu) {
+      _shunxuText = "小说章节顺序-倒序";
+    } else {
+      _shunxuText = "小说章节顺序-正序";
+    }
+
+    notifyListeners();
+  }
 
   setStateType(StateType stateType) {
     _state = stateType;

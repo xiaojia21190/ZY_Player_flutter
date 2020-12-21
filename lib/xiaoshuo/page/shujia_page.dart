@@ -22,7 +22,8 @@ class ShuJiaPage extends StatefulWidget {
   _ShuJiaPageState createState() => _ShuJiaPageState();
 }
 
-class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
+class _ShuJiaPageState extends State<ShuJiaPage>
+    with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -88,7 +89,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
             floating: false,
             pinned: true,
             snap: false,
-            expandedHeight: ScreenUtil.getInstance().getWidth(150),
+            expandedHeight: ScreenUtil.getInstance().getWidth(230),
             flexibleSpace: Selector<XiaoShuoProvider, List<XiaoshuoDetail>>(
                 builder: (_, xiaoList, __) {
                   return FlexibleSpaceBar(
@@ -97,7 +98,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
                     background: xiaoList.length > 0
                         ? BookshelfHeader(xiaoList[0])
                         : Center(
-                            child: Text("点击加号添加书"),
+                            child: Text("点击加号添加小说"),
                           ),
                   );
                 },
@@ -105,7 +106,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
             actions: [
               TextButton(
                   onPressed: () {
-                    NavigatorUtils.push(context, PlayerRouter.searchPage);
+                    NavigatorUtils.push(context, '${XiaoShuoRouter.searchPage}');
                   },
                   child: Icon(
                     Icons.search_sharp,
@@ -116,7 +117,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
         ];
       },
       body: Container(
-        color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
+        color: isDark ? Colours.dark_bg_gray_ : Colours.lightGray,
         child: Selector<XiaoShuoProvider, List<XiaoshuoDetail>>(
             builder: (_, xiaoList, __) {
               return MyScrollView(

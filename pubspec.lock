@@ -29,6 +29,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.5.0-nullsafety.1"
+  battery:
+    dependency: "direct main"
+    description:
+      name: battery
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.7"
+  battery_platform_interface:
+    dependency: transitive
+    description:
+      name: battery_platform_interface
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -749,6 +763,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.24.1"
+  screen:
+    dependency: "direct main"
+    description:
+      name: screen
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.5"
   shared_preferences:
     dependency: transitive
     description:

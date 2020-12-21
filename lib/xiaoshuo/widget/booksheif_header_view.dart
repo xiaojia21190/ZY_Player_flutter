@@ -82,7 +82,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
     var width = Screen.widthOt;
     return Container(
       width: width,
-      padding: EdgeInsets.fromLTRB(15, 54 + Screen.topSafeHeight, 10, 0),
+      padding: EdgeInsets.fromLTRB(15, 54 + Screen.topSafeHeight, 10, 10),
       color: Colors.transparent,
       child: GestureDetector(
         onTap: () {
@@ -93,7 +93,10 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             DecoratedBox(
-              child: LoadImage(novel.img, width: 120, height: 160),
+              child: LoadImage(
+                novel.img,
+                width: 130,
+              ),
               decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
             ),
             SizedBox(width: 20),

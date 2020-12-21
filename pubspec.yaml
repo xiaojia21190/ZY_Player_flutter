@@ -79,6 +79,10 @@ dependencies:
   qr_flutter: 3.2.0
   image_pickers: 1.0.8+7
 
+  battery: 1.0.7
+
+#  flutter_shine: ^0.0.5
+  screen: 0.0.5
 
 dev_dependencies:
   build_runner: ^1.10.4

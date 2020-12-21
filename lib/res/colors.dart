@@ -52,4 +52,24 @@ class Colours {
   static Color gray = Color(0xFF888888);
   static Color blue = Color(0xFF3688FF);
   static Color golden = Color(0xff8B7961);
+
+  // 护眼色
+  static Color yinhebai = Color(0xffFFFFFF);
+  static Color xingrenhuang = Color(0xffFAF9DE);
+  static Color qinyehe = Color(0xffFFF2E2);
+  static Color yanzhihong = Color(0xffFDE6E0);
+  static Color qingcaolv = Color(0xffE3EDCD);
+  static Color haitianlan = Color(0xffDCE2F1);
+  static Color geqinzi = Color(0xffE9EBFE);
+  static Color jiguanghui = Color(0xffEAEAEF);
+  /**
+ * 银河白    #FFFFFF   RGB(255, 255, 255)
+    杏仁黄    #FAF9DE   RGB(250, 249, 222)
+    秋叶褐    #FFF2E2   RGB(255, 242, 226)
+    胭脂红    #FDE6E0   RGB(253, 230, 224)
+    青草绿    #E3EDCD   RGB(227, 237, 205)
+    海天蓝    #DCE2F1   RGB(220, 226, 241)
+    葛巾紫    #E9EBFE   RGB(233, 235, 254)
+    极光灰    #EAEAEF   RGB(234, 234, 239)
+ */
 }

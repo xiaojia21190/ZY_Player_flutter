@@ -8,29 +8,29 @@ part of 'xiaoshuo_chap.dart';
 
 XiaoshuoChap _$XiaoshuoChapFromJson(Map<String, dynamic> json) {
   return XiaoshuoChap(
-    json['name'] as String,
-    (json['list'] as List)
-        ?.map((e) =>
-            e == null ? null : ChpList.fromJson(e as Map<String, dynamic>))
+    json['page'] as int,
+    json['total'] as int,
+    (json['xiaoshuoList'] as List)
+        ?.map((e) => e == null ? null : XiaoshuoList.fromJson(e as Map<String, dynamic>))
         ?.toList(),
   );
 }
 
-Map<String, dynamic> _$XiaoshuoChapToJson(XiaoshuoChap instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'list': instance.chpList,
+Map<String, dynamic> _$XiaoshuoChapToJson(XiaoshuoChap instance) => <String, dynamic>{
+      'page': instance.page,
+      'total': instance.total,
+      'list': instance.xiaoshuoList,
     };
 
-ChpList _$ChpListFromJson(Map<String, dynamic> json) {
-  return ChpList(
+XiaoshuoList _$ChpListFromJson(Map<String, dynamic> json) {
+  return XiaoshuoList(
     json['id'] as int,
     json['name'] as String,
     json['hasContent'] as int,
   );
 }
 
-Map<String, dynamic> _$ChpListToJson(ChpList instance) => <String, dynamic>{
+Map<String, dynamic> _$ChpListToJson(XiaoshuoList instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'hasContent': instance.hasContent,

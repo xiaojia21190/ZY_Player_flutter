@@ -4,15 +4,19 @@ part 'xiaoshuo_chap.g.dart';
 
 @JsonSerializable()
 class XiaoshuoChap extends Object {
-  @JsonKey(name: 'name')
-  String name;
+  @JsonKey(name: 'page')
+  int page;
 
-  @JsonKey(name: 'list')
-  List<ChpList> chpList;
+  @JsonKey(name: 'total')
+  int total;
+
+  @JsonKey(name: 'xiaoshuoList')
+  List<XiaoshuoList> xiaoshuoList;
 
   XiaoshuoChap(
-    this.name,
-    this.chpList,
+    this.page,
+    this.total,
+    this.xiaoshuoList,
   );
 
   factory XiaoshuoChap.fromJson(Map<String, dynamic> srcJson) => _$XiaoshuoChapFromJson(srcJson);
@@ -21,7 +25,7 @@ class XiaoshuoChap extends Object {
 }
 
 @JsonSerializable()
-class ChpList extends Object {
+class XiaoshuoList extends Object {
   @JsonKey(name: 'id')
   int id;
 
@@ -31,13 +35,13 @@ class ChpList extends Object {
   @JsonKey(name: 'hasContent')
   int hasContent;
 
-  ChpList(
+  XiaoshuoList(
     this.id,
     this.name,
     this.hasContent,
   );
 
-  factory ChpList.fromJson(Map<String, dynamic> srcJson) => _$ChpListFromJson(srcJson);
+  factory XiaoshuoList.fromJson(Map<String, dynamic> srcJson) => _$ChpListFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$ChpListToJson(this);
 }
