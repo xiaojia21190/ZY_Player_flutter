@@ -9,6 +9,7 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
@@ -117,62 +118,60 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                 ? CustomScrollView(
                     slivers: <Widget>[
                       SliverToBoxAdapter(
-                        child: MyCard(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: ScreenUtil.getInstance().getWidth(100),
-                            padding: EdgeInsets.symmetric(vertical: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                LoadImage(
-                                  provider.catLog.cover,
-                                  width: 100,
-                                  fit: BoxFit.contain,
+                        child: Container(
+                          height: ScreenUtil.getInstance().getWidth(100),
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              LoadImage(
+                                provider.catLog.cover,
+                                width: 100,
+                                fit: BoxFit.contain,
+                              ),
+                              Expanded(
+                                  child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      provider.catLog.author,
+                                    ),
+                                    Text(
+                                      provider.catLog.gengxin,
+                                    ),
+                                    Text(provider.catLog.gengxinTime),
+                                  ],
                                 ),
-                                Expanded(
-                                    child: Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        provider.catLog.author,
-                                      ),
-                                      Text(
-                                        provider.catLog.gengxin,
-                                      ),
-                                      Text(provider.catLog.gengxinTime),
-                                    ],
-                                  ),
-                                ))
-                              ],
-                            ),
+                              ))
+                            ],
                           ),
                         ),
                       ),
                       SliverToBoxAdapter(
-                        child: MyCard(
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(provider.catLog.content),
-                                Row(
-                                  children: [
-                                    Text(provider.shunxuText),
-                                    IconButton(
-                                        icon: Icon(provider.currentOrder ? Icons.vertical_align_bottom_rounded : Icons.vertical_align_top_rounded),
-                                        onPressed: () {
-                                          provider.changeShunxu(!provider.currentOrder);
-                                        })
-                                  ],
-                                )
-                              ],
-                            ),
+                        child: Gaps.vGap8,
+                      ),
+                      SliverToBoxAdapter(
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(provider.catLog.content),
+                              Row(
+                                children: [
+                                  Text(provider.shunxuText),
+                                  IconButton(
+                                      icon: Icon(provider.currentOrder ? Icons.vertical_align_bottom_rounded : Icons.vertical_align_top_rounded),
+                                      onPressed: () {
+                                        provider.changeShunxu(!provider.currentOrder);
+                                      })
+                                ],
+                              )
+                            ],
                           ),
                         ),
                       ),

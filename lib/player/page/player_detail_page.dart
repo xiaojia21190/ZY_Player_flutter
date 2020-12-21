@@ -389,8 +389,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                     ? MyScrollView(
                         children: [
                           Gaps.vGap10,
-                          MyCard(
-                              child: Container(
+                          Container(
                             padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -420,7 +419,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                 buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl, provider.chooseYuanIndex, isDark),
                               ],
                             ),
-                          ))
+                          )
                         ],
                       )
                     : StateLayout(

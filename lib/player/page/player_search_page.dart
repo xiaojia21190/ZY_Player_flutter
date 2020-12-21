@@ -65,6 +65,12 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
     });
   }
 
+  Future _onFresh() async {
+    _baseListProvider.clear();
+    page = 1;
+    this.getData();
+  }
+
   Future _onLoadMore() async {
     page++;
     this.getData();
@@ -88,7 +94,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
             Toast.show('搜索内容：$text');
             if (text != null) {
               keywords = text;
-              this.getData();
+              this._onFresh();
             }
           }),
       body: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
@@ -111,7 +117,6 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                       child: FadeInAnimation(
                           child: Card(
                               elevation: 2,
-                              color: Colours.orange,
                               margin: EdgeInsets.all(10),
                               child: ListTile(
                                 contentPadding: EdgeInsets.all(10),

@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:flutter/material.dart';
 import 'package:screen/screen.dart' as lightness;
@@ -15,23 +17,19 @@ class ColorCh {
 }
 
 class ReaderMenu extends StatefulWidget {
-  // final List<Chapter> chapters;
   final String title;
   final int articleIndex;
 
   final VoidCallback onTap;
   final VoidCallback onPreviousArticle;
   final VoidCallback onNextArticle;
-  // final void Function(Chapter chapter) onToggleChapter;
 
   ReaderMenu({
-    // this.chapters,
     this.articleIndex,
     this.title,
     this.onTap,
     this.onPreviousArticle,
     this.onNextArticle,
-    // this.onToggleChapter
   });
 
   @override
@@ -39,17 +37,17 @@ class ReaderMenu extends StatefulWidget {
 }
 
 class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> animation;
-
   double progressValue;
   bool isTipVisible = false;
+  AppStateProvider _appStateProvider;
 
   double light = 0;
   double maxLight = 0;
   String _lightNm;
   bool lightSlider = false;
   bool colorSlider = false;
+  bool sizeSlider = false;
+  double fsise = 0;
 
   List<ColorCh> _list = [
     ColorCh("银河白", Colours.yinhebai),
@@ -64,13 +62,10 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
 
   @override
   initState() {
-    super.initState();
-
-    // progressValue = this.widget.articleIndex / (this.widget.chapters.length - 1);
-    animationController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
-    animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
-    animationController.forward();
+    _appStateProvider = Store.value<AppStateProvider>(context);
     this.getLight();
+    fsise = _appStateProvider.xsFontSize;
+    super.initState();
   }
 
   Future getLight() async {
@@ -78,25 +73,8 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   }
 
   @override
-  void didUpdateWidget(ReaderMenu oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // progressValue = this.widget.articleIndex / (this.widget.chapters.length - 1);
-  }
-
-  @override
   void dispose() {
-    animationController.dispose();
     super.dispose();
-  }
-
-  hide() {
-    animationController.reverse();
-    Timer(Duration(milliseconds: 200), () {
-      this.widget.onTap();
-    });
-    setState(() {
-      isTipVisible = false;
-    });
   }
 
   buildTopView(BuildContext context) {
@@ -105,8 +83,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
       left: 0,
       right: 0,
       child: Container(
-        decoration:
-            BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+        decoration: BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
         height: Screen.navigationBarHeight - 40,
         padding: EdgeInsets.fromLTRB(20, 0, 5, 0),
         child: Row(
@@ -124,120 +101,69 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                 child: Container(
               child: Text(widget.title),
             )),
-            // Container(
-            //   width: 21,
-            //   child: Image.asset('assets/images/book/read_icon_voice.png'),
-            // ),
-            // Container(
-            //   width: 21,
-            //   child: Image.asset('assets/images/book/read_icon_more.png'),
-            // ),
           ],
         ),
       ),
     );
   }
 
-  // int currentArticleIndex() {
-  //   return ((this.widget.chapters.length - 1) * progressValue).toInt();
-  // }
-  //
-  // buildProgressTipView() {
-  //   if (!isTipVisible) {
-  //     return Container();
-  //   }
-  //   Chapter chapter = this.widget.chapters[currentArticleIndex()];
-  //   double percentage = chapter.index / (this.widget.chapters.length - 1) * 100;
-  //   return Container(
-  //     decoration: BoxDecoration(color: Color(0xff00C88D), borderRadius: BorderRadius.circular(5)),
-  //     margin: EdgeInsets.fromLTRB(15, 0, 15, 10),
-  //     padding: EdgeInsets.all(15),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: <Widget>[
-  //         Text(chapter.title, style: TextStyle(color: Colors.white, fontSize: 16)),
-  //         Text('${percentage.toStringAsFixed(1)}%', style: TextStyle(color: Colours.lightGray, fontSize: 12)),
-  //       ],
-  //     ),
-  //   );
-  // }
+  previousArticle() {}
 
-  previousArticle() {
-    if (this.widget.articleIndex == 0) {
-      Toast.show('已经是第一章了');
-      return;
-    }
-    this.widget.onPreviousArticle();
-    setState(() {
-      isTipVisible = true;
-    });
-  }
-
-  nextArticle() {
-    // if (this.widget.articleIndex == this.widget.chapters.length - 1) {
-    //   Toast.show('已经是最后一章了');
-    //   return;
-    // }
-    // this.widget.onNextArticle();
-    // setState(() {
-    //   isTipVisible = true;
-    // });
-  }
-
-  // buildProgressView() {
-  //   return Container(
-  //     padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-  //     child: Row(
-  //       children: <Widget>[
-  //         GestureDetector(
-  //           onTap: previousArticle,
-  //           child: Container(
-  //             padding: EdgeInsets.all(20),
-  //             child: Image.asset('img/read_icon_chapter_previous.png'),
-  //           ),
-  //         ),
-  //         Expanded(
-  //           child: Slider(
-  //             value: progressValue,
-  //             onChanged: (double value) {
-  //               setState(() {
-  //                 isTipVisible = true;
-  //                 progressValue = value;
-  //               });
-  //             },
-  //             onChangeEnd: (double value) {
-  //               Chapter chapter = this.widget.chapters[currentArticleIndex()];
-  //               this.widget.onToggleChapter(chapter);
-  //             },
-  //             activeColor: Colours.primary,
-  //             inactiveColor: Colours.gray,
-  //           ),
-  //         ),
-  //         GestureDetector(
-  //           onTap: nextArticle,
-  //           child: Container(
-  //             padding: EdgeInsets.all(20),
-  //             child: Image.asset('img/read_icon_chapter_next.png'),
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
+  nextArticle() {}
 
   buildLightProgress() {
-    return Slider(
-      value: light,
-      onChanged: (v) {
-        setState(() {
-          light = v;
-          lightness.Screen.setBrightness(v);
-        });
-      },
-      label: "亮度:$light", //气泡的值
-      divisions: 10, //进度条上显示多少个刻度点
-      max: 1,
-      min: 0,
+    return Container(
+        width: Screen.widthOt,
+        height: 80,
+        color: Colors.black87,
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+            "当前亮度:${light * 100}%",
+            style: TextStyle(color: Colors.white),
+          ),
+          Slider(
+            value: light,
+            onChanged: (v) {
+              setState(() {
+                light = v;
+                lightness.Screen.setBrightness(v);
+              });
+            },
+            label: "亮度:$light", //气泡的值
+            divisions: 10, //进度条上显示多少个刻度点
+            max: 1,
+            min: 0,
+          )
+        ]));
+  }
+
+  buildSize() {
+    return Container(
+      width: Screen.widthOt,
+      height: 80,
+      color: Colors.black87,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "当前字体大小:$fsise",
+            style: TextStyle(color: Colors.white),
+          ),
+          Slider(
+            value: fsise,
+            onChanged: (v) {
+              setState(() {
+                fsise = v;
+                _appStateProvider.setFontSize(v);
+              });
+            },
+            label: "字体大小:$fsise", //气泡的值
+            divisions: 10, //进度条上显示多少个刻度点
+            max: 30,
+            min: 10,
+          )
+        ],
+      ),
     );
   }
 
@@ -245,7 +171,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
     return Container(
       width: Screen.widthOt,
       height: 80,
-      color: Colors.black45,
+      color: Colors.black87,
       padding: EdgeInsets.only(top: 20),
       child: Wrap(
         alignment: WrapAlignment.spaceAround,
@@ -253,12 +179,20 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
         children: List.generate(
             _list.length,
             (index) => GestureDetector(
+                  onTap: () {
+                    _appStateProvider.setFontColor(_list[index].color);
+                    setState(() {});
+                  },
                   child: Column(
                     children: [
                       Container(
                         height: 30,
                         width: 30,
-                        color: _list[index].color,
+                        decoration: BoxDecoration(
+                            color: _list[index].color,
+                            border: _appStateProvider.xsColor == _list[index].color
+                                ? Border.all(color: Colors.redAccent, width: 3)
+                                : Border.all(color: Colors.transparent)),
                       ),
                       Text(
                         _list[index].name,
@@ -278,12 +212,11 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
       right: 0,
       child: Column(
         children: <Widget>[
-          // buildProgressTipView(),
           lightSlider ? buildLightProgress() : Container(),
           colorSlider ? buildColor() : Container(),
+          sizeSlider ? buildSize() : Container(),
           Container(
-            decoration:
-                BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+            decoration: BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
             padding: EdgeInsets.only(bottom: Screen.bottomSafeHeight),
             child: Column(
               children: <Widget>[
@@ -301,35 +234,45 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        buildBottomItem('目录', 'book/read_icon_catalog', 0),
-        buildBottomItem('亮度', 'book/read_icon_brightness', 1),
-        buildBottomItem('字体', 'book/read_icon_font', 2),
-        buildBottomItem('设置', 'book/read_icon_setting', 3),
+        buildBottomItem('目录', 'book/read_icon_catalog', () => {}),
+        buildBottomItem(
+            '亮度',
+            'book/read_icon_brightness',
+            () => {
+                  setState(() {
+                    lightSlider = !lightSlider;
+                    colorSlider = false;
+                    sizeSlider = false;
+                  })
+                }),
+        buildBottomItem(
+            '字体',
+            'book/read_icon_font',
+            () => {
+                  setState(() {
+                    lightSlider = false;
+                    colorSlider = false;
+                    sizeSlider = !sizeSlider;
+                  })
+                }),
+        buildBottomItem(
+            '颜色',
+            'book/read_icon_setting',
+            () => {
+                  setState(() {
+                    lightSlider = false;
+                    colorSlider = !colorSlider;
+                    sizeSlider = false;
+                  })
+                }),
       ],
     );
   }
 
-  buildBottomItem(String title, String icon, int index) {
+  buildBottomItem(String title, String icon, Function callClick) {
     return GestureDetector(
       onTap: () async {
-        switch (index) {
-          case 0:
-            break;
-          case 1:
-            setState(() {
-              lightSlider = true;
-            });
-            break;
-          case 2:
-            setState(() {
-              colorSlider = true;
-            });
-            break;
-          case 3:
-            break;
-          default:
-            break;
-        }
+        callClick();
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 7),

@@ -1,4 +1,5 @@
 import 'package:ZY_Player_flutter/model/manhua_detail.dart';
+import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_content.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -12,6 +13,7 @@ import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
+import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/batter_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/reader_memu.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +39,7 @@ class XiaoShuoContentPage extends StatefulWidget {
 
 class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
   AppStateProvider _appStateProvider;
-
+  XiaoShuoProvider _xiaoShuoProvider;
   BaseListProvider<XiaoshuoContent> _baseListProvider = BaseListProvider();
 
   List<Map<String, int>> chpPage;
@@ -49,42 +51,53 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
   @override
   void initState() {
     _appStateProvider = Store.value<AppStateProvider>(context);
-    chapid = int.parse(widget.chpId);
-    fetchData(chapid);
+    _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
+    _appStateProvider.setConfig();
+    fetchData(int.parse(widget.chpId));
     super.initState();
   }
 
   Future fetchData([int chaId]) async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getxiaoshuoDetail,
-        queryParameters: {"id": widget.id, "capid": chapid}, onSuccess: (result) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getxiaoshuoDetail, queryParameters: {"id": widget.id, "capid": chaId},
+        onSuccess: (result) {
+      _xiaoShuoProvider.setReadList(XiaoshuoList(result["cid"], result["cname"], 1));
       _baseListProvider.add(XiaoshuoContent.fromJson(result));
     }, onError: (_, __) {});
   }
 
   Future loadMore() async {
-    chapid++;
-    fetchData(chapid);
+    if (_baseListProvider.list[_baseListProvider.list.length - 1].nid != -1) {
+      fetchData(_baseListProvider.list[_baseListProvider.list.length - 1].nid);
+    } else {
+      _baseListProvider.setHasMore(false);
+      setState(() {});
+      Toast.show("已经到最后了");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colours.qingcaolv,
-        body: SafeArea(
-          child: Stack(
-            children: <Widget>[
-              ReaderOverlayer(title: widget.title, page: 1, topSafeHeight: Screen.topSafeHeight),
-              buildContent(),
-              AnimatedOpacity(
-                opacity: opacityLevel,
-                duration: new Duration(milliseconds: 300),
-                child: ReaderMenu(
-                  title: widget.title,
+    return Selector<AppStateProvider, Color>(
+        builder: (_, colorCh, __) {
+          return Scaffold(
+              backgroundColor: colorCh,
+              body: SafeArea(
+                child: Stack(
+                  children: <Widget>[
+                    ReaderOverlayer(title: widget.title, page: 1, topSafeHeight: Screen.topSafeHeight),
+                    buildContent(),
+                    AnimatedOpacity(
+                      opacity: opacityLevel,
+                      duration: new Duration(milliseconds: 300),
+                      child: ReaderMenu(
+                        title: widget.title,
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ));
+              ));
+        },
+        selector: (_, store) => store.xsColor);
   }
 
   buildContent() {
@@ -118,20 +131,21 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
                                 children: [
                                   Container(
                                     margin: EdgeInsets.only(top: 10),
-                                    child: Text(_baseListProvider.list[index].cname,
-                                        style: TextStyle(fontSize: 14, color: Colours.golden)),
+                                    child: Text(_baseListProvider.list[index].cname, style: TextStyle(fontSize: 14, color: Colours.golden)),
                                   ),
-                                  Container(
-                                    color: Colors.transparent,
-                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                    child: Text.rich(
-                                      TextSpan(children: [
-                                        TextSpan(
-                                            text: _baseListProvider.list[index].content, style: TextStyle(fontSize: 14))
-                                      ]),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                  ),
+                                  Selector<AppStateProvider, double>(
+                                      builder: (_, fzsie, __) {
+                                        return Container(
+                                          color: Colors.transparent,
+                                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                          child: Text.rich(
+                                            TextSpan(
+                                                children: [TextSpan(text: _baseListProvider.list[index].content, style: TextStyle(fontSize: fzsie))]),
+                                            textAlign: TextAlign.justify,
+                                          ),
+                                        );
+                                      },
+                                      selector: (_, store) => store.xsFontSize),
                                 ],
                               ))),
                     ),

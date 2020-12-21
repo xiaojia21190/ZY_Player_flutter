@@ -80,7 +80,6 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
                 itemBuilder: (_, index) {
                   return Card(
                     elevation: 2,
-                    color: Colours.orange,
                     margin: EdgeInsets.all(10),
                     child: ListTile(
                       title: Text(provider.list[index].name),

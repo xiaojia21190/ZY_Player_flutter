@@ -5,6 +5,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/booksheif_header_view.dart';
@@ -22,8 +23,7 @@ class ShuJiaPage extends StatefulWidget {
   _ShuJiaPageState createState() => _ShuJiaPageState();
 }
 
-class _ShuJiaPageState extends State<ShuJiaPage>
-    with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
+class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -90,19 +90,31 @@ class _ShuJiaPageState extends State<ShuJiaPage>
             pinned: true,
             snap: false,
             expandedHeight: ScreenUtil.getInstance().getWidth(230),
-            flexibleSpace: Selector<XiaoShuoProvider, List<XiaoshuoDetail>>(
-                builder: (_, xiaoList, __) {
+            title: Text(
+              "书架",
+              style: TextStyle(color: Colours.text),
+            ),
+            flexibleSpace: Selector<XiaoShuoProvider, XiaoshuoDetail>(
+                builder: (_, lastread, __) {
                   return FlexibleSpaceBar(
-                    // centerTitle: true,
-                    // title: Text("12321"),
-                    background: xiaoList.length > 0
-                        ? BookshelfHeader(xiaoList[0])
-                        : Center(
-                            child: Text("点击加号添加小说"),
+                    background: lastread != null
+                        ? BookshelfHeader(lastread)
+                        : Stack(
+                            children: [
+                              LoadImage(
+                                "book/bookshelf_bg",
+                                width: Screen.widthOt,
+                              ),
+                              Positioned(
+                                top: ScreenUtil.getInstance().getWidth(230) / 2,
+                                left: Screen.widthOt / 2 - 60,
+                                child: Text("点击加号添加小说"),
+                              )
+                            ],
                           ),
                   );
                 },
-                selector: (_, store) => store.xiaoshuo),
+                selector: (_, store) => store.lastread),
             actions: [
               TextButton(
                   onPressed: () {

@@ -26,9 +26,20 @@ class XiaoShuoProvider extends ChangeNotifier {
   List<XiaoshuoList> _readList = [];
   List<XiaoshuoList> get readList => _readList;
 
+  XiaoshuoDetail _lastread;
+  XiaoshuoDetail get lastread => _lastread;
+
   setReadList(XiaoshuoList xiaoshuoList) {
-    _readList.add(xiaoshuoList);
-    SpUtil.putObjectList("readXiaoshuo", _readList);
+    if (_readList.where((element) => element.id == xiaoshuoList.id).toList().length == 0) {
+      _readList.add(xiaoshuoList);
+      SpUtil.putObjectList("readXiaoshuo", _readList);
+      notifyListeners();
+    }
+  }
+
+  setLastRead(XiaoshuoDetail xiaoshuoDetail) {
+    _lastread = xiaoshuoDetail;
+    SpUtil.putObject("lastread", _lastread);
     notifyListeners();
   }
 

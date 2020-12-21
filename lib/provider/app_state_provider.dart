@@ -1,3 +1,5 @@
+import 'package:ZY_Player_flutter/res/colors.dart';
+import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dlna/dlna/dlna.dart';
 import 'package:flutter_dlna/flutter_dlna.dart';
@@ -8,6 +10,30 @@ class AppStateProvider extends ChangeNotifier {
 
   String _loadingText = "";
   String get loadingText => _loadingText;
+
+  // 小说字体
+  double _xsFontSize = 18;
+  double get xsFontSize => _xsFontSize;
+  // 小说字体大小
+  Color _xsColor = Colours.qingcaolv;
+  Color get xsColor => _xsColor;
+
+  setConfig() {
+    _xsFontSize = SpUtil.getDouble("xsfontsize", defValue: 14);
+    _xsColor = Color(SpUtil.getInt("xscolor", defValue: 0xffE3EDCD));
+  }
+
+  setFontSize(double size) {
+    _xsFontSize = size;
+    SpUtil.putDouble("xsfontsize", size);
+    notifyListeners();
+  }
+
+  setFontColor(Color color) {
+    _xsColor = color;
+    SpUtil.putInt("xscolor", color.value);
+    notifyListeners();
+  }
 
   void setloadingState(bool state, [String text]) {
     _loadingState = state;

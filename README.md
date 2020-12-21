@@ -6,7 +6,7 @@
 <img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
 ### flutter 版本安装
-- v1.3.6 地址 https://jizutang.oss-cn-beijing.aliyuncs.com/admin/app-release.apk
+- v1.4.0 地址 https://jizutang.oss-cn-beijing.aliyuncs.com/admin/app-release.apk
 
 ### 爬虫后台
 -  https://github.com/xiaojia21190/egg_crawel
@@ -16,17 +16,21 @@
 
 ### 截图
 
-|         影视热门列表          |           影视资源           |             详情页             |
+|         影视热门列表          |           影视资源播放           |             搜索页             |
 | :---------------------------: | :--------------------------: | :----------------------------: |
-| ![home](./images/image10.jpg) | ![home](./images/image6.jpg) | ![detail](./images/image9.jpg) |
+| ![home](./images/screenshot_20201221_232112.png) | ![home](./images/screenshot_20201221_232434.png) | ![detail](./images/screenshot_20201221_232830.png) |
 
-|             直播              |             详情页              |
+|             直播列表              |             详情页              |
 | :---------------------------: | :-----------------------------: |
-| ![home](./images/image11.jpg) | ![detail](./images/image12.jpg) |
+| ![home](./images/screenshot_20201221_232120.png) | ![detail](./images/screenshot_20201221_232952.png) |
+
+|           小说书架           |             详情页             |             阅读页             |
+| :--------------------------: | :----------------------------: | :----------------------------: |
+| ![home](./images/screenshot_20201221_232444.png) | ![detail](./images/screenshot_20201221_232451.png) | ![detail](./images/screenshot_20201221_232504.png) |
 
 |           漫画资源           |             详情页             |             漫画页             |
 | :--------------------------: | :----------------------------: | :----------------------------: |
-| ![home](./images/image5.jpg) | ![detail](./images/image4.jpg) | ![detail](./images/image3.jpg) |
+| ![home](./images/screenshot_20201221_232513.png) | ![detail](./images/screenshot_20201221_232520.png) | ![detail](./images/screenshot_20201221_232532.png) |
 
 
 

@@ -18,6 +18,7 @@ class BookshelfItemView extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         String jsonString = jsonEncode(novel);
+
         NavigatorUtils.push(context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
       },
       child: Container(

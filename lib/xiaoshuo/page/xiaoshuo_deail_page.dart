@@ -49,6 +49,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
     _detail = XiaoshuoDetail.fromJson(jsonDecode(widget.xiaoshuodetail));
     _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
     _xiaoShuoProvider.getReadList();
+    _xiaoShuoProvider.setLastRead(_detail);
     fetchData();
     super.initState();
   }
@@ -98,18 +99,38 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
     return Scaffold(
-      backgroundColor: isDark ? Colours.dark_bg_color : Colours.white,
+      // backgroundColor: isDark ? Colours.dark_bg_color : Colours.white,
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
               SliverAppBar(
                 forceElevated: innerBoxIsScrolled,
                 centerTitle: true,
-                backgroundColor: Colours.dark_bg_color,
                 elevation: 0,
                 floating: false,
                 pinned: true,
                 snap: false,
+                leading: Semantics(
+                  label: '返回',
+                  child: SizedBox(
+                    width: 48.0,
+                    height: 48.0,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.maybePop(context);
+                      },
+                      borderRadius: BorderRadius.circular(24.0),
+                      child: Padding(
+                        key: const Key('search_back'),
+                        padding: const EdgeInsets.all(12.0),
+                        child: Image.asset(
+                          "assets/images/ic_back_black.png",
+                          color: isDark ? Colours.dark_text : Colours.dark_text,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 expandedHeight: ScreenUtil.getInstance().getWidth(250),
                 flexibleSpace: FlexibleSpaceBar(
                   background: LoadImage(_detail.img),
@@ -125,10 +146,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                             }
                           },
                           child: Text(
-                            provider.xiaoshuo.where((element) => element.id == _detail.id).toList().length > 0
-                                ? "移出书架"
-                                : "加入书架",
-                            style: TextStyle(color: Colours.white),
+                            provider.xiaoshuo.where((element) => element.id == _detail.id).toList().length > 0 ? "移出书架" : "加入书架",
                           )))
                 ],
               ),
@@ -138,12 +156,11 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                   delegate: PersistentHeaderBuilder(
                       builder: (ctx, offset) => GestureDetector(
                             onTap: () {
-                              _xiaoShuoProvider
-                                  .setReadList(XiaoshuoList(int.parse(_detail.lastChapterId), _detail.lastChapter, 1));
+                              _xiaoShuoProvider.setReadList(XiaoshuoList(int.parse(_detail.lastChapterId), _detail.lastChapter, 1));
                             },
                             child: Container(
                               alignment: Alignment.center,
-                              color: Colors.orangeAccent,
+                              color: Colours.orange,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -174,8 +191,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                       Selector<XiaoShuoProvider, bool>(
                           builder: (_, order, __) {
                             return IconButton(
-                                icon: Icon(
-                                    order ? Icons.vertical_align_top_rounded : Icons.vertical_align_bottom_rounded),
+                                icon: Icon(order ? Icons.vertical_align_top_rounded : Icons.vertical_align_bottom_rounded),
                                 onPressed: () {
                                   _xiaoShuoProvider.changeShunxu(!order);
                                   _refush(!order);
@@ -210,14 +226,10 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                               child: FadeInAnimation(
                                 child: Consumer<XiaoShuoProvider>(
                                     builder: (_, provider, __) => ListTile(
-                                          selected: provider.readList
-                                                      .where(
-                                                          (element) => element.id == _baseListProvider.list[index].id)
-                                                      .toList()
-                                                      .length >
-                                                  0
-                                              ? true
-                                              : false,
+                                          selected:
+                                              provider.readList.where((element) => element.id == _baseListProvider.list[index].id).toList().length > 0
+                                                  ? true
+                                                  : false,
                                           onTap: () {
                                             provider.setReadList(_baseListProvider.list[index]);
                                             NavigatorUtils.push(context,
@@ -239,8 +251,7 @@ class PersistentHeaderBuilder extends SliverPersistentHeaderDelegate {
   final double min;
   final Widget Function(BuildContext context, double offset) builder;
 
-  PersistentHeaderBuilder({this.max = 80, this.min = 40, @required this.builder})
-      : assert(max >= min && builder != null);
+  PersistentHeaderBuilder({this.max = 80, this.min = 40, @required this.builder}) : assert(max >= min && builder != null);
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {

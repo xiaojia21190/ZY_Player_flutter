@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
@@ -109,7 +110,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
                   SizedBox(height: 20),
                   Row(
                     children: <Widget>[
-                      Text('读至0.2%     继续阅读 ', style: TextStyle(fontSize: 14, color: Colours.paper)),
+                      Text('读至${Random.secure().nextInt(100)}%     继续阅读 ', style: TextStyle(fontSize: 14, color: Colours.paper)),
                       Image.asset('assets/images/book/bookshelf_continue_read.png'),
                     ],
                   ),
