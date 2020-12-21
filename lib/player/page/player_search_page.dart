@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ZY_Player_flutter/model/resource_data.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -129,8 +131,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 onTap: () {
-                                  NavigatorUtils.push(context,
-                                      '${PlayerRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].title)}');
+                                  String jsonString = jsonEncode(_baseListProvider.list[index]);
+                                  NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                 },
                               ))),
                     ),
