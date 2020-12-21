@@ -3,7 +3,7 @@
 基于ZY-Player开发的Flutter版本视频播放器，免费无广告
 
 ### 版本下载 手机的话请在浏览器里打开
-- [android下载](https://jizutang.oss-cn-beijing.aliyuncs.com/admin/app-release.apk)
+- [android下载](https://jizutang.oss-cn-beijing.aliyuncs.com/download/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk))
 
 
 ### 主要功能
