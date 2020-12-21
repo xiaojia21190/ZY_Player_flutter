@@ -5,13 +5,13 @@
 ### 订阅新版本
 <img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
-### flutter 版本安装
+### 版本安装
 - [android v1.4.0](https://jizutang.oss-cn-beijing.aliyuncs.com/download/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk)
 
-### 爬虫后台
+### 后台
 -  https://github.com/xiaojia21190/egg_crawel
 
-### 爬取漫画镇魂街到issue
+### 镇魂街
 -  https://github.com/xiaojia21190/zhenhunjie
 
 ### 截图
@@ -31,9 +31,6 @@
 |           漫画资源           |             详情页             |             漫画页             |
 | :--------------------------: | :----------------------------: | :----------------------------: |
 | ![home](./images/screenshot_20201221_232513.png) | ![detail](./images/screenshot_20201221_232520.png) | ![detail](./images/screenshot_20201221_232532.png) |
-
-
-
 
 
 
