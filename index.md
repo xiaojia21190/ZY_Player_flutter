@@ -1,13 +1,13 @@
-# ZY Player Flutter 资源播放
+ # 虱子聚合 资源播放  如果喜欢，麻烦点个star吧！谢谢！！
 
-基于ZY-Player开发的Flutter版本视频播放器，免费无广告
+Flutter版本视频播放器，免费无广告
 
 ### 版本下载 手机的话请在浏览器里打开
 - [android下载](https://jizutang.oss-cn-beijing.aliyuncs.com/download/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk)
 
 
 ### 主要功能
-- 播放视频(支持投屏) 全网免费电影 直播
+- 全网免费电影 电视直播 (支持投屏)
 - 小说
 - 免费看漫画
 - 收藏
