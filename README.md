@@ -6,7 +6,7 @@
 <img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
 ### flutter 版本安装
-- v1.4.0 地址 https://jizutang.oss-cn-beijing.aliyuncs.com/admin/app-release.apk
+- v1.4.0 地址 https://jizutang.oss-cn-beijing.aliyuncs.com/download/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk
 
 ### 爬虫后台
 -  https://github.com/xiaojia21190/egg_crawel
@@ -43,7 +43,7 @@
 
 ###  鸣谢
 
-特别感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 为本开源项目提供免费的 [IntelliJ GoLand](https://www.jetbrains.com/go/?from=ferry) 授权
+特别感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 为本开源项目提供免费的 [IntelliJ WebStorm](https://www.jetbrains.com/webstorm/) 授权
 
 <p>
  <a href="https://www.jetbrains.com/?from=ferry">

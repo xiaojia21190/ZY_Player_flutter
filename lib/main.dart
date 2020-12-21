@@ -38,7 +38,7 @@ Future<void> main() async {
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
 
-  JAnalytics.init(iosKey: '*****');
+  JAnalytics.init(iosKey: 'e5f443aa7c04dc808c6d022d');
   JAnalytics.setDebugEnable(true);
   JAnalytics.startCrashHandler();
   JAnalytics.setReportPeriod(Duration(seconds: 60));

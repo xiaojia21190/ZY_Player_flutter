@@ -49,7 +49,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         manifestPlaceholders = [
-                JPUSH_APPKEY : "*****", //JPush上注册的包名对应的appkey.
+                JPUSH_APPKEY : "e5f443aa7c04dc808c6d022d", //JPush上注册的包名对应的appkey.
                 JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
         ]
     }
