@@ -23,7 +23,8 @@ class ShuJiaPage extends StatefulWidget {
   _ShuJiaPageState createState() => _ShuJiaPageState();
 }
 
-class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
+class _ShuJiaPageState extends State<ShuJiaPage>
+    with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -38,6 +39,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
     _xiaoShuoProvider.setListXiaoshuoResource();
+    _xiaoShuoProvider.getLastRead();
     super.initState();
   }
 

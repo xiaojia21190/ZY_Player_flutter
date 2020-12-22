@@ -43,6 +43,11 @@ class XiaoShuoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  getLastRead() {
+    _lastread = SpUtil.getObj("lastread", (data) => XiaoshuoDetail.fromJson(data));
+    notifyListeners();
+  }
+
   getReadList() {
     var result = SpUtil.getObjList<XiaoshuoList>("readXiaoshuo", (data) => XiaoshuoList.fromJson(data));
     if (result.length > 0) {
