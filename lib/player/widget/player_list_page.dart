@@ -101,8 +101,8 @@ class _PlayerListPageState extends State<PlayerListPage>
                                 //解决ListView嵌套GridView滑动冲突问题
                                 physics: NeverScrollableScrollPhysics(),
                                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3, //每行几列
-                                    childAspectRatio: 0.65),
+                                  crossAxisCount: 5,
+                                ),
                                 itemCount: _baseListProvider.list[index].playlist.length,
                                 itemBuilder: (context, i) {
                                   //要返回的item样式
