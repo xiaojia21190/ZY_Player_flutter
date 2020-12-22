@@ -35,6 +35,7 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData getTheme({bool isDarkMode = false}) {
     return ThemeData(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         errorColor: isDarkMode ? Colours.dark_red : Colours.red,
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
         primaryColor: isDarkMode ? Colours.dark_app_main : Colours.app_main,

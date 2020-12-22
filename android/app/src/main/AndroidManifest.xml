@@ -13,9 +13,9 @@
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
 
-    <application android:requestLegacyExternalStorage="true"  android:usesCleartextTraffic="true" android:name="io.flutter.app.FlutterApplication" android:label="虱子聚合" android:icon="@mipmap/ic_launcher">
+    <application android:requestLegacyExternalStorage="true" android:usesCleartextTraffic="true" android:name="io.flutter.app.FlutterApplication" android:label="虱子聚合" android:banner="@drawable/banner" android:icon="@mipmap/ic_launcher">
         <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:launchMode="singleTop" android:screenOrientation="portrait" android:name=".MainActivity" android:theme="@style/LaunchTheme" android:windowSoftInputMode="adjustResize">
-            <!-- Specify that the launch screen should continue being displayed -->
+            <!-- Specify that the launch screen should continue bein g displayed -->
             <!-- until Flutter renders its first frame. -->
             <meta-data android:name="io.flutter.embedding.android.SplashScreenDrawable" android:resource="@drawable/launch_background" />
 
@@ -25,6 +25,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -36,5 +37,7 @@
         <provider android:name="sk.fourq.otaupdate.OtaUpdateFileProvider" android:authorities="${applicationId}.ota_update_provider" android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />
         </provider>
+        <uses-feature android:name="android.software.leanback" android:required="false" />
+        <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     </application>
 </manifest>
