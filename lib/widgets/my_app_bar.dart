@@ -34,8 +34,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       _backgroundColor = backgroundColor;
     }
 
-    SystemUiOverlayStyle _overlayStyle =
-        ThemeData.estimateBrightnessForColor(_backgroundColor) == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
+    SystemUiOverlayStyle _overlayStyle = ThemeData.estimateBrightnessForColor(_backgroundColor) == Brightness.dark
+        ? SystemUiOverlayStyle.light
+        : SystemUiOverlayStyle.dark;
 
     var back = isBack
         ? IconButton(

@@ -46,9 +46,9 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
   }
 
   Future getData() async {
-    _appStateProvider.setloadingState(true);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "page": page},
-        onSuccess: (resultList) {
+    _baseListProvider.setStateType(StateType.loading);
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource,
+        queryParameters: {"keywords": keywords, "page": page}, onSuccess: (resultList) {
       List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
       if (resultList.length == 0) {
         _baseListProvider.setStateType(StateType.order);
@@ -132,7 +132,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                                 ),
                                 onTap: () {
                                   String jsonString = jsonEncode(_baseListProvider.list[index]);
-                                  NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                  NavigatorUtils.push(context,
+                                      '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                 },
                               ))),
                     ),

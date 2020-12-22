@@ -41,30 +41,31 @@ class _CollectPageState extends State<CollectPage>
   }
 
   Widget getData(data, int index) {
-    return ListTile(
-      title: Text(data.title),
-      subtitle: index == 0 ? null : Text(data.leixing),
-      trailing: Icon(Icons.keyboard_arrow_right),
-      leading: Container(
-        // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
-        height: 200,
-        width: 100,
-        padding: EdgeInsets.all(5),
-        child: LoadImage(
-          data.cover,
-          fit: BoxFit.fill,
+    return Card(
+      child: ListTile(
+        title: Text(data.title),
+        subtitle: index == 0 ? null : Text(data.leixing),
+        trailing: Icon(Icons.keyboard_arrow_right),
+        leading: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: LoadImage(
+            data.cover,
+            fit: BoxFit.fill,
+          ),
         ),
+        onTap: () {
+          Log.d('前往详情页');
+          if (index == 0) {
+            String jsonString = jsonEncode(data);
+            NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+          } else {
+            NavigatorUtils.push(context,
+                '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+          }
+        },
       ),
-      onTap: () {
-        Log.d('前往详情页');
-        if (index == 0) {
-          String jsonString = jsonEncode(data);
-          NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
-        } else {
-          NavigatorUtils.push(context,
-              '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
-        }
-      },
     );
   }
 
