@@ -72,7 +72,7 @@ Future<T> showElasticDialog<T>({
   bool barrierDismissible = true,
   WidgetBuilder builder,
 }) {
-  final ThemeData theme = Theme.of(context, shadowThemeOnly: true);
+  final ThemeData theme = Theme.of(context);
   return showGeneralDialog(
     context: context,
     pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
@@ -91,7 +91,8 @@ Future<T> showElasticDialog<T>({
   );
 }
 
-Widget _buildDialogTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+Widget _buildDialogTransitions(
+    BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
   return FadeTransition(
     opacity: CurvedAnimation(
       parent: animation,

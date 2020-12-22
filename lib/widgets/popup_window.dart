@@ -45,7 +45,7 @@ Future<T> showPopupWindow<T>({
           child: child,
           elevation: elevation,
           semanticLabel: label,
-          theme: Theme.of(context, shadowThemeOnly: true),
+          theme: Theme.of(context),
           barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
           fullWidth: fullWidth,
           isShowBg: isShowBg));
@@ -90,7 +90,10 @@ class _PopupWindowRoute<T> extends PopupRoute<T> {
 
   @override
   Animation<double> createAnimation() {
-    return CurvedAnimation(parent: super.createAnimation(), curve: Curves.linear, reverseCurve: const Interval(0.0, _kWindowCloseIntervalEnd));
+    return CurvedAnimation(
+        parent: super.createAnimation(),
+        curve: Curves.linear,
+        reverseCurve: const Interval(0.0, _kWindowCloseIntervalEnd));
   }
 
   @override
@@ -205,7 +208,8 @@ class _PopupWindowLayoutDelegate extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     // The menu can be at most the size of the overlay minus 8.0 pixels in each
     // direction.
-    return BoxConstraints.loose(constraints.biggest - const Offset(_kWindowScreenPadding * 2.0, _kWindowScreenPadding * 2.0));
+    return BoxConstraints.loose(
+        constraints.biggest - const Offset(_kWindowScreenPadding * 2.0, _kWindowScreenPadding * 2.0));
   }
 
   @override
@@ -247,10 +251,12 @@ class _PopupWindowLayoutDelegate extends SingleChildLayoutDelegate {
     // edge of the screen in every direction.
     if (x < _kWindowScreenPadding)
       x = _kWindowScreenPadding;
-    else if (x + childSize.width > size.width - _kWindowScreenPadding) x = size.width - childSize.width - _kWindowScreenPadding;
+    else if (x + childSize.width > size.width - _kWindowScreenPadding)
+      x = size.width - childSize.width - _kWindowScreenPadding;
     if (y < _kWindowScreenPadding)
       y = _kWindowScreenPadding;
-    else if (y + childSize.height > size.height - _kWindowScreenPadding) y = size.height - childSize.height - _kWindowScreenPadding;
+    else if (y + childSize.height > size.height - _kWindowScreenPadding)
+      y = size.height - childSize.height - _kWindowScreenPadding;
     return Offset(x, y);
   }
 
