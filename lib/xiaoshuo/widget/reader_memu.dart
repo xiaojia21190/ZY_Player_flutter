@@ -1,12 +1,18 @@
 import 'dart:async';
 
+import 'package:ZY_Player_flutter/event/event_bus.dart';
+import 'package:ZY_Player_flutter/event/event_model.dart';
+import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
+import 'package:ZY_Player_flutter/net/dio_utils.dart';
+import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
-import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:screen/screen.dart' as lightness;
 
@@ -18,6 +24,7 @@ class ColorCh {
 
 class ReaderMenu extends StatefulWidget {
   final String title;
+  final String id;
   final int articleIndex;
 
   final VoidCallback onTap;
@@ -27,6 +34,7 @@ class ReaderMenu extends StatefulWidget {
   ReaderMenu({
     this.articleIndex,
     this.title,
+    this.id,
     this.onTap,
     this.onPreviousArticle,
     this.onNextArticle,
@@ -57,8 +65,11 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
     ColorCh("青草绿", Colours.qingcaolv),
     ColorCh("海天蓝", Colours.haitianlan),
     ColorCh("葛巾紫", Colours.geqinzi),
-    ColorCh("极光灰", Colours.jiguanghui)
+    ColorCh("极光灰", Colours.jiguanghui),
+    ColorCh("暗黑", Colors.black),
   ];
+
+  List<XiaoshuoList> _list1 = [];
 
   @override
   initState() {
@@ -70,6 +81,15 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
 
   Future getLight() async {
     light = await lightness.Screen.brightness;
+  }
+
+  Future fetchData() async {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail, queryParameters: {"id": widget.id, "page": -1, "reverse": "1"},
+        onSuccess: (resultList) {
+      XiaoshuoChap result = XiaoshuoChap.fromJson(resultList);
+      List.generate(result.xiaoshuoList.length, (index) => _list1.add(result.xiaoshuoList[index]));
+    }, onError: (_, __) {});
+    return _list1;
   }
 
   @override
@@ -107,10 +127,6 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
     );
   }
 
-  previousArticle() {}
-
-  nextArticle() {}
-
   buildLightProgress() {
     return Container(
         width: Screen.widthOt,
@@ -118,7 +134,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
         color: Colors.black87,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
-            "当前亮度:${light * 100}%",
+            "当前亮度:${(light * 100).toInt()}%",
             style: TextStyle(color: Colors.white),
           ),
           Slider(
@@ -129,7 +145,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                 lightness.Screen.setBrightness(v);
               });
             },
-            label: "亮度:$light", //气泡的值
+            label: "亮度:${(light * 100).toInt()}%", //气泡的值
             divisions: 10, //进度条上显示多少个刻度点
             max: 1,
             min: 0,
@@ -176,6 +192,8 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
       child: Wrap(
         alignment: WrapAlignment.spaceAround,
         crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 1,
+        runSpacing: 1,
         children: List.generate(
             _list.length,
             (index) => GestureDetector(
@@ -220,7 +238,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
             padding: EdgeInsets.only(bottom: Screen.bottomSafeHeight),
             child: Column(
               children: <Widget>[
-                // buildProgressView(),
+                //buildProgressView(),
                 buildBottomMenus(),
               ],
             ),
@@ -234,7 +252,53 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        buildBottomItem('目录', 'book/read_icon_catalog', () => {}),
+        buildBottomItem(
+            '目录',
+            'book/read_icon_catalog',
+            () => {
+                  showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      elevation: 10,
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return Container(
+                          height: ScreenUtil.getInstance().getWidth(550),
+                          decoration: BoxDecoration(
+                              color: Colours.qingcaolv, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                          child: FutureBuilder(
+                            future: fetchData(),
+                            builder: (BuildContext context, AsyncSnapshot snapshot) {
+                              if (snapshot.connectionState == ConnectionState.done) {
+                                if (snapshot.hasData) {
+                                  return ListView.builder(
+                                    itemBuilder: (context, index) {
+                                      return ClickItem(
+                                        title: snapshot.data[index].name,
+                                        content: snapshot.data[index].id.toString(),
+                                        onTap: () {
+                                          ApplicationEvent.event.fire(LoadXiaoShuoEvent(snapshot.data[index].id, snapshot.data[index].name));
+                                          Navigator.pop(context);
+                                        },
+                                      );
+                                    },
+                                    itemExtent: 50,
+                                    itemCount: snapshot.data.length,
+                                  );
+                                } else {
+                                  return Container(
+                                    alignment: Alignment.center,
+                                    child: TextButton(onPressed: null, child: Text('error')),
+                                  );
+                                }
+                              } else {
+                                return Container(alignment: Alignment.center, child: CircularProgressIndicator());
+                              }
+                            },
+                          ),
+                        );
+                      })
+                }),
         buildBottomItem(
             '亮度',
             'book/read_icon_brightness',

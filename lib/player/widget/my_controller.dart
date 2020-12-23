@@ -5,7 +5,10 @@ import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
+import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -19,9 +22,11 @@ import 'package:chewie/src/chewie_player.dart';
 // ignore: implementation_imports
 import 'package:chewie/src/chewie_progress_colors.dart';
 // ignore: implementation_imports
-import 'package:chewie/src/material_progress_bar.dart';
+import 'package:chewie/src/cupertino_progress_bar.dart';
 // ignore: implementation_imports
 import 'package:chewie/src/utils.dart';
+
+import 'package:screen/screen.dart' as lightness;
 
 class MyControls extends StatefulWidget {
   String title;
@@ -50,6 +55,17 @@ class _MyMaterialControlsState extends State<MyControls> {
   Offset _initialSwipeOffset;
   Offset _finalSwipeOffset;
 
+  Offset _initialVerSwipeOffset;
+  Offset _finalVerSwipeOffset;
+  bool _verSwiper = false;
+  String _verText = "快进到:";
+
+  Offset _initialVerLightOffset;
+  Offset _finalVerLightOffset;
+  bool _verLight = false;
+  String _verLightText = "亮度:";
+  double light = 0;
+
   VideoPlayerController controller;
   ChewieController chewieController;
 
@@ -58,7 +74,12 @@ class _MyMaterialControlsState extends State<MyControls> {
   @override
   void initState() {
     appStateProvider = Store.value<AppStateProvider>(context);
+    getLight();
     super.initState();
+  }
+
+  Future getLight() async {
+    light = await lightness.Screen.brightness;
   }
 
   @override
@@ -86,6 +107,9 @@ class _MyMaterialControlsState extends State<MyControls> {
         onHorizontalDragStart: _onHorizontalDragStart,
         onHorizontalDragUpdate: _onHorizontalDragUpdate,
         onHorizontalDragEnd: _onHorizontalDragEnd,
+        onVerticalDragStart: _onVerticalDragStart,
+        onVerticalDragUpdate: _onVerticalDragUpdate,
+        onVerticalDragEnd: _onVerticalDragEnd,
         onDoubleTap: () {
           controller.pause();
         },
@@ -118,7 +142,30 @@ class _MyMaterialControlsState extends State<MyControls> {
                         )
                       : Container(),
                   alignment: Alignment.bottomCenter,
-                )
+                ),
+                // 滑动进度
+                Align(
+                  child: _verSwiper && controller.value.isPlaying
+                      ? Center(
+                          child: Text(
+                            _verText,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      : Container(),
+                  alignment: Alignment.center,
+                ),
+                Align(
+                  child: _verLight
+                      ? Center(
+                          child: Text(
+                            _verLightText,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      : Container(),
+                  alignment: Alignment.center,
+                ),
               ],
             )),
       ),
@@ -483,20 +530,83 @@ class _MyMaterialControlsState extends State<MyControls> {
 
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
     _finalSwipeOffset = details.globalPosition;
+    if (_initialSwipeOffset != null) {
+      final offsetDifference = _initialSwipeOffset.dx - _finalSwipeOffset.dx;
+      String fintext = "";
+      _verSwiper = true;
+      // 最多滑动20分钟
+      var offsetAbs = offsetDifference.abs() / Screen.widthOt;
+
+      fintext = offsetDifference < 0 ? "快进到：" : "后退到：";
+      if (offsetDifference < 0) {
+        var endTime = offsetAbs * (controller.value.duration.inSeconds - controller.value.position.inSeconds);
+        _verText = "$fintext${Duration(seconds: controller.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
+      } else {
+        var endTime = offsetAbs * (controller.value.position.inSeconds);
+        _verText = "$fintext${Duration(seconds: controller.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
+      }
+    }
+    setState(() {});
   }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
     if (_initialSwipeOffset != null) {
       final offsetDifference = _initialSwipeOffset.dx - _finalSwipeOffset.dx;
+      var offsetAbs = offsetDifference.abs() / Screen.widthOt;
       if (offsetDifference > 0) {
+        var endTime = offsetAbs * (controller.value.position.inSeconds);
         if (controller.value.isPlaying) {
-          controller.position.then((value) => {controller.seekTo(value - Duration(seconds: 5))});
+          Log.d(Duration(seconds: controller.value.position.inSeconds - endTime.toInt()).toString());
+          controller.position.then((value) => {controller.seekTo(value - Duration(seconds: endTime.toInt()))});
         }
       } else {
-        if (controller.value.isPlaying) {
-          controller.position.then((value) => {controller.seekTo(value + Duration(seconds: 5))});
+        var endTime = offsetAbs * (controller.value.duration.inSeconds - controller.value.position.inSeconds);
+        if (Duration(seconds: controller.value.position.inSeconds + endTime.toInt()) <= controller.value.duration) {
+          Log.d(Duration(seconds: controller.value.position.inSeconds + endTime.toInt()).toString());
+          if (controller.value.isPlaying) {
+            controller.position.then((value) => {controller.seekTo(value + Duration(seconds: endTime.toInt()))});
+          }
         }
       }
+    }
+    _verSwiper = false;
+    setState(() {});
+  }
+
+  void _onVerticalDragStart(DragStartDetails details) {
+    _verLight = true;
+    _initialVerLightOffset = details.globalPosition;
+    setState(() {});
+  }
+
+  Future _onVerticalDragUpdate(DragUpdateDetails details) async {
+    _finalVerLightOffset = details.globalPosition;
+    final offsetDifference = _initialVerLightOffset.dy - _finalVerLightOffset.dy;
+    var offsetAbs = offsetDifference.abs() / ScreenUtil.getInstance().getWidth(300);
+    // Log.d(offsetAbs.toString());
+    var entLight;
+    if (offsetDifference > 0) {
+      entLight = light + offsetAbs;
+      if (entLight >= 1) {
+        entLight = 1.0;
+      }
+      lightness.Screen.setBrightness(entLight);
+    } else {
+      entLight = light - offsetAbs;
+      if (entLight <= 0) {
+        entLight = 0.0;
+      }
+      lightness.Screen.setBrightness(entLight);
+    }
+    _verLightText = "亮度：${(entLight * 100).toInt()}%";
+    setState(() {});
+  }
+
+  void _onVerticalDragEnd(DragEndDetails details) {
+    if (_initialVerLightOffset != null) {
+      getLight();
+      _verLight = false;
+      setState(() {});
     }
   }
 
@@ -585,7 +695,7 @@ class _MyMaterialControlsState extends State<MyControls> {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(right: _hideStuff ? 0 : 10.0),
-        child: MaterialVideoProgressBar(
+        child: CupertinoVideoProgressBar(
           controller,
           onDragStart: () {
             setState(() {
@@ -605,7 +715,7 @@ class _MyMaterialControlsState extends State<MyControls> {
             playedColor: Colors.red,
             handleColor: Colors.blue,
             backgroundColor: Colors.grey,
-            bufferedColor: Colors.lightGreen,
+            bufferedColor: Colors.lightGreenAccent,
           ),
         ),
       ),

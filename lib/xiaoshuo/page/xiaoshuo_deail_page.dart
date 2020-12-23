@@ -135,20 +135,6 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                 flexibleSpace: FlexibleSpaceBar(
                   background: LoadImage(_detail.img),
                 ),
-                actions: [
-                  Consumer<XiaoShuoProvider>(
-                      builder: (_, provider, __) => TextButton(
-                          onPressed: () {
-                            if (provider.xiaoshuo.where((element) => element.id == _detail.id).toList().length > 0) {
-                              _xiaoShuoProvider.removeXiaoshuoResource(_detail.id);
-                            } else {
-                              _xiaoShuoProvider.addXiaoshuoResource(_detail);
-                            }
-                          },
-                          child: Text(
-                            provider.xiaoshuo.where((element) => element.id == _detail.id).toList().length > 0 ? "移出书架" : "加入书架",
-                          )))
-                ],
               ),
               SliverPersistentHeader(
                   pinned: true,
@@ -183,21 +169,37 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Selector<XiaoShuoProvider, String>(
-                          builder: (_, text, __) {
-                            return Text(text);
-                          },
-                          selector: (_, store) => store.shunxuText),
-                      Selector<XiaoShuoProvider, bool>(
-                          builder: (_, order, __) {
-                            return IconButton(
-                                icon: Icon(order ? Icons.vertical_align_top_rounded : Icons.vertical_align_bottom_rounded),
-                                onPressed: () {
-                                  _xiaoShuoProvider.changeShunxu(!order);
-                                  _refush(!order);
-                                });
-                          },
-                          selector: (_, store) => store.currentOrder),
+                      Row(
+                        children: [
+                          Selector<XiaoShuoProvider, String>(
+                              builder: (_, text, __) {
+                                return Text(text);
+                              },
+                              selector: (_, store) => store.shunxuText),
+                          Selector<XiaoShuoProvider, bool>(
+                              builder: (_, order, __) {
+                                return IconButton(
+                                    icon: Icon(order ? Icons.vertical_align_top_rounded : Icons.vertical_align_bottom_rounded),
+                                    onPressed: () {
+                                      _xiaoShuoProvider.changeShunxu(!order);
+                                      _refush(!order);
+                                    });
+                              },
+                              selector: (_, store) => store.currentOrder),
+                        ],
+                      ),
+                      Consumer<XiaoShuoProvider>(
+                          builder: (_, provider, __) => TextButton(
+                              onPressed: () {
+                                if (provider.xiaoshuo.where((element) => element.id == _detail.id).toList().length > 0) {
+                                  _xiaoShuoProvider.removeXiaoshuoResource(_detail.id);
+                                } else {
+                                  _xiaoShuoProvider.addXiaoshuoResource(_detail);
+                                }
+                              },
+                              child: Text(
+                                provider.xiaoshuo.where((element) => element.id == _detail.id).toList().length > 0 ? "移出书架" : "加入书架",
+                              ))),
                     ],
                   ),
                 ),

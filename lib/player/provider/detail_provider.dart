@@ -14,6 +14,9 @@ class DetailProvider extends ChangeNotifier {
   List<String> _kanguojuji = []; // 已经看过的剧集列表
   List<String> get kanguojuji => _kanguojuji;
 
+  List<String> _saveRecord = [];
+  List<String> get saveRecord => _saveRecord;
+
   bool _playState = false;
   bool get playState => _playState;
 
@@ -57,6 +60,7 @@ class DetailProvider extends ChangeNotifier {
 
   setJuji() {
     _kanguojuji = SpUtil.getStringList("KGjuji", defValue: []);
+    _saveRecord = SpUtil.getStringList("saverecord", defValue: []);
   }
 
   saveJuji(String juji) {
@@ -65,6 +69,38 @@ class DetailProvider extends ChangeNotifier {
       SpUtil.putStringList("KGjuji", _kanguojuji);
       notifyListeners();
     }
+  }
+
+  saveRecordNof(String record) {
+    var index = -1;
+    for (var i = 0; i < _saveRecord.length; i++) {
+      var splitEle = _saveRecord[i].split("_");
+      var splitEle1 = record.split("_");
+      if (splitEle[0] == splitEle1[0] && splitEle[1] == splitEle1[1] && splitEle[2] == splitEle1[2]) {
+        index = i;
+        break;
+      }
+    }
+    if (index < 0) {
+      _saveRecord.add(record);
+      SpUtil.putStringList("saverecord", _saveRecord);
+    } else {
+      _saveRecord[index] = record;
+      SpUtil.putStringList("saverecord", _saveRecord);
+    }
+  }
+
+  String getRecord(String playerList) {
+    var record;
+    for (var i = 0; i < _saveRecord.length; i++) {
+      var splitEle = _saveRecord[i].split("_");
+      var splitEle1 = playerList.split("_");
+      if (splitEle[0] == splitEle1[0] && splitEle[1] == splitEle1[1] && splitEle[2] == splitEle1[2]) {
+        record = splitEle[3];
+        break;
+      }
+    }
+    return record;
   }
 
   addDetailResource(DetailReource detailReourceData) {

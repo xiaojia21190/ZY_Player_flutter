@@ -19,7 +19,7 @@ class AppStateProvider extends ChangeNotifier {
   Color get xsColor => _xsColor;
 
   setConfig() {
-    _xsFontSize = SpUtil.getDouble("xsfontsize", defValue: 14);
+    _xsFontSize = SpUtil.getDouble("xsfontsize", defValue: 18);
     _xsColor = Color(SpUtil.getInt("xscolor", defValue: 0xffE3EDCD));
   }
 

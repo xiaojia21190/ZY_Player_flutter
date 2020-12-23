@@ -1,3 +1,5 @@
+import 'package:ZY_Player_flutter/event/event_bus.dart';
+import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/model/manhua_detail.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_content.dart';
@@ -47,13 +49,22 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
 
   bool hasMore = false;
   int chapid = 0;
+  String title = "";
 
   @override
   void initState() {
     _appStateProvider = Store.value<AppStateProvider>(context);
     _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
     _appStateProvider.setConfig();
+    title = widget.title;
     fetchData(int.parse(widget.chpId));
+    ApplicationEvent.event.on<LoadXiaoShuoEvent>().listen((event) {
+      _baseListProvider.clear();
+      title = event.title;
+      opacityLevel = 0.0;
+      setState(() {});
+      fetchData(event.chpId);
+    });
     super.initState();
   }
 
@@ -84,14 +95,12 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
               body: SafeArea(
                 child: Stack(
                   children: <Widget>[
-                    ReaderOverlayer(title: widget.title, page: 1, topSafeHeight: Screen.topSafeHeight),
+                    ReaderOverlayer(title: title, page: 1, topSafeHeight: Screen.topSafeHeight),
                     buildContent(),
                     AnimatedOpacity(
                       opacity: opacityLevel,
                       duration: new Duration(milliseconds: 300),
-                      child: ReaderMenu(
-                        title: widget.title,
-                      ),
+                      child: ReaderMenu(title: title, id: widget.id),
                     )
                   ],
                 ),
@@ -103,7 +112,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
   buildContent() {
     return ChangeNotifierProvider<BaseListProvider<XiaoshuoContent>>(
         create: (_) => _baseListProvider,
-        child: Consumer<BaseListProvider<XiaoshuoContent>>(builder: (_, _baseListProvider, __) {
+        child: Consumer2<BaseListProvider<XiaoshuoContent>, AppStateProvider>(builder: (_, _baseListProvider, appStateProvider, __) {
           return MediaQuery.removePadding(
               context: context,
               removeTop: true,
@@ -133,19 +142,20 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
                                     margin: EdgeInsets.only(top: 10),
                                     child: Text(_baseListProvider.list[index].cname, style: TextStyle(fontSize: 14, color: Colours.golden)),
                                   ),
-                                  Selector<AppStateProvider, double>(
-                                      builder: (_, fzsie, __) {
-                                        return Container(
-                                          color: Colors.transparent,
-                                          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                          child: Text.rich(
-                                            TextSpan(
-                                                children: [TextSpan(text: _baseListProvider.list[index].content, style: TextStyle(fontSize: fzsie))]),
-                                            textAlign: TextAlign.justify,
-                                          ),
-                                        );
-                                      },
-                                      selector: (_, store) => store.xsFontSize),
+                                  Container(
+                                    color: Colors.transparent,
+                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                    child: Text.rich(
+                                      TextSpan(children: [
+                                        TextSpan(
+                                            text: _baseListProvider.list[index].content,
+                                            style: TextStyle(
+                                                fontSize: appStateProvider.xsFontSize,
+                                                color: appStateProvider.xsColor == Colors.black ? Colours.dark_text : Colours.text))
+                                      ]),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                  ),
                                 ],
                               ))),
                     ),

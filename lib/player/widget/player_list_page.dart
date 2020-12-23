@@ -23,8 +23,7 @@ class PlayerListPage extends StatefulWidget {
   _PlayerListPageState createState() => _PlayerListPageState();
 }
 
-class _PlayerListPageState extends State<PlayerListPage>
-    with AutomaticKeepAliveClientMixin<PlayerListPage>, SingleTickerProviderStateMixin {
+class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAliveClientMixin<PlayerListPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<Types> _baseListProvider = BaseListProvider();
@@ -127,12 +126,12 @@ class _PlayerListPageState extends State<PlayerListPage>
                                                     children: [
                                                       Text(
                                                         _baseListProvider.list[index].playlist[i].bofang,
-                                                        style: TextStyle(fontSize: 14, color: Colors.white),
+                                                        style: TextStyle(fontSize: 12, color: Colors.white),
                                                       ),
                                                       Gaps.hGap4,
                                                       Text(
                                                         _baseListProvider.list[index].playlist[i].qingxi,
-                                                        style: TextStyle(fontSize: 14, color: Colors.white),
+                                                        style: TextStyle(fontSize: 12, color: Colors.white),
                                                       )
                                                     ],
                                                   ),
@@ -142,9 +141,8 @@ class _PlayerListPageState extends State<PlayerListPage>
                                                 left: 10,
                                                 child: Container(
                                                   padding: EdgeInsets.all(5),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.black45,
-                                                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                                                  decoration:
+                                                      BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
                                                   child: Text(
                                                     _baseListProvider.list[index].playlist[i].pingfen,
                                                     style: TextStyle(fontSize: 12, color: Colors.white),
@@ -161,8 +159,7 @@ class _PlayerListPageState extends State<PlayerListPage>
                                     ),
                                     onTap: () {
                                       String jsonString = jsonEncode(_baseListProvider.list[index].playlist[i]);
-                                      NavigatorUtils.push(context,
-                                          '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                      NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                     },
                                   );
                                 },

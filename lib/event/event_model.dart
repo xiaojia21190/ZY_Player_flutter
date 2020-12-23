@@ -9,6 +9,12 @@ class DeviceEvent {
   DeviceEvent(this.devicesId, this.devicesName);
 }
 
+class LoadXiaoShuoEvent {
+  int chpId;
+  String title;
+  LoadXiaoShuoEvent(this.chpId, this.title);
+}
+
 class WebViewEvent {
   WebViewStateType stateType;
   String url;
