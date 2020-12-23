@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
   Future tryOtaUpdate() async {
     try {
       Toast.show("开始下载版本");
-      OtaUpdate().execute(currentUpdateUrl, destinationFilename: "虱子聚合").listen(
+      OtaUpdate().execute(currentUpdateUrl, destinationFilename: "虱子聚合.apk").listen(
         (OtaEvent event) {
           if (event.status == OtaStatus.DOWNLOADING) {
             dialog.update(double.parse(event.value) / 100);
