@@ -25,6 +25,7 @@ class ColorCh {
 class ReaderMenu extends StatefulWidget {
   final String title;
   final String id;
+  final String chpId;
   final int articleIndex;
 
   final VoidCallback onTap;
@@ -34,6 +35,7 @@ class ReaderMenu extends StatefulWidget {
   ReaderMenu({
     this.articleIndex,
     this.title,
+    this.chpId,
     this.id,
     this.onTap,
     this.onPreviousArticle,
@@ -48,6 +50,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   double progressValue;
   bool isTipVisible = false;
   AppStateProvider _appStateProvider;
+  ScrollController scrollController = ScrollController();
 
   double light = 0;
   double maxLight = 0;
@@ -266,35 +269,48 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                           height: ScreenUtil.getInstance().getWidth(550),
                           decoration: BoxDecoration(
                               color: Colours.qingcaolv, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-                          child: FutureBuilder(
-                            future: fetchData(),
-                            builder: (BuildContext context, AsyncSnapshot snapshot) {
-                              if (snapshot.connectionState == ConnectionState.done) {
-                                if (snapshot.hasData) {
-                                  return ListView.builder(
-                                    itemBuilder: (context, index) {
-                                      return ClickItem(
-                                        title: snapshot.data[index].name,
-                                        content: snapshot.data[index].id.toString(),
-                                        onTap: () {
-                                          ApplicationEvent.event.fire(LoadXiaoShuoEvent(snapshot.data[index].id, snapshot.data[index].name));
-                                          Navigator.pop(context);
+                          child: Column(
+                            children: [
+                              _list.length > 0
+                                  ? TextButton(
+                                      onPressed: () {
+                                        var index = _list1.indexWhere((element) => element.id == int.parse(widget.chpId));
+                                        scrollController.animateTo(50.0 * index - 300, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                      },
+                                      child: Text("去当前"))
+                                  : Container(),
+                              Expanded(
+                                  child: FutureBuilder(
+                                future: fetchData(),
+                                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.done) {
+                                    if (snapshot.hasData) {
+                                      return ListView.builder(
+                                        controller: scrollController,
+                                        itemBuilder: (context, index) {
+                                          return ClickItem(
+                                            title: snapshot.data[index].name,
+                                            content: snapshot.data[index].id.toString(),
+                                            onTap: () {
+                                              // ApplicationEvent.event.fire(LoadXiaoShuoEvent(snapshot.data[index].id, snapshot.data[index].name));
+                                              // Navigator.pop(context);
+                                            },
+                                          );
                                         },
+                                        itemCount: snapshot.data.length,
                                       );
-                                    },
-                                    itemExtent: 50,
-                                    itemCount: snapshot.data.length,
-                                  );
-                                } else {
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    child: TextButton(onPressed: null, child: Text('error')),
-                                  );
-                                }
-                              } else {
-                                return Container(alignment: Alignment.center, child: CircularProgressIndicator());
-                              }
-                            },
+                                    } else {
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        child: TextButton(onPressed: fetchData, child: Text('error')),
+                                      );
+                                    }
+                                  } else {
+                                    return Container(alignment: Alignment.center, child: CircularProgressIndicator());
+                                  }
+                                },
+                              ))
+                            ],
                           ),
                         );
                       })

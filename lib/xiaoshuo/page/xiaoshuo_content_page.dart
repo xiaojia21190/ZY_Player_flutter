@@ -100,7 +100,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
                     AnimatedOpacity(
                       opacity: opacityLevel,
                       duration: new Duration(milliseconds: 300),
-                      child: ReaderMenu(title: title, id: widget.id),
+                      child: ReaderMenu(title: title, id: widget.id, chpId: widget.chpId),
                     )
                   ],
                 ),
