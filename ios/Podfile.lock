@@ -1,17 +1,48 @@
 PODS:
-  - BIJKPlayer (0.7.8)
-  - fijkplayer (0.8.7):
-    - BIJKPlayer (~> 0.7.8)
+  - battery (0.0.1):
     - Flutter
+  - CocoaAsyncSocket (7.6.4)
+  - connectivity (0.0.1):
+    - Flutter
+    - Reachability
+  - core_location_fluttify (0.0.1):
+    - Flutter
+    - foundation_fluttify
   - Flutter (1.0.0)
+  - flutter_dlna (0.0.1):
+    - CocoaAsyncSocket
+    - Flutter
+    - flutter_dlna/MRC (= 0.0.1)
+  - flutter_dlna/MRC (0.0.1):
+    - CocoaAsyncSocket
+    - Flutter
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
-  - image_picker (0.0.1):
+  - foundation_fluttify (0.0.1):
     - Flutter
+  - image_gallery_saver (1.5.0):
+    - Flutter
+  - JAnalytics (2.1.2):
+    - JCore (< 3.0.0, >= 1.2.0)
+  - janalytics_fluttify (0.0.1):
+    - Flutter
+    - foundation_fluttify
+    - JAnalytics (= 2.1.2)
+    - jcore_fluttify
+  - JCore (2.4.0)
+  - jcore_fluttify (0.0.1):
+    - Flutter
+    - foundation_fluttify
+    - JCore (= 2.4.0)
   - package_info (0.0.1):
     - Flutter
   - path_provider (0.0.1):
+    - Flutter
+  - "permission_handler (5.0.1+1)":
+    - Flutter
+  - Reachability (3.2)
+  - screen (0.0.1):
     - Flutter
   - shared_preferences (0.0.1):
     - Flutter
@@ -20,58 +51,109 @@ PODS:
     - FMDB (~> 2.7.2)
   - url_launcher (0.0.1):
     - Flutter
+  - video_player (0.0.1):
+    - Flutter
+  - wakelock (0.0.1):
+    - Flutter
   - webview_flutter (0.0.1):
     - Flutter
 
 DEPENDENCIES:
-  - fijkplayer (from `.symlinks/plugins/fijkplayer/ios`)
+  - battery (from `.symlinks/plugins/battery/ios`)
+  - connectivity (from `.symlinks/plugins/connectivity/ios`)
+  - core_location_fluttify (from `.symlinks/plugins/core_location_fluttify/ios`)
   - Flutter (from `Flutter`)
-  - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - flutter_dlna (from `.symlinks/plugins/flutter_dlna/ios`)
+  - foundation_fluttify (from `.symlinks/plugins/foundation_fluttify/ios`)
+  - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
+  - janalytics_fluttify (from `.symlinks/plugins/janalytics_fluttify/ios`)
+  - jcore_fluttify (from `.symlinks/plugins/jcore_fluttify/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - screen (from `.symlinks/plugins/screen/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+  - video_player (from `.symlinks/plugins/video_player/ios`)
+  - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
 
 SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - CocoaAsyncSocket
+    - JAnalytics
+    - JCore
+    - Reachability
   trunk:
-    - BIJKPlayer
     - FMDB
 
 EXTERNAL SOURCES:
-  fijkplayer:
-    :path: ".symlinks/plugins/fijkplayer/ios"
+  battery:
+    :path: ".symlinks/plugins/battery/ios"
+  connectivity:
+    :path: ".symlinks/plugins/connectivity/ios"
+  core_location_fluttify:
+    :path: ".symlinks/plugins/core_location_fluttify/ios"
   Flutter:
     :path: Flutter
-  image_picker:
-    :path: ".symlinks/plugins/image_picker/ios"
+  flutter_dlna:
+    :path: ".symlinks/plugins/flutter_dlna/ios"
+  foundation_fluttify:
+    :path: ".symlinks/plugins/foundation_fluttify/ios"
+  image_gallery_saver:
+    :path: ".symlinks/plugins/image_gallery_saver/ios"
+  janalytics_fluttify:
+    :path: ".symlinks/plugins/janalytics_fluttify/ios"
+  jcore_fluttify:
+    :path: ".symlinks/plugins/jcore_fluttify/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
+  screen:
+    :path: ".symlinks/plugins/screen/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
   url_launcher:
     :path: ".symlinks/plugins/url_launcher/ios"
+  video_player:
+    :path: ".symlinks/plugins/video_player/ios"
+  wakelock:
+    :path: ".symlinks/plugins/wakelock/ios"
   webview_flutter:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
-  BIJKPlayer: 464bcb8d263331228758bfa34b45d00f399c9fb8
-  fijkplayer: 0c8728bf3b222203e1fddb08f6899719d88b2b6d
+  battery: 6b19dafdbba590f03b1f0cd2f1224e3ffedadbe6
+  CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
+  connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
+  core_location_fluttify: 9466a411ea7d22c6349c7e6a767ae4623f01eb1d
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_dlna: a91f5b62e4b507c4e83331a462c536fd14ef8188
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  foundation_fluttify: 0c45145e3fad1fb99188e4979daed5b24cd9b278
+  image_gallery_saver: 259eab68fb271cfd57d599904f7acdc7832e7ef2
+  JAnalytics: 46c696f8ebbe486f871cebd31047e00b299be6ba
+  janalytics_fluttify: 056fa10f4e9ba5d44f839deedc1c4eb63c647fb8
+  JCore: a29e4b0ee54e1301446dc02d8e1c350404108b34
+  jcore_fluttify: 18c2a4b32cdfe6f5dcd16748ee44c81db84f37a1
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  screen: abd91ca7bf3426e1cc3646d27e9b2358d6bf07b0
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
+  video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
+  wakelock: bfc7955c418d0db797614075aabbc58a39ab5107
   webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
 
-PODFILE CHECKSUM: 59020ded770ef23289bacbeca8485025b432191f
+PODFILE CHECKSUM: c170334ed918def99b10e82c4d235ed919fa4795
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

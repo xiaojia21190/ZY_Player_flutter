@@ -6,7 +6,7 @@ import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_pickers/image_pickers.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -59,11 +59,11 @@ class QSCommon {
   }
 
   /// 保存图片到相册
-  static Future<File> saveImageToCamera(ByteData byteData) async {
+  static Future saveImageToCamera(ByteData byteData) async {
     await handlePhotosPermission();
 
     Uint8List sourceBytes = byteData.buffer.asUint8List();
-    String path = await ImagePickers.saveByteDataImageToGallery(sourceBytes);
-    return File(path);
+    final result = await ImageGallerySaver.saveImage(sourceBytes);
+    return result;
   }
 }

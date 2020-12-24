@@ -159,9 +159,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                             child: Container(
                               decoration: BoxDecoration(
                                 color: context.dialogBackgroundColor,
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(20.0),
                               ),
-                              width: 270.0,
+                              width: ScreenUtil.getInstance().getWidth(300),
                               height: ScreenUtil.getInstance().getWidth(400),
                               // padding: const EdgeInsets.only(top: 24.0),
                               child: TextButtonTheme(
@@ -180,7 +180,10 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                   children: <Widget>[
                                     LoadImage(
                                       image,
-                                      height: ScreenUtil.getInstance().getWidth(250),
+                                      height: ScreenUtil.getInstance().getWidth(300),
+                                      width: ScreenUtil.getInstance().getWidth(300),
+                                      // width: ,
+                                      fit: BoxFit.fitWidth,
                                     ),
                                     Expanded(
                                         child: Row(
@@ -208,7 +211,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                           padding: EdgeInsets.all(ScreenUtil.getInstance().getWidth(7)),
                                           backgroundColor: Colors.white,
                                           data: "https://xiaojia21190.github.io/ZY_Player_flutter/",
-                                          size: ScreenUtil.getInstance().getWidth(120),
+                                          size: ScreenUtil.getInstance().getWidth(90),
                                         ),
                                       ],
                                     ))
@@ -232,9 +235,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                 onPressed: () async {
                                   ByteData byteData = await QSCommon.capturePngToByteData(haibaoKey);
                                   // 保存
-                                  File file = await QSCommon.saveImageToCamera(byteData);
-                                  debugPrint('$file');
-                                  if (file.path.length > 0) {
+                                  var result = await QSCommon.saveImageToCamera(byteData);
+                                  if (result["isSuccess"]) {
                                     Toast.show("保存成功, 快去分享吧");
                                   } else {
                                     Toast.show("保存失败");

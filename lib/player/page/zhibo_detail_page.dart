@@ -83,14 +83,12 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
   void _videoListener() async {
     if (_videoPlayerController.value.initialized) {
       _detailProvider.setInitPlayer(true);
-      appStateProvider.setloadingState(false);
     }
   }
 
   Future initData() async {
     _videoPlayerController?.removeListener(_videoListener);
     _videoPlayerController?.pause();
-    appStateProvider.setloadingState(true);
 
     _videoPlayerController = VideoPlayerController.network(widget.url);
     await _videoPlayerController.initialize();

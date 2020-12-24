@@ -77,7 +77,7 @@ dependencies:
   janalytics_fluttify: 0.3.2+1
   #二维码
   qr_flutter: 3.2.0
-  image_pickers: 1.0.8+7
+  image_gallery_saver: 1.6.7
 
   battery: 1.0.7
 
