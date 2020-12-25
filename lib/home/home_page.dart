@@ -104,7 +104,7 @@ class _HomeState extends State<Home> {
         enableIgnore: true,
         updateButtonText: '开始升级',
         ignoreButtonText: '忽略此版本', onIgnore: () {
-      Log.d("忽略");
+      Toast.show("忽略");
       SpUtil.putString("ignoreBb", currentVersion);
       dialog.dismiss();
     }, onUpdate: tryOtaUpdate);
@@ -112,15 +112,13 @@ class _HomeState extends State<Home> {
 
   Future tryOtaUpdate() async {
     try {
-      Toast.show("开始下载版本");
+      Toast.show("后台开始下载");
       OtaUpdate().execute(currentUpdateUrl, destinationFilename: "虱子聚合.apk").listen(
         (OtaEvent event) {
           if (event.status == OtaStatus.DOWNLOADING) {
             dialog.update(double.parse(event.value) / 100);
           } else if (event.status == OtaStatus.INSTALLING) {
             Toast.show("升级成功");
-          } else if (event.status == OtaStatus.PERMISSION_NOT_GRANTED_ERROR) {
-            tryOtaUpdate();
           } else {
             Toast.show("升级失败，请从新下载");
             dialog.dismiss();
@@ -132,7 +130,6 @@ class _HomeState extends State<Home> {
       Toast.show("升级失败，请从新下载");
       dialog.dismiss();
       openUpdateDiolog();
-      print('Failed to make OTA update. Details: $e');
     }
   }
 
@@ -292,7 +289,8 @@ class _HomeState extends State<Home> {
                   unselectedFontSize: Dimens.font_sp10,
                   selectedItemColor: Theme.of(context).primaryColor,
                   unselectedItemColor: isDark ? Colours.dark_unselected_item_color : Colours.unselected_item_color,
-                  onTap: (index) => _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease),
+                  onTap: (index) =>
+                      _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease),
                 );
               },
             ),
