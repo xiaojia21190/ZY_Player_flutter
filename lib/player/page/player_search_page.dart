@@ -32,14 +32,12 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
   BaseListProvider<ResourceData> _baseListProvider = BaseListProvider();
 
   final FocusNode _focus = FocusNode();
-  AppStateProvider _appStateProvider;
   int page = 1;
   String keywords = "";
 
   @override
   void initState() {
     _playerProvider = Store.value<PlayerProvider>(context);
-    _appStateProvider = Store.value<AppStateProvider>(context);
     _baseListProvider.setStateType(StateType.empty);
     _playerProvider.setWords();
     super.initState();
@@ -60,10 +58,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
       } else {
         _baseListProvider.setHasMore(true);
       }
-      _appStateProvider.setloadingState(false);
     }, onError: (_, __) {
       _baseListProvider.setStateType(StateType.network);
-      _appStateProvider.setloadingState(false);
     });
   }
 

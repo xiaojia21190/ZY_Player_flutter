@@ -21,6 +21,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:janalytics_fluttify/janalytics_fluttify.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+import 'package:ZY_Player_flutter/util/Loading.dart';
 
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
@@ -73,8 +74,8 @@ class MyApp extends StatelessWidget {
 
     setInitDio(
       //adb kill-server && adb server && adb shell
-      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
+      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
+      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
       interceptors: interceptors,
     );
   }
@@ -88,60 +89,38 @@ class MyApp extends StatelessWidget {
                 shortcuts: <LogicalKeySet, Intent>{
                   LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
                 },
-                child: Stack(
-                  children: [
-                    MaterialApp(
-                      title: '虱子聚合',
-                      theme: theme ?? provider.getTheme(),
-                      darkTheme: provider.getTheme(isDarkMode: true),
-                      themeMode: provider.getThemeMode(),
-                      // home: home ?? SplashPage(),
-                      home: Home(),
-                      onGenerateRoute: Application.router.generator,
-                      localizationsDelegates: const [
-                        AppLocalizationsDelegate(),
-                        GlobalMaterialLocalizations.delegate,
-                        GlobalWidgetsLocalizations.delegate,
-                        GlobalCupertinoLocalizations.delegate,
-                      ],
-                      supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
-                      builder: (context, child) {
-                        /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
-                        return MediaQuery(
-                          data: MediaQuery.of(context).copyWith(
-                              textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
-                          child: child,
-                        );
-                      },
-
-                      /// 因为使用了fluro，这里设置主要针对Web
-                      onUnknownRoute: (_) {
-                        return MaterialPageRoute(
-                          builder: (BuildContext context) => PageNotFound(),
-                        );
-                      },
-                    ),
-                    appStateProvider.loadingState
-                        ? Container(
-                            color: Colors.black45,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: CircularProgressIndicator(
-                                    backgroundColor: Colors.black26,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 10),
-                                  child: Text(
-                                    appStateProvider.loadingText ?? "正在加载中.....",
-                                  ),
-                                )
-                              ],
-                            ))
-                        : Container(),
+                child: MaterialApp(
+                  navigatorKey: Constant.navigatorKey,
+                  title: '虱子聚合',
+                  theme: theme ?? provider.getTheme(),
+                  darkTheme: provider.getTheme(isDarkMode: true),
+                  themeMode: provider.getThemeMode(),
+                  // home: home ?? SplashPage(),
+                  home: Home(),
+                  onGenerateRoute: Application.router.generator,
+                  localizationsDelegates: const [
+                    AppLocalizationsDelegate(),
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
                   ],
+                  supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
+                  builder: (context, child) {
+                    /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
+                    return MediaQuery(
+                      data: MediaQuery.of(context).copyWith(
+                          textScaleFactor:
+                              1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                      child: child,
+                    );
+                  },
+
+                  /// 因为使用了fluro，这里设置主要针对Web
+                  onUnknownRoute: (_) {
+                    return MaterialPageRoute(
+                      builder: (BuildContext context) => PageNotFound(),
+                    );
+                  },
                 ));
           },
         ),

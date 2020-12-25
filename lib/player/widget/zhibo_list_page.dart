@@ -70,32 +70,23 @@ class _ZhiboListPageState extends State<ZhiboListPage>
                 itemCount: _zhiboListProvider.list.length,
                 itemBuilder: (context, index) {
                   //要返回的item样式
-                  return AnimationConfiguration.staggeredGrid(
-                    position: index,
-                    duration: const Duration(milliseconds: 100),
-                    columnCount: _zhiboListProvider.list.length,
-                    child: ScaleAnimation(
-                      child: FadeInAnimation(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.blueAccent, borderRadius: BorderRadius.all(Radius.circular(5))),
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.all(5),
-                            child: InkWell(
-                                onTap: () {
-                                  NavigatorUtils.push(context,
-                                      '${PlayerRouter.detailZhiboPage}?url=${Uri.encodeComponent(_zhiboListProvider.list[index].url)}&title=${Uri.encodeComponent(_zhiboListProvider.list[index].title)}');
-                                },
-                                child: Text(
-                                  '${_zhiboListProvider.list[index].title}',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: isDark ? Colours.dark_text : Colors.white,
-                                  ),
-                                ))),
-                      ),
-                    ),
-                  );
+                  return Container(
+                      decoration:
+                          BoxDecoration(color: Colors.blueAccent, borderRadius: BorderRadius.all(Radius.circular(5))),
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.all(5),
+                      child: InkWell(
+                          onTap: () {
+                            NavigatorUtils.push(context,
+                                '${PlayerRouter.detailZhiboPage}?url=${Uri.encodeComponent(_zhiboListProvider.list[index].url)}&title=${Uri.encodeComponent(_zhiboListProvider.list[index].title)}');
+                          },
+                          child: Text(
+                            '${_zhiboListProvider.list[index].title}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: isDark ? Colours.dark_text : Colors.white,
+                            ),
+                          )));
                 },
               ));
         }));

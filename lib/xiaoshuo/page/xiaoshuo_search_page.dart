@@ -43,7 +43,8 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
   Future getSearchWords(String keywords) async {
     _appStateProvider.setloadingState(true);
 
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchXiaoshuo, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchXiaoshuo, queryParameters: {"keywords": keywords},
+        onSuccess: (resultList) {
       var data = List.generate(resultList.length, (index) => XiaoshuoDetail.fromJson(resultList[index]));
       if (data.length == 0) {
         _xiaoShuoProvider.setStateType(StateType.order);
@@ -91,7 +92,8 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
                         String jsonString = jsonEncode(provider.list[index]);
-                        NavigatorUtils.push(context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
+                        NavigatorUtils.push(
+                            context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
                       },
                     ),
                   );

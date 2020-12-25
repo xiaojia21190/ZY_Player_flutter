@@ -1,4 +1,6 @@
+import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
+import 'package:ZY_Player_flutter/util/Loading.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dlna/dlna/dlna.dart';
@@ -38,6 +40,11 @@ class AppStateProvider extends ChangeNotifier {
   void setloadingState(bool state, [String text]) {
     _loadingState = state;
     _loadingText = text;
+    if (_loadingState) {
+      Loading.show(_loadingText);
+    } else {
+      Loading.hide();
+    }
     notifyListeners();
   }
 
