@@ -74,10 +74,10 @@ class _HomeState extends State<Home> {
           currentUpdateUrl = data["updateUrl"];
           currentVersion = data["appVersion"];
           currentUpdateText = data["updateText"];
-          String ignoreBb = SpUtil.getString("ignoreBb");
-          if (currentVersion != ignoreBb) {
-            openUpdateDiolog();
-          }
+          // String ignoreBb = SpUtil.getString("ignoreBb");
+          // if (currentVersion != ignoreBb) {
+          // }
+          openUpdateDiolog();
         }
       },
       onError: (code, msg) {},
@@ -101,13 +101,9 @@ class _HomeState extends State<Home> {
         themeColor: Color(0xFFFFAC5D),
         progressBackgroundColor: Color(0x5AFFAC5D),
         isForce: false,
-        enableIgnore: true,
+        enableIgnore: false,
         updateButtonText: '开始升级',
-        ignoreButtonText: '忽略此版本', onIgnore: () {
-      Toast.show("忽略");
-      SpUtil.putString("ignoreBb", currentVersion);
-      dialog.dismiss();
-    }, onUpdate: tryOtaUpdate);
+        onUpdate: tryOtaUpdate);
   }
 
   Future tryOtaUpdate() async {
