@@ -40,7 +40,6 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
   StreamSubscription _currentPosSubs;
 
   String actionName = "";
-  bool _isFullscreen = false;
 
   int currentVideoIndex = -1;
   Timer searchTimer;
