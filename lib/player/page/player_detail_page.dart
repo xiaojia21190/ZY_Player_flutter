@@ -88,6 +88,16 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       appStateProvider.setloadingState(false);
     });
 
+    ApplicationEvent.event.on<ChangeJujiEvent>().listen((event) async {
+      // 播放下一级
+      if (currentVideoIndex + 1 > _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl.length) {
+        Toast.show("全部播放完了！");
+        return;
+      }
+      await playVideo(
+          currentVideoIndex + 1, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl, _detailProvider.chooseYuanIndex);
+    });
+
     super.initState();
   }
 
@@ -147,7 +157,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
               showElasticDialog<void>(
                 context: context,
                 builder: (BuildContext context) {
-                  const OutlinedBorder buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0)));
                   return Material(
                     type: MaterialType.transparency,
                     child: Center(
@@ -162,61 +171,47 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                               width: ScreenUtil.getInstance().getWidth(300),
-                              height: ScreenUtil.getInstance().getWidth(400),
-                              // padding: const EdgeInsets.only(top: 24.0),
-                              child: TextButtonTheme(
-                                data: TextButtonThemeData(
-                                    style: ButtonStyle(
-                                  // 文字颜色
-                                  foregroundColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-                                  // 按下高亮颜色
-                                  shadowColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor.withOpacity(0.2)),
-                                  // 按钮大小
-                                  minimumSize: MaterialStateProperty.all<Size>(const Size(double.infinity, double.infinity)),
-                                  // 修改默认圆角
-                                  shape: MaterialStateProperty.all<OutlinedBorder>(buttonShape),
-                                )),
-                                child: Column(
-                                  children: <Widget>[
-                                    LoadImage(
-                                      image,
-                                      height: ScreenUtil.getInstance().getWidth(300),
-                                      width: ScreenUtil.getInstance().getWidth(300),
-                                      // width: ,
-                                      fit: BoxFit.fitWidth,
-                                    ),
-                                    Expanded(
-                                        child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Text("分享 zy_player_flutter"),
-                                            Container(
-                                              child: Text(
-                                                "影片名称:$title",
-                                                overflow: TextOverflow.ellipsis,
-                                                softWrap: true,
-                                              ),
-                                              width: ScreenUtil.getInstance().getWidth(120),
+                              height: ScreenUtil.getInstance().getWidth(430),
+                              padding: const EdgeInsets.only(top: 24.0),
+                              child: Column(
+                                children: <Widget>[
+                                  LoadImage(
+                                    image,
+                                    height: ScreenUtil.getInstance().getWidth(300),
+                                    width: ScreenUtil.getInstance().getWidth(300),
+                                    // width: ,
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                  Expanded(
+                                      child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text("分享 虱子聚合"),
+                                          Container(
+                                            child: Text(
+                                              "影片名称:$title",
+                                              overflow: TextOverflow.ellipsis,
+                                              softWrap: true,
                                             ),
-                                            Text("点击复制链接"),
-                                            Text("或者保存到相册分享")
-                                          ],
-                                        ),
-                                        QrImage(
-                                          padding: EdgeInsets.all(ScreenUtil.getInstance().getWidth(7)),
-                                          backgroundColor: Colors.white,
-                                          data: "https://xiaojia21190.github.io/ZY_Player_flutter/",
-                                          size: ScreenUtil.getInstance().getWidth(90),
-                                        ),
-                                      ],
-                                    ))
-                                  ],
-                                ),
+                                          ),
+                                          Text("点击复制链接"),
+                                          Text("或者保存到相册分享")
+                                        ],
+                                      ),
+                                      QrImage(
+                                        padding: EdgeInsets.all(ScreenUtil.getInstance().getWidth(7)),
+                                        backgroundColor: Colors.white,
+                                        data: "https://xiaojia21190.github.io/ZY_Player_flutter/",
+                                        size: ScreenUtil.getInstance().getWidth(100),
+                                      ),
+                                    ],
+                                  ))
+                                ],
                               ),
                             ),
                           ),
@@ -224,14 +219,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               TextButton(
-                                child: const Text('点击复制链接'),
+                                child: const Text('点击复制链接', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
                                   Clipboard.setData(ClipboardData(text: "https://xiaojia21190.github.io/ZY_Player_flutter/"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
                               TextButton(
-                                child: const Text('保存到相册'),
+                                child: const Text('保存到相册', style: TextStyle(color: Colors.white)),
                                 onPressed: () async {
                                   ByteData byteData = await QSCommon.capturePngToByteData(haibaoKey);
                                   // 保存
@@ -266,6 +261,38 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         .saveRecordNof("${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}");
   }
 
+  Future playVideo(int index, List<ZiyuanUrl> urls, int chooseIndex) async {
+    if (currentVideoIndex == index) return;
+    _videoPlayerController?.removeListener(_videoListener);
+    _videoPlayerController?.pause();
+    _chewieController?.dispose();
+    currentVideoIndex = index;
+    appStateProvider.setloadingState(true);
+    Toast.show("正在解析地址");
+    await getPlayVideoUrl(urls[currentVideoIndex].url, currentVideoIndex);
+    _detailProvider.saveJuji("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
+    var record = _detailProvider.getRecord("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
+    var startAt = Duration(seconds: 0);
+    if (record != null) {
+      startAt = Duration(seconds: int.parse(record));
+    }
+
+    _videoPlayerController = VideoPlayerController.network(currentUrl);
+    await _videoPlayerController.initialize();
+    _videoPlayerController.addListener(_videoListener);
+    _chewieController = ChewieController(
+      customControls: MyControls(_playlist.title, urls.length),
+      videoPlayerController: _videoPlayerController,
+      autoPlay: false,
+      allowedScreenSleep: false,
+      looping: false,
+      aspectRatio: 16 / 9,
+      autoInitialize: true,
+      startAt: startAt,
+    );
+    appStateProvider.setloadingState(false);
+  }
+
   Wrap buildJuJi(List<ZiyuanUrl> urls, int chooseIndex, var isDark) {
     return Wrap(
       spacing: 20, // 主轴(水平)方向间距
@@ -274,35 +301,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       children: List.generate(urls.length, (index) {
         return InkWell(
             onTap: () async {
-              if (currentVideoIndex == index) return;
-              _videoPlayerController?.removeListener(_videoListener);
-              _videoPlayerController?.pause();
-              _chewieController?.dispose();
-              currentVideoIndex = index;
-              appStateProvider.setloadingState(true);
-              Toast.show("正在解析地址");
-              await getPlayVideoUrl(urls[currentVideoIndex].url, currentVideoIndex);
-              _detailProvider.saveJuji("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
-              var record = _detailProvider.getRecord("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
-              var startAt = Duration(seconds: 0);
-              if (record != null) {
-                startAt = Duration(seconds: int.parse(record));
-              }
-
-              _videoPlayerController = VideoPlayerController.network(currentUrl);
-              await _videoPlayerController.initialize();
-              _videoPlayerController.addListener(_videoListener);
-              _chewieController = ChewieController(
-                customControls: MyControls(_playlist.title),
-                videoPlayerController: _videoPlayerController,
-                autoPlay: false,
-                allowedScreenSleep: false,
-                looping: false,
-                aspectRatio: 16 / 9,
-                autoInitialize: true,
-                startAt: startAt,
-              );
-              appStateProvider.setloadingState(false);
+              await playVideo(index, urls, chooseIndex);
             },
             child: Container(
                 width: ScreenUtil.getInstance().getWidth(100),

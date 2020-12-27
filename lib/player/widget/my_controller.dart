@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:ZY_Player_flutter/event/event_bus.dart';
 import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
+import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
@@ -11,6 +12,7 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/xiaoshuo/widget/batter_view.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -30,8 +32,9 @@ import 'package:screen/screen.dart' as lightness;
 
 class MyControls extends StatefulWidget {
   String title;
+  int jujiLen;
 
-  MyControls(this.title);
+  MyControls(this.title, this.jujiLen);
 
   @override
   State<StatefulWidget> createState() {
@@ -119,8 +122,7 @@ class _MyMaterialControlsState extends State<MyControls> {
                 Column(
                   children: <Widget>[
                     _buildHeader(context, this.widget.title),
-                    _latestValue != null && !_latestValue.isPlaying && _latestValue.duration == null ||
-                            _latestValue.isBuffering
+                    _latestValue != null && !_latestValue.isPlaying && _latestValue.duration == null || _latestValue.isBuffering
                         ? const Expanded(
                             child: const Center(
                               child: const CircularProgressIndicator(),
@@ -145,10 +147,15 @@ class _MyMaterialControlsState extends State<MyControls> {
                 // 滑动进度
                 Align(
                   child: _verSwiper && controller.value.isPlaying
-                      ? Center(
-                          child: Text(
-                            _verText,
-                            style: TextStyle(color: Colors.white),
+                      ? Container(
+                          height: 30,
+                          width: 120,
+                          decoration: BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: Text(
+                              _verText,
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         )
                       : Container(),
@@ -156,14 +163,53 @@ class _MyMaterialControlsState extends State<MyControls> {
                 ),
                 Align(
                   child: _verLight
-                      ? Center(
-                          child: Text(
-                            _verLightText,
-                            style: TextStyle(color: Colors.white),
+                      ? Container(
+                          height: 30,
+                          width: 80,
+                          decoration: BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: Text(
+                              _verLightText,
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         )
                       : Container(),
                   alignment: Alignment.center,
+                ),
+                // 播放完成
+                Align(
+                  child: _latestValue.duration.inSeconds == _latestValue.position.inSeconds && widget.jujiLen > 1
+                      ? _buildPlayNext(controller)
+                      : _latestValue.duration.inSeconds == _latestValue.position.inSeconds
+                          ? Container(
+                              child: Center(
+                                child: Text(
+                                  "${widget.title} 播放完成",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            )
+                          : Container(),
+                  alignment: Alignment.center,
+                ),
+                Align(
+                  child: chewieController.isFullScreen
+                      ? Container(
+                          margin: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Text(
+                                "剩余电量:",
+                                style: TextStyle(color: Colors.white, fontSize: 11),
+                              ),
+                              Gaps.hGap5,
+                              BatteryView()
+                            ],
+                          ),
+                        )
+                      : Container(),
+                  alignment: Alignment.topLeft,
                 ),
               ],
             )),
@@ -243,8 +289,7 @@ class _MyMaterialControlsState extends State<MyControls> {
                                     child: TextButton(
                                       child: Text(devices[index].deviceName),
                                       onPressed: () {
-                                        ApplicationEvent.event
-                                            .fire(DeviceEvent(devices[index].uuid, devices[index].deviceName));
+                                        ApplicationEvent.event.fire(DeviceEvent(devices[index].uuid, devices[index].deviceName));
                                       },
                                     ),
                                   ),
@@ -272,8 +317,7 @@ class _MyMaterialControlsState extends State<MyControls> {
               return FlareGiffyDialog(
                 flarePath: 'assets/images/space_demo.flr',
                 flareAnimation: 'loading',
-                title: Text(words,
-                    textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+                title: Text(words, textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
                 description: Text(
                   '请打开相关设备后点击重新搜索',
                   textAlign: TextAlign.center,
@@ -376,9 +420,7 @@ class _MyMaterialControlsState extends State<MyControls> {
           ),
           child: Center(
             child: ImageIcon(
-              AssetImage(chewieController.isFullScreen
-                  ? "assets/images/fullscreen_exit.png"
-                  : "assets/images/fullscreen_enter.png"),
+              AssetImage(chewieController.isFullScreen ? "assets/images/fullscreen_exit.png" : "assets/images/fullscreen_enter.png"),
               size: 32.0,
               color: Colors.white,
             ),
@@ -407,27 +449,29 @@ class _MyMaterialControlsState extends State<MyControls> {
             });
           }
         },
-        child: Container(
-          color: Colors.transparent,
-          child: Center(
-            child: AnimatedOpacity(
-              opacity: _latestValue != null && !_latestValue.isPlaying && !_dragging ? 1.0 : 0.0,
-              duration: Duration(milliseconds: 300),
-              child: GestureDetector(
-                child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: ImageIcon(
-                      AssetImage("assets/images/video_play.png"),
-                      size: 64.0,
-                      color: Colors.white,
+        child: _latestValue.duration.inSeconds != _latestValue.position.inSeconds
+            ? Container(
+                color: Colors.transparent,
+                child: Center(
+                  child: AnimatedOpacity(
+                    opacity: _latestValue != null && !_latestValue.isPlaying && !_dragging ? 1.0 : 0.0,
+                    duration: Duration(milliseconds: 300),
+                    child: GestureDetector(
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: ImageIcon(
+                            AssetImage("assets/images/video_play.png"),
+                            size: 64.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
-        ),
+              )
+            : Container(),
       ),
     );
   }
@@ -451,25 +495,15 @@ class _MyMaterialControlsState extends State<MyControls> {
         duration: Duration(milliseconds: 300),
         child: ClipRect(
           child: Container(
-            child: Container(
-              height: barHeight,
-              padding: EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-              ),
-              child: ImageIcon(
-                AssetImage((_latestValue != null && _latestValue.volume > 0)
-                    ? "assets/images/voice_ok.png"
-                    : "assets/images/voice_stop.png"),
-                size: 32.0,
-                color: Colors.white,
-              ),
-              // child: Icon(
-              //   (_latestValue != null && _latestValue.volume > 0)
-              //       ? Icons.volume_up
-              //       : Icons.volume_off,
-              //   color: lightColor,
-              // ),
+            height: barHeight,
+            padding: EdgeInsets.only(
+              left: 8.0,
+              right: 8.0,
+            ),
+            child: ImageIcon(
+              AssetImage((_latestValue != null && _latestValue.volume > 0) ? "assets/images/voice_ok.png" : "assets/images/voice_stop.png"),
+              size: 32.0,
+              color: Colors.white,
             ),
           ),
         ),
@@ -501,17 +535,28 @@ class _MyMaterialControlsState extends State<MyControls> {
     return GestureDetector(
       onTap: _playNext,
       child: Container(
-        height: barHeight,
-        color: Colors.transparent,
+        height: barHeight + 15,
+        width: 130,
+        decoration: BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
         margin: EdgeInsets.only(left: 2.0, right: 8.0),
         padding: EdgeInsets.only(
           left: 2.0,
           right: 2.0,
         ),
-        child: ImageIcon(
-          AssetImage("assets/images/video_next.png"),
-          color: Colors.white,
-          size: 32,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ImageIcon(
+              AssetImage("assets/images/video_next.png"),
+              color: Colors.white,
+              size: 32,
+            ),
+            Gaps.vGap5,
+            Text(
+              "点击切换下一集",
+              style: TextStyle(color: Colors.white),
+            )
+          ],
         ),
       ),
     );
@@ -546,12 +591,10 @@ class _MyMaterialControlsState extends State<MyControls> {
       fintext = offsetDifference < 0 ? "快进到：" : "后退到：";
       if (offsetDifference < 0) {
         var endTime = offsetAbs * (controller.value.duration.inSeconds - controller.value.position.inSeconds);
-        _verText =
-            "$fintext${Duration(seconds: controller.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
+        _verText = "$fintext${Duration(seconds: controller.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
       } else {
         var endTime = offsetAbs * (controller.value.position.inSeconds);
-        _verText =
-            "$fintext${Duration(seconds: controller.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
+        _verText = "$fintext${Duration(seconds: controller.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
       }
     }
     setState(() {});
@@ -658,7 +701,10 @@ class _MyMaterialControlsState extends State<MyControls> {
     });
   }
 
-  void _playNext() {}
+  void _playNext() {
+    // 点击切换下一集
+    ApplicationEvent.event.fire(ChangeJujiEvent());
+  }
 
   void _playPause() {
     bool isFinished = _latestValue.position >= _latestValue.duration;

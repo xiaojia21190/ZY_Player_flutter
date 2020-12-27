@@ -9,6 +9,10 @@ class DeviceEvent {
   DeviceEvent(this.devicesId, this.devicesName);
 }
 
+class ChangeJujiEvent {
+  ChangeJujiEvent();
+}
+
 class LoadXiaoShuoEvent {
   int chpId;
   String title;

@@ -39,7 +39,7 @@ class Loading {
             width: Screen.widthOt,
             height: Screen.heightOt,
             padding: const EdgeInsets.all(15),
-            decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(8))),
+            decoration: const BoxDecoration(color: Colors.black54),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

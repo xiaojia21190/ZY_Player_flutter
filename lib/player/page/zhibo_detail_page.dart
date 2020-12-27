@@ -93,7 +93,7 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     await _videoPlayerController.initialize();
     _videoPlayerController.addListener(_videoListener);
     _chewieController = ChewieController(
-      customControls: MyControls(widget.title),
+      customControls: MyControls(widget.title, 0),
       videoPlayerController: _videoPlayerController,
       autoPlay: false,
       allowedScreenSleep: false,
