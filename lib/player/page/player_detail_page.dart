@@ -170,7 +170,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                             child: Container(
                               decoration: BoxDecoration(
                                 color: context.dialogBackgroundColor,
-                                borderRadius: BorderRadius.circular(20.0),
                               ),
                               width: ScreenUtil.getInstance().getWidth(300),
                               height: ScreenUtil.getInstance().getWidth(430),
