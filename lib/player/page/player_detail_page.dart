@@ -33,6 +33,7 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'package:screen/screen.dart' as lightness;
 
 class PlayerDetailPage extends StatefulWidget {
   const PlayerDetailPage({
@@ -83,8 +84,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       Toast.show(
           "推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${event.devicesName}");
       await appStateProvider.dlnaManager.setDevice(event.devicesId);
-      await appStateProvider.dlnaManager.setVideoUrlAndName(currentUrl,
-          _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
+      await appStateProvider.dlnaManager
+          .setVideoUrlAndName(currentUrl, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
       appStateProvider.setloadingState(false);
     });
 
@@ -94,8 +95,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         Toast.show("全部播放完了！");
         return;
       }
-      await playVideo(currentVideoIndex + 1, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl,
-          _detailProvider.chooseYuanIndex);
+      await playVideo(
+          currentVideoIndex + 1, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl, _detailProvider.chooseYuanIndex);
     });
 
     super.initState();
@@ -119,11 +120,12 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     _videoPlayerController?.removeListener(_videoListener);
     _chewieController?.dispose();
     _currentPosSubs?.cancel();
+    // 删除后。默认返回0.5亮度
+    lightness.Screen.setBrightness(0.5);
   }
 
   Future getPlayVideoUrl(String videoUrl, int index) async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl},
-        onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) {
       currentUrl = data;
     }, onError: (_, __) {
       currentVideoIndex = index;
@@ -132,8 +134,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist.url},
-        onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist.url}, onSuccess: (data) {
       if (data != null && data.length > 0) {
         List.generate(data.length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data[index])));
         _detailProvider.setJuji();
@@ -207,8 +208,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                       QrImage(
                                         padding: EdgeInsets.all(ScreenUtil.getInstance().getWidth(7)),
                                         backgroundColor: Colors.white,
-                                        data:
-                                            "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?url=${Uri.encodeComponent(_playlist.url)}",
+                                        data: "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?url=${Uri.encodeComponent(_playlist.url)}",
                                         size: ScreenUtil.getInstance().getWidth(100),
                                       ),
                                     ],
@@ -224,8 +224,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                 child: const Text('点击复制链接', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
                                   Clipboard.setData(ClipboardData(
-                                      text:
-                                          "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?url=${Uri.encodeComponent(_playlist.url)}"));
+                                      text: "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?url=${Uri.encodeComponent(_playlist.url)}"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
@@ -261,8 +260,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         _detailProvider.setInitPlayer(true);
       }
     }
-    _detailProvider.saveRecordNof(
-        "${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}");
+    _detailProvider
+        .saveRecordNof("${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}");
   }
 
   Future playVideo(int index, List<ZiyuanUrl> urls, int chooseIndex) async {
@@ -311,9 +310,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                 width: ScreenUtil.getInstance().getWidth(100),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: _detailProvider.kanguojuji.contains("${_playlist.url}_${chooseIndex}_$index")
-                        ? Colors.redAccent
-                        : Colors.blueAccent,
+                    color: _detailProvider.kanguojuji.contains("${_playlist.url}_${chooseIndex}_$index") ? Colors.redAccent : Colors.blueAccent,
                     borderRadius: BorderRadius.all(Radius.circular(5))),
                 alignment: Alignment.center,
                 child: Text(
@@ -434,8 +431,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                     ],
                                   ),
                                 ),
-                                buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl,
-                                    provider.chooseYuanIndex, isDark),
+                                buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl, provider.chooseYuanIndex, isDark),
                               ],
                             ),
                           )
