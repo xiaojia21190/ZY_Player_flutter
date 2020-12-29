@@ -6,7 +6,8 @@ class TabBarChangeIndex {
 class DeviceEvent {
   String devicesId;
   String devicesName;
-  DeviceEvent(this.devicesId, this.devicesName);
+  int controll;
+  DeviceEvent(this.devicesId, this.devicesName, this.controll);
 }
 
 class ChangeJujiEvent {

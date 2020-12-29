@@ -60,10 +60,14 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     initData();
 
     ApplicationEvent.event.on<DeviceEvent>().listen((event) async {
-      Toast.show("推送视频 ${widget.title} 到设备：${event.devicesName}");
-      await appStateProvider.dlnaManager.setDevice(event.devicesId);
-      await appStateProvider.dlnaManager.setVideoUrlAndName(widget.url, widget.title);
-      appStateProvider.setloadingState(false);
+      if (event.controll == 0) {
+        Toast.show("推送视频 ${widget.title} 到设备：${event.devicesName}");
+        await appStateProvider.dlnaManager.setDevice(event.devicesId);
+        await appStateProvider.dlnaManager.setVideoUrlAndName(widget.url, widget.title);
+        await appStateProvider.dlnaManager.startAndPlay();
+        appStateProvider.setloadingState(false);
+        Navigator.pop(context);
+      }
     });
 
     super.initState();
@@ -77,6 +81,7 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     _videoPlayerController?.removeListener(_videoListener);
     _chewieController?.dispose();
     _currentPosSubs?.cancel();
+    ApplicationEvent.event.destroy();
   }
 
   void _videoListener() async {

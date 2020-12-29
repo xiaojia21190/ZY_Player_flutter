@@ -287,9 +287,10 @@ class _MyMaterialControlsState extends State<MyControls> {
                                   devices.length,
                                   (index) => Expanded(
                                     child: TextButton(
-                                      child: Text(devices[index].deviceName),
+                                      child: Text(devices[index]["name"]),
                                       onPressed: () {
-                                        ApplicationEvent.event.fire(DeviceEvent(devices[index].uuid, devices[index].deviceName));
+                                        _playPause();
+                                        ApplicationEvent.event.fire(DeviceEvent(devices[index]["id"], devices[index]["name"], widget.jujiLen));
                                       },
                                     ),
                                   ),

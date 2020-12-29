@@ -218,6 +218,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.6.0"
+  cron:
+    dependency: "direct main"
+    description:
+      name: cron
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.4"
   crypto:
     dependency: transitive
     description:
@@ -497,6 +504,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.3.0"
+  jpush_flutter:
+    dependency: "direct main"
+    description:
+      name: jpush_flutter
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.6.1"
   js:
     dependency: transitive
     description:

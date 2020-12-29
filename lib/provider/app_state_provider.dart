@@ -48,10 +48,10 @@ class AppStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<DLNADevice> _dlnaDevices = [];
-  List<DLNADevice> get dlnaDevices => _dlnaDevices;
+  List _dlnaDevices = [];
+  List get dlnaDevices => _dlnaDevices;
 
-  setDlnaDevices(List<DLNADevice> list) {
+  setDlnaDevices(List list) {
     _dlnaDevices = list;
     notifyListeners();
   }

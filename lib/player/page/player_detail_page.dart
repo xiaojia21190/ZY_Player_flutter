@@ -81,12 +81,16 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     initData();
 
     ApplicationEvent.event.on<DeviceEvent>().listen((event) async {
-      Toast.show(
-          "推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${event.devicesName}");
-      await appStateProvider.dlnaManager.setDevice(event.devicesId);
-      await appStateProvider.dlnaManager
-          .setVideoUrlAndName(currentUrl, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
-      appStateProvider.setloadingState(false);
+      if (event.controll > 0) {
+        Toast.show(
+            "推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${event.devicesName}");
+        await appStateProvider.dlnaManager.setDevice(event.devicesId);
+        await appStateProvider.dlnaManager
+            .setVideoUrlAndName(currentUrl, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
+        await appStateProvider.dlnaManager.startAndPlay();
+        appStateProvider.setloadingState(false);
+        Navigator.pop(context);
+      }
     });
 
     ApplicationEvent.event.on<ChangeJujiEvent>().listen((event) async {
