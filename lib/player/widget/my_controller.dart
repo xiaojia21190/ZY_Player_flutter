@@ -201,7 +201,7 @@ class _MyMaterialControlsState extends State<MyControls> {
                             children: [
                               Text(
                                 "剩余电量:",
-                                style: TextStyle(color: Colors.white, fontSize: 11),
+                                style: TextStyle(color: Colors.white, fontSize: 12),
                               ),
                               Gaps.hGap5,
                               BatteryView()

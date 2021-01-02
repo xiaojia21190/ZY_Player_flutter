@@ -58,6 +58,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   String actionName = "";
 
   int currentVideoIndex = -1;
+  String currentVideo = "";
   Timer searchTimer;
 
   String currentUrl = "";
@@ -119,13 +120,13 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   @override
   void dispose() {
-    super.dispose();
+    _chewieController?.dispose();
     _videoPlayerController?.dispose();
     _videoPlayerController?.removeListener(_videoListener);
-    _chewieController?.dispose();
     _currentPosSubs?.cancel();
-    // 删除后。默认返回0.5亮度
-    lightness.Screen.setBrightness(0.5);
+    // 删除后。默认返回0.2亮度
+    lightness.Screen.setBrightness(0.2);
+    super.dispose();
   }
 
   Future getPlayVideoUrl(String videoUrl, int index) async {
@@ -212,7 +213,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                       QrImage(
                                         padding: EdgeInsets.all(ScreenUtil.getInstance().getWidth(7)),
                                         backgroundColor: Colors.white,
-                                        data: "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?url=${Uri.encodeComponent(_playlist.url)}",
+                                        data:
+                                            "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?random=${DateTime.now()}&url=${Uri.encodeComponent(_playlist.url)}",
                                         size: ScreenUtil.getInstance().getWidth(100),
                                       ),
                                     ],
@@ -228,7 +230,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                 child: const Text('点击复制链接', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
                                   Clipboard.setData(ClipboardData(
-                                      text: "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?url=${Uri.encodeComponent(_playlist.url)}"));
+                                      text:
+                                          "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?random=${DateTime.now()}&url=${Uri.encodeComponent(_playlist.url)}"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
@@ -269,11 +272,12 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   Future playVideo(int index, List<ZiyuanUrl> urls, int chooseIndex) async {
-    if (currentVideoIndex == index) return;
+    if (currentVideo == "${index}_$chooseIndex") return;
     _videoPlayerController?.removeListener(_videoListener);
     _videoPlayerController?.pause();
     _chewieController?.dispose();
     currentVideoIndex = index;
+    currentVideo = "${index}_$chooseIndex";
     appStateProvider.setloadingState(true);
     Toast.show("正在解析地址");
     await getPlayVideoUrl(urls[currentVideoIndex].url, currentVideoIndex);
@@ -349,105 +353,107 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     final ThemeData themeData = Theme.of(context);
     final bool isDark = themeData.brightness == Brightness.dark;
 
-    return ChangeNotifierProvider<DetailProvider>(
-        create: (_) => _detailProvider,
-        child: Scaffold(
-          key: _scaffoldKey,
-          appBar: PreferredSize(
-              preferredSize: Size.fromHeight(48.0),
-              child: Selector<DetailProvider, String>(
-                  builder: (_, actionName, __) {
-                    return MyAppBar(
-                        centerTitle: _playlist.title,
-                        actionName: actionName,
-                        onPressed: () {
-                          if (getFilterData(_playlist.url)) {
-                            Log.d("点击取消");
-                            _collectProvider.removeResource(_playlist.url);
-                            _detailProvider.setActionName("收藏");
-                          } else {
-                            Log.d("点击收藏");
-                            _collectProvider.addResource(
-                              _playlist,
-                            );
-                            _detailProvider.setActionName("取消");
-                          }
-                        });
-                  },
-                  selector: (_, store) => store.actionName)),
-          body: Column(
-            children: [
-              Stack(
+    return WillPopScope(
+        child: ChangeNotifierProvider<DetailProvider>(
+            create: (_) => _detailProvider,
+            child: Scaffold(
+              key: _scaffoldKey,
+              appBar: PreferredSize(
+                  preferredSize: Size.fromHeight(48.0),
+                  child: Selector<DetailProvider, String>(
+                      builder: (_, actionName, __) {
+                        return MyAppBar(
+                            centerTitle: _playlist.title,
+                            actionName: actionName,
+                            onPressed: () {
+                              if (getFilterData(_playlist.url)) {
+                                Log.d("点击取消");
+                                _collectProvider.removeResource(_playlist.url);
+                                _detailProvider.setActionName("收藏");
+                              } else {
+                                Log.d("点击收藏");
+                                _collectProvider.addResource(
+                                  _playlist,
+                                );
+                                _detailProvider.setActionName("取消");
+                              }
+                            });
+                      },
+                      selector: (_, store) => store.actionName)),
+              body: Column(
                 children: [
-                  Container(
-                      color: Colors.black,
-                      width: Screen.widthOt,
-                      height: ScreenUtil.getInstance().getWidth(300),
-                      child: Selector<DetailProvider, bool>(
-                          builder: (_, isplayer, __) {
-                            return isplayer
-                                ? Chewie(
-                                    controller: _chewieController,
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      SizedBox(height: 20),
-                                      Text(
-                                        '等待播放...',
-                                        style: TextStyle(color: Colors.white),
+                  Stack(
+                    children: [
+                      Container(
+                          color: Colors.black,
+                          width: Screen.widthOt,
+                          height: ScreenUtil.getInstance().getWidth(300),
+                          child: Selector<DetailProvider, bool>(
+                              builder: (_, isplayer, __) {
+                                return isplayer
+                                    ? Chewie(
+                                        controller: _chewieController,
+                                      )
+                                    : Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: const [
+                                          SizedBox(height: 20),
+                                          Text(
+                                            '等待播放...',
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                        ],
+                                      );
+                              },
+                              selector: (_, store) => store.isInitPlayer)),
+                    ],
+                  ),
+                  Expanded(child: Consumer<DetailProvider>(builder: (_, provider, __) {
+                    return provider.detailReource != null && provider.detailReource.length > 0
+                        ? MyScrollView(
+                            children: [
+                              Gaps.vGap10,
+                              Container(
+                                padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10, bottom: 10),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Text(
+                                            "剧集选择",
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                          buildShare(_playlist.cover, _playlist.title),
+                                          //源切换
+                                          DropdownButton(
+                                            onChanged: (value) {
+                                              provider.setChooseYuanIndex(value);
+                                            },
+                                            items: textWidget(provider),
+                                            value: provider.chooseYuanIndex,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  );
-                          },
-                          selector: (_, store) => store.isInitPlayer)),
+                                    ),
+                                    buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl, provider.chooseYuanIndex, isDark),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
+                        : StateLayout(
+                            type: provider.stateType,
+                            onRefresh: initData,
+                          );
+                  }))
                 ],
               ),
-              Expanded(child: Consumer<DetailProvider>(builder: (_, provider, __) {
-                return provider.detailReource != null && provider.detailReource.length > 0
-                    ? MyScrollView(
-                        children: [
-                          Gaps.vGap10,
-                          Container(
-                            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(top: 10, bottom: 10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        "剧集选择",
-                                        style: TextStyle(fontSize: 15),
-                                      ),
-                                      buildShare(_playlist.cover, _playlist.title),
-                                      //源切换
-                                      DropdownButton(
-                                        onChanged: (value) {
-                                          provider.setChooseYuanIndex(value);
-                                        },
-                                        items: textWidget(provider),
-                                        value: provider.chooseYuanIndex,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl, provider.chooseYuanIndex, isDark),
-                              ],
-                            ),
-                          )
-                        ],
-                      )
-                    : StateLayout(
-                        type: provider.stateType,
-                        onRefresh: initData,
-                      );
-              }))
-            ],
-          ),
-        ));
+            )),
+        onWillPop: () async => !appStateProvider.loadingState);
   }
 }

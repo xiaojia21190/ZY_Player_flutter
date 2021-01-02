@@ -36,6 +36,9 @@ class _BatteryViewState extends State<BatteryView> {
             margin: EdgeInsets.fromLTRB(2, 2, 2, 2),
             width: 20 * batteryLevel,
             color: Colours.golden,
+          ),
+          Center(
+            child: Text("${(batteryLevel * 100).toInt()}%", style: TextStyle(color: Colours.white, fontSize: 8)),
           )
         ],
       ),
