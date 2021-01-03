@@ -275,7 +275,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     if (currentVideo == "${index}_$chooseIndex") return;
     _videoPlayerController?.removeListener(_videoListener);
     _videoPlayerController?.pause();
-    _chewieController?.dispose();
     currentVideoIndex = index;
     currentVideo = "${index}_$chooseIndex";
     appStateProvider.setloadingState(true);
@@ -292,15 +291,15 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     await _videoPlayerController.initialize();
     _videoPlayerController.addListener(_videoListener);
     _chewieController = ChewieController(
-      customControls: MyControls(_playlist.title, urls.length),
-      videoPlayerController: _videoPlayerController,
-      autoPlay: false,
-      allowedScreenSleep: false,
-      looping: false,
-      aspectRatio: 16 / 9,
-      autoInitialize: true,
-      startAt: startAt,
-    );
+        customControls: MyControls(_playlist.title, urls.length),
+        videoPlayerController: _videoPlayerController,
+        autoPlay: false,
+        allowedScreenSleep: false,
+        looping: false,
+        aspectRatio: 16 / 9,
+        autoInitialize: true,
+        startAt: startAt,
+        fullScreenByDefault: true);
     appStateProvider.setloadingState(false);
   }
 

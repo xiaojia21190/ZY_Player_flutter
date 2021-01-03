@@ -113,6 +113,7 @@ class _MyMaterialControlsState extends State<MyControls> {
         onVerticalDragEnd: _onVerticalDragEnd,
         onDoubleTap: () {
           controller.pause();
+          _hideStuff = false;
         },
         onTap: () => _cancelAndRestartTimer(),
         child: AbsorbPointer(
@@ -122,7 +123,7 @@ class _MyMaterialControlsState extends State<MyControls> {
                 Column(
                   children: <Widget>[
                     _buildHeader(context, this.widget.title),
-                    _latestValue != null && !_latestValue.isPlaying && _latestValue.duration == null || _latestValue.isBuffering
+                    _latestValue != null && _latestValue.isBuffering
                         ? const Expanded(
                             child: const Center(
                               child: const CircularProgressIndicator(),
@@ -133,7 +134,7 @@ class _MyMaterialControlsState extends State<MyControls> {
                   ],
                 ),
                 Align(
-                  child: (_hideStuff && !chewieController.isFullScreen)
+                  child: _hideStuff && !chewieController.isFullScreen
                       ? Container(
                           color: darkColor,
                           height: 0,
@@ -533,6 +534,7 @@ class _MyMaterialControlsState extends State<MyControls> {
   }
 
   GestureDetector _buildPlayNext(VideoPlayerController controller) {
+    chewieController.exitFullScreen();
     return GestureDetector(
       onTap: _playNext,
       child: Container(

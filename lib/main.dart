@@ -78,7 +78,8 @@ class MyApp extends StatelessWidget {
     setInitDio(
       //adb kill-server && adb server && adb shell
       // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
+      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
+      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://140.143.207.151:7001/',
       interceptors: interceptors,
     );
   }
