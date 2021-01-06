@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:ZY_Player_flutter/util/device_utils.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
@@ -33,13 +35,6 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     if (Device.isAndroid) WebView.platform = SurfaceAndroidWebView();
-    if (widget.flag == "1") {
-      SystemChrome.setEnabledSystemUIOverlays([]);
-      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-    } else {
-      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    }
   }
 
   @override
@@ -49,16 +44,14 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
         builder: (context, snapshot) {
           return WillPopScope(
             onWillPop: () async {
-              // if (snapshot.hasData) {
-              //   var canGoBack = await snapshot.data.canGoBack();
-              //   if (canGoBack) {
-              //     // 网页可以返回时，优先返回上一页
-              //     await snapshot.data.goBack();
-              //     return Future.value(false);
-              //   }
-              // }
-              SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-              SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+              if (snapshot.hasData) {
+                var canGoBack = await snapshot.data.canGoBack();
+                if (canGoBack) {
+                  // 网页可以返回时，优先返回上一页
+                  await snapshot.data.goBack();
+                  return Future.value(false);
+                }
+              }
               return Future.value(true);
             },
             child: Scaffold(
@@ -72,22 +65,8 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                     WebView(
                       initialUrl: widget.url,
                       javascriptMode: JavascriptMode.unrestricted,
-                      navigationDelegate: (NavigationRequest request) {
-                        if (request.url.contains("https://m.weibo.cn/login")) {
-                          // 微博禁止跳转
-                          return NavigationDecision.prevent;
-                        } else if (request.url.contains("open=1&utm_medium=QA&utm_content=expand_answer1")) {
-                          // 知乎禁止跳转 oia/answers
-                          return NavigationDecision.prevent;
-                        } else if (request.url.contains("oia/answers")) {
-                          // 知乎禁止跳转 oia/answers
-                          return NavigationDecision.prevent;
-                        } else if (request.url.contains("http://")) {
-                          return NavigationDecision.navigate;
-                        } else if (request.url.contains("https://")) {
-                          return NavigationDecision.navigate;
-                        }
-                        return NavigationDecision.prevent;
+                      navigationDelegate: (NavigationRequest request) async {
+                        return NavigationDecision.navigate;
                       },
                       onPageStarted: (String url) {
                         setState(() {
@@ -98,7 +77,6 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                         setState(() {
                           isLoading = false;
                         });
-                        // _webViewController.evaluateJavascript("document.querySelector('.ModalWrap').style = 'display:none'");
                       },
                       onWebViewCreated: (WebViewController webViewController) {
                         _controller.complete(webViewController);
@@ -109,9 +87,7 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                         ? Container(
                             color: Colors.black26,
                             child: Center(
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.black26,
-                              ),
+                              child: CircularProgressIndicator(),
                             ),
                           )
                         : Container(),

@@ -151,7 +151,8 @@ class _MyMaterialControlsState extends State<MyControls> {
                       ? Container(
                           height: 30,
                           width: 120,
-                          decoration: BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                          decoration:
+                              BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
                           child: Center(
                             child: Text(
                               _verText,
@@ -167,7 +168,8 @@ class _MyMaterialControlsState extends State<MyControls> {
                       ? Container(
                           height: 30,
                           width: 80,
-                          decoration: BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                          decoration:
+                              BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
                           child: Center(
                             child: Text(
                               _verLightText,
@@ -291,7 +293,8 @@ class _MyMaterialControlsState extends State<MyControls> {
                                       child: Text(devices[index]["name"]),
                                       onPressed: () {
                                         _playPause();
-                                        ApplicationEvent.event.fire(DeviceEvent(devices[index]["id"], devices[index]["name"], widget.jujiLen));
+                                        ApplicationEvent.event.fire(
+                                            DeviceEvent(devices[index]["id"], devices[index]["name"], widget.jujiLen));
                                       },
                                     ),
                                   ),
@@ -319,7 +322,8 @@ class _MyMaterialControlsState extends State<MyControls> {
               return FlareGiffyDialog(
                 flarePath: 'assets/images/space_demo.flr',
                 flareAnimation: 'loading',
-                title: Text(words, textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+                title: Text(words,
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
                 description: Text(
                   '请打开相关设备后点击重新搜索',
                   textAlign: TextAlign.center,
@@ -354,14 +358,17 @@ class _MyMaterialControlsState extends State<MyControls> {
                 onPressed: () async {
                   // 取消全屏
                   chewieController.exitFullScreen();
-                  // 点击显示投屏数据
-                  if (appStateProvider.dlnaDevices.length == 0) {
-                    // 没有搜索到
-                    searchDialog();
-                  } else {
-                    // 搜索到了
-                    dlnaDevicesDialog();
-                  }
+                  // 延迟点击
+                  Future.delayed(Duration(seconds: 1), () {
+                    // 点击显示投屏数据
+                    if (appStateProvider.dlnaDevices.length == 0) {
+                      // 没有搜索到
+                      searchDialog();
+                    } else {
+                      // 搜索到了
+                      dlnaDevicesDialog();
+                    }
+                  });
                 },
                 icon: Icon(
                   Icons.present_to_all_sharp,
@@ -422,7 +429,9 @@ class _MyMaterialControlsState extends State<MyControls> {
           ),
           child: Center(
             child: ImageIcon(
-              AssetImage(chewieController.isFullScreen ? "assets/images/fullscreen_exit.png" : "assets/images/fullscreen_enter.png"),
+              AssetImage(chewieController.isFullScreen
+                  ? "assets/images/fullscreen_exit.png"
+                  : "assets/images/fullscreen_enter.png"),
               size: 32.0,
               color: Colors.white,
             ),
@@ -503,7 +512,9 @@ class _MyMaterialControlsState extends State<MyControls> {
               right: 8.0,
             ),
             child: ImageIcon(
-              AssetImage((_latestValue != null && _latestValue.volume > 0) ? "assets/images/voice_ok.png" : "assets/images/voice_stop.png"),
+              AssetImage((_latestValue != null && _latestValue.volume > 0)
+                  ? "assets/images/voice_ok.png"
+                  : "assets/images/voice_stop.png"),
               size: 32.0,
               color: Colors.white,
             ),
@@ -594,10 +605,12 @@ class _MyMaterialControlsState extends State<MyControls> {
       fintext = offsetDifference < 0 ? "快进到：" : "后退到：";
       if (offsetDifference < 0) {
         var endTime = offsetAbs * (controller.value.duration.inSeconds - controller.value.position.inSeconds);
-        _verText = "$fintext${Duration(seconds: controller.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
+        _verText =
+            "$fintext${Duration(seconds: controller.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
       } else {
         var endTime = offsetAbs * (controller.value.position.inSeconds);
-        _verText = "$fintext${Duration(seconds: controller.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
+        _verText =
+            "$fintext${Duration(seconds: controller.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
       }
     }
     setState(() {});
