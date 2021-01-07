@@ -1,6 +1,5 @@
 import 'package:ZY_Player_flutter/event/event_bus.dart';
 import 'package:ZY_Player_flutter/event/event_model.dart';
-import 'package:ZY_Player_flutter/model/manhua_detail.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_content.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
@@ -8,13 +7,10 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
-import 'package:ZY_Player_flutter/util/ReaderPageAgent.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
-import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/batter_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/reader_memu.dart';
@@ -69,9 +65,8 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
   }
 
   Future fetchData([int chaId]) async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getxiaoshuoDetail, queryParameters: {"id": widget.id, "capid": chaId},
-        onSuccess: (result) {
-      _xiaoShuoProvider.setReadList(XiaoshuoList(result["cid"], result["cname"], 1));
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getxiaoshuoDetail, queryParameters: {"id": widget.id, "capid": chaId}, onSuccess: (result) {
+      _xiaoShuoProvider.setReadList("${widget.id}_${result["cid"]}");
       _baseListProvider.add(XiaoshuoContent.fromJson(result));
     }, onError: (_, __) {});
   }
@@ -150,8 +145,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> {
                                         TextSpan(
                                             text: _baseListProvider.list[index].content,
                                             style: TextStyle(
-                                                fontSize: appStateProvider.xsFontSize,
-                                                color: appStateProvider.xsColor == Colors.black ? Colours.dark_text : Colours.text))
+                                                fontSize: appStateProvider.xsFontSize, color: appStateProvider.xsColor == Colors.black ? Colours.dark_text : Colours.text))
                                       ]),
                                       textAlign: TextAlign.justify,
                                     ),

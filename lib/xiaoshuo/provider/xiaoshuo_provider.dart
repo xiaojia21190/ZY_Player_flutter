@@ -23,16 +23,16 @@ class XiaoShuoProvider extends ChangeNotifier {
   String _shunxuText = "小说章节顺序-正序";
   String get shunxuText => _shunxuText;
 
-  List<XiaoshuoList> _readList = [];
-  List<XiaoshuoList> get readList => _readList;
+  List<String> _readList = [];
+  List<String> get readList => _readList;
 
   XiaoshuoDetail _lastread;
   XiaoshuoDetail get lastread => _lastread;
 
-  setReadList(XiaoshuoList xiaoshuoList) {
-    if (_readList.where((element) => element.id == xiaoshuoList.id).toList().length == 0) {
-      _readList.add(xiaoshuoList);
-      SpUtil.putObjectList("readXiaoshuo", _readList);
+  setReadList(String readString) {
+    if (_readList.where((element) => element == readString).toList().length == 0) {
+      _readList.add(readString);
+      SpUtil.putStringList("readXiaoshuo1", _readList);
       notifyListeners();
     }
   }
@@ -49,7 +49,7 @@ class XiaoShuoProvider extends ChangeNotifier {
   }
 
   getReadList() {
-    var result = SpUtil.getObjList<XiaoshuoList>("readXiaoshuo", (data) => XiaoshuoList.fromJson(data));
+    var result = SpUtil.getStringList("readXiaoshuo1");
     if (result.length > 0) {
       _readList.addAll(result);
     }

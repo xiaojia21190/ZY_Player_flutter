@@ -62,8 +62,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
 
   Future fetchData() async {
     _baseListProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail,
-        queryParameters: {"id": _detail.id, "page": page, "reverse": reverse}, onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail, queryParameters: {"id": _detail.id, "page": page, "reverse": reverse}, onSuccess: (resultList) {
       if (resultList == null) {
         _baseListProvider.setStateType(StateType.order);
       } else {
@@ -142,7 +141,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                   delegate: PersistentHeaderBuilder(
                       builder: (ctx, offset) => GestureDetector(
                             onTap: () {
-                              _xiaoShuoProvider.setReadList(XiaoshuoList(int.parse(_detail.lastChapterId), _detail.lastChapter, 1));
+                              _xiaoShuoProvider.setReadList("${_detail.id}_${_detail.lastChapter}");
                             },
                             child: Container(
                               alignment: Alignment.center,
@@ -228,12 +227,11 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                               child: FadeInAnimation(
                                 child: Consumer<XiaoShuoProvider>(
                                     builder: (_, provider, __) => ListTile(
-                                          selected:
-                                              provider.readList.where((element) => element.id == _baseListProvider.list[index].id).toList().length > 0
-                                                  ? true
-                                                  : false,
+                                          selected: provider.readList.where((element) => element == "${_detail.id}_${_baseListProvider.list[index].id}").toList().length > 0
+                                              ? true
+                                              : false,
                                           onTap: () {
-                                            provider.setReadList(_baseListProvider.list[index]);
+                                            provider.setReadList("${_detail.id}_${_baseListProvider.list[index].id}");
                                             NavigatorUtils.push(context,
                                                 '${XiaoShuoRouter.contentPage}?id=${_detail.id}&chpId=${_baseListProvider.list[index].id}&title=${Uri.encodeComponent(_baseListProvider.list[index].name)}');
                                           },
@@ -267,6 +265,5 @@ class PersistentHeaderBuilder extends SliverPersistentHeaderDelegate {
   double get minExtent => min;
 
   @override
-  bool shouldRebuild(covariant PersistentHeaderBuilder oldDelegate) =>
-      max != oldDelegate.max || min != oldDelegate.min || builder != oldDelegate.builder;
+  bool shouldRebuild(covariant PersistentHeaderBuilder oldDelegate) => max != oldDelegate.max || min != oldDelegate.min || builder != oldDelegate.builder;
 }

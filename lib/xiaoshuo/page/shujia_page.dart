@@ -1,3 +1,4 @@
+import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
@@ -23,8 +24,7 @@ class ShuJiaPage extends StatefulWidget {
   _ShuJiaPageState createState() => _ShuJiaPageState();
 }
 
-class _ShuJiaPageState extends State<ShuJiaPage>
-    with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
+class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -53,7 +53,9 @@ class _ShuJiaPageState extends State<ShuJiaPage>
     List<Widget> children = [];
     if (list.length > 0) {
       list.forEach((novel) {
-        children.add(BookshelfItemView(novel));
+        // 寻找最后的章节，显示到页面
+        int index = _xiaoShuoProvider.readList.lastIndexWhere((element) => element.split("_")[0] == novel.id);
+        children.add(BookshelfItemView(novel, _xiaoShuoProvider.readList[index].split("_")[1]));
       });
     }
     var width = (Screen.widthOt - 15 * 2 - 24 * 2) / 3;
