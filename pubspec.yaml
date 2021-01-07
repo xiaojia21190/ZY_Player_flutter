@@ -83,8 +83,7 @@ dependencies:
 
   battery: 1.0.7
 
-#  flutter_shine: ^0.0.5
-  screen: 0.0.5
+  flutter_screen: 0.0.2
 
 dev_dependencies:
   build_runner: ^1.10.4

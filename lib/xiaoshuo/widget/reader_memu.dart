@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:ZY_Player_flutter/event/event_bus.dart';
-import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -14,7 +12,7 @@ import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
-import 'package:screen/screen.dart' as lightness;
+import 'package:flutter_screen/flutter_screen.dart';
 
 class ColorCh {
   String name;
@@ -83,7 +81,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   }
 
   Future getLight() async {
-    light = await lightness.Screen.brightness;
+    light = await FlutterScreen.brightness;
   }
 
   Future fetchData() async {
@@ -145,7 +143,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
             onChanged: (v) {
               setState(() {
                 light = v;
-                lightness.Screen.setBrightness(v);
+                FlutterScreen.setBrightness(v);
               });
             },
             label: "亮度:${(light * 100).toInt()}%", //气泡的值

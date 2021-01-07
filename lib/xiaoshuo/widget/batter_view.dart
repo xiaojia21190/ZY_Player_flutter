@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:battery/battery.dart';
@@ -10,11 +12,21 @@ class BatteryView extends StatefulWidget {
 class _BatteryViewState extends State<BatteryView> {
   double batteryLevel = 0;
 
+  Timer _timer;
+
   @override
   void initState() {
     super.initState();
 
-    getBatteryLevel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      getBatteryLevel();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   getBatteryLevel() async {
