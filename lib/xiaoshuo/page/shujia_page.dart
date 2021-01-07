@@ -1,6 +1,4 @@
-import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
-import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
@@ -39,6 +37,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
     _xiaoShuoProvider.setListXiaoshuoResource();
+    _xiaoShuoProvider.getReadList();
     _xiaoShuoProvider.getLastRead();
     super.initState();
   }
@@ -136,11 +135,13 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
         color: isDark ? Colours.dark_bg_gray_ : Colours.lightGray,
         child: Selector<XiaoShuoProvider, List<XiaoshuoDetail>>(
             builder: (_, xiaoList, __) {
-              return MyScrollView(
-                children: [
-                  buildFavoriteView(xiaoList),
-                ],
-              );
+              return xiaoList.length > 0
+                  ? MyScrollView(
+                      children: [
+                        buildFavoriteView(xiaoList),
+                      ],
+                    )
+                  : Container();
             },
             selector: (_, store) => store.xiaoshuo),
       ),

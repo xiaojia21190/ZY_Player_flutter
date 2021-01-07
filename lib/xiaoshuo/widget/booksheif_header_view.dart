@@ -5,7 +5,9 @@ import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
+import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../xiaoshuo_router.dart';
@@ -23,10 +25,12 @@ class BookshelfHeader extends StatefulWidget {
 class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
+  XiaoShuoProvider _xiaoShuoProvider = XiaoShuoProvider();
 
   @override
   initState() {
     super.initState();
+    _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
     controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
 
@@ -87,8 +91,9 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
       color: Colors.transparent,
       child: GestureDetector(
         onTap: () {
-          String jsonString = jsonEncode(novel);
-          NavigatorUtils.push(context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
+          int index = _xiaoShuoProvider.readList.lastIndexWhere((element) => element.split("_")[0] == novel.id);
+          NavigatorUtils.push(context,
+              '${XiaoShuoRouter.contentPage}?id=${novel.id}&chpId=${_xiaoShuoProvider.readList[index].split("_")[1]}&title=${Uri.encodeComponent(novel.name)}');
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +115,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
                   SizedBox(height: 20),
                   Row(
                     children: <Widget>[
-                      Text('读至${Random.secure().nextInt(100)}%     继续阅读 ', style: TextStyle(fontSize: 14, color: Colours.paper)),
+                      Text(' 读至${Random.secure().nextInt(100)}%     继续阅读 ', style: TextStyle(fontSize: 14, color: Colours.paper)),
                       Image.asset('assets/images/book/bookshelf_continue_read.png'),
                     ],
                   ),
