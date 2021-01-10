@@ -41,7 +41,7 @@ class XiaoshuoList extends Object {
     this.hasContent,
   );
 
-  factory XiaoshuoList.fromJson(Map<String, dynamic> srcJson) => _$ChpListFromJson(srcJson);
+  factory XiaoshuoList.fromJson(Map<String, dynamic> srcJson) => _$XiaoshuoListFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$ChpListToJson(this);
+  Map<String, dynamic> toJson() => _$XiaoshuoListToJson(this);
 }

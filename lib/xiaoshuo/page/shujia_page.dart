@@ -22,7 +22,8 @@ class ShuJiaPage extends StatefulWidget {
   _ShuJiaPageState createState() => _ShuJiaPageState();
 }
 
-class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
+class _ShuJiaPageState extends State<ShuJiaPage>
+    with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -133,17 +134,11 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
       },
       body: Container(
         color: isDark ? Colours.dark_bg_gray_ : Colours.lightGray,
-        child: Selector<XiaoShuoProvider, List<XiaoshuoDetail>>(
-            builder: (_, xiaoList, __) {
-              return xiaoList.length > 0
-                  ? MyScrollView(
-                      children: [
-                        buildFavoriteView(xiaoList),
-                      ],
-                    )
-                  : Container();
-            },
-            selector: (_, store) => store.xiaoshuo),
+        child: MyScrollView(
+          children: [
+            buildFavoriteView(_xiaoShuoProvider.xiaoshuo),
+          ],
+        ),
       ),
     );
   }

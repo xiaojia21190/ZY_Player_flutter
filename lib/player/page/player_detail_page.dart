@@ -380,32 +380,28 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                       selector: (_, store) => store.actionName)),
               body: Column(
                 children: [
-                  Stack(
-                    children: [
-                      Container(
-                          color: Colors.black,
-                          width: Screen.widthOt,
-                          height: ScreenUtil.getInstance().getWidth(300),
-                          child: Selector<DetailProvider, bool>(
-                              builder: (_, isplayer, __) {
-                                return isplayer
-                                    ? Chewie(
-                                        controller: _chewieController,
-                                      )
-                                    : Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: const [
-                                          SizedBox(height: 20),
-                                          Text(
-                                            '等待播放...',
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                        ],
-                                      );
-                              },
-                              selector: (_, store) => store.isInitPlayer)),
-                    ],
-                  ),
+                  Container(
+                      color: Colors.black,
+                      width: Screen.widthOt,
+                      height: ScreenUtil.getInstance().getWidth(300),
+                      child: Selector<DetailProvider, bool>(
+                          builder: (_, isplayer, __) {
+                            return isplayer
+                                ? Chewie(
+                                    controller: _chewieController,
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      SizedBox(height: 20),
+                                      Text(
+                                        '等待播放...',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  );
+                          },
+                          selector: (_, store) => store.isInitPlayer)),
                   Expanded(child: Consumer<DetailProvider>(builder: (_, provider, __) {
                     return provider.detailReource != null && provider.detailReource.length > 0
                         ? MyScrollView(

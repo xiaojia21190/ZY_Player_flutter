@@ -173,7 +173,10 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                       );
                     },
                   ))
-              : StateLayout(type: _baseListProvider.stateType);
+              : StateLayout(
+                  type: _baseListProvider.stateType,
+                  onRefresh: _onRefresh,
+                );
         }));
   }
 }

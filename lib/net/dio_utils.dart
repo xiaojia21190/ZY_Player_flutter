@@ -7,8 +7,8 @@ import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'error_handle.dart';
 
 /// 默认dio配置
-int _connectTimeout = 15000;
-int _receiveTimeout = 15000;
+int _connectTimeout = 1000 * 15;
+int _receiveTimeout = 1000 * 15;
 int _sendTimeout = 10000;
 String _baseUrl;
 List<Interceptor> _interceptors = [];

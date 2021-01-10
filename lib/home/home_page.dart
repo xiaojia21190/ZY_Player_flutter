@@ -6,6 +6,7 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/page/player_page.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
+import 'package:ZY_Player_flutter/tingshu/page/tingshu_page.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
@@ -29,7 +30,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['影视', '小说', '动漫', '收藏'];
+  final List<String> _appBarTitles = ['影视', '听书', '小说', '动漫', '收藏'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
@@ -139,7 +140,7 @@ class _HomeState extends State<Home> {
   }
 
   void initData() {
-    _pageList = [PlayerPage(), ShuJiaPage(), ManhuaPage(), CollectPage()];
+    _pageList = [PlayerPage(), TingShuPage(), ShuJiaPage(), ManhuaPage(), CollectPage()];
   }
 
   List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {
@@ -159,12 +160,24 @@ class _HomeState extends State<Home> {
         ],
         [
           const LoadAssetImage(
-            'home/resou',
+            'home/tingshu',
             width: 25.0,
             color: Colours.unselected_item_color,
           ),
           const LoadAssetImage(
-            'home/resou',
+            'home/tingshu',
+            width: 25.0,
+            color: Colours.app_main,
+          ),
+        ],
+        [
+          const LoadAssetImage(
+            'home/xiaoshuo',
+            width: 25.0,
+            color: Colours.unselected_item_color,
+          ),
+          const LoadAssetImage(
+            'home/xiaoshuo',
             width: 25.0,
             color: Colours.app_main,
           ),
@@ -194,7 +207,7 @@ class _HomeState extends State<Home> {
           ),
         ]
       ];
-      _list = List.generate(4, (i) {
+      _list = List.generate(5, (i) {
         return BottomNavigationBarItem(
             icon: _tabImages[i][0],
             activeIcon: _tabImages[i][1],
@@ -222,9 +235,17 @@ class _HomeState extends State<Home> {
           ),
         ],
         [
-          const LoadAssetImage('home/resou', width: 25.0),
+          const LoadAssetImage('home/tingshu', width: 25.0),
           const LoadAssetImage(
-            'home/resou',
+            'home/tingshu',
+            width: 25.0,
+            color: Colours.dark_app_main,
+          ),
+        ],
+        [
+          const LoadAssetImage('home/xiaoshuo', width: 25.0),
+          const LoadAssetImage(
+            'home/xiaoshuo',
             width: 25.0,
             color: Colours.dark_app_main,
           ),
@@ -247,7 +268,7 @@ class _HomeState extends State<Home> {
         ]
       ];
 
-      _listDark = List.generate(4, (i) {
+      _listDark = List.generate(5, (i) {
         return BottomNavigationBarItem(
             icon: _tabImagesDark[i][0],
             activeIcon: _tabImagesDark[i][1],
@@ -285,8 +306,7 @@ class _HomeState extends State<Home> {
                   unselectedFontSize: Dimens.font_sp10,
                   selectedItemColor: Theme.of(context).primaryColor,
                   unselectedItemColor: isDark ? Colours.dark_unselected_item_color : Colours.unselected_item_color,
-                  onTap: (index) =>
-                      _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease),
+                  onTap: (index) => _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease),
                 );
               },
             ),
