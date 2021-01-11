@@ -18,4 +18,10 @@ class HttpApi {
   static const String updateApp = "updateApp";
   static const String getPlayVideoUrl = "getPlayVideoUrl";
   static const String getZhiboList = "getZhiboList";
+
+  static const String getXmlyHot = "getXmlyHot";
+  static const String getXmlySearch = "getXmlySearch";
+  static const String getXmlyHotSearch = "getXmlyHotSearch";
+  static const String getXmlyDetail = "getXmlyDetail";
+  static const String getXmlyDetailMp3 = "getXmlyDetailMp3";
 }

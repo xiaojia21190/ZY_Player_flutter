@@ -4,7 +4,6 @@ import 'package:ZY_Player_flutter/model/manhua_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
-import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
@@ -44,8 +43,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
     _searchProvider.list.clear();
     _appStateProvider.setloadingState(true);
 
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords},
-        onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(resultList.length, (index) => Types.fromJson(resultList[index]));
       if (data.length == 0) {
         _searchProvider.setStateType(StateType.order);

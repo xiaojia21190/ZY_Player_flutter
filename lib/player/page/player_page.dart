@@ -9,7 +9,6 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/dimens.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/util/Loading.dart';
 import 'package:ZY_Player_flutter/util/image_utils.dart';
 import 'package:ZY_Player_flutter/util/persistent_header_delegate.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
@@ -60,7 +59,7 @@ class _PlayerPageState extends State<PlayerPage>
             floating: false,
             pinned: true,
             snap: false,
-            expandedHeight: ScreenUtil.getInstance().getWidth(150),
+            expandedHeight: ScreenUtil.getInstance().getWidth(200),
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               title: TabBar(
@@ -96,13 +95,10 @@ class _PlayerPageState extends State<PlayerPage>
                             child: Swiper(
                               autoplay: true,
                               itemBuilder: (BuildContext context, int index) {
-                                return LoadImage(
-                                  list[index].cover,
-                                  fit: BoxFit.cover,
-                                );
+                                return LoadImage(list[index].cover, fit: BoxFit.fitHeight);
                               },
                               itemCount: list.length,
-                              pagination: SwiperPagination.fraction,
+                              pagination: SwiperPagination.dots,
                               onTap: (index) {
                                 String jsonString = jsonEncode(list[index]);
                                 NavigatorUtils.push(context,

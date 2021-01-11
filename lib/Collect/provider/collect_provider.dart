@@ -1,5 +1,7 @@
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
+import 'package:ZY_Player_flutter/model/ting_shu_detail.dart';
+import 'package:ZY_Player_flutter/tingshu/page/tingshu_detail_page.dart';
 // import 'package:ZY_Player_flutter/model/xiaoshuo_resource.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,9 @@ class CollectProvider extends ChangeNotifier {
 
   List<ManhuaCatlogDetail> _manhuaCatlog = [];
   List<ManhuaCatlogDetail> get manhuaCatlog => _manhuaCatlog;
+
+  List<TingShuDetail> _list = [];
+  List<TingShuDetail> get list => _list;
 
   setListDetailResource(String collect) {
     switch (collect) {
@@ -29,8 +34,30 @@ class CollectProvider extends ChangeNotifier {
           _manhuaCatlog.addAll(result);
         }
         break;
+      case "collcetTingshu":
+        var result = SpUtil.getObjList<TingShuDetail>(collect, (data) => TingShuDetail.fromJson(data));
+        if (result.length > 0) {
+          _list.clear();
+          _list.addAll(result);
+        }
+        break;
       default:
     }
+  }
+
+  addTingshu(TingShuDetail data) {
+    var glll = _listDetailResource.where((element) => element.url == data.url).toList().length;
+    if (glll == 0) {
+      _list.add(data);
+      SpUtil.putObjectList("collcetTingshu", _list);
+      notifyListeners();
+    }
+  }
+
+  removeTingshu(String url) {
+    _list.removeWhere((element) => element.url == url);
+    SpUtil.putObjectList("collcetTingshu", _list);
+    notifyListeners();
   }
 
   removeResource(String url) {

@@ -9,11 +9,9 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
-import 'package:ZY_Player_flutter/widgets/my_card.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
@@ -58,13 +56,14 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
 
   Future initData() async {
     _manhuaProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url},
+        onSuccess: (data) {
       _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data));
       _manhuaProvider.setZhanghjie();
       if (getFilterData(_manhuaProvider.catLog)) {
-        _manhuaProvider.setActionName("点击取消");
+        _manhuaProvider.setActionName("取消");
       } else {
-        _manhuaProvider.setActionName("点击收藏");
+        _manhuaProvider.setActionName("收藏");
       }
       _manhuaProvider.setStateType(StateType.empty);
     }, onError: (_, __) {
@@ -100,15 +99,13 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         actionName: actionName,
                         onPressed: () {
                           if (getFilterData(_manhuaProvider.catLog)) {
-                            Log.d("点击取消");
                             _collectProvider.removeCatlogResource(_manhuaProvider.catLog.url);
-                            _manhuaProvider.setActionName("点击收藏");
+                            _manhuaProvider.setActionName("收藏");
                           } else {
-                            Log.d("点击收藏");
                             _collectProvider.addCatlogResource(
                               _manhuaProvider.catLog,
                             );
-                            _manhuaProvider.setActionName("点击取消");
+                            _manhuaProvider.setActionName("取消");
                           }
                         });
                   },
@@ -165,7 +162,9 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                 children: [
                                   Text(provider.shunxuText),
                                   IconButton(
-                                      icon: Icon(provider.currentOrder ? Icons.vertical_align_bottom_rounded : Icons.vertical_align_top_rounded),
+                                      icon: Icon(provider.currentOrder
+                                          ? Icons.vertical_align_bottom_rounded
+                                          : Icons.vertical_align_top_rounded),
                                       onPressed: () {
                                         provider.changeShunxu(!provider.currentOrder);
                                       })
@@ -176,14 +175,14 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         ),
                       ),
                       SliverPadding(
-                        padding: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(10),
                         sliver: AnimationLimiter(
                           child: SliverGrid(
                             //Grid
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 4, //Grid按两列显示
-                              mainAxisSpacing: 2,
-                              crossAxisSpacing: 1.5,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
                             ),
                             delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {

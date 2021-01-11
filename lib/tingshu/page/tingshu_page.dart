@@ -1,11 +1,13 @@
-import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
-import 'package:ZY_Player_flutter/model/manhua_detail.dart';
+import 'package:ZY_Player_flutter/model/ting_shu_hot.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
 import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
+import 'package:ZY_Player_flutter/tingshu/provider/tingshu_provider.dart';
+import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/util/persistent_header_delegate.dart';
+import 'package:ZY_Player_flutter/utils/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -14,21 +16,23 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-class ManhuaPage extends StatefulWidget {
-  ManhuaPage({Key key}) : super(key: key);
+class TingShuPage extends StatefulWidget {
+  TingShuPage({Key key}) : super(key: key);
 
   @override
-  _ManhuaPageState createState() => _ManhuaPageState();
+  _TingShuPageState createState() => _TingShuPageState();
 }
 
-class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMixin<ManhuaPage>, SingleTickerProviderStateMixin {
+class _TingShuPageState extends State<TingShuPage> with AutomaticKeepAliveClientMixin<TingShuPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-  BaseListProvider<ManhuaDetail> _baseListProvider = BaseListProvider();
+  BaseListProvider<AudiList> _baseListProvider = BaseListProvider();
+  TingShuProvider tingShuProvider;
 
   @override
   void initState() {
     super.initState();
+    tingShuProvider = Store.value<TingShuProvider>(context);
     getData();
   }
 
@@ -36,9 +40,12 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
     _baseListProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(
       Method.get,
-      HttpApi.getHomeManhua,
+      HttpApi.getXmlyHot,
       onSuccess: (data) {
-        List.generate(data.length, (i) => _baseListProvider.add(ManhuaDetail.fromJson(data[i])));
+        TingShuHot tingShuHot = TingShuHot.fromJson(data);
+        List.generate(tingShuHot.audiList.length, (i) => _baseListProvider.add(tingShuHot.audiList[i]));
+        List.generate(tingShuHot.rmtj.length, (i) => tingShuProvider.setHotSearch(tingShuHot.rmtj[i]));
+
         if (data.length == 0) {
           _baseListProvider.setStateType(StateType.network);
         } else {
@@ -53,7 +60,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
 
   Future _onRefresh() async {
     _baseListProvider.clear();
-    this.getData();
+    getData();
   }
 
   @override
@@ -77,20 +84,19 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                     margin: EdgeInsets.all(5),
                     decoration: BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.all(Radius.circular(5))),
                     child: Center(
-                      child: Text("点击搜索漫画",
+                      child: Text("点击搜索小说",
                           style: TextStyle(
                             shadows: [Shadow(color: Colors.redAccent, offset: Offset(6, 3), blurRadius: 10)],
                           )),
                     ),
                   ),
-                  onTap: () => NavigatorUtils.push(context, ManhuaRouter.searchPage)),
+                  onTap: () => NavigatorUtils.push(context, TingshuRouter.searchPage)),
             ),
           ),
-          //https://m.gufengmh8.com/themes/mip/phone/images/icon_h2_2.png
           SliverFillRemaining(
-            child: ChangeNotifierProvider<BaseListProvider<ManhuaDetail>>(
+            child: ChangeNotifierProvider<BaseListProvider<AudiList>>(
                 create: (_) => _baseListProvider,
-                child: Consumer<BaseListProvider<ManhuaDetail>>(builder: (_, _baseListProvider, __) {
+                child: Consumer<BaseListProvider<AudiList>>(builder: (_, _baseListProvider, __) {
                   return DeerListView(
                     itemCount: _baseListProvider.list.length,
                     stateType: _baseListProvider.stateType,
@@ -158,7 +164,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                                       ),
                                       onTap: () {
                                         NavigatorUtils.push(context,
-                                            '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].types[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].types[i].title)}');
+                                            '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].types[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].types[i].title)}');
                                       },
                                     );
                                   },

@@ -25,6 +25,7 @@ class Loading {
     toastView._show();
   }
 
+
   static hide() {
     preToast.dismiss();
   }

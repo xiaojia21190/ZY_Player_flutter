@@ -7,6 +7,7 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/dimens.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
+import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/utils/provider.dart';
@@ -22,8 +23,7 @@ class CollectPage extends StatefulWidget {
   _CollectPageState createState() => _CollectPageState();
 }
 
-class _CollectPageState extends State<CollectPage>
-    with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
+class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   TabController _tabController;
@@ -33,7 +33,7 @@ class _CollectPageState extends State<CollectPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2);
+    _tabController = TabController(vsync: this, length: 3);
     _pageController = PageController(initialPage: 0);
     _collectProvider = Store.value<CollectProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
@@ -41,10 +41,16 @@ class _CollectPageState extends State<CollectPage>
   }
 
   Widget getData(data, int index) {
+    var bofang = "12万";
     return Card(
+      elevation: 4,
       child: ListTile(
         title: Text(data.title),
-        subtitle: index == 0 ? null : Text(data.leixing),
+        subtitle: index == 0
+            ? Text("播放量:${data.bofang ?? bofang}")
+            : index == 1
+                ? Text(data.state)
+                : Text(data.gengxin),
         trailing: Icon(Icons.keyboard_arrow_right),
         leading: Container(
           decoration: BoxDecoration(
@@ -52,7 +58,7 @@ class _CollectPageState extends State<CollectPage>
           ),
           child: LoadImage(
             data.cover,
-            fit: BoxFit.fill,
+            height: 60,
           ),
         ),
         onTap: () {
@@ -60,9 +66,10 @@ class _CollectPageState extends State<CollectPage>
           if (index == 0) {
             String jsonString = jsonEncode(data);
             NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+          } else if (index == 1) {
+            NavigatorUtils.push(context, '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           } else {
-            NavigatorUtils.push(context,
-                '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+            NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           }
         },
       ),
@@ -91,6 +98,7 @@ class _CollectPageState extends State<CollectPage>
           indicatorWeight: 3,
           tabs: const <Widget>[
             Text("影视"),
+            Text("听书"),
             Text("漫画"),
           ],
           onTap: (index) {
@@ -105,41 +113,50 @@ class _CollectPageState extends State<CollectPage>
         color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
         child: PageView.builder(
             key: const Key('pageView'),
-            itemCount: 2,
+            itemCount: 3,
             onPageChanged: _onPageChange,
             controller: _pageController,
             itemBuilder: (_, pageIndex) {
-              return Selector<CollectProvider, dynamic>(
-                  builder: (_, list, __) {
-                    return ListView.builder(
-                        itemCount: list.length,
-                        itemBuilder: (_, index) {
-                          return Slidable(
-                            child: getData(list[index], pageIndex),
-                            actionPane: SlidableDrawerActionPane(),
-                            actionExtentRatio: 0.25,
-                            secondaryActions: <Widget>[
-                              IconSlideAction(
-                                caption: '取消收藏',
-                                color: Colors.red,
-                                icon: Icons.delete,
-                                onTap: () {
-                                  // 取消收藏
-                                  if (pageIndex == 0) {
-                                    // 影视
-                                    _collectProvider.removeResource(list[index].url);
-                                  } else if (pageIndex == 1) {
-                                    // 漫画
-                                    _collectProvider.removeCatlogResource(list[index].url);
-                                  }
-                                  setState(() {});
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  },
-                  selector: (_, store) => pageIndex == 0 ? store.listDetailResource : store.manhuaCatlog);
+              return Selector<CollectProvider, dynamic>(builder: (_, list, __) {
+                return ListView.builder(
+                    itemCount: list.length,
+                    itemBuilder: (_, index) {
+                      return Slidable(
+                        child: getData(list[index], pageIndex),
+                        actionPane: SlidableDrawerActionPane(),
+                        actionExtentRatio: 0.25,
+                        secondaryActions: <Widget>[
+                          IconSlideAction(
+                            caption: '取消收藏',
+                            color: Colors.red,
+                            icon: Icons.delete,
+                            onTap: () {
+                              // 取消收藏
+                              if (pageIndex == 0) {
+                                // 影视
+                                _collectProvider.removeResource(list[index].url);
+                              } else if (pageIndex == 1) {
+                                // 漫画
+                                _collectProvider.removeTingshu(list[index].url);
+                              } else if (pageIndex == 2) {
+                                // 漫画
+                                _collectProvider.removeCatlogResource(list[index].url);
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              }, selector: (_, store) {
+                if (pageIndex == 0) {
+                  return store.listDetailResource;
+                } else if (pageIndex == 1) {
+                  return store.list;
+                } else {
+                  return store.manhuaCatlog;
+                }
+              });
             }),
       ),
     );
@@ -151,6 +168,9 @@ class _CollectPageState extends State<CollectPage>
         _collectProvider.setListDetailResource("collcetPlayer");
         break;
       case 1:
+        _collectProvider.setListDetailResource("collcetTingshu");
+        break;
+      case 2:
         _collectProvider.setListDetailResource("collcetManhua");
         break;
       default:
