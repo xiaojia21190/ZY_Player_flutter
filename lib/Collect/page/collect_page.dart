@@ -23,8 +23,7 @@ class CollectPage extends StatefulWidget {
   _CollectPageState createState() => _CollectPageState();
 }
 
-class _CollectPageState extends State<CollectPage>
-    with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
+class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   TabController _tabController;
@@ -42,12 +41,13 @@ class _CollectPageState extends State<CollectPage>
   }
 
   Widget getData(data, int index) {
+    var bofang = "12万";
     return Card(
       elevation: 4,
       child: ListTile(
         title: Text(data.title),
         subtitle: index == 0
-            ? Text("播放量:${data.bofang}" ?? "播放量:12万")
+            ? Text("播放量:${data.bofang ?? bofang}")
             : index == 1
                 ? Text(data.state)
                 : Text(data.gengxin),
@@ -67,11 +67,9 @@ class _CollectPageState extends State<CollectPage>
             String jsonString = jsonEncode(data);
             NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
           } else if (index == 1) {
-            NavigatorUtils.push(context,
-                '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+            NavigatorUtils.push(context, '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           } else {
-            NavigatorUtils.push(context,
-                '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+            NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           }
         },
       ),

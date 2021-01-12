@@ -14,6 +14,7 @@ import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class TingShuPage extends StatefulWidget {
   TingShuPage({Key key}) : super(key: key);
@@ -22,8 +23,7 @@ class TingShuPage extends StatefulWidget {
   _TingShuPageState createState() => _TingShuPageState();
 }
 
-class _TingShuPageState extends State<TingShuPage>
-    with AutomaticKeepAliveClientMixin<TingShuPage>, SingleTickerProviderStateMixin {
+class _TingShuPageState extends State<TingShuPage> with AutomaticKeepAliveClientMixin<TingShuPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<AudiList> _baseListProvider = BaseListProvider();
@@ -82,8 +82,7 @@ class _TingShuPageState extends State<TingShuPage>
                   child: Container(
                     height: 50,
                     margin: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black), borderRadius: BorderRadius.all(Radius.circular(5))),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.all(Radius.circular(5))),
                     child: Center(
                       child: Text("点击搜索小说",
                           style: TextStyle(
@@ -117,16 +116,19 @@ class _TingShuPageState extends State<TingShuPage>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                padding: EdgeInsets.only(left: 10, top: 5),
-                                child: Text(
-                                  _baseListProvider.list[index].name,
-                                  style: TextStyle(
-                                    shadows: [Shadow(color: Colors.black, offset: Offset(6, 3), blurRadius: 10)],
-                                    decorationColor: Colors.redAccent,
-                                    decorationStyle: TextDecorationStyle.solid,
-                                  ),
-                                ),
-                              ),
+                                  padding: EdgeInsets.only(left: 10, top: 5),
+                                  child: Shimmer.fromColors(
+                                    baseColor: Colors.red,
+                                    highlightColor: Colors.yellow,
+                                    child: Text(
+                                      _baseListProvider.list[index].name,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )),
                               Gaps.vGap8,
                               Container(
                                 child: GridView.builder(
