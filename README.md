@@ -2,6 +2,10 @@
 
 Flutter版本视频播放器，免费无广告
 
+## qq讨论群
+
+- [点击进入qq群](https://qm.qq.com/cgi-bin/qm/qr?k=HhAORLf9su9TXkarxoNHPLRR1N_NGN6x&jump_from=webapi)
+
 ### 订阅新版本
 <img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
@@ -56,4 +60,6 @@ Flutter版本视频播放器，免费无广告
 ## 如果觉得有用，请小哥喝杯茶
 
 <img src="./images/微信图片_20210113220740.jpg" width="200px" />
+
+
 
