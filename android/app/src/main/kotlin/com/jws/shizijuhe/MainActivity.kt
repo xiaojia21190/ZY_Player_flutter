@@ -1,4 +1,4 @@
-package com.jws.shizijuhe
+package com.jws.sile
 
 import io.flutter.embedding.android.FlutterActivity
 
