@@ -1,0 +1,25 @@
+name: push-build
+on:
+  push:
+    branches: # 这里对分支进行限制，仅仅build master分支，可以减少不必要的action
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-18.04 # 环境，无所谓
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1 # flutter 需要java环境
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1 # 搭建 flutter 环境
+        with:
+          channel: "stable" # 稳定第一
+      - run: flutter pub get
+      # - run: flutter test # 这里没有写测试代码，所以注释掉。
+      - run: flutter build apk --debug # 由于需要测试，这里生成debug版本的
+      # 将上一步打包好的文件上传到github上，以供下载
+      - name: upload artifects
+        uses: actions/upload-artifact@main
+        with:
+          name: android-app
+          path: build/app/outputs
