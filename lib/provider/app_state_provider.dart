@@ -1,10 +1,36 @@
 import 'package:ZY_Player_flutter/common/common.dart';
+import 'package:ZY_Player_flutter/event/event_bus.dart';
+import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/util/Loading.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_dlna/dlna/dlna.dart';
 import 'package:flutter_dlna/flutter_dlna.dart';
+import 'package:intl/intl.dart';
+
+class PlayerModel {
+  final String name;
+  final String videoId;
+  final String cover;
+  final String startAt;
+  final String url;
+  PlayerModel({this.name, this.cover, this.url, this.startAt, this.videoId});
+
+  PlayerModel.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        cover = json['cover'],
+        startAt = json['startAt'],
+        videoId = json['videoId'],
+        url = json['url'];
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'name': name,
+        'startAt': startAt,
+        'cover': cover,
+        'url': url,
+        'videoId': videoId,
+      };
+}
 
 class AppStateProvider extends ChangeNotifier {
   bool _loadingState = false;
@@ -20,9 +46,54 @@ class AppStateProvider extends ChangeNotifier {
   Color _xsColor = Colours.qingcaolv;
   Color get xsColor => _xsColor;
 
+  List<PlayerModel> _playerList = [];
+  List<PlayerModel> get playerList => _playerList;
+
+  double _opacityLevel = 0.0;
+  double get opacityLevel => _opacityLevel;
+
+  setOpcity(double opc) {
+    _opacityLevel = opc;
+    notifyListeners();
+  }
+
+  getPlayerRecord() async {
+    _playerList = SpUtil.getObjList<PlayerModel>("player_record", (data) => PlayerModel.fromJson(data), defValue: []);
+    notifyListeners();
+  }
+
+  savePlayerRecord(PlayerModel playerModel) async {
+    int index = _playerList.indexWhere((element) => element.url == playerModel.url);
+    if (index >= 0) {
+      _playerList[index] = playerModel;
+    } else {
+      _playerList.add(playerModel);
+    }
+    SpUtil.putObjectList("player_record", _playerList);
+
+    List<String> list = SpUtil.getStringList("saverecord");
+
+    var indexa = list.indexWhere((element) =>
+        element.split("_")[0] == playerModel.videoId.split("_")[0] &&
+        element.split("_")[1] == playerModel.videoId.split("_")[1] &&
+        element.split("_")[2] == playerModel.videoId.split("_")[2]);
+    var replaceText =
+        "${playerModel.videoId.split("_")[0]}_${playerModel.videoId.split("_")[1]}_${playerModel.videoId.split("_")[2]}_${playerModel.startAt}";
+    list[indexa] = replaceText;
+    SpUtil.putStringList("saverecord", list);
+
+    notifyListeners();
+  }
+
+  clearPlayerRecord() {
+    SpUtil.putObjectList("player_record", null);
+    _playerList = [];
+    notifyListeners();
+  }
+
   setConfig() {
     _xsFontSize = SpUtil.getDouble("xsfontsize", defValue: 18);
-    _xsColor = Color(SpUtil.getInt("xscolor", defValue: 0xffE3EDCD));
+    _xsColor = Color(SpUtil.getInt("xscolor", defValue: 0xffCCF1CF));
   }
 
   setFontSize(double size) {
@@ -53,6 +124,10 @@ class AppStateProvider extends ChangeNotifier {
 
   setDlnaDevices(List list) {
     _dlnaDevices = list;
+    if (list.length > 0) {
+      // 通知可以打开投屏列表
+      ApplicationEvent.event.fire(DeviceEvent());
+    }
     notifyListeners();
   }
 
@@ -68,24 +143,54 @@ class AppStateProvider extends ChangeNotifier {
       // 成功之后回调
       if (devices != null && devices.length > 0) {
         _searchText = "搜索成功，点击投屏按钮继续投屏";
+        Navigator.pop(Constant.navigatorKey.currentContext);
         setDlnaDevices(devices);
       } else {
         _searchText = "设备搜索超时";
         setDlnaDevices([]);
       }
-      notifyListeners();
     });
-    await searchDlna();
   }
 
   Future searchDlna() async {
     _searchText = "正在搜索设备...";
     await dlnaManager.search();
+
     notifyListeners();
   }
 
   setSearchText(String text) {
     _searchText = text;
+    notifyListeners();
+  }
+
+  String _nowTime = DateFormat('HH:mm').format(DateTime.now());
+  String get nowTime => _nowTime;
+
+  bool _verSwiper = false;
+  bool get verSwiper => _verSwiper;
+  String _verText = "快进到:";
+  String get verText => _verText;
+
+  bool _verLight = false;
+  bool get verLight => _verLight;
+  String _verLightText = "亮度:";
+  String get verLightText => _verLightText;
+
+  setVerSwiper(bool flag, String text) {
+    _verSwiper = flag;
+    _verText = text;
+    notifyListeners();
+  }
+
+  setVerLight(bool flag, String text) {
+    _verLight = flag;
+    _verLightText = text;
+    notifyListeners();
+  }
+
+  setTime() {
+    _nowTime = DateFormat('HH:mm').format(DateTime.now());
     notifyListeners();
   }
 }

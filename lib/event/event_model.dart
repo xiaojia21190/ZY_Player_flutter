@@ -3,16 +3,23 @@ class TabBarChangeIndex {
   TabBarChangeIndex({this.index});
 }
 
-class DeviceEvent {
-  String devicesId;
-  String devicesName;
-  int controll;
-  DeviceEvent(this.devicesId, this.devicesName, this.controll);
+class CurrentDownLoadVideo {
+  final String videoUrl;
+  final String videoName;
+  final String videoCover;
+  final double progress;
+  final String speed;
+  final int state;
+  CurrentDownLoadVideo({this.videoUrl, this.videoName, this.speed, this.videoCover, this.progress, this.state});
 }
 
-class ChangeJujiEvent {
-  ChangeJujiEvent();
+class DeviceEvent {
+  DeviceEvent();
 }
+
+// class ChangeJujiEvent {
+//   ChangeJujiEvent();
+// }
 
 class LoadXiaoShuoEvent {
   int chpId;

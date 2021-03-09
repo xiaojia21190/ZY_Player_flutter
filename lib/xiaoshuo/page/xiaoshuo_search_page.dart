@@ -1,13 +1,13 @@
 import 'dart:convert';
+
 import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -61,8 +61,6 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = ThemeUtils.isDark(context);
-
     return Scaffold(
       appBar: SearchBar(
           focus: _focus,
@@ -74,36 +72,46 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
               getSearchWords(text);
             }
           }),
-      body: Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
-        return provider.list.length > 0
-            ? ListView.builder(
-                itemCount: provider.list.length,
-                itemBuilder: (_, index) {
-                  return Card(
-                    elevation: 2,
-                    margin: EdgeInsets.all(10),
-                    child: ListTile(
-                      title: Text(provider.list[index].name),
-                      subtitle: Text(provider.list[index].author),
-                      leading: LoadImage(
-                        provider.list[index].img,
-                        fit: BoxFit.cover,
-                      ),
-                      trailing: Icon(Icons.keyboard_arrow_right),
-                      onTap: () {
-                        String jsonString = jsonEncode(provider.list[index]);
-                        NavigatorUtils.push(
-                            context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
-                      },
+      body: Column(
+        children: [
+          Expanded(child: Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
+            return provider.list.length > 0
+                ? ListView.builder(
+                    itemCount: provider.list.length,
+                    itemBuilder: (_, index) {
+                      return Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            side: BorderSide(
+                              style: BorderStyle.solid,
+                              color: Colours.orange,
+                            )),
+                        margin: EdgeInsets.all(10),
+                        child: ListTile(
+                          title: Text(provider.list[index].name),
+                          subtitle: Text(provider.list[index].author),
+                          leading: LoadImage(
+                            provider.list[index].img,
+                            fit: BoxFit.cover,
+                          ),
+                          trailing: Icon(Icons.keyboard_arrow_right),
+                          onTap: () {
+                            String jsonString = jsonEncode(provider.list[index]);
+                            NavigatorUtils.push(
+                                context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
+                          },
+                        ),
+                      );
+                    })
+                : Center(
+                    child: StateLayout(
+                      type: provider.state,
                     ),
                   );
-                })
-            : Center(
-                child: StateLayout(
-                  type: provider.state,
-                ),
-              );
-      }),
+          }))
+        ],
+      ),
     );
   }
 }

@@ -20,7 +20,7 @@ class XiaoShuoProvider extends ChangeNotifier {
   bool _currentOrder = false;
   bool get currentOrder => _currentOrder;
 
-  String _shunxuText = "小说章节顺序-正序";
+  String _shunxuText = "章节顺序-正序";
   String get shunxuText => _shunxuText;
 
   List<String> _readList = [];
@@ -30,11 +30,10 @@ class XiaoShuoProvider extends ChangeNotifier {
   XiaoshuoDetail get lastread => _lastread;
 
   setReadList(String readString) {
-    if (_readList.where((element) => element == readString).toList().length == 0) {
-      _readList.add(readString);
-      SpUtil.putStringList("readXiaoshuo1", _readList);
-      notifyListeners();
-    }
+    _readList.removeWhere((element) => element == readString);
+    _readList.add(readString);
+    SpUtil.putStringList("readXiaoshuo1", _readList);
+    notifyListeners();
   }
 
   setLastRead(XiaoshuoDetail xiaoshuoDetail) {
@@ -54,15 +53,16 @@ class XiaoShuoProvider extends ChangeNotifier {
     }
   }
 
-  changeShunxu(bool shuxu) {
+  changeShunxu(bool shuxu, [bool flag = true]) {
     _currentOrder = shuxu;
     if (shuxu) {
-      _shunxuText = "小说章节顺序-倒序";
+      _shunxuText = "章节顺序-倒序";
     } else {
-      _shunxuText = "小说章节顺序-正序";
+      _shunxuText = "章节顺序-正序";
     }
-
-    notifyListeners();
+    if (flag) {
+      notifyListeners();
+    }
   }
 
   setStateType(StateType stateType) {

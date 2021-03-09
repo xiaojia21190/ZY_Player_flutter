@@ -1,8 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
+import 'package:flutter/material.dart';
 
 class ClickItem extends StatelessWidget {
-  const ClickItem({Key key, this.onTap, @required this.title, this.content = '', this.textAlign = TextAlign.start, this.maxLines = 1})
+  const ClickItem(
+      {Key key,
+      this.onTap,
+      @required this.title,
+      this.content = '',
+      this.textAlign = TextAlign.start,
+      this.slected = false,
+      this.maxLines = 1})
       : super(key: key);
 
   final GestureTapCallback onTap;
@@ -10,14 +18,20 @@ class ClickItem extends StatelessWidget {
   final String content;
   final TextAlign textAlign;
   final int maxLines;
+  final bool slected;
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = ThemeUtils.isDark(context);
     Widget child = Row(
       //为了数字类文字居中
       crossAxisAlignment: maxLines == 1 ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title),
+        Gaps.hGap16,
+        Text(
+          title,
+          style: TextStyle(color: isDark ? Colours.dark_text : Colours.text),
+        ),
         const Spacer(),
         Gaps.hGap16,
         Expanded(
@@ -44,7 +58,6 @@ class ClickItem extends StatelessWidget {
 
     /// 分隔线
     child = Container(
-      margin: const EdgeInsets.only(left: 15.0),
       padding: const EdgeInsets.fromLTRB(0, 15.0, 15.0, 15.0),
       constraints: BoxConstraints(
         maxHeight: double.infinity,
@@ -53,7 +66,13 @@ class ClickItem extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         border: Border(
-          bottom: Divider.createBorderSide(context, width: 0.6),
+          bottom: Divider.createBorderSide(context,
+              width: 0.6,
+              color: slected
+                  ? Colors.red
+                  : isDark
+                      ? Colours.dark_text_gray
+                      : Colours.white),
         ),
       ),
       child: child,

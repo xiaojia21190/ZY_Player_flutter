@@ -10,9 +10,7 @@ import 'package:ZY_Player_flutter/routes/application.dart';
 import 'package:ZY_Player_flutter/routes/routers.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:ZY_Player_flutter/utils/jpush.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
-import 'package:cron/cron.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flustars/flustars.dart';
@@ -22,6 +20,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+import 'package:screen_ratio_adapter/screen_ratio_adapter.dart';
+import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
+import 'package:ZY_Player_flutter/util/app_analysis.dart';
 
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
@@ -32,20 +33,12 @@ Future<void> main() async {
 
   /// sp初始化
   await SpUtil.getInstance();
-  runApp(Store.init(MyApp()));
+  runFxApp(Store.init(MyApp()), uiBlueprints: BlueprintsRectangle(750, 1334));
   // 透明状态栏
   if (Device.isAndroid) {
     final SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
-
-  JpushUtil.setUp();
-  JpushUtil.tongjiSetUp();
-
-  final cron = Cron();
-  cron.schedule(Schedule.parse('0 10,20 */1 * *'), () async {
-    JpushUtil.tonzhi("电影，小说，漫画更新了", "来不及了说了，赶紧去看看吧！");
-  });
 }
 
 class MyApp extends StatelessWidget {
@@ -61,7 +54,7 @@ class MyApp extends StatelessWidget {
     Application.router = router;
   }
 
-  void initDio() {
+  void initDio() async {
     final List<Interceptor> interceptors = [];
 
     /// 统一添加身份验证请求头
@@ -76,11 +69,10 @@ class MyApp extends StatelessWidget {
     }
 
     setInitDio(
-      //adb kill-server && adb server && adb shell
-      // baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.31.37:7001/',
+      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
       interceptors: interceptors,
     );
+
   }
 
   @override
@@ -93,6 +85,7 @@ class MyApp extends StatelessWidget {
                   LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
                 },
                 child: MaterialApp(
+                  navigatorObservers: [AppAnalysis()],
                   navigatorKey: Constant.navigatorKey,
                   title: '虱子聚合',
                   theme: theme ?? provider.getTheme(),
@@ -112,7 +105,8 @@ class MyApp extends StatelessWidget {
                     /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
                     return MediaQuery(
                       data: MediaQuery.of(context).copyWith(
-                          textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                          textScaleFactor:
+                              1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
                       child: child,
                     );
                   },

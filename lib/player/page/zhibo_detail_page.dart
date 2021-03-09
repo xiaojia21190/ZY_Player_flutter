@@ -1,19 +1,22 @@
 import 'dart:async';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
-import 'package:ZY_Player_flutter/event/event_bus.dart';
-import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
-import 'package:ZY_Player_flutter/player/widget/my_controller.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
+import 'package:ZY_Player_flutter/res/colors.dart';
+import 'package:ZY_Player_flutter/res/gaps.dart';
+import 'package:ZY_Player_flutter/res/styles.dart';
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/utils.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
+import 'package:ZY_Player_flutter/xiaoshuo/widget/batter_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_screen/flutter_screen.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -59,18 +62,12 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
 
     initData();
 
-    ApplicationEvent.event.on<DeviceEvent>().listen((event) async {
-      if (event.controll == 0) {
-        Toast.show("推送视频 ${widget.title} 到设备：${event.devicesName}");
-        await appStateProvider.dlnaManager.setDevice(event.devicesId);
-        await appStateProvider.dlnaManager.setVideoUrlAndName(widget.url, widget.title);
-        await appStateProvider.dlnaManager.startAndPlay();
-        appStateProvider.setloadingState(false);
-        Navigator.pop(context);
-      }
-    });
-
+    getLight();
     super.initState();
+  }
+
+  Future getLight() async {
+    light = await FlutterScreen.brightness;
   }
 
   @override
@@ -81,12 +78,133 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     _videoPlayerController?.removeListener(_videoListener);
     _chewieController?.dispose();
     _currentPosSubs?.cancel();
-    ApplicationEvent.event.destroy();
   }
 
   void _videoListener() async {
-    if (_videoPlayerController.value.initialized) {
+    if (_videoPlayerController.value.isInitialized) {
       _detailProvider.setInitPlayer(true);
+    }
+  }
+
+  dlnaDevicesDialog() {
+    showElasticDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Material(
+          type: MaterialType.transparency,
+          child: Center(
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: context.dialogBackgroundColor,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  width: 270,
+                  height: 200,
+                  padding: const EdgeInsets.only(top: 24.0),
+                  child: Column(
+                    children: <Widget>[
+                      const Text(
+                        '可以投屏的设备',
+                        style: TextStyles.textBold18,
+                      ),
+                      Gaps.vGap16,
+                      Expanded(
+                        child: Selector<AppStateProvider, List>(
+                            builder: (_, devices, __) {
+                              return ListView.separated(
+                                itemCount: devices.length,
+                                itemBuilder: (_, index) {
+                                  return TextButton(
+                                    child: Text(devices[index]["name"]),
+                                    onPressed: () async {
+                                      _chewieController.pause();
+                                      Toast.show("推送视频 ${widget.title} 到设备：${devices[index]["name"]}");
+                                      await appStateProvider.dlnaManager.setDevice(devices[index]["id"]);
+                                      await appStateProvider.dlnaManager.setVideoUrlAndName(widget.url, widget.title);
+                                      await appStateProvider.dlnaManager.startAndPlay();
+                                      appStateProvider.setloadingState(false);
+                                      Navigator.pop(context);
+                                    },
+                                  );
+                                },
+                                separatorBuilder: (_, index) => const Divider(),
+                              );
+                            },
+                            selector: (_, store) => store.dlnaDevices),
+                      )
+                    ],
+                  ))),
+        );
+      },
+    );
+  }
+
+  searchDialog() {
+    // 提示是否继续搜索
+    appStateProvider.setSearchText("设备搜索超时");
+    showDialog(
+        context: context,
+        builder: (_) => Selector<AppStateProvider, String>(
+            builder: (_, words, __) {
+              return FlareGiffyDialog(
+                flarePath: 'assets/images/space_demo.flr',
+                flareAnimation: 'loading',
+                title: Text(words,
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+                description: Text(
+                  '请打开相关设备后点击重新搜索',
+                  textAlign: TextAlign.center,
+                ),
+                entryAnimation: EntryAnimation.BOTTOM,
+                buttonOkText: Text("重新搜索"),
+                buttonCancelText: Text("停止搜索"),
+                onOkButtonPressed: () async {
+                  await appStateProvider.searchDlna();
+                },
+                onCancelButtonPressed: () async {
+                  Navigator.pop(context);
+                  await appStateProvider.dlnaManager.stop();
+                },
+              );
+            },
+            selector: (_, store) => store.searchText));
+  }
+
+  Offset _initialVerLightOffset;
+  Offset _finalVerLightOffset;
+  double light = 0;
+
+  void _onVerticalDragStart(DragStartDetails details) {
+    _initialVerLightOffset = details.globalPosition;
+  }
+
+  Future _onVerticalDragUpdate(DragUpdateDetails details) async {
+    _finalVerLightOffset = details.globalPosition;
+    final offsetDifference = _initialVerLightOffset.dy - _finalVerLightOffset.dy;
+    var offsetAbs = offsetDifference.abs() / 300;
+    // Log.d(offsetAbs.toString());
+    var entLight;
+    if (offsetDifference > 0) {
+      entLight = light + offsetAbs;
+      if (entLight >= 1) {
+        entLight = 1.0;
+      }
+      FlutterScreen.setBrightness(entLight);
+    } else {
+      entLight = light - offsetAbs;
+      if (entLight <= 0) {
+        entLight = 0.0;
+      }
+      FlutterScreen.setBrightness(entLight);
+    }
+    var verLightText = "亮度：${(entLight * 100).toInt()}%";
+    appStateProvider.setVerLight(true, verLightText);
+  }
+
+  void _onVerticalDragEnd(DragEndDetails details) {
+    if (_initialVerLightOffset != null) {
+      getLight();
+      appStateProvider.setVerLight(false, "");
     }
   }
 
@@ -98,22 +216,132 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     await _videoPlayerController.initialize();
     _videoPlayerController.addListener(_videoListener);
     _chewieController = ChewieController(
-      customControls: MyControls(widget.title, 0),
-      videoPlayerController: _videoPlayerController,
-      autoPlay: false,
-      allowedScreenSleep: false,
-      looping: false,
-      aspectRatio: _videoPlayerController.value.aspectRatio,
-      placeholder: CachedNetworkImage(imageUrl: 'https://tva2.sinaimg.cn/large/007UW77jly1g5elwuwv4rj30sg0g0wfo.jpg'),
-      autoInitialize: true,
-    );
+        videoPlayerController: _videoPlayerController,
+        autoPlay: false,
+        allowedScreenSleep: false,
+        looping: false,
+        isLive: true,
+        aspectRatio: _videoPlayerController.value.aspectRatio,
+        placeholder: CachedNetworkImage(imageUrl: 'https://tva2.sinaimg.cn/large/007UW77jly1g5elwuwv4rj30sg0g0wfo.jpg'),
+        autoInitialize: true,
+        routePageBuilder: (context, animation, __, provider) {
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget child) {
+              return Scaffold(
+                  backgroundColor: Colors.black,
+                  body: GestureDetector(
+                    onVerticalDragStart: _onVerticalDragStart,
+                    onVerticalDragUpdate: _onVerticalDragUpdate,
+                    onVerticalDragEnd: _onVerticalDragEnd,
+                    child: Stack(children: [
+                      Container(
+                        alignment: Alignment.center,
+                        child: provider,
+                      ),
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: TextButton.icon(
+                              onPressed: () async {
+                                // 取消全屏
+                                _chewieController.exitFullScreen();
+                                // 延迟点击
+                                Future.delayed(Duration(seconds: 1), () {
+                                  // 点击显示投屏数据
+                                  if (appStateProvider.dlnaDevices.length == 0) {
+                                    // 没有搜索到
+                                    searchDialog();
+                                  } else {
+                                    // 搜索到了
+                                    dlnaDevicesDialog();
+                                  }
+                                });
+                              },
+                              icon: Icon(
+                                Icons.present_to_all_sharp,
+                                color: Colors.white,
+                              ),
+                              label: Text(
+                                "投屏",
+                                style: TextStyle(color: Colors.white),
+                              )),
+                        ),
+                      ),
+                      _videoPlayerController.value.isBuffering
+                          ? Positioned.fill(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  height: 30,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                      color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                            '正在加载中...',
+                                            style: Theme.of(context).textTheme.headline6,
+                                          ),
+                                          CircularProgressIndicator(),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      Consumer<AppStateProvider>(builder: (_, _detailProvider, __) {
+                        return _detailProvider.verLight
+                            ? Positioned.fill(
+                                child: Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      height: 30,
+                                      width: 80,
+                                      decoration: BoxDecoration(
+                                          color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                                      child: Center(
+                                        child: Text(
+                                          _detailProvider.verLightText,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    )),
+                              )
+                            : Container();
+                      }),
+                      Positioned.fill(
+                        child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              margin: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "剩余电量:",
+                                    style: TextStyle(color: Colors.white, fontSize: 12),
+                                  ),
+                                  Gaps.hGap5,
+                                  BatteryView()
+                                ],
+                              ),
+                            )),
+                      ),
+                    ]),
+                  ));
+            },
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    final bool isDark = themeData.brightness == Brightness.dark;
-
     return ChangeNotifierProvider<DetailProvider>(
       create: (_) => _detailProvider,
       child: Scaffold(
@@ -123,30 +351,34 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
             title: widget.title,
             isBack: true,
           ),
-          body: Center(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: ScreenUtil.getInstance().getWidth(230),
-              child: Selector<DetailProvider, bool>(
-                  builder: (_, isplayer, __) {
-                    return isplayer
-                        ? Chewie(
-                            controller: _chewieController,
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              CircularProgressIndicator(),
-                              SizedBox(height: 20),
-                              Text(
-                                'Loading',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          );
-                  },
-                  selector: (_, store) => store.isInitPlayer),
-            ),
+          body: Stack(
+            children: [
+              Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 230,
+                  child: Selector<DetailProvider, bool>(
+                      builder: (_, isplayer, __) {
+                        return isplayer
+                            ? Chewie(
+                                controller: _chewieController,
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  CircularProgressIndicator(),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'Loading',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              );
+                      },
+                      selector: (_, store) => store.isInitPlayer),
+                ),
+              ),
+            ],
           )),
     );
   }

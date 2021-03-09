@@ -5,15 +5,11 @@ import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
-import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
-import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
@@ -81,8 +77,6 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = ThemeUtils.isDark(context);
-
     return Scaffold(
       appBar: SearchBar(
           focus: _focus,
@@ -95,47 +89,59 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
               this._onFresh();
             }
           }),
-      body: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
-          create: (_) => _baseListProvider,
-          child: Consumer<BaseListProvider<ResourceData>>(builder: (_, _baseListProvider, __) {
-            return DeerListView(
-                itemCount: _baseListProvider.list.length,
-                stateType: _baseListProvider.stateType,
-                hasRefresh: false,
-                loadMore: _onLoadMore,
-                physics: AlwaysScrollableScrollPhysics(),
-                pageSize: 10,
-                hasMore: _baseListProvider.hasMore,
-                itemBuilder: (_, index) {
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      verticalOffset: 60.0,
-                      child: FadeInAnimation(
-                          child: Card(
-                              elevation: 2,
-                              margin: EdgeInsets.all(10),
-                              child: ListTile(
-                                contentPadding: EdgeInsets.all(10),
-                                leading: LoadImage(
-                                  _baseListProvider.list[index].cover,
-                                  fit: BoxFit.cover,
-                                ),
-                                title: Text(
-                                  _baseListProvider.list[index].title,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                onTap: () {
-                                  String jsonString = jsonEncode(_baseListProvider.list[index]);
-                                  NavigatorUtils.push(context,
-                                      '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
-                                },
-                              ))),
-                    ),
-                  );
-                });
-          })),
+      body: Column(
+        children: [
+          Expanded(
+              child: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
+                  create: (_) => _baseListProvider,
+                  child: Consumer<BaseListProvider<ResourceData>>(builder: (_, _baseListProvider, __) {
+                    return DeerListView(
+                        itemCount: _baseListProvider.list.length,
+                        stateType: _baseListProvider.stateType,
+                        hasRefresh: false,
+                        onRefresh: _onFresh,
+                        loadMore: _onLoadMore,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        pageSize: 10,
+                        hasMore: _baseListProvider.hasMore,
+                        itemBuilder: (_, index) {
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 375),
+                            child: SlideAnimation(
+                              verticalOffset: 60.0,
+                              child: FadeInAnimation(
+                                  child: Card(
+                                      elevation: 5,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                                          side: BorderSide(
+                                            style: BorderStyle.solid,
+                                            color: Colours.orange,
+                                          )),
+                                      margin: EdgeInsets.all(10),
+                                      child: ListTile(
+                                        contentPadding: EdgeInsets.all(10),
+                                        leading: LoadImage(
+                                          _baseListProvider.list[index].cover,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        title: Text(
+                                          _baseListProvider.list[index].title,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        onTap: () {
+                                          String jsonString = jsonEncode(_baseListProvider.list[index]);
+                                          NavigatorUtils.push(context,
+                                              '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                        },
+                                      ))),
+                            ),
+                          );
+                        });
+                  })))
+        ],
+      ),
     );
   }
 }

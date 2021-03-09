@@ -64,16 +64,20 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
             appBar: MyAppBar(
               title: widget.title,
             ),
-            body: Consumer<BaseListProvider<String>>(builder: (_, _baseListProvider, __) {
-              return DeerListView(
-                  itemCount: _baseListProvider.list.length,
-                  stateType: _baseListProvider.stateType,
-                  onRefresh: _onRefresh,
-                  pageSize: _baseListProvider.list.length,
-                  hasMore: false,
-                  itemBuilder: (_, index) {
-                    return LoadImage(_baseListProvider.list[index]);
-                  });
-            })));
+            body: Column(
+              children: [
+                Expanded(child: Consumer<BaseListProvider<String>>(builder: (_, _baseListProvider, __) {
+                  return DeerListView(
+                      itemCount: _baseListProvider.list.length,
+                      stateType: _baseListProvider.stateType,
+                      onRefresh: _onRefresh,
+                      pageSize: _baseListProvider.list.length,
+                      hasMore: false,
+                      itemBuilder: (_, index) {
+                        return LoadImage(_baseListProvider.list[index]);
+                      });
+                })),
+              ],
+            )));
   }
 }

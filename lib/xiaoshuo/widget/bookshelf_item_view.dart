@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
@@ -21,8 +20,13 @@ class BookshelfItemView extends StatelessWidget {
       onTap: () {
         String jsonString = jsonEncode(novel);
         // 最后看到的是第几章，跳转到当前章节
-        NavigatorUtils.push(context, '${XiaoShuoRouter.contentPage}?id=${novel.id}&chpId=$readChapId&title=${Uri.encodeComponent(novel.name)}');
-        // NavigatorUtils.push(context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
+        // if (readChapId != "-1") {
+        //   NavigatorUtils.push(context,
+        //       '${XiaoShuoRouter.contentPage}?id=${novel.id}&chpId=$readChapId&title=${Uri.encodeComponent(novel.name)}');
+        // } else {
+        //
+        // }
+        NavigatorUtils.push(context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
       },
       child: Container(
         width: width,

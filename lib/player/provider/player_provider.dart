@@ -17,13 +17,10 @@ class PlayerProvider extends ChangeNotifier {
   StateType _stateType = StateType.empty;
   StateType get stateType => _stateType;
 
-  int _waimaiIndex = 0;
-  int get waimaiIndex => _waimaiIndex;
+  TabController tabController;
+  PageController pageController;
 
-  setWaiMaiIndex(int index) {
-    _waimaiIndex = index;
-    notifyListeners();
-  }
+  int index;
 
   setWords() {
     _words = SpUtil.getStringList("playerWords", defValue: []);

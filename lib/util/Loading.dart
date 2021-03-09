@@ -25,15 +25,13 @@ class Loading {
     toastView._show();
   }
 
-
   static hide() {
     preToast.dismiss();
   }
 
   static LayoutBuilder buildToastLayout(String msg) {
     return LayoutBuilder(builder: (context, constraints) {
-      return IgnorePointer(
-        ignoring: true,
+      return AbsorbPointer(
         child: Material(
           color: Colors.white.withOpacity(0),
           child: Container(

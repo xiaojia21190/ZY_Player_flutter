@@ -9,7 +9,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/search_bar.dart';
@@ -24,7 +24,8 @@ class HotSearchPage extends StatefulWidget {
   _HotSearchPageState createState() => _HotSearchPageState();
 }
 
-class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveClientMixin<HotSearchPage>, SingleTickerProviderStateMixin {
+class _HotSearchPageState extends State<HotSearchPage>
+    with AutomaticKeepAliveClientMixin<HotSearchPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   HotSearchProvider _hotSearchProvider;
@@ -198,7 +199,8 @@ class _HotSearchPageState extends State<HotSearchPage> with AutomaticKeepAliveCl
                                     ),
                                     onTap: () {
                                       Log.d('前往详情页');
-                                      NavigatorUtils.goWebViewPage(context, _baseListProvider.list[index].title, _baseListProvider.list[index].url,
+                                      NavigatorUtils.goWebViewPage(context, _baseListProvider.list[index].title,
+                                          _baseListProvider.list[index].url,
                                           flag: "2");
                                     },
                                   ),

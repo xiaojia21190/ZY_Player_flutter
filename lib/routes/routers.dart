@@ -1,3 +1,4 @@
+import 'package:ZY_Player_flutter/Collect/collect_router.dart';
 import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/home/webview_page.dart';
 import 'package:ZY_Player_flutter/hotseach/hot_router.dart';
@@ -26,7 +27,8 @@ class Routes {
       return PageNotFound();
     });
 
-    router.define(home, handler: Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) => Home()));
+    router.define(home,
+        handler: Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) => Home()));
 
     router.define(webViewPage, handler: Handler(handlerFunc: (_, params) {
       final String title = params['title']?.first;
@@ -45,6 +47,7 @@ class Routes {
     _listRouter.add(HotRouter());
     _listRouter.add(XiaoShuoRouter());
     _listRouter.add(TingshuRouter());
+    _listRouter.add(CollectRouter());
 
     /// 初始化路由
     _listRouter.forEach((routerProvider) {

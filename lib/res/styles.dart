@@ -39,6 +39,9 @@ class TextStyles {
   static const TextStyle textDark =
       TextStyle(fontSize: Dimens.font_sp14, color: Colours.dark_text, textBaseline: TextBaseline.alphabetic);
 
+  static const TextStyle textDarkWhite =
+      TextStyle(fontSize: Dimens.font_sp14, color: Colours.white, textBaseline: TextBaseline.alphabetic);
+
   static const TextStyle textGray12 =
       TextStyle(fontSize: Dimens.font_sp12, color: Colours.text_gray, fontWeight: FontWeight.normal);
   static const TextStyle textDarkGray12 =

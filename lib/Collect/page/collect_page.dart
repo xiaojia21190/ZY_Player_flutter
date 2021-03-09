@@ -10,7 +10,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -23,7 +23,8 @@ class CollectPage extends StatefulWidget {
   _CollectPageState createState() => _CollectPageState();
 }
 
-class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
+class _CollectPageState extends State<CollectPage>
+    with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   TabController _tabController;
@@ -32,18 +33,25 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
 
   @override
   void initState() {
-    super.initState();
     _tabController = TabController(vsync: this, length: 3);
     _pageController = PageController(initialPage: 0);
     _collectProvider = Store.value<CollectProvider>(context);
     _collectProvider.setListDetailResource("collcetPlayer");
     _collectProvider.setListDetailResource("collcetManhua");
+    _collectProvider.setListDetailResource("collcetTingshu");
+    super.initState();
   }
 
   Widget getData(data, int index) {
     var bofang = "12万";
     return Card(
-      elevation: 4,
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          side: BorderSide(
+            style: BorderStyle.solid,
+            color: Colours.orange,
+          )),
       child: ListTile(
         title: Text(data.title),
         subtitle: index == 0
@@ -67,9 +75,11 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
             String jsonString = jsonEncode(data);
             NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
           } else if (index == 1) {
-            NavigatorUtils.push(context, '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+            NavigatorUtils.push(context,
+                '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           } else {
-            NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
+            NavigatorUtils.push(context,
+                '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           }
         },
       ),

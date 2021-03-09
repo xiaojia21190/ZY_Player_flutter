@@ -21,7 +21,8 @@ class ManhuaPage extends StatefulWidget {
   _ManhuaPageState createState() => _ManhuaPageState();
 }
 
-class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMixin<ManhuaPage>, SingleTickerProviderStateMixin {
+class _ManhuaPageState extends State<ManhuaPage>
+    with AutomaticKeepAliveClientMixin<ManhuaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<ManhuaDetail> _baseListProvider = BaseListProvider();
@@ -63,30 +64,6 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
       body: SafeArea(
           child: CustomScrollView(
         slivers: [
-          SliverPersistentHeader(
-            // 属性同 SliverAppBar
-            pinned: true,
-            floating: true,
-            // 因为 SliverPersistentHeaderDelegate 是一个抽象类，所以需要自定义
-            delegate: CustomSliverPersistentHeaderDelegate(
-              max: 50.0,
-              min: 0.0,
-              child: GestureDetector(
-                  child: Container(
-                    height: 50,
-                    margin: EdgeInsets.all(5),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: Center(
-                      child: Text("点击搜索漫画",
-                          style: TextStyle(
-                            shadows: [Shadow(color: Colors.redAccent, offset: Offset(6, 3), blurRadius: 10)],
-                          )),
-                    ),
-                  ),
-                  onTap: () => NavigatorUtils.push(context, ManhuaRouter.searchPage)),
-            ),
-          ),
-          //https://m.gufengmh8.com/themes/mip/phone/images/icon_h2_2.png
           SliverFillRemaining(
             child: ChangeNotifierProvider<BaseListProvider<ManhuaDetail>>(
                 create: (_) => _baseListProvider,
@@ -125,45 +102,48 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                                   )),
                               Gaps.vGap8,
                               Container(
-                                child: GridView.builder(
-                                  //将所有子控件在父控件中填满
-                                  shrinkWrap: true,
-                                  //解决ListView嵌套GridView滑动冲突问题
-                                  physics: NeverScrollableScrollPhysics(),
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3, //每行几列
-                                      childAspectRatio: 0.58),
-                                  itemCount: _baseListProvider.list[index].types.length,
-                                  itemBuilder: (context, i) {
-                                    //要返回的item样式
-                                    return InkWell(
-                                      child: Column(
-                                        children: [
-                                          LoadImage(
-                                            _baseListProvider.list[index].types[i].cover,
-                                            width: 100,
-                                            height: 150,
-                                            fit: BoxFit.cover,
-                                          ),
-                                          Gaps.vGap8,
-                                          Text(
-                                            _baseListProvider.list[index].types[i].title,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          Text(
-                                            _baseListProvider.list[index].types[i].author,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        NavigatorUtils.push(context,
-                                            '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].types[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].types[i].title)}');
-                                      },
-                                    );
-                                  },
-                                ),
-                              )
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: Wrap(
+                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    runSpacing: 20,
+                                    spacing: 20,
+                                    children: List.generate(
+                                        _baseListProvider.list[index].types.length,
+                                        (i) => InkWell(
+                                              child: Column(
+                                                children: [
+                                                  LoadImage(
+                                                    _baseListProvider.list[index].types[i].cover,
+                                                    width: 100,
+                                                    height: 150,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                  Gaps.vGap8,
+                                                  Container(
+                                                    width: 100,
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      _baseListProvider.list[index].types[i].title,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  Gaps.vGap8,
+                                                  Container(
+                                                    width: 100,
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      _baseListProvider.list[index].types[i].author,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              onTap: () {
+                                                NavigatorUtils.push(context,
+                                                    '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].types[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].types[i].title)}');
+                                              },
+                                            )).toList(),
+                                  ))
                             ],
                           )),
                         ),
@@ -172,7 +152,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                     physics: AlwaysScrollableScrollPhysics(),
                   );
                 })),
-          )
+          ),
         ],
       )),
     );

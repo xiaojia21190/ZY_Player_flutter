@@ -26,7 +26,8 @@ class TokenInterceptor extends Interceptor {
     params['refresh_token'] = SpUtil.getString(Constant.refreshToken);
     try {
       _tokenDio.options = DioUtils.instance.dio.options;
-      final Response response = await _tokenDio.post('lgn/refreshToken', data: params);
+      final Response response =
+          await _tokenDio.post('lgn/refreshToken', data: params);
       if (response.statusCode == ExceptionHandle.success) {
         return json.decode(response.data.toString())['access_token'];
       }
@@ -41,7 +42,8 @@ class TokenInterceptor extends Interceptor {
   @override
   Future<Object> onResponse(Response response) async {
     //401代表token过期
-    if (response != null && response.statusCode == ExceptionHandle.unauthorized) {
+    if (response != null &&
+        response.statusCode == ExceptionHandle.unauthorized) {
       Log.d('-----------自动刷新Token------------');
       final Dio dio = DioUtils.instance.dio;
       dio.interceptors.requestLock.lock();
@@ -62,7 +64,7 @@ class TokenInterceptor extends Interceptor {
               data: request.data,
               queryParameters: request.queryParameters,
               cancelToken: request.cancelToken,
-              options: request,
+              options: request as Options,
               onReceiveProgress: request.onReceiveProgress);
           return response;
         } on DioError catch (e) {
@@ -85,7 +87,11 @@ class LoggingInterceptor extends Interceptor {
     if (options.queryParameters.isEmpty) {
       Log.d('RequestUrl: ' + options.baseUrl + options.path);
     } else {
-      Log.d('RequestUrl: ' + options.baseUrl + options.path + '?' + Transformer.urlEncodeMap(options.queryParameters));
+      Log.d('RequestUrl: ' +
+          options.baseUrl +
+          options.path +
+          '?' +
+          Transformer.urlEncodeMap(options.queryParameters));
     }
     Log.d('RequestMethod: ' + options.method);
     Log.d('RequestHeaders:' + options.headers.toString());

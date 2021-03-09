@@ -5,7 +5,7 @@ import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +29,6 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
 
   @override
   initState() {
-    super.initState();
     _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
     controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
@@ -42,6 +41,8 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
       }
     });
     controller.forward();
+
+    super.initState();
   }
 
   dispose() {
@@ -53,7 +54,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
   Widget build(BuildContext context) {
     var width = Screen.widthOt;
     var bgHeight = width / 0.9;
-    var height = Screen.topSafeHeight + 250;
+    var height = Screen.topSafeHeight + 200;
     return Container(
       width: width,
       height: height,
@@ -87,13 +88,18 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
     var width = Screen.widthOt;
     return Container(
       width: width,
-      padding: EdgeInsets.fromLTRB(15, 54 + Screen.topSafeHeight, 10, 10),
+      padding: EdgeInsets.fromLTRB(15, Screen.topSafeHeight, 10, 10),
       color: Colors.transparent,
       child: GestureDetector(
         onTap: () {
+          String jsonString = jsonEncode(novel);
           int index = _xiaoShuoProvider.readList.lastIndexWhere((element) => element.split("_")[0] == novel.id);
-          NavigatorUtils.push(context,
-              '${XiaoShuoRouter.contentPage}?id=${novel.id}&chpId=${_xiaoShuoProvider.readList[index].split("_")[1]}&title=${Uri.encodeComponent(novel.name)}');
+          if (index >= 0) {
+            NavigatorUtils.push(context,
+                '${XiaoShuoRouter.contentPage}?id=${novel.id}&chpId=${_xiaoShuoProvider.readList[index].split("_")[1]}&title=${Uri.encodeComponent(novel.name)}');
+          } else {
+            NavigatorUtils.push(context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
+          }
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,12 +116,12 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 40),
+                  SizedBox(height: 10),
                   Text(novel.name, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 20),
                   Row(
                     children: <Widget>[
-                      Text(' 读至${Random.secure().nextInt(100)}%     继续阅读 ', style: TextStyle(fontSize: 14, color: Colours.paper)),
+                      Text(' 读至${Random.secure().nextInt(100)}%     继续阅读 ',
+                          style: TextStyle(fontSize: 14, color: Colours.paper)),
                       Image.asset('assets/images/book/bookshelf_continue_read.png'),
                     ],
                   ),

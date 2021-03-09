@@ -3,7 +3,7 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
@@ -53,9 +53,7 @@ class _ShuJiaPageState extends State<ShuJiaPage>
     List<Widget> children = [];
     if (list.length > 0) {
       list.forEach((novel) {
-        // 寻找最后的章节，显示到页面
-        int index = _xiaoShuoProvider.readList.lastIndexWhere((element) => element.split("_")[0] == novel.id);
-        children.add(BookshelfItemView(novel, _xiaoShuoProvider.readList[index].split("_")[1]));
+        children.add(BookshelfItemView(novel, "-1"));
       });
     }
     var width = (Screen.widthOt - 15 * 2 - 24 * 2) / 3;
@@ -86,50 +84,28 @@ class _ShuJiaPageState extends State<ShuJiaPage>
     return NestedScrollView(
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return [
-          SliverAppBar(
-            forceElevated: innerBoxIsScrolled,
-            centerTitle: true,
-            elevation: 0,
-            floating: false,
-            pinned: true,
-            snap: false,
-            expandedHeight: ScreenUtil.getInstance().getWidth(230),
-            title: Text(
-              "书架",
-              style: TextStyle(color: Colours.text),
-            ),
-            flexibleSpace: Selector<XiaoShuoProvider, XiaoshuoDetail>(
+          SliverToBoxAdapter(
+            child: Selector<XiaoShuoProvider, XiaoshuoDetail>(
                 builder: (_, lastread, __) {
-                  return FlexibleSpaceBar(
-                    background: lastread != null
-                        ? BookshelfHeader(lastread)
-                        : Stack(
-                            children: [
-                              LoadImage(
-                                "book/bookshelf_bg",
-                                width: Screen.widthOt,
-                              ),
-                              Positioned(
-                                top: ScreenUtil.getInstance().getWidth(230) / 2,
-                                left: Screen.widthOt / 2 - 60,
-                                child: Text("点击加号添加小说"),
-                              )
-                            ],
-                          ),
-                  );
+                  return lastread != null
+                      ? BookshelfHeader(lastread)
+                      : Stack(
+                          children: [
+                            LoadImage(
+                              "book/bookshelf_bg",
+                              width: Screen.widthOt,
+                              height: Screen.topSafeHeight + 200,
+                            ),
+                            Positioned(
+                              top: 230 / 2,
+                              left: Screen.widthOt / 2 - 60,
+                              child: Text("点击加号添加小说"),
+                            )
+                          ],
+                        );
                 },
                 selector: (_, store) => store.lastread),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    NavigatorUtils.push(context, '${XiaoShuoRouter.searchPage}');
-                  },
-                  child: Icon(
-                    Icons.search_sharp,
-                    color: Colours.text,
-                  ))
-            ],
-          ),
+          )
         ];
       },
       body: Container(

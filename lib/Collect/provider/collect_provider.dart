@@ -1,12 +1,8 @@
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/model/ting_shu_detail.dart';
-import 'package:ZY_Player_flutter/tingshu/page/tingshu_detail_page.dart';
-// import 'package:ZY_Player_flutter/model/xiaoshuo_resource.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
-
-import '../../model/detail_reource.dart';
 
 class CollectProvider extends ChangeNotifier {
   List<Playlist> _listDetailResource = [];

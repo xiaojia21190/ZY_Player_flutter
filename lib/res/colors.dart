@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Colours {
-  static const Color app_main = Color(0xFF4688FA);
+  static const Color app_main = Color(0xff36DAB9);
   static const Color dark_app_main = Color(0xFF3F7AE0);
 
   static const Color bg_color = Color(0xfff1f1f1);
@@ -42,34 +42,20 @@ class Colours {
 
   static const Color red_selected_line = Color(0xffF96634);
 
-  static Color primary = Color(0xFF23B38E);
-  static Color secondary = Color(0xFF51DEC6);
-  static Color orange = Color(0xFFF67264);
-  static Color white = Color(0xFFFFFFFF);
-  static Color paper = Color(0xFFF5F5F5);
-  static Color lightGray = Color(0xFFEEEEEE);
-  static Color darkGray = Color(0xFF333333);
-  static Color gray = Color(0xFF888888);
-  static Color blue = Color(0xFF3688FF);
-  static Color golden = Color(0xff8B7961);
+  static const Color primary = Color(0xFF23B38E);
+  static const Color secondary = Color(0xFF51DEC6);
+  static const Color orange = Color(0xFFF67264);
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color paper = Color(0xFFF5F5F5);
+  static const Color lightGray = Color(0xFFEEEEEE);
+  static const Color darkGray = Color(0xFF333333);
+  static const Color gray = Color(0xFF888888);
+  static const Color blue = Color(0xFF3688FF);
+  static const Color golden = Color(0xff8B7961);
 
   // 护眼色
-  static Color yinhebai = Color(0xffFFFFFF);
-  static Color xingrenhuang = Color(0xffFAF9DE);
-  static Color qinyehe = Color(0xffFFF2E2);
-  static Color yanzhihong = Color(0xffFDE6E0);
-  static Color qingcaolv = Color(0xffE3EDCD);
-  static Color haitianlan = Color(0xffDCE2F1);
-  static Color geqinzi = Color(0xffE9EBFE);
-  static Color jiguanghui = Color(0xffEAEAEF);
-  /**
- * 银河白    #FFFFFF   RGB(255, 255, 255)
-    杏仁黄    #FAF9DE   RGB(250, 249, 222)
-    秋叶褐    #FFF2E2   RGB(255, 242, 226)
-    胭脂红    #FDE6E0   RGB(253, 230, 224)
-    青草绿    #E3EDCD   RGB(227, 237, 205)
-    海天蓝    #DCE2F1   RGB(220, 226, 241)
-    葛巾紫    #E9EBFE   RGB(233, 235, 254)
-    极光灰    #EAEAEF   RGB(234, 234, 239)
- */
+  static const Color yinhebai = Color(0xffFFFFFF);
+  static const Color xingrenhuang = Color(0xffF6F3E0);
+  static const Color qingcaolv = Color(0xffCCF1CF);
+  static const Color cunhei = Color(0xff212830);
 }

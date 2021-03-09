@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 
@@ -8,18 +9,44 @@ import 'routers.dart';
 class NavigatorUtils {
   static void push(BuildContext context, String path, {bool replace = false, bool clearStack = false}) {
     unfocus();
-    Application.router.navigateTo(context, path, replace: replace, clearStack: clearStack, transition: TransitionType.cupertino);
+    Application.router.navigateTo(
+      context,
+      path,
+      replace: replace,
+      clearStack: clearStack,
+      transition: TransitionType.custom,
+      routeSettings: RouteSettings(name: path.split("?")[0]),
+      transitionBuilder: (context, animation, secondaryAnimation, child) => SharedAxisTransition(
+        animation: animation,
+        secondaryAnimation: secondaryAnimation,
+        transitionType: SharedAxisTransitionType.scaled,
+        child: child,
+      ),
+    );
   }
 
-  static void pushResult(BuildContext context, String path, Function(Object) function, {bool replace = false, bool clearStack = false}) {
+  static void pushResult(BuildContext context, String path, Function(Object) function,
+      {bool replace = false, bool clearStack = false}) {
     unfocus();
     Application.router
-        .navigateTo(context, path, replace: replace, clearStack: clearStack, transition: TransitionType.cupertino)
+        .navigateTo(
+      context,
+      path,
+      replace: replace,
+      clearStack: clearStack,
+      transition: TransitionType.custom,
+      transitionBuilder: (context, animation, secondaryAnimation, child) => SharedAxisTransition(
+        animation: animation,
+        secondaryAnimation: secondaryAnimation,
+        transitionType: SharedAxisTransitionType.scaled,
+        child: child,
+      ),
+    )
         .then((Object result) {
-      // 页面返回result为null
-      if (result == null) {
-        return;
-      }
+      // // 页面返回result为null
+      // if (result == null) {
+      //   return;
+      // }
       function(result);
     }).catchError((dynamic error) {
       print('$error');
@@ -41,7 +68,8 @@ class NavigatorUtils {
   /// 跳到WebView页
   static void goWebViewPage(BuildContext context, String title, String url, {String flag}) {
     //fluro 不支持传中文,需转换
-    push(context, '${Routes.webViewPage}?title=${Uri.encodeComponent(title)}&url=${Uri.encodeComponent(url)}&flag=$flag');
+    push(context,
+        '${Routes.webViewPage}?title=${Uri.encodeComponent(title)}&url=${Uri.encodeComponent(url)}&flag=$flag');
   }
 
   static void unfocus() {

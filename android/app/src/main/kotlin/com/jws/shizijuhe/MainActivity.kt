@@ -1,4 +1,4 @@
-package com.jws.ZY_Player_flutter
+package com.jws.shizijuhe
 
 import io.flutter.embedding.android.FlutterActivity
 

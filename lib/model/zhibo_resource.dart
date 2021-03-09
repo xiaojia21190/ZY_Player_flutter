@@ -25,12 +25,16 @@ class M3uResult extends Object {
   @JsonKey(name: 'title')
   String title;
 
+  @JsonKey(name: 'cover')
+  String cover;
+
   @JsonKey(name: 'url')
   String url;
 
   M3uResult(
     this.title,
     this.url,
+    this.cover,
   );
 
   factory M3uResult.fromJson(Map<String, dynamic> srcJson) => _$M3uResultFromJson(srcJson);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Navigator工具类 
+/// Navigator工具类
 /// 更推荐使用'routers/fluro_navigator.dart'
 class AppNavigator {
   static void push(BuildContext context, Widget scene) {
@@ -18,18 +18,17 @@ class AppNavigator {
         context,
         MaterialPageRoute(
           builder: (BuildContext context) => scene,
-        )
-    );
+        ));
   }
 
   /// 指定页面加入到路由中，然后将其他所有的页面全部pop
   static void pushAndRemoveUntil(BuildContext context, Widget scene) {
     Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) => scene,
-      ), (route) => route == null
-    );
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => scene,
+        ),
+        (route) => route == null);
   }
 
   static void pushResult(BuildContext context, Widget scene, Function(Object) function) {

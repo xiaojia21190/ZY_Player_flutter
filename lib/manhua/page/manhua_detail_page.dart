@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/manhua/provider/manhua_detail_provider.dart';
@@ -8,15 +9,19 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/util/utils.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
+import 'package:ZY_Player_flutter/util/qs_common.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../manhua_router.dart';
 
@@ -41,11 +46,15 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   CollectProvider _collectProvider;
   String actionName = "";
 
+  int yueduIndex = 0;
+
   @override
   void initState() {
     super.initState();
+    yueduIndex = 0;
     _collectProvider = Store.value<CollectProvider>(context);
     _collectProvider.setListDetailResource("collcetManhua");
+
     initData();
   }
 
@@ -83,6 +92,108 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     return false;
   }
 
+  Widget buildShare(String image, String title) {
+    GlobalKey haibaoKey2 = GlobalKey();
+    return TextButton.icon(
+        onPressed: () => {
+              showElasticDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return Material(
+                    type: MaterialType.transparency,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          RepaintBoundary(
+                            key: haibaoKey2,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: context.dialogBackgroundColor,
+                              ),
+                              width: 300,
+                              height: 430,
+                              child: Column(
+                                children: <Widget>[
+                                  LoadImage(
+                                    image,
+                                    height: 320,
+                                    width: 300,
+                                    // width: ,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Expanded(
+                                      child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text("分享 虱子聚合"),
+                                          Container(
+                                            child: Text(
+                                              "$title",
+                                              overflow: TextOverflow.ellipsis,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Text("点击复制链接"),
+                                          Text("或者保存到相册分享")
+                                        ],
+                                      ),
+                                      QrImage(
+                                        padding: EdgeInsets.all(7),
+                                        backgroundColor: Colors.white,
+                                        data:
+                                            "http://hall.moitech.cn/shizhijuhe/index.html#/upload?random=${DateTime.now()}",
+                                        size: 100,
+                                      ),
+                                    ],
+                                  ))
+                                ],
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              TextButton(
+                                child: const Text('点击复制链接', style: TextStyle(color: Colors.white)),
+                                onPressed: () {
+                                  Clipboard.setData(ClipboardData(
+                                      text:
+                                          "http://hall.moitech.cn/shizhijuhe/index.html#/upload?random=${DateTime.now()}"));
+                                  Toast.show("复制链接成功，快去分享吧");
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('保存到相册', style: TextStyle(color: Colors.white)),
+                                onPressed: () async {
+                                  ByteData byteData = await QSCommon.capturePngToByteData(haibaoKey2);
+                                  // 保存
+                                  var result = await QSCommon.saveImageToCamera(byteData);
+                                  if (result["isSuccess"]) {
+                                    Toast.show("保存成功, 快去分享吧");
+                                  } else {
+                                    Toast.show("保存失败");
+                                  }
+                                },
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              )
+            },
+        icon: Icon(Icons.share),
+        label: Text("分享漫画"));
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
@@ -116,7 +227,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                     slivers: <Widget>[
                       SliverToBoxAdapter(
                         child: Container(
-                          height: ScreenUtil.getInstance().getWidth(100),
+                          height: 100,
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -146,6 +257,9 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                             ],
                           ),
                         ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: buildShare(provider.catLog.cover, provider.catLog.title),
                       ),
                       SliverToBoxAdapter(
                         child: Gaps.vGap8,

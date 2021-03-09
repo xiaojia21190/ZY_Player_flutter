@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:ZY_Player_flutter/event/event_bus.dart';
+import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_chap.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -7,12 +9,14 @@ import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
-import 'package:ZY_Player_flutter/utils/provider.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screen/flutter_screen.dart';
+import 'package:provider/provider.dart';
 
 class ColorCh {
   String name;
@@ -23,7 +27,7 @@ class ColorCh {
 class ReaderMenu extends StatefulWidget {
   final String title;
   final String id;
-  final String chpId;
+  final int chpId;
   final int articleIndex;
 
   final VoidCallback onTap;
@@ -52,7 +56,6 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
 
   double light = 0;
   double maxLight = 0;
-  String _lightNm;
   bool lightSlider = false;
   bool colorSlider = false;
   bool sizeSlider = false;
@@ -61,22 +64,20 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   List<ColorCh> _list = [
     ColorCh("银河白", Colours.yinhebai),
     ColorCh("杏仁黄", Colours.xingrenhuang),
-    ColorCh("秋叶褐", Colours.qinyehe),
-    ColorCh("胭脂红", Colours.yanzhihong),
     ColorCh("青草绿", Colours.qingcaolv),
-    ColorCh("海天蓝", Colours.haitianlan),
-    ColorCh("葛巾紫", Colours.geqinzi),
-    ColorCh("极光灰", Colours.jiguanghui),
-    ColorCh("暗黑", Colors.black),
+    ColorCh("暗黑", Colours.cunhei),
   ];
 
   List<XiaoshuoList> _list1 = [];
+
+  Future fetData;
 
   @override
   initState() {
     _appStateProvider = Store.value<AppStateProvider>(context);
     this.getLight();
     fsise = _appStateProvider.xsFontSize;
+    fetData = fetchData();
     super.initState();
   }
 
@@ -85,11 +86,14 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   }
 
   Future fetchData() async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail, queryParameters: {"id": widget.id, "page": -1, "reverse": "1"},
-        onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail,
+        queryParameters: {"id": widget.id, "page": -1, "reverse": "1"}, onSuccess: (resultList) {
       XiaoshuoChap result = XiaoshuoChap.fromJson(resultList);
       List.generate(result.xiaoshuoList.length, (index) => _list1.add(result.xiaoshuoList[index]));
-    }, onError: (_, __) {});
+    }, onError: (_, __) {
+      Toast.show("接口异常");
+      Navigator.pop(context);
+    });
     return _list1;
   }
 
@@ -104,7 +108,8 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
       left: 0,
       right: 0,
       child: Container(
-        decoration: BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+        decoration:
+            BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
         height: Screen.navigationBarHeight - 40,
         padding: EdgeInsets.fromLTRB(20, 0, 5, 0),
         child: Row(
@@ -131,7 +136,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   buildLightProgress() {
     return Container(
         width: Screen.widthOt,
-        height: 80,
+        height: _appStateProvider.opacityLevel == 1.0 ? 80 : 0,
         color: Colors.black87,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
@@ -147,7 +152,6 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
               });
             },
             label: "亮度:${(light * 100).toInt()}%", //气泡的值
-            divisions: 10, //进度条上显示多少个刻度点
             max: 1,
             min: 0,
           )
@@ -157,7 +161,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   buildSize() {
     return Container(
       width: Screen.widthOt,
-      height: 80,
+      height: _appStateProvider.opacityLevel == 1.0 ? 80 : 0,
       color: Colors.black87,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -175,7 +179,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
               });
             },
             label: "字体大小:$fsise", //气泡的值
-            divisions: 10, //进度条上显示多少个刻度点
+            divisions: 20, //进度条上显示多少个刻度点
             max: 30,
             min: 10,
           )
@@ -187,7 +191,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   buildColor() {
     return Container(
       width: Screen.widthOt,
-      height: 80,
+      height: _appStateProvider.opacityLevel == 1.0 ? 80 : 0,
       color: Colors.black87,
       padding: EdgeInsets.only(top: 20),
       child: Wrap(
@@ -209,6 +213,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                         width: 30,
                         decoration: BoxDecoration(
                             color: _list[index].color,
+                            borderRadius: BorderRadius.circular(8.0),
                             border: _appStateProvider.xsColor == _list[index].color
                                 ? Border.all(color: Colors.redAccent, width: 3)
                                 : Border.all(color: Colors.transparent)),
@@ -235,7 +240,8 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
           colorSlider ? buildColor() : Container(),
           sizeSlider ? buildSize() : Container(),
           Container(
-            decoration: BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+            decoration:
+                BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
             padding: EdgeInsets.only(bottom: Screen.bottomSafeHeight),
             child: Column(
               children: <Widget>[
@@ -264,34 +270,40 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return Container(
-                          height: ScreenUtil.getInstance().getWidth(550),
+                          height: 550,
                           decoration: BoxDecoration(
-                              color: Colours.qingcaolv, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                              color: Colours.qingcaolv,
+                              borderRadius:
+                                  BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
                           child: Column(
                             children: [
                               _list.length > 0
                                   ? TextButton(
                                       onPressed: () {
-                                        var index = _list1.indexWhere((element) => element.id == int.parse(widget.chpId));
-                                        scrollController.animateTo(50.0 * index - 300, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                        var index = _list1.indexWhere((element) => element.id == widget.chpId);
+                                        scrollController.animateTo(50.0 * index - 80,
+                                            duration: Duration(milliseconds: 300), curve: Curves.ease);
                                       },
                                       child: Text("去当前"))
                                   : Container(),
                               Expanded(
                                   child: FutureBuilder(
-                                future: fetchData(),
+                                future: fetData,
                                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                                   if (snapshot.connectionState == ConnectionState.done) {
-                                    if (snapshot.hasData) {
+                                    if (snapshot.hasData && snapshot.data.length > 0) {
                                       return ListView.builder(
                                         controller: scrollController,
+                                        itemExtent: 50,
                                         itemBuilder: (context, index) {
                                           return ClickItem(
+                                            slected: widget.chpId == snapshot.data[index].id,
                                             title: snapshot.data[index].name,
                                             content: snapshot.data[index].id.toString(),
                                             onTap: () {
-                                              // ApplicationEvent.event.fire(LoadXiaoShuoEvent(snapshot.data[index].id, snapshot.data[index].name));
-                                              // Navigator.pop(context);
+                                              ApplicationEvent.event.fire(LoadXiaoShuoEvent(
+                                                  snapshot.data[index].id, snapshot.data[index].name));
+                                              Navigator.pop(context);
                                             },
                                           );
                                         },
@@ -300,7 +312,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                                     } else {
                                       return Container(
                                         alignment: Alignment.center,
-                                        child: TextButton(onPressed: fetchData, child: Text('error')),
+                                        child: TextButton(onPressed: fetchData, child: Text('点击刷新章节')),
                                       );
                                     }
                                   } else {
@@ -369,13 +381,17 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: <Widget>[
-          buildTopView(context),
-          buildBottomView(),
-        ],
-      ),
-    );
+    return Selector<AppStateProvider, double>(
+        builder: (_, value, __) {
+          return AnimatedOpacity(
+            opacity: value,
+            duration: new Duration(milliseconds: 300),
+            child: Stack(children: <Widget>[
+              buildTopView(context),
+              buildBottomView(),
+            ]),
+          );
+        },
+        selector: (_, store) => store.opacityLevel);
   }
 }
