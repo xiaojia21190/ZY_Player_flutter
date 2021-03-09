@@ -1,19 +1,10 @@
-# 虱子聚合 资源播放  如果喜欢，麻烦点个star吧！谢谢！！
-
-Flutter版本视频播放器，免费无广告
-
-
-
-### 声明
-希望大家认真对待开源的东西，别像有些人吃相这么难看，你自己搞毒应用，至少改个包名吧，真是服了，api后台接口不在维护，大家耗子尾汁。
-
-
+# 虱子聚合 全新版本  如果喜欢，麻烦点个star吧！谢谢！！
 
 ### 订阅新版本
 <img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
 ### 版本安装
-- [android v1.5.2](https://gamehall-1255478053.cos.ap-chengdu.myqcloud.com/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk)
+- [android v1.6.7](https://gamehall-1255478053.cos.ap-chengdu.myqcloud.com/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk)
 
 ### 后台
 -  https://github.com/xiaojia21190/egg_crawel
