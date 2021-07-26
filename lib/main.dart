@@ -1,6 +1,7 @@
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
+import 'package:ZY_Player_flutter/login/page/login_page.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/intercept.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
@@ -8,6 +9,7 @@ import 'package:ZY_Player_flutter/provider/theme_provider.dart';
 import 'package:ZY_Player_flutter/routes/404.dart';
 import 'package:ZY_Player_flutter/routes/application.dart';
 import 'package:ZY_Player_flutter/routes/routers.dart';
+import 'package:ZY_Player_flutter/util/app_analysis.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
@@ -22,18 +24,24 @@ import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 import 'package:screen_ratio_adapter/screen_ratio_adapter.dart';
 import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
-import 'package:ZY_Player_flutter/util/app_analysis.dart';
 
 Future<void> main() async {
-//  debugProfileBuildsEnabled = true;
-//  debugPaintLayerBordersEnabled = true;
-//  debugProfilePaintsEnabled = true;
-//  debugRepaintRainbowEnabled = true;
+  // debugProfileBuildsEnabled = true;
+  // debugPaintLayerBordersEnabled = true;
+  // debugProfilePaintsEnabled = true;
+  // debugRepaintRainbowEnabled = true;
   WidgetsFlutterBinding.ensureInitialized();
 
   /// sp初始化
   await SpUtil.getInstance();
-  runFxApp(Store.init(MyApp()), uiBlueprints: BlueprintsRectangle(750, 1334));
+  final String accessToken = SpUtil.getString(Constant.accessToken);
+  runFxApp(
+      Store.init(MyApp(
+        home: accessToken.isNotEmpty ? Home() : LoginPage(),
+        // home: Home(),
+      )),
+      uiBlueprints: BlueprintsRectangle(750, 1334));
+
   // 透明状态栏
   if (Device.isAndroid) {
     final SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
@@ -44,7 +52,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final Widget home;
   final ThemeData theme;
-//
+
   MyApp({this.home, this.theme}) {
     Log.init();
     initDio();
@@ -69,10 +77,10 @@ class MyApp extends StatelessWidget {
     }
 
     setInitDio(
-      baseUrl: Constant.inProduction ? 'http://140.143.207.151:7001/' : 'http://192.168.0.115:7001/',
+      //adb kill-server && adb server && adb shell
+      baseUrl: Constant.inProduction ? '后台地址/' : '后台地址/',
       interceptors: interceptors,
     );
-
   }
 
   @override
@@ -91,8 +99,7 @@ class MyApp extends StatelessWidget {
                   theme: theme ?? provider.getTheme(),
                   darkTheme: provider.getTheme(isDarkMode: true),
                   themeMode: provider.getThemeMode(),
-                  // home: home ?? SplashPage(),
-                  home: Home(),
+                  home: home,
                   onGenerateRoute: Application.router.generator,
                   localizationsDelegates: const [
                     AppLocalizationsDelegate(),
@@ -105,8 +112,7 @@ class MyApp extends StatelessWidget {
                     /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
                     return MediaQuery(
                       data: MediaQuery.of(context).copyWith(
-                          textScaleFactor:
-                              1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                          textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
                       child: child,
                     );
                   },
