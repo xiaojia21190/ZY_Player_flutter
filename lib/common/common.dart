@@ -14,8 +14,11 @@ class Constant {
   static const String code = 'code';
 
   static const String keyGuide = 'keyGuide';
-  static const String phone = 'phone';
+  static const String email = 'email';
+  static const String password = 'password';
   static const String accessToken = 'accessToken';
+  static const String orderid = 'orderid';
+  static const String jihuoDate = 'jihuoDate';
   static const String refreshToken = 'refreshToken';
 
   static const String theme = 'AppTheme';
