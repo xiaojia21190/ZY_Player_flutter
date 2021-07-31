@@ -14,7 +14,8 @@ class CurrentDownLoadVideo {
 }
 
 class DeviceEvent {
-  DeviceEvent();
+  final int device;
+  DeviceEvent(this.device);
 }
 
 // class ChangeJujiEvent {
