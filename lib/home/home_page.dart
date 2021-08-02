@@ -1,11 +1,14 @@
-import 'dart:typed_data';
-
-import 'package:ZY_Player_flutter/Collect/collect_router.dart';
-import 'package:ZY_Player_flutter/Collect/page/collect_page.dart';
+import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
+import 'package:ZY_Player_flutter/collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
+import 'package:ZY_Player_flutter/login/login_router.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
+import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
+import 'package:ZY_Player_flutter/model/player_hot.dart';
+import 'package:ZY_Player_flutter/model/ting_shu_detail.dart';
+import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/page/player_page.dart';
@@ -15,43 +18,51 @@ import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/setting/setting_router.dart';
-import 'package:ZY_Player_flutter/tingshu/page/tingshu_page.dart';
 import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
+import 'package:ZY_Player_flutter/util/hex_color.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
-import 'package:ZY_Player_flutter/util/provider.dart';
+import 'package:ZY_Player_flutter/widgets/bubble_tab_indicator.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/page/shujia_page.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flustars/flustars.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_update_dialog/flutter_update_dialog.dart';
 import 'package:ota_update/ota_update.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+class IconTitle {
+  final IconData icon;
+  final String title;
+  IconTitle({this.icon, this.title});
+}
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> with TickerProviderStateMixin {
   List<Widget> _pageList;
 
-  final List<String> _appBarTitles = ['影视', '小说', '动漫', '收藏'];
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
 
-  List<BottomNavigationBarItem> _list;
-  List<BottomNavigationBarItem> _listDark;
   AppStateProvider appStateProvider;
   PlayerProvider playerProvider;
+  CollectProvider collectProvider;
 
   UpdateDialog dialog;
   OtaEvent currentEvent;
@@ -62,6 +73,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool isUpdating = false;
 
   TabController _tabController;
+  TabController _tabControllerColl;
+
+  AnimationController _animationController;
+  Animation<double> animation;
+  CurvedAnimation curve;
+
+  final iconList = <IconTitle>[
+    IconTitle(icon: Icons.play_circle_fill, title: "影视"),
+    IconTitle(icon: Icons.book, title: "小说"),
+    IconTitle(icon: Icons.theater_comedy, title: "漫画"),
+    IconTitle(icon: Icons.favorite, title: "收藏"),
+  ];
 
   @override
   void initState() {
@@ -72,20 +95,149 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     } else {
       // ios 应用商店
     }
-    // 获取公告数据
+
+    // 获取是否激活
+    checkJihuo();
 
     // 获得Player数据
     initData();
     appStateProvider = Store.value<AppStateProvider>(context);
     playerProvider = Store.value<PlayerProvider>(context);
+    collectProvider = Store.value<CollectProvider>(context);
     // 初始化投屏数据
     appStateProvider.initDlnaManager();
-    _tabController = TabController(vsync: this, length: 3);
+    _tabController = TabController(vsync: this, length: 2);
+    _tabControllerColl = TabController(vsync: this, length: 3);
     playerProvider.tabController = _tabController;
+    collectProvider.tabController = _tabControllerColl;
 
-    Future.microtask(() {
+    Future.microtask(() async {
       appStateProvider.getPlayerRecord();
+      await getUserInfo();
     });
+
+    _animationController = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+    curve = CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(
+        0.5,
+        1.0,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+    animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(curve);
+
+    Future.delayed(
+      Duration(seconds: 1),
+      () => _animationController.forward(),
+    );
+  }
+
+  gongGao(String gongao) async {
+    return showElasticDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Material(
+          type: MaterialType.transparency,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(color: Colours.qingcaolv, borderRadius: BorderRadius.all(Radius.circular(10))),
+                  width: 250,
+                  height: 250,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.red,
+                          highlightColor: Colors.yellow,
+                          child: Text(
+                            "公告",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "$gongao",
+                            softWrap: true,
+                            style: TextStyle(color: Colours.text, letterSpacing: 1.2),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future getUserInfo() async {
+    await DioUtils.instance.requestNetwork(
+      Method.get,
+      HttpApi.queryUserInfo,
+      onSuccess: (data) {
+        List<XiaoshuoDetail> _xslist = [];
+        JsonUtil.getObjectList(data["xslist"], (v) => _xslist.add(XiaoshuoDetail.fromJson(v)));
+        SpUtil.putObjectList("collcetXiaoshuo", _xslist);
+
+        List<Playlist> _pylist = [];
+        JsonUtil.getObjectList(data["playlist"], (v) => _pylist.add(Playlist.fromJson(v)));
+        SpUtil.putObjectList("collcetPlayer", _pylist);
+
+        collectProvider.setListDetailResource("collcetPlayer", _pylist);
+        List<TingShuDetail> _tslist = [];
+        JsonUtil.getObjectList(data["tslist"], (v) => _tslist.add(TingShuDetail.fromJson(v)));
+        SpUtil.putObjectList("collcetTingshu", _tslist);
+        collectProvider.setListDetailResource("collcetTingshu", _tslist);
+
+        List<ManhuaCatlogDetail> _mhlist = [];
+        JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v)));
+        SpUtil.putObjectList("collcetManhua", _mhlist);
+        collectProvider.setListDetailResource("collcetManhua", _mhlist);
+      },
+      onError: (code, msg) {},
+    );
+  }
+
+  Future checkJihuo() async {
+    await DioUtils.instance.requestNetwork(
+      Method.get,
+      HttpApi.queryJihuo,
+      onSuccess: (data) {
+        SpUtil.putString(Constant.orderid, data["order"]);
+        SpUtil.putString(Constant.jihuoDate, data["jihuoDate"]);
+      },
+      onError: (code, msg) {},
+    );
   }
 
   Future checkUpDate({bool jinru = false}) async {
@@ -107,10 +259,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           // String ignoreBb = SpUtil.getString("ignoreBb");
           // if (currentVersion != ignoreBb) {
           // }
-          openUpdateDiolog();
+          openUpdateDialog();
         } else {
           if (jinru) {
             Toast.show("已经是最新版本了");
+          } else {
+            gongGao(data["gonggao"]);
           }
         }
       },
@@ -118,7 +272,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  openUpdateDiolog() {
+  openUpdateDialog() {
     if (dialog != null && dialog.isShowing()) {
       return;
     }
@@ -135,7 +289,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         radius: 8,
         themeColor: Color(0xFFFFAC5D),
         progressBackgroundColor: Color(0x5AFFAC5D),
-        isForce: false,
+        isForce: true,
         enableIgnore: false,
         updateButtonText: '开始升级',
         onUpdate: tryOtaUpdate);
@@ -155,14 +309,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           } else {
             Toast.show("升级失败，请从新下载");
             dialog.dismiss();
-            openUpdateDiolog();
+            openUpdateDialog();
           }
         },
       );
     } catch (e) {
       Toast.show("升级失败，请从新下载");
       dialog.dismiss();
-      openUpdateDiolog();
+      openUpdateDialog();
     }
   }
 
@@ -176,103 +330,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   void initData() {
-    _pageList = [PlayerPage(), ShuJiaPage(), ManhuaPage()];
-  }
-
-  List<BottomNavigationBarItem> _buildBottomNavigationBarItem() {
-    if (_list == null) {
-      var _tabImages = [
-        [
-          const LoadAssetImage(
-            'home/video',
-            width: 25.0,
-            color: Colours.unselected_item_color,
-          ),
-          const LoadAssetImage(
-            'home/video',
-            width: 25.0,
-            color: Colours.app_main,
-          ),
-        ],
-        [
-          const LoadAssetImage(
-            'home/xiaoshuo',
-            width: 25.0,
-            color: Colours.unselected_item_color,
-          ),
-          const LoadAssetImage(
-            'home/xiaoshuo',
-            width: 25.0,
-            color: Colours.app_main,
-          ),
-        ],
-        [
-          const LoadAssetImage(
-            'home/dongman',
-            width: 25.0,
-            color: Colours.unselected_item_color,
-          ),
-          const LoadAssetImage(
-            'home/dongman',
-            width: 25.0,
-            color: Colours.app_main,
-          ),
-        ],
-      ];
-      _list = List.generate(3, (i) {
-        return BottomNavigationBarItem(icon: _tabImages[i][0], activeIcon: _tabImages[i][1], label: _appBarTitles[i]);
-      });
-    }
-    return _list;
-  }
-
-  List<BottomNavigationBarItem> _buildDarkBottomNavigationBarItem() {
-    if (_listDark == null) {
-      var _tabImagesDark = [
-        [
-          const LoadAssetImage(
-            'home/video',
-            width: 25.0,
-            color: Colours.white,
-          ),
-          const LoadAssetImage(
-            'home/video',
-            width: 25.0,
-            color: Colours.dark_app_main,
-          ),
-        ],
-        [
-          const LoadAssetImage(
-            'home/xiaoshuo',
-            width: 25.0,
-            color: Colours.white,
-          ),
-          const LoadAssetImage(
-            'home/xiaoshuo',
-            width: 25.0,
-            color: Colours.dark_app_main,
-          ),
-        ],
-        [
-          const LoadAssetImage(
-            'home/dongman',
-            width: 25.0,
-            color: Colours.white,
-          ),
-          const LoadAssetImage(
-            'home/dongman',
-            width: 25.0,
-            color: Colours.dark_app_main,
-          ),
-        ],
-      ];
-
-      _listDark = List.generate(3, (i) {
-        return BottomNavigationBarItem(
-            icon: _tabImagesDark[i][0], activeIcon: _tabImagesDark[i][1], label: _appBarTitles[i]);
-      });
-    }
-    return _listDark;
+    _pageList = [PlayerPage(), ShuJiaPage(), ManhuaPage(), CollectPage()];
   }
 
   int _lastReportedPage = 0;
@@ -315,17 +373,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TextButton(
-                      child: const Text('点击直接进入加入qq群', style: TextStyle(color: Colors.white)),
+                      child: const Text('点击加好友', style: TextStyle(color: Colors.white)),
                       onPressed: () async {
-                        const url =
-                            "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D" +
-                                "IJq1PRxEMXFtGPZotuORjjOaHPh0HZgS";
+                        const url = "https://qm.qq.com/cgi-bin/qm/qr?k=CQQAk3iXGmdhvNPK0mWpZkIXSgYcJtOr&noverify=0";
                         if (await canLaunch(url)) {
                           await launch(url);
                         } else {
                           throw 'Could not launch $url';
                         }
-                        //
                       },
                     ),
                   ],
@@ -374,11 +429,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               isScrollable: true,
                               labelPadding: EdgeInsets.all(12.0),
                               indicatorSize: TabBarIndicatorSize.label,
-                              labelColor: Colours.app_main,
+                              labelColor: Colours.white,
                               unselectedLabelColor: isDark ? Colors.white : Colors.black,
+                              indicator: BubbleTabIndicator(),
                               tabs: const <Widget>[
                                 Text("影视"),
-                                Text("直播"),
                                 Text("听书"),
                               ],
                               onTap: (index) {
@@ -397,6 +452,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       break;
                     case 2:
                       return Text("漫画");
+                      break;
+                    case 3:
+                      return Selector<CollectProvider, PageController>(
+                          builder: (_, tab, __) {
+                            return TabBar(
+                              controller: _tabControllerColl,
+                              isScrollable: true,
+                              labelPadding: EdgeInsets.all(12.0),
+                              indicatorSize: TabBarIndicatorSize.label,
+                              labelColor: Colours.white,
+                              unselectedLabelColor: isDark ? Colors.white : Colors.black,
+                              indicator: BubbleTabIndicator(),
+                              tabs: const <Widget>[
+                                Text("影视"),
+                                Text("听书"),
+                                Text("漫画"),
+                              ],
+                              onTap: (index) {
+                                if (!mounted) {
+                                  return;
+                                }
+                                collectProvider.index = index;
+                                tab?.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                              },
+                            );
+                          },
+                          selector: (_, store) => store.pageController);
                       break;
                     default:
                       break;
@@ -450,53 +532,99 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 )
               ],
             ),
+            floatingActionButton: ScaleTransition(
+              scale: animation,
+              child: FloatingActionButton(
+                elevation: 8,
+                backgroundColor: HexColor('#FFA400'),
+                child: Text(
+                  "直播",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {
+                  _animationController.reset();
+                  _animationController.forward();
+
+                  NavigatorUtils.push(context, PlayerRouter.playerzhibo);
+                },
+              ),
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: <Widget>[
                   DrawerHeader(
-                      decoration: BoxDecoration(
-                        color: Colours.app_main,
-                      ),
-                      child: Text(
-                        '虱子聚合',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
+                    decoration: BoxDecoration(
+                      color: Colours.app_main,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          '虱子聚合',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                          ),
                         ),
-                      )),
-                  ClickItem(
-                    title: '收藏',
-                    onTap: () => NavigatorUtils.push(context, CollectRouter.collectPage),
+                        Text("userID: ${SpUtil.getString(Constant.email)}")
+                      ],
+                    ),
                   ),
+                  ClickItem(title: '会员', onTap: () => NavigatorUtils.push(context, SettingRouter.accountManagerPage)),
                   ClickItem(title: '观看记录', onTap: () => NavigatorUtils.push(context, SettingRouter.playerRecordPage)),
-                  ClickItem(
-                      title: '夜间模式',
-                      content: themeMode,
-                      onTap: () => NavigatorUtils.push(context, SettingRouter.themePage)),
+                  ClickItem(title: '夜间模式', content: themeMode, onTap: () => NavigatorUtils.push(context, SettingRouter.themePage)),
                   ClickItem(title: '检查更新', content: currentVersion, onTap: () => checkUpDate(jinru: true)),
                   ClickItem(
-                    title: '加入qq群',
+                      title: '切换账号',
+                      onTap: () {
+                        SpUtil.clear();
+                        NavigatorUtils.push(context, LoginRouter.loginPage);
+                      }),
+                  ClickItem(
+                    title: '加好友',
                     onTap: () => _showQQDialog(),
                   ),
                 ],
               ),
             ),
+            drawerEnableOpenDragGesture: true,
             bottomNavigationBar: Consumer<HomeProvider>(
               builder: (_, provider, __) {
-                return BottomNavigationBar(
-                  backgroundColor: ThemeUtils.getBackgroundColor(context),
-                  items: isDark ? _buildDarkBottomNavigationBarItem() : _buildBottomNavigationBarItem(),
-                  type: BottomNavigationBarType.shifting,
-                  currentIndex: provider.value,
-                  elevation: 10.0,
-                  iconSize: 21.0,
-                  selectedFontSize: Dimens.font_sp12,
-                  unselectedFontSize: Dimens.font_sp12,
-                  selectedItemColor: Theme.of(context).primaryColor,
-                  unselectedItemColor: isDark ? Colours.dark_text : Colours.unselected_item_color,
-                  onTap: (index) =>
-                      _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease),
+                return AnimatedBottomNavigationBar.builder(
+                  itemCount: iconList.length,
+                  tabBuilder: (int index, bool isActive) {
+                    final color = isActive ? HexColor('#FFA400') : Colors.white;
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          iconList[index].icon,
+                          size: 24,
+                          color: color,
+                        ),
+                        const SizedBox(height: 4),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(iconList[index].title, maxLines: 1, style: TextStyle(color: color)))
+                      ],
+                    );
+                  },
+                  backgroundColor: HexColor('#373A36'),
+                  activeIndex: provider.value,
+                  splashColor: HexColor('#FFA400'),
+                  notchAndCornersAnimation: animation,
+                  splashSpeedInMilliseconds: 300,
+                  notchSmoothness: NotchSmoothness.smoothEdge,
+                  gapLocation: GapLocation.center,
+                  leftCornerRadius: 0,
+                  rightCornerRadius: 0,
+                  onTap: (index) {
+                    _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                  },
                 );
               },
             ),
@@ -516,7 +644,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               },
               child: PageView(
                 controller: _pageController,
-                onPageChanged: (index) => provider.value = index,
+                onPageChanged: (index) => provider.value == index,
                 children: _pageList,
                 physics: NeverScrollableScrollPhysics(), // 禁止滑动
               ),
