@@ -1,10 +1,16 @@
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 import 'package:ZY_Player_flutter/login/widgets/my_text_field.dart';
+import 'package:ZY_Player_flutter/net/dio_utils.dart';
+import 'package:ZY_Player_flutter/net/http_api.dart';
+import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/routes/routers.dart';
 import 'package:ZY_Player_flutter/util/change_notifier_manage.dart';
+import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
@@ -29,7 +35,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
   bool _clickable = false;
-
+  AppStateProvider appStateProvider;
   @override
   Map<ChangeNotifier, List<VoidCallback>> changeNotifier() {
     final List<VoidCallback> callbacks = [_verify];
@@ -44,7 +50,8 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
   @override
   void initState() {
     super.initState();
-    _nameController.text = SpUtil.getString(Constant.phone);
+    appStateProvider = Store.value<AppStateProvider>(context);
+    _nameController.text = SpUtil.getString(Constant.email);
   }
 
   void _verify() {
@@ -66,9 +73,25 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
     }
   }
 
-  void _login() {
-    SpUtil.putString(Constant.phone, _nameController.text);
-    NavigatorUtils.push(context, Routes.home);
+  void _login() async {
+    // 进行登录
+    var uuid = await Utils.getUniqueId();
+    appStateProvider.setloadingState(true);
+    await DioUtils.instance.requestNetwork(Method.post, HttpApi.login,
+        params: {"username": _nameController.text, "password": _passwordController.text, "uuid": uuid},
+        onSuccess: (data) {
+      Log.d(data["token"]);
+      appStateProvider.setloadingState(false);
+      SpUtil.putString(Constant.accessToken, data["token"]);
+      SpUtil.putString(Constant.email, _nameController.text);
+      SpUtil.putString(Constant.orderid, data["orderid"] ?? "0");
+      SpUtil.putString(Constant.jihuoDate, data["jihuoDate"]);
+      SpUtil.putString(Constant.password, _passwordController.text);
+      NavigatorUtils.push(context, Routes.home);
+    }, onError: (_, __) {
+      appStateProvider.setloadingState(false);
+      Log.d('登录失败，账号，密码不正确！');
+    });
   }
 
   @override
@@ -76,10 +99,10 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
     return Scaffold(
       appBar: MyAppBar(
         isBack: false,
-        actionName: AppLocalizations.of(context).verificationCodeLogin,
-        onPressed: () {
-          NavigatorUtils.push(context, LoginRouter.smsLoginPage);
-        },
+        // actionName: AppLocalizations.of(context).verificationCodeLogin,
+        // onPressed: () {
+        //   NavigatorUtils.push(context, LoginRouter.smsLoginPage);
+        // },
       ),
       body: MyScrollView(
         keyboardConfig: Utils.getKeyboardActionsConfig(context, <FocusNode>[_nodeText1, _nodeText2]),
@@ -91,17 +114,16 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
 
   List<Widget> get _buildBody => <Widget>[
         Text(
-          AppLocalizations.of(context).passwordLogin,
+          "邮箱登录",
           style: TextStyles.textBold26,
         ),
         Gaps.vGap16,
         MyTextField(
-          key: const Key('phone'),
+          key: const Key('email'),
           focusNode: _nodeText1,
           controller: _nameController,
-          maxLength: 11,
-          keyboardType: TextInputType.phone,
-          hintText: AppLocalizations.of(context).inputUsernameHint,
+          keyboardType: TextInputType.emailAddress,
+          hintText: "请输入邮箱",
         ),
         Gaps.vGap8,
         MyTextField(
@@ -112,25 +134,15 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
           controller: _passwordController,
           keyboardType: TextInputType.visiblePassword,
           maxLength: 16,
-          hintText: AppLocalizations.of(context).inputPasswordHint,
+          hintText: "请输入密码",
         ),
         Gaps.vGap24,
         MyButton(
           key: const Key('login'),
-          onPressed: _clickable ? _login : null,
-          text: AppLocalizations.of(context).login,
-        ),
-        Container(
-          height: 40.0,
-          alignment: Alignment.centerRight,
-          child: GestureDetector(
-            child: Text(
-              AppLocalizations.of(context).forgotPasswordLink,
-              key: const Key('forgotPassword'),
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-            onTap: () => NavigatorUtils.push(context, LoginRouter.resetPasswordPage),
-          ),
+          height: 50,
+          onPressed: _clickable ? _login : () => Toast.show("请填写邮箱跟密码"),
+          text: "登录",
+          fontSize: 20,
         ),
         Gaps.vGap16,
         Container(
