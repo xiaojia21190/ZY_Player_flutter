@@ -1,12 +1,21 @@
+import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
 import 'package:ZY_Player_flutter/login/widgets/my_text_field.dart';
+import 'package:ZY_Player_flutter/net/dio_utils.dart';
+import 'package:ZY_Player_flutter/net/http_api.dart';
+import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
+import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
+import 'package:ZY_Player_flutter/routes/routers.dart';
 import 'package:ZY_Player_flutter/util/change_notifier_manage.dart';
+import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
+import 'package:flustars/flustars.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,6 +49,13 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
     };
   }
 
+  AppStateProvider appStateProvider;
+  @override
+  void initState() {
+    appStateProvider = Store.value<AppStateProvider>(context);
+    super.initState();
+  }
+
   void _verify() {
     final String name = _nameController.text;
     final String vCode = _vCodeController.text;
@@ -61,8 +77,27 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
     }
   }
 
-  void _register() {
-    Toast.show('点击注册');
+  void _register() async {
+    var uuid = await Utils.getUniqueId();
+    appStateProvider.setloadingState(true);
+    await DioUtils.instance.requestNetwork(Method.post, HttpApi.register, params: {
+      "username": _nameController.text,
+      "code": _vCodeController.text,
+      "password": _passwordController.text,
+      "uuid": uuid
+    }, onSuccess: (data) {
+      Log.d(data["token"]);
+      appStateProvider.setloadingState(false);
+      SpUtil.putString(Constant.accessToken, data["token"]);
+      SpUtil.putString(Constant.email, _nameController.text);
+      SpUtil.putString(Constant.orderid, "0");
+      SpUtil.putString(Constant.jihuoDate, data["jihuoDate"]);
+      SpUtil.putString(Constant.password, _passwordController.text);
+      NavigatorUtils.push(context, Routes.home);
+    }, onError: (_, __) {
+      appStateProvider.setloadingState(false);
+      Log.d('登录失败，账号，密码不正确！');
+    });
   }
 
   @override
@@ -88,12 +123,11 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
       ),
       Gaps.vGap16,
       MyTextField(
-        key: const Key('phone'),
+        key: const Key('email'),
         focusNode: _nodeText1,
         controller: _nameController,
-        maxLength: 11,
-        keyboardType: TextInputType.phone,
-        hintText: AppLocalizations.of(context).inputPhoneHint,
+        keyboardType: TextInputType.emailAddress,
+        hintText: "请输入邮箱",
       ),
       Gaps.vGap8,
       MyTextField(
@@ -102,13 +136,25 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
         controller: _vCodeController,
         keyboardType: TextInputType.number,
         getVCode: () async {
-          if (_nameController.text.length == 11) {
-            Toast.show(AppLocalizations.of(context).verificationButton);
+          final String regexEmail = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$";
+          bool flag = new RegExp(regexEmail).hasMatch(_nameController.text);
+          if (flag) {
+            Toast.show("开始发送验证码");
+            //sendMailSms
+            await DioUtils.instance.requestNetwork(Method.post, HttpApi.sendMailSms, params: {
+              "to": _nameController.text,
+            }, onSuccess: (data) {
+              Log.d("发送成功");
+              // SpUtil.putString(Constant.accessToken, data["token"]);
+              // NavigatorUtils.push(context, Routes.home);
+            }, onError: (_, msg) {
+              Toast.show(msg);
+            });
 
             /// 一般可以在这里发送真正的请求，请求成功返回true
             return true;
           } else {
-            Toast.show(AppLocalizations.of(context).inputPhoneInvalid);
+            Toast.show("请输入有效邮箱!");
             return false;
           }
         },
@@ -129,7 +175,9 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
       Gaps.vGap24,
       MyButton(
         key: const Key('register'),
-        onPressed: _clickable ? _register : null,
+        height: 50,
+        fontSize: 20,
+        onPressed: _clickable ? _register : () => Toast.show("请填写相关信息"),
         text: AppLocalizations.of(context).register,
       )
     ];
