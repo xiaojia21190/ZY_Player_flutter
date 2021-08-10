@@ -26,10 +26,10 @@ import 'package:screen_ratio_adapter/screen_ratio_adapter.dart';
 import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 Future<void> main() async {
-  // debugProfileBuildsEnabled = true;
-  // debugPaintLayerBordersEnabled = true;
-  // debugProfilePaintsEnabled = true;
-  // debugRepaintRainbowEnabled = true;
+//  debugProfileBuildsEnabled = true;
+//  debugPaintLayerBordersEnabled = true;
+//  debugProfilePaintsEnabled = true;
+//  debugRepaintRainbowEnabled = true;
   WidgetsFlutterBinding.ensureInitialized();
 
   /// sp初始化
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
 
     setInitDio(
       //adb kill-server && adb server && adb shell
-      baseUrl: Constant.inProduction ? '后台地址/' : '后台地址/',
+      baseUrl: Constant.inProduction ? '替换后台地址' : '替换后台地址',
       interceptors: interceptors,
     );
   }
