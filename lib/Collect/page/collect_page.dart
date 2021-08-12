@@ -5,7 +5,6 @@ import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
@@ -68,8 +67,6 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
           if (index == 0) {
             String jsonString = jsonEncode(data);
             NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
-          } else if (index == 1) {
-            NavigatorUtils.push(context, '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           } else {
             NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           }
@@ -89,7 +86,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
             builder: (_, tab, __) {
               return PageView.builder(
                   key: const Key('pageView'),
-                  itemCount: 3,
+                  itemCount: 2,
                   onPageChanged: (index) {
                     tab.animateTo(index);
                     _collectProvider.index = index;
@@ -114,10 +111,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                                     if (pageIndex == 0) {
                                       // 影视
                                       _collectProvider.removeResource(list[index].url);
-                                    } else if (pageIndex == 1) {
-                                      // 漫画
-                                      _collectProvider.removeTingshu(list[index].url);
-                                    } else if (pageIndex == 2) {
+                                    } else {
                                       // 漫画
                                       _collectProvider.removeCatlogResource(list[index].url);
                                     }
@@ -130,11 +124,8 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                     }, selector: (_, store) {
                       if (pageIndex == 0) {
                         return store.listDetailResource;
-                      } else if (pageIndex == 1) {
-                        return store.list;
-                      } else {
-                        return store.manhuaCatlog;
                       }
+                      return store.manhuaCatlog;
                     });
                   });
             },
