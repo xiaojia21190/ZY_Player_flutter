@@ -107,7 +107,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     // 初始化投屏数据
     appStateProvider.initDlnaManager();
     _tabController = TabController(vsync: this, length: 2);
-    _tabControllerColl = TabController(vsync: this, length: 3);
+    _tabControllerColl = TabController(vsync: this, length: 2);
     playerProvider.tabController = _tabController;
     collectProvider.tabController = _tabControllerColl;
 
@@ -434,7 +434,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               indicator: BubbleTabIndicator(),
                               tabs: const <Widget>[
                                 Text("影视"),
-                                Text("听书"),
+                                Text("直播"),
                               ],
                               onTap: (index) {
                                 if (!mounted) {
@@ -466,7 +466,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               indicator: BubbleTabIndicator(),
                               tabs: const <Widget>[
                                 Text("影视"),
-                                Text("听书"),
                                 Text("漫画"),
                               ],
                               onTap: (index) {
@@ -538,14 +537,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 elevation: 8,
                 backgroundColor: HexColor('#FFA400'),
                 child: Text(
-                  "直播",
+                  "挂京东",
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () {
                   _animationController.reset();
                   _animationController.forward();
-
-                  NavigatorUtils.push(context, PlayerRouter.playerzhibo);
+                  NavigatorUtils.goWebViewPage(context, "京东代挂", "https://shop.lppfk.top");
                 },
               ),
             ),
