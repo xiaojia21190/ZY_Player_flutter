@@ -12,7 +12,7 @@ class MyTextField extends StatefulWidget {
   const MyTextField(
       {Key key,
       @required this.controller,
-      this.maxLength = 16,
+      this.maxLength,
       this.autoFocus = false,
       this.keyboardType = TextInputType.text,
       this.hintText = '',
@@ -44,7 +44,7 @@ class _MyTextFieldState extends State<MyTextField> {
   bool _clickable = true;
 
   /// 倒计时秒数
-  final int _second = 30;
+  final int _second = 180;
 
   /// 当前秒数
   int _currentSecond;
@@ -108,9 +108,9 @@ class _MyTextFieldState extends State<MyTextField> {
       textInputAction: TextInputAction.done,
       keyboardType: widget.keyboardType,
       // 数字、手机号限制格式为0到9(白名单)， 密码限制不包含汉字（黑名单）
-      inputFormatters: (widget.keyboardType == TextInputType.number || widget.keyboardType == TextInputType.phone)
-          ? [FilteringTextInputFormatter.allow(RegExp('[0-9]'))]
-          : [FilteringTextInputFormatter.allow(RegExp('[\u4e00-\u9fa5]'))],
+      // inputFormatters: (widget.keyboardType == TextInputType.number || widget.keyboardType == TextInputType.phone)
+      //     ? [FilteringTextInputFormatter.allow(RegExp('[0-9]'))]
+      //     : [FilteringTextInputFormatter.allow(RegExp('[\u4e00-\u9fa5]'))],
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
         hintText: widget.hintText,
@@ -171,23 +171,23 @@ class _MyTextFieldState extends State<MyTextField> {
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
-      child: FlatButton(
+      child: TextButton(
         key: const Key('getVerificationCode'),
         onPressed: _clickable ? _getVCode : null,
-        textColor: themeData.primaryColor,
-        color: Colors.transparent,
-        disabledTextColor: isDark ? Colours.dark_text : Colors.white,
-        disabledColor: isDark ? Colours.dark_text_gray : Colours.text_gray_c,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: BorderSide(
-            color: _clickable ? themeData.primaryColor : Colors.transparent,
-            width: 0.8,
-          ),
-        ),
+        style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              side: BorderSide(
+                color: _clickable ? themeData.primaryColor : Colors.transparent,
+                width: 0.8,
+              ),
+            )),
+            foregroundColor: MaterialStateProperty.all(isDark ? Colours.dark_text : Colors.white),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: themeData.primaryColor))),
         child: Text(
           _clickable ? AppLocalizations.of(context).getVerificationCode : '（$_currentSecond s）',
-          style: TextStyle(fontSize: Dimens.font_sp12),
+          style: TextStyle(fontSize: Dimens.font_sp12, color: isDark ? Colours.dark_text : themeData.primaryColor),
         ),
       ),
     );
