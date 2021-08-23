@@ -9,7 +9,6 @@ import 'package:ZY_Player_flutter/provider/theme_provider.dart';
 import 'package:ZY_Player_flutter/routes/404.dart';
 import 'package:ZY_Player_flutter/routes/application.dart';
 import 'package:ZY_Player_flutter/routes/routers.dart';
-import 'package:ZY_Player_flutter/util/app_analysis.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
@@ -23,7 +22,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 import 'package:screen_ratio_adapter/screen_ratio_adapter.dart';
-import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
@@ -78,7 +76,7 @@ class MyApp extends StatelessWidget {
 
     setInitDio(
       //adb kill-server && adb server && adb shell
-      baseUrl: Constant.inProduction ? '替换后台地址' : '替换后台地址',
+      baseUrl: Constant.inProduction ? 'https://crawel.lppfk.top/' : 'https://crawel.lppfk.top/',
       interceptors: interceptors,
     );
   }
@@ -93,7 +91,6 @@ class MyApp extends StatelessWidget {
                   LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
                 },
                 child: MaterialApp(
-                  navigatorObservers: [AppAnalysis()],
                   navigatorKey: Constant.navigatorKey,
                   title: '虱子聚合',
                   theme: theme ?? provider.getTheme(),

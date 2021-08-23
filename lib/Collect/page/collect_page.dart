@@ -47,11 +47,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
           )),
       child: ListTile(
         title: Text(data.title),
-        subtitle: index == 0
-            ? Text("播放量:${data.bofang ?? bofang}")
-            : index == 1
-                ? Text(data.state)
-                : Text(data.gengxin),
+        subtitle: index == 0 ? Text("播放量:${data.bofang ?? bofang}") : Text(data.gengxin),
         trailing: Icon(Icons.keyboard_arrow_right),
         leading: Container(
           decoration: BoxDecoration(
