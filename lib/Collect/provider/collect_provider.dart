@@ -1,6 +1,5 @@
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
-import 'package:ZY_Player_flutter/model/ting_shu_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:flustars/flustars.dart';
@@ -13,9 +12,6 @@ class CollectProvider extends ChangeNotifier {
   List<ManhuaCatlogDetail> _manhuaCatlog = [];
   List<ManhuaCatlogDetail> get manhuaCatlog => _manhuaCatlog;
 
-  List<TingShuDetail> _list = [];
-  List<TingShuDetail> get list => _list;
-
   setListDetailResource(String collect, dynamic result) async {
     switch (collect) {
       case "collcetPlayer":
@@ -26,31 +22,8 @@ class CollectProvider extends ChangeNotifier {
         _manhuaCatlog.clear();
         _manhuaCatlog.addAll(result);
         break;
-      case "collcetTingshu":
-        _list.clear();
-        _list.addAll(result);
-        break;
       default:
     }
-    notifyListeners();
-  }
-
-  addTingshu(TingShuDetail data) async {
-    var glll = _listDetailResource.where((element) => element.url == data.url).toList().length;
-    if (glll == 0) {
-      _list.add(data);
-      SpUtil.putObjectList("collcetTingshu", _list);
-      await DioUtils.instance.requestNetwork(Method.post, HttpApi.changeCollect,
-          params: {"content": JsonUtil.encodeObj(_list), "type": 2}, onSuccess: (data) {}, onError: (_, __) {});
-      notifyListeners();
-    }
-  }
-
-  removeTingshu(String url) async {
-    _list.removeWhere((element) => element.url == url);
-    SpUtil.putObjectList("collcetTingshu", _list);
-    await DioUtils.instance.requestNetwork(Method.post, HttpApi.changeCollect,
-        params: {"content": JsonUtil.encodeObj(_list), "type": 2}, onSuccess: (data) {}, onError: (_, __) {});
     notifyListeners();
   }
 
@@ -60,9 +33,7 @@ class CollectProvider extends ChangeNotifier {
       _listDetailResource.add(data);
       SpUtil.putObjectList("collcetPlayer", _listDetailResource);
       await DioUtils.instance.requestNetwork(Method.post, HttpApi.changeCollect,
-          params: {"content": JsonUtil.encodeObj(_listDetailResource), "type": 1},
-          onSuccess: (data) {},
-          onError: (_, __) {});
+          params: {"content": JsonUtil.encodeObj(_listDetailResource), "type": 1}, onSuccess: (data) {}, onError: (_, __) {});
       notifyListeners();
     }
   }
@@ -71,9 +42,7 @@ class CollectProvider extends ChangeNotifier {
     _listDetailResource.removeWhere((element) => element.url == url);
     SpUtil.putObjectList("collcetPlayer", _listDetailResource);
     await DioUtils.instance.requestNetwork(Method.post, HttpApi.changeCollect,
-        params: {"content": JsonUtil.encodeObj(_listDetailResource), "type": 1},
-        onSuccess: (data) {},
-        onError: (_, __) {});
+        params: {"content": JsonUtil.encodeObj(_listDetailResource), "type": 1}, onSuccess: (data) {}, onError: (_, __) {});
     notifyListeners();
   }
 
@@ -81,7 +50,7 @@ class CollectProvider extends ChangeNotifier {
     _manhuaCatlog.removeWhere((element) => element.url == url);
     SpUtil.putObjectList("collcetManhua", _manhuaCatlog);
     await DioUtils.instance.requestNetwork(Method.post, HttpApi.changeCollect,
-        params: {"content": JsonUtil.encodeObj(_list), "type": 3}, onSuccess: (data) {}, onError: (_, __) {});
+        params: {"content": JsonUtil.encodeObj(_manhuaCatlog), "type": 3}, onSuccess: (data) {}, onError: (_, __) {});
     notifyListeners();
   }
 
