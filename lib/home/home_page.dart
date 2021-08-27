@@ -7,7 +7,6 @@ import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
-import 'package:ZY_Player_flutter/model/ting_shu_detail.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
@@ -18,7 +17,6 @@ import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/setting/setting_router.dart';
-import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
 import 'package:ZY_Player_flutter/util/hex_color.dart';
@@ -212,12 +210,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         List<Playlist> _pylist = [];
         JsonUtil.getObjectList(data["playlist"], (v) => _pylist.add(Playlist.fromJson(v)));
         SpUtil.putObjectList("collcetPlayer", _pylist);
-
         collectProvider.setListDetailResource("collcetPlayer", _pylist);
-        List<TingShuDetail> _tslist = [];
-        JsonUtil.getObjectList(data["tslist"], (v) => _tslist.add(TingShuDetail.fromJson(v)));
-        SpUtil.putObjectList("collcetTingshu", _tslist);
-        collectProvider.setListDetailResource("collcetTingshu", _tslist);
 
         List<ManhuaCatlogDetail> _mhlist = [];
         JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v)));
@@ -497,11 +490,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                       case 0:
                         return TextButton(
                             onPressed: () {
-                              if (playerProvider.index == 2) {
-                                NavigatorUtils.push(context, TingshuRouter.searchPage);
-                              } else {
-                                NavigatorUtils.push(context, PlayerRouter.searchPage);
-                              }
+                              NavigatorUtils.push(context, PlayerRouter.searchPage);
                             },
                             child: Icon(
                               Icons.search_sharp,
@@ -616,7 +605,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   splashColor: HexColor('#FFA400'),
                   notchAndCornersAnimation: animation,
                   splashSpeedInMilliseconds: 300,
-                  notchSmoothness: NotchSmoothness.smoothEdge,
+                  notchSmoothness: NotchSmoothness.defaultEdge,
                   gapLocation: GapLocation.center,
                   leftCornerRadius: 0,
                   rightCornerRadius: 0,
