@@ -9,11 +9,11 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
+import 'package:ZY_Player_flutter/util/qs_common.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
-import 'package:ZY_Player_flutter/util/provider.dart';
-import 'package:ZY_Player_flutter/util/qs_common.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
@@ -53,7 +53,6 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
     super.initState();
     yueduIndex = 0;
     _collectProvider = Store.value<CollectProvider>(context);
-    _collectProvider.setListDetailResource("collcetManhua");
 
     initData();
   }
@@ -146,8 +145,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                       QrImage(
                                         padding: EdgeInsets.all(7),
                                         backgroundColor: Colors.white,
-                                        data:
-                                            "http://hall.moitech.cn/shizhijuhe/index.html#/upload?random=${DateTime.now()}",
+                                        data: "https://crawel.lppfk.top/static/index.html",
                                         size: 100,
                                       ),
                                     ],
@@ -162,9 +160,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                               TextButton(
                                 child: const Text('点击复制链接', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                  Clipboard.setData(ClipboardData(
-                                      text:
-                                          "http://hall.moitech.cn/shizhijuhe/index.html#/upload?random=${DateTime.now()}"));
+                                  Clipboard.setData(ClipboardData(text: "https://crawel.lppfk.top/static/index.html"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
