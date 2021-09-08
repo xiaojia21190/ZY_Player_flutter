@@ -9,11 +9,15 @@ part of 'zhibo_resource.dart';
 ZhiboResource _$ZhiboResourceFromJson(Map<String, dynamic> json) {
   return ZhiboResource(
     json['name'] as String,
-    (json['m3uResult'] as List)?.map((e) => e == null ? null : M3uResult.fromJson(e as Map<String, dynamic>))?.toList(),
+    (json['m3uResult'] as List)
+        ?.map((e) =>
+            e == null ? null : M3uResult.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
-Map<String, dynamic> _$ZhiboResourceToJson(ZhiboResource instance) => <String, dynamic>{
+Map<String, dynamic> _$ZhiboResourceToJson(ZhiboResource instance) =>
+    <String, dynamic>{
       'name': instance.name,
       'm3uResult': instance.m3uResult,
     };
@@ -22,12 +26,10 @@ M3uResult _$M3uResultFromJson(Map<String, dynamic> json) {
   return M3uResult(
     json['title'] as String,
     json['url'] as String,
-    json['cover'] as String,
   );
 }
 
 Map<String, dynamic> _$M3uResultToJson(M3uResult instance) => <String, dynamic>{
       'title': instance.title,
       'url': instance.url,
-      'cover': instance.cover,
     };
