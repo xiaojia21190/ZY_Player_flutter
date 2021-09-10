@@ -1,14 +1,18 @@
 import 'dart:convert';
 
+import 'package:ZY_Player_flutter/common/common.dart';
+import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
+import 'package:ZY_Player_flutter/setting/setting_router.dart';
+import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ZY_Player_flutter/common/common.dart';
-import 'package:ZY_Player_flutter/util/log_utils.dart';
+
 import 'error_handle.dart';
 
 /// 默认dio配置
-int _connectTimeout = 1000 * 15;
-int _receiveTimeout = 1000 * 15;
+int _connectTimeout = 1000 * 50;
+int _receiveTimeout = 1000 * 50;
 int _sendTimeout = 10000;
 String _baseUrl;
 List<Interceptor> _interceptors = [];
@@ -139,6 +143,10 @@ class DioUtils {
           onSuccess(result["data"]);
         }
       } else {
+        if (result["code"] == ExceptionHandle.red_huiyuan) {
+          NavigatorUtils.push(navigatorState.context, SettingRouter.accountManagerPage);
+          Toast.show('接口请求异常： ${result["message"]}');
+        }
         _onError(result["code"], result["message"], onError);
       }
     }, onError: (dynamic e) {
@@ -172,7 +180,11 @@ class DioUtils {
           onSuccess(result["data"]);
         }
       } else {
-        _onError(result["code"], result["message"], onError);
+        if (result["code"] == ExceptionHandle.red_huiyuan) {
+          NavigatorUtils.push(navigatorState.context, SettingRouter.accountManagerPage);
+        } else {
+          _onError(result["code"], result["message"], onError);
+        }
       }
     }, onError: (dynamic e) {
       _cancelLogPrint(e, url);
@@ -193,6 +205,7 @@ class DioUtils {
       msg = '未知异常';
     }
     Log.e('接口请求异常： code: $code, mag: $msg');
+    Toast.show('接口请求异常： code: $code, mag: $msg');
     if (onError != null) {
       onError(code, msg);
     }
