@@ -16,12 +16,12 @@ class ExceptionHandle {
   static const int timeout_error = 1004;
   static const int cancel_error = 1005;
   static const int unknown_error = 9999;
+  static const int red_huiyuan = 10090;
 
   static NetError handleException(dynamic error) {
     print(error);
     if (error is DioError) {
-      if (error.type == DioErrorType.other ||
-          error.type == DioErrorType.response) {
+      if (error.type == DioErrorType.other || error.type == DioErrorType.response) {
         dynamic e = error.error;
         if (e is SocketException) {
           return NetError(socket_error, '网络异常，请检查你的网络！');

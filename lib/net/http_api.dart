@@ -14,14 +14,24 @@ class HttpApi {
   static const String hotSearch = 'HotSearch';
   static const String HomeHot = 'HomeHot';
   static const String getHotList = "getHotZiyuan";
+  static const String piankuMoreData = "piankuMoreData";
   static const String getHomeManhua = "getHomeManhua";
   static const String updateApp = "updateApp";
   static const String getPlayVideoUrl = "getPlayVideoUrl";
   static const String getZhiboList = "getZhiboList";
+  static const String getDwonUrl = "getDwonUrl";
+  static const String getVideoDwonUrl = "getVideoDwonUrl";
 
   static const String getXmlyHot = "getXmlyHot";
   static const String getXmlySearch = "getXmlySearch";
   static const String getXmlyHotSearch = "getXmlyHotSearch";
   static const String getXmlyDetail = "getXmlyDetail";
   static const String getXmlyDetailMp3 = "getXmlyDetailMp3";
+  static const String login = "login";
+  static const String register = "register";
+  static const String sendMailSms = "sendMailSms";
+  static const String zhjfu = "zhjfu";
+  static const String changeCollect = "changeCollect";
+  static const String queryJihuo = "queryJihuoStatus";
+  static const String queryUserInfo = "queryUserInfo";
 }
