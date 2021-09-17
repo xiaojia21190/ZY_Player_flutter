@@ -13,12 +13,12 @@ import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
+import 'package:ZY_Player_flutter/util/qs_common.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
-import 'package:ZY_Player_flutter/util/provider.dart';
-import 'package:ZY_Player_flutter/util/qs_common.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
@@ -31,6 +31,7 @@ import 'package:flutter_screen/flutter_screen.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayerDetailPage extends StatefulWidget {
@@ -75,18 +76,22 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     WidgetsBinding.instance.addObserver(this);
     var result = jsonDecode(widget.playerList);
     _playlist = Playlist.fromJson(result);
+    getPlayDownLoadUrl(_playlist.url);
     _collectProvider = Store.value<CollectProvider>(context);
     appStateProvider = Store.value<AppStateProvider>(context);
-    _collectProvider.setListDetailResource("collcetPlayer");
     bofangIndex = 0;
     initData();
 
     ApplicationEvent.event.on<DeviceEvent>().listen((event) async {
+      if (event.device == 0) return;
       // 弹出dlna的弹窗
-      dlnaDevicesDialog();
+      if (mounted) {
+        dlnaDevicesDialog();
+      }
     });
 
     getLight();
+
     super.initState();
   }
 
@@ -111,20 +116,42 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   Future getPlayVideoUrl(String videoUrl, int index) async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl},
-        onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getPlayVideoUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) {
       currentUrl = data;
-    }, onError: (_, __) {
+    }, onError: (_, msg) {
       currentVideoIndex = index;
-      Toast.show("获取链接失败，请从新获取");
+      Toast.show(msg);
+      appStateProvider.setloadingState(false);
+    });
+  }
+
+  List<ZiyuanUrl> playDownUrl = [];
+
+  Future getPlayDownLoadUrl(String videoUrl) async {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getDwonUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) {
+      List.generate(data.length, (index) => playDownUrl.add(ZiyuanUrl.fromJson(data[index])));
+    }, onError: (_, msg) {
+      Toast.show(msg);
+      appStateProvider.setloadingState(false);
+    });
+  }
+
+  Future LaunchDownLoadUrl(String videoUrl) async {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getVideoDwonUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) async {
+      if (await canLaunch(data)) {
+        await launch(data);
+      } else {
+        throw 'Could not launch $data';
+      }
+    }, onError: (_, __) {
+      Toast.show("获取下载链接失败，请从新获取");
       appStateProvider.setloadingState(false);
     });
   }
 
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist.url},
-        onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist.url}, onSuccess: (data) {
       if (data != null && data.length > 0) {
         List.generate(data.length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data[index])));
         _detailProvider.setJuji();
@@ -197,8 +224,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                       QrImage(
                                         padding: EdgeInsets.all(7),
                                         backgroundColor: Colors.white,
-                                        data:
-                                            "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?random=${DateTime.now()}&url=${Uri.encodeComponent(_playlist.url)}",
+                                        data: "https://crawel.lppfk.top/static/index.html",
                                         size: 100,
                                       ),
                                     ],
@@ -213,9 +239,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                               TextButton(
                                 child: const Text('点击复制链接', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                  Clipboard.setData(ClipboardData(
-                                      text:
-                                          "http://hall.moitech.cn/shizhijuhe/index.html#/playVideo?random=${DateTime.now()}&url=${Uri.encodeComponent(_playlist.url)}"));
+                                  Clipboard.setData(ClipboardData(text: "https://crawel.lppfk.top/static/index.html"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
@@ -251,15 +275,12 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         _detailProvider.setInitPlayer(true);
       }
     }
-    _detailProvider.saveRecordNof(
-        "${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}");
+    _detailProvider.saveRecordNof("${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}");
 
     // 存储播放记录
     PlayerModel playerModel = PlayerModel(
-        videoId:
-            "${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}",
-        name:
-            "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}",
+        videoId: "${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}",
+        name: "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}",
         url: currentUrl,
         cover: _playlist.cover,
         startAt: "${_videoPlayerController.value.position.inSeconds}");
@@ -298,13 +319,10 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                   child: Text(devices[index]["name"]),
                                   onPressed: () async {
                                     _chewieController.pause();
-                                    Toast.show(
-                                        "推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${devices[index]["name"]}");
+                                    Toast.show("推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${devices[index]["name"]}");
                                     await appStateProvider.dlnaManager.setDevice(devices[index]["id"]);
-                                    await appStateProvider.dlnaManager.setVideoUrlAndName(
-                                        currentUrl,
-                                        _detailProvider.detailReource[_detailProvider.chooseYuanIndex]
-                                            .ziyuanUrl[currentVideoIndex].title);
+                                    await appStateProvider.dlnaManager
+                                        .setVideoUrlAndName(currentUrl, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
                                     await appStateProvider.dlnaManager.startAndPlay();
                                     appStateProvider.setloadingState(false);
                                     Navigator.pop(context);
@@ -326,7 +344,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   searchDialog() {
     // 提示是否继续搜索
-    appStateProvider.setSearchText("设备搜索超时");
+    appStateProvider.setSearchText("点击开始搜索设备");
     showDialog(
         context: context,
         builder: (_) => Selector<AppStateProvider, String>(
@@ -334,8 +352,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
               return FlareGiffyDialog(
                 flarePath: 'assets/images/space_demo.flr',
                 flareAnimation: 'loading',
-                title: Text(words,
-                    textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+                title: Text(words, textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
                 description: Text(
                   '请打开相关设备后点击重新搜索',
                   textAlign: TextAlign.center,
@@ -344,7 +361,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                 buttonOkText: Text("重新搜索"),
                 buttonCancelText: Text("停止搜索"),
                 onOkButtonPressed: () async {
-                  await appStateProvider.searchDlna();
+                  await appStateProvider.searchDlna(1);
                 },
                 onCancelButtonPressed: () async {
                   Navigator.pop(context);
@@ -377,14 +394,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
       fintext = offsetDifference < 0 ? "快进到：" : "后退到：";
       if (offsetDifference < 0) {
-        var endTime = offsetAbs *
-            (_videoPlayerController.value.duration.inSeconds - _videoPlayerController.value.position.inSeconds);
-        text =
-            "$fintext${Duration(seconds: _videoPlayerController.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
+        var endTime = offsetAbs * (_videoPlayerController.value.duration.inSeconds - _videoPlayerController.value.position.inSeconds);
+        text = "$fintext${Duration(seconds: _videoPlayerController.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
       } else {
         var endTime = offsetAbs * (_videoPlayerController.value.position.inSeconds);
-        text =
-            "$fintext${Duration(seconds: _videoPlayerController.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
+        text = "$fintext${Duration(seconds: _videoPlayerController.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
       }
       appStateProvider.setVerSwiper(true, text);
     }
@@ -398,18 +412,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         var endTime = offsetAbs * (_videoPlayerController.value.position.inSeconds);
         if (_videoPlayerController.value.isPlaying) {
           Log.d(Duration(seconds: _videoPlayerController.value.position.inSeconds - endTime.toInt()).toString());
-          _videoPlayerController.position
-              .then((value) => {_videoPlayerController.seekTo(value - Duration(seconds: endTime.toInt()))});
+          _videoPlayerController.position.then((value) => {_videoPlayerController.seekTo(value - Duration(seconds: endTime.toInt()))});
         }
       } else {
-        var endTime = offsetAbs *
-            (_videoPlayerController.value.duration.inSeconds - _videoPlayerController.value.position.inSeconds);
-        if (Duration(seconds: _videoPlayerController.value.position.inSeconds + endTime.toInt()) <=
-            _videoPlayerController.value.duration) {
+        var endTime = offsetAbs * (_videoPlayerController.value.duration.inSeconds - _videoPlayerController.value.position.inSeconds);
+        if (Duration(seconds: _videoPlayerController.value.position.inSeconds + endTime.toInt()) <= _videoPlayerController.value.duration) {
           Log.d(Duration(seconds: _videoPlayerController.value.position.inSeconds + endTime.toInt()).toString());
           if (_videoPlayerController.value.isPlaying) {
-            _videoPlayerController.position
-                .then((value) => {_videoPlayerController.seekTo(value + Duration(seconds: endTime.toInt()))});
+            _videoPlayerController.position.then((value) => {_videoPlayerController.seekTo(value + Duration(seconds: endTime.toInt()))});
           }
         }
       }
@@ -460,8 +470,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     Toast.show("正在解析地址");
     try {
       await getPlayVideoUrl(urls[currentVideoIndex].url, currentVideoIndex);
-      currentUrlName =
-          "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}";
+      currentUrlName = "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}";
       _detailProvider.saveJuji("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
       var record = _detailProvider.getRecord("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
       var startAt = Duration(seconds: 0);
@@ -543,34 +552,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                               )),
                         ),
                       ),
-                      _videoPlayerController.value.isBuffering
-                          ? Positioned.fill(
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Container(
-                                  height: 30,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                      color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text(
-                                            '正在加载中...',
-                                            style: Theme.of(context).textTheme.headline6,
-                                          ),
-                                          CircularProgressIndicator(),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(),
                       Consumer<AppStateProvider>(builder: (_, provider, __) {
                         return provider.verSwiper && _videoPlayerController.value.isPlaying
                             ? Positioned.fill(
@@ -579,8 +560,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                   child: Container(
                                     height: 30,
                                     width: 120,
-                                    decoration: BoxDecoration(
-                                        color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                                    decoration: BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
                                     child: Center(
                                       child: Text(
                                         provider.verText,
@@ -600,8 +580,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                     child: Container(
                                       height: 30,
                                       width: 80,
-                                      decoration: BoxDecoration(
-                                          color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                                      decoration: BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
                                       child: Center(
                                         child: Text(
                                           provider.verLightText,
@@ -639,8 +618,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       // 存储播放记录
       PlayerModel playerModel = PlayerModel(
           videoId: "${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_$record}",
-          name:
-              "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}",
+          name: "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}",
           url: currentUrl,
           cover: _playlist.cover,
           startAt: record);
@@ -674,9 +652,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                 width: 100,
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: _detailProvider.kanguojuji.contains("${_playlist.url}_${chooseIndex}_$index")
-                        ? Colors.redAccent
-                        : Colors.blueAccent,
+                    color: _detailProvider.kanguojuji.contains("${_playlist.url}_${chooseIndex}_$index") ? Colors.redAccent : Colors.blueAccent,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: currentClickIndex == index
                         ? Border.all(
@@ -751,6 +727,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                       },
                       selector: (_, store) => store.actionName)),
               body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                       color: Colors.black,
@@ -775,6 +752,39 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                           },
                           selector: (_, store) => store.isInitPlayer)),
                   Gaps.vGap8,
+                  TextButton.icon(
+                      onPressed: () {
+                        // 弹窗
+                        return showElasticDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Material(
+                              type: MaterialType.transparency,
+                              elevation: 10,
+                              child: Center(
+                                  child: Container(
+                                decoration: BoxDecoration(
+                                  color: context.dialogBackgroundColor,
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ),
+                                width: 300,
+                                height: 430,
+                                child: ListView.builder(
+                                    itemCount: playDownUrl.length,
+                                    itemBuilder: (_, i) {
+                                      return TextButton(
+                                          onPressed: () async {
+                                            await LaunchDownLoadUrl(playDownUrl[i].url);
+                                          },
+                                          child: Text(playDownUrl[i].title));
+                                    }),
+                              )),
+                            );
+                          },
+                        );
+                      },
+                      icon: Icon(Icons.download_rounded),
+                      label: Text("下载")),
                   Expanded(child: Consumer<DetailProvider>(builder: (_, provider, __) {
                     return provider.detailReource != null && provider.detailReource.length > 0
                         ? MyScrollView(
@@ -809,8 +819,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                       ),
                                     ),
                                     Gaps.vGap8,
-                                    buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl,
-                                        provider.chooseYuanIndex, isDark),
+                                    buildJuJi(provider.detailReource[provider.chooseYuanIndex].ziyuanUrl, provider.chooseYuanIndex, isDark),
                                   ],
                                 ),
                               )
