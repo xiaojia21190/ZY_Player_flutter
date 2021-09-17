@@ -14,16 +14,16 @@ import 'error_handle.dart';
 int _connectTimeout = 1000 * 50;
 int _receiveTimeout = 1000 * 50;
 int _sendTimeout = 10000;
-String _baseUrl;
+String _baseUrl = '';
 List<Interceptor> _interceptors = [];
 
 /// 初始化Dio配置
 void setInitDio({
-  int connectTimeout,
-  int receiveTimeout,
-  int sendTimeout,
-  String baseUrl,
-  List<Interceptor> interceptors,
+  int? connectTimeout,
+  int? receiveTimeout,
+  int? sendTimeout,
+  String? baseUrl,
+  List<Interceptor>? interceptors,
 }) {
   _connectTimeout = connectTimeout ?? _connectTimeout;
   _receiveTimeout = receiveTimeout ?? _receiveTimeout;
@@ -38,18 +38,10 @@ typedef NetErrorCallback = Function(int code, String msg);
 
 /// @weilu https://github.com/simplezhli
 class DioUtils {
-  static final DioUtils _singleton = DioUtils._();
-
-  static DioUtils get instance => DioUtils();
-
   factory DioUtils() => _singleton;
 
-  static Dio _dio;
-
-  Dio get dio => _dio;
-
   DioUtils._() {
-    BaseOptions _options = BaseOptions(
+    final BaseOptions _options = BaseOptions(
       connectTimeout: _connectTimeout,
       receiveTimeout: _receiveTimeout,
       sendTimeout: _sendTimeout,
@@ -61,7 +53,7 @@ class DioUtils {
         return true;
       },
       baseUrl: _baseUrl,
-//  contentType: ContentType('application', 'x-www-form-urlencoded', charset: 'utf-8'),
+//      contentType: Headers.formUrlEncodedContentType, // 适用于post form表单提交
     );
     _dio = Dio(_options);
 
@@ -82,14 +74,22 @@ class DioUtils {
     });
   }
 
+  static final DioUtils _singleton = DioUtils._();
+
+  static DioUtils get instance => DioUtils();
+
+  static late Dio _dio;
+
+  Dio get dio => _dio;
+
   // 数据返回格式统一，统一处理异常
   Future<dynamic> _request(
     String method,
     String url, {
     dynamic data,
-    Map<String, dynamic> queryParameters,
-    CancelToken cancelToken,
-    Options options,
+    Map<String, dynamic>? queryParameters,
+    CancelToken? cancelToken,
+    Options? options,
   }) async {
     final Response<String> response = await _dio.request<String>(
       url,
@@ -109,12 +109,12 @@ class DioUtils {
       final Map<String, dynamic> _map = isCompute ? await compute(parseData, data) : parseData(data);
       return _map;
     } catch (e) {
-      debugPrint(e);
+      debugPrint(e.toString());
       return {ExceptionHandle.parse_error, '数据解析错误！', null};
     }
   }
 
-  Options _checkOptions(String method, Options options) {
+  Options _checkOptions(String method, Options? options) {
     options ??= Options();
     options.method = method;
     return options;
@@ -123,12 +123,12 @@ class DioUtils {
   Future requestNetwork(
     Method method,
     String url, {
-    NetSuccessCallback onSuccess,
-    NetErrorCallback onError,
+    NetSuccessCallback? onSuccess,
+    NetErrorCallback? onError,
     dynamic params,
-    Map<String, dynamic> queryParameters,
-    CancelToken cancelToken,
-    Options options,
+    Map<String, dynamic>? queryParameters,
+    CancelToken? cancelToken,
+    Options? options,
   }) {
     return _request(
       method.value,
@@ -144,15 +144,15 @@ class DioUtils {
         }
       } else {
         if (result["code"] == ExceptionHandle.red_huiyuan) {
-          NavigatorUtils.push(navigatorState.context, SettingRouter.accountManagerPage);
+          NavigatorUtils.push(navigatorState!.context, SettingRouter.accountManagerPage);
           Toast.show('接口请求异常： ${result["message"]}');
         }
-        _onError(result["code"], result["message"], onError);
+        _onError(result["code"], result["message"], onError!);
       }
     }, onError: (dynamic e) {
       _cancelLogPrint(e, url);
       final NetError error = ExceptionHandle.handleException(e);
-      _onError(error.code, error.msg, onError);
+      _onError(error.code, error.msg, onError!);
     });
   }
 
@@ -160,12 +160,12 @@ class DioUtils {
   void asyncRequestNetwork(
     Method method,
     String url, {
-    NetSuccessCallback onSuccess,
-    NetErrorCallback onError,
+    NetSuccessCallback? onSuccess,
+    NetErrorCallback? onError,
     dynamic params,
-    Map<String, dynamic> queryParameters,
-    CancelToken cancelToken,
-    Options options,
+    Map<String, dynamic>? queryParameters,
+    CancelToken? cancelToken,
+    Options? options,
   }) {
     Stream.fromFuture(_request(
       method.value,
@@ -181,15 +181,15 @@ class DioUtils {
         }
       } else {
         if (result["code"] == ExceptionHandle.red_huiyuan) {
-          NavigatorUtils.push(navigatorState.context, SettingRouter.accountManagerPage);
+          NavigatorUtils.push(navigatorState!.context, SettingRouter.accountManagerPage);
         } else {
-          _onError(result["code"], result["message"], onError);
+          _onError(result["code"], result["message"], onError!);
         }
       }
     }, onError: (dynamic e) {
       _cancelLogPrint(e, url);
       final NetError error = ExceptionHandle.handleException(e);
-      _onError(error.code, error.msg, onError);
+      _onError(error.code, error.msg, onError!);
     });
   }
 
@@ -199,16 +199,13 @@ class DioUtils {
     }
   }
 
-  void _onError(int code, String msg, NetErrorCallback onError) {
+  void _onError(int? code, String msg, NetErrorCallback? onError) {
     if (code == null) {
       code = ExceptionHandle.unknown_error;
       msg = '未知异常';
     }
     Log.e('接口请求异常： code: $code, mag: $msg');
-    Toast.show('接口请求异常： code: $code, mag: $msg');
-    if (onError != null) {
-      onError(code, msg);
-    }
+    onError?.call(code, msg);
   }
 }
 

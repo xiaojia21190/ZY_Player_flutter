@@ -14,7 +14,7 @@ class PlayerRecordPage extends StatefulWidget {
 }
 
 class _PlayerRecordPageState extends State<PlayerRecordPage> {
-  AppStateProvider appStateProvider;
+  AppStateProvider? appStateProvider;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _PlayerRecordPageState extends State<PlayerRecordPage> {
         actionName: "清空记录",
         centerTitle: '观看记录',
         onPressed: () {
-          appStateProvider.clearPlayerRecord();
+          appStateProvider!.clearPlayerRecord();
         },
       ),
       body: Selector<AppStateProvider, List<PlayerModel>>(
@@ -54,8 +54,7 @@ class _PlayerRecordPageState extends State<PlayerRecordPage> {
                           margin: EdgeInsets.all(10),
                           child: ListTile(
                             title: Text(recordList[index].name),
-                            subtitle: Text(
-                                "播放进度:  ${Duration(seconds: int.parse(recordList[index].startAt)).toString().split(".")[0]}"),
+                            subtitle: Text("播放进度:  ${Duration(seconds: int.parse(recordList[index].startAt)).toString().split(".")[0]}"),
                             leading: LoadImage(
                               recordList[index].cover,
                               fit: BoxFit.cover,

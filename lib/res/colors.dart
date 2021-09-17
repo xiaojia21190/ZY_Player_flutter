@@ -58,4 +58,16 @@ class Colours {
   static const Color xingrenhuang = Color(0xffF6F3E0);
   static const Color qingcaolv = Color(0xffCCF1CF);
   static const Color cunhei = Color(0xff212830);
+
+  // 其他颜色
+  static const Color background = Color(0xff171a1f);
+  static const Color foreground = Color(0xffebeff0);
+  static const Color redOther = Color(0xffe98585);
+  static const Color orangeOther = Color(0xfffaa66c);
+  static const Color yellow = Color(0xffffcc66);
+  static const Color green = Color(0xff97df8b);
+  static const Color cyan = Color(0xff72d8dd);
+  static const Color blueOther = Color(0xff74a1ef);
+  static const Color purple = Color(0xffd9a8fa);
+  static const Color pink = Color(0xfff7a0da);
 }

@@ -1,14 +1,12 @@
 import 'package:ZY_Player_flutter/Collect/collect_router.dart';
 import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/home/webview_page.dart';
-import 'package:ZY_Player_flutter/hotseach/hot_router.dart';
 import 'package:ZY_Player_flutter/login/login_router.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/routes/404.dart';
 import 'package:ZY_Player_flutter/routes/router_init.dart';
 import 'package:ZY_Player_flutter/setting/setting_router.dart';
-import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
@@ -22,19 +20,17 @@ class Routes {
 
   static void configureRoutes(FluroRouter router) {
     /// 指定路由跳转错误返回页
-    router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    router.notFoundHandler = Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       debugPrint('未找到目标页');
       return PageNotFound();
     });
 
-    router.define(home,
-        handler: Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) => Home()));
+    router.define(home, handler: Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) => Home()));
 
     router.define(webViewPage, handler: Handler(handlerFunc: (_, params) {
-      final String title = params['title']?.first;
-      final String url = params['url']?.first;
-      final String flag = params['flag']?.first;
-      return WebViewPage(title: title, url: url, flag: flag);
+      final String title = params['title']!.first;
+      final String url = params['url']!.first;
+      return WebViewPage(title: title, url: url);
     }));
 
     _listRouter.clear();
@@ -44,9 +40,7 @@ class Routes {
     _listRouter.add(SettingRouter());
     _listRouter.add(PlayerRouter());
     _listRouter.add(ManhuaRouter());
-    _listRouter.add(HotRouter());
     _listRouter.add(XiaoShuoRouter());
-    _listRouter.add(TingshuRouter());
     _listRouter.add(CollectRouter());
 
     /// 初始化路由

@@ -37,9 +37,9 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
   bool _clickable = false;
 
   @override
-  Map<ChangeNotifier, List<VoidCallback>> changeNotifier() {
-    final List<VoidCallback> callbacks = [_verify];
-    return {
+  Map<ChangeNotifier, List<VoidCallback>?>? changeNotifier() {
+    final List<VoidCallback> callbacks = <VoidCallback>[_verify];
+    return <ChangeNotifier, List<VoidCallback>?>{
       _nameController: callbacks,
       _vCodeController: callbacks,
       _passwordController: callbacks,
@@ -49,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
     };
   }
 
-  AppStateProvider appStateProvider;
+  late AppStateProvider appStateProvider;
   @override
   void initState() {
     appStateProvider = Store.value<AppStateProvider>(context);
@@ -80,12 +80,9 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
   void _register() async {
     var uuid = await Utils.getUniqueId();
     appStateProvider.setloadingState(true);
-    await DioUtils.instance.requestNetwork(Method.post, HttpApi.register, params: {
-      "username": _nameController.text,
-      "code": _vCodeController.text,
-      "password": _passwordController.text,
-      "uuid": uuid
-    }, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.post, HttpApi.register,
+        params: {"username": _nameController.text, "code": _vCodeController.text, "password": _passwordController.text, "uuid": uuid},
+        onSuccess: (data) {
       Log.d(data["token"]);
       appStateProvider.setloadingState(false);
       SpUtil.putString(Constant.accessToken, data["token"]);
@@ -104,7 +101,7 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-        title: AppLocalizations.of(context).register,
+        title: AppLocalizations.of(context)!.register,
       ),
       body: MyScrollView(
         keyboardConfig: Utils.getKeyboardActionsConfig(context, <FocusNode>[_nodeText1, _nodeText2, _nodeText3]),
@@ -118,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
   List<Widget> _buildBody() {
     return <Widget>[
       Text(
-        AppLocalizations.of(context).openYourAccount,
+        AppLocalizations.of(context)!.openYourAccount,
         style: TextStyles.textBold26,
       ),
       Gaps.vGap16,
@@ -159,7 +156,7 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
           }
         },
         maxLength: 6,
-        hintText: AppLocalizations.of(context).inputVerificationCodeHint,
+        hintText: AppLocalizations.of(context)!.inputVerificationCodeHint,
       ),
       Gaps.vGap8,
       MyTextField(
@@ -170,15 +167,15 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
         controller: _passwordController,
         keyboardType: TextInputType.visiblePassword,
         maxLength: 16,
-        hintText: AppLocalizations.of(context).inputPasswordHint,
+        hintText: AppLocalizations.of(context)!.inputPasswordHint,
       ),
       Gaps.vGap24,
       MyButton(
         key: const Key('register'),
-        height: 50,
+        minHeight: 50,
         fontSize: 20,
         onPressed: _clickable ? _register : () => Toast.show("请填写相关信息"),
-        text: AppLocalizations.of(context).register,
+        text: AppLocalizations.of(context)!.register,
       )
     ];
   }

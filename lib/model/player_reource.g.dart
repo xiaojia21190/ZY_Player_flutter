@@ -15,10 +15,9 @@ PlayerReource _$PlayerReourceFromJson(Map<String, dynamic> json) {
     json['view'] as String,
     json['search'] as String,
     json['type'] as int,
-    (json['tags'] as List)
-        ?.map(
-            (e) => e == null ? null : Tags.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['tags'] as List<dynamic>)
+        .map((e) => Tags.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 
@@ -38,7 +37,7 @@ Tags _$TagsFromJson(Map<String, dynamic> json) {
   return Tags(
     json['title'] as String,
     json['id'] as int,
-    json['children'] as List,
+    json['children'] as List<dynamic>,
   );
 }
 

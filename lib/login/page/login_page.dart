@@ -35,11 +35,12 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
   bool _clickable = false;
-  AppStateProvider appStateProvider;
+  late AppStateProvider appStateProvider;
+
   @override
-  Map<ChangeNotifier, List<VoidCallback>> changeNotifier() {
-    final List<VoidCallback> callbacks = [_verify];
-    return {
+  Map<ChangeNotifier, List<VoidCallback>?>? changeNotifier() {
+    final List<VoidCallback> callbacks = <VoidCallback>[_verify];
+    return <ChangeNotifier, List<VoidCallback>?>{
       _nameController: callbacks,
       _passwordController: callbacks,
       _nodeText1: null,
@@ -51,7 +52,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
   void initState() {
     super.initState();
     appStateProvider = Store.value<AppStateProvider>(context);
-    _nameController.text = SpUtil.getString(Constant.email);
+    _nameController.text = SpUtil.getString(Constant.email)!;
   }
 
   void _verify() {
@@ -78,8 +79,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
     var uuid = await Utils.getUniqueId();
     appStateProvider.setloadingState(true);
     await DioUtils.instance.requestNetwork(Method.post, HttpApi.login,
-        params: {"username": _nameController.text, "password": _passwordController.text, "uuid": uuid},
-        onSuccess: (data) {
+        params: {"username": _nameController.text, "password": _passwordController.text, "uuid": uuid}, onSuccess: (data) {
       Log.d(data["token"]);
       appStateProvider.setloadingState(false);
       SpUtil.putString(Constant.accessToken, data["token"]);
@@ -139,7 +139,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
         Gaps.vGap24,
         MyButton(
           key: const Key('login'),
-          height: 50,
+          minHeight: 50,
           onPressed: _clickable ? _login : () => Toast.show("请填写邮箱跟密码"),
           text: "登录",
           fontSize: 20,
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
             alignment: Alignment.center,
             child: GestureDetector(
               child: Text(
-                AppLocalizations.of(context).noAccountRegisterLink,
+                AppLocalizations.of(context)!.noAccountRegisterLink,
                 key: const Key('noAccountRegister'),
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),

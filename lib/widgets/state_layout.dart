@@ -9,11 +9,11 @@ typedef RefreshCallback = Future<void> Function();
 
 /// design/9暂无状态页面/index.html#artboard3
 class StateLayout extends StatelessWidget {
-  const StateLayout({Key key, @required this.type, this.hintText, this.onRefresh}) : super(key: key);
+  const StateLayout({Key? key, required this.type, this.hintText, this.onRefresh}) : super(key: key);
 
   final StateType type;
-  final String hintText;
-  final RefreshCallback onRefresh;
+  final String? hintText;
+  final RefreshCallback? onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,10 @@ class StateLayout extends StatelessWidget {
                   )
                 : MyButton(
                     text: "点击刷新",
-                    width: 60,
-                    height: 30,
+                    minWidth: 60,
+                    minHeight: 30,
                     onPressed: () {
-                      onRefresh();
+                      onRefresh!();
                     },
                   ),
           ),
@@ -51,7 +51,7 @@ class StateLayout extends StatelessWidget {
         ),
         Text(
           hintText ?? type.hintText,
-          style: Theme.of(context).textTheme.subtitle2.copyWith(fontSize: Dimens.font_sp14),
+          style: Theme.of(context).textTheme.subtitle2!.copyWith(fontSize: Dimens.font_sp14),
         ),
         Gaps.vGap50,
       ],

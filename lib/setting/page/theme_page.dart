@@ -15,7 +15,7 @@ class _ThemePageState extends State<ThemePage> {
 
   @override
   Widget build(BuildContext context) {
-    String theme = SpUtil.getString(Constant.theme);
+    String? theme = SpUtil.getString(Constant.theme);
     String themeMode;
     switch (theme) {
       case 'Dark':

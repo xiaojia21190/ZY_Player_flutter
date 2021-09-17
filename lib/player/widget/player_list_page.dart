@@ -6,7 +6,6 @@ import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
-import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
@@ -26,14 +25,13 @@ class PlayerListPage extends StatefulWidget {
   _PlayerListPageState createState() => _PlayerListPageState();
 }
 
-class _PlayerListPageState extends State<PlayerListPage>
-    with AutomaticKeepAliveClientMixin<PlayerListPage>, SingleTickerProviderStateMixin {
+class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAliveClientMixin<PlayerListPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<Types> _baseListProvider = BaseListProvider();
 
   List<SwiperList> _list = [];
-  PlayerProvider _playerProvider;
+  PlayerProvider? _playerProvider;
 
   @override
   void initState() {
@@ -55,7 +53,7 @@ class _PlayerListPageState extends State<PlayerListPage>
       onSuccess: (data) {
         List.generate(data["types"].length, (i) => _baseListProvider.add(Types.fromJson(data["types"][i])));
         List.generate(data["swiper"].length, (i) => _list.add(SwiperList.fromJson(data["swiper"][i])));
-        _playerProvider.setSwiperList(_list);
+        _playerProvider!.setSwiperList(_list);
       },
       onError: (code, msg) {
         _baseListProvider.setStateType(StateType.network);
@@ -67,6 +65,8 @@ class _PlayerListPageState extends State<PlayerListPage>
     _baseListProvider.clear();
     this.getData();
   }
+
+  final typeStr = ["mv", "tv", "ac"];
 
   @override
   Widget build(BuildContext context) {
@@ -91,20 +91,45 @@ class _PlayerListPageState extends State<PlayerListPage>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                    padding: EdgeInsets.only(left: 10, top: 5),
-                                    child: Shimmer.fromColors(
-                                      baseColor: Colors.red,
-                                      highlightColor: Colors.yellow,
-                                      child: Text(
-                                        _baseListProvider.list[index].type,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    )),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                        padding: EdgeInsets.only(left: 10, top: 5),
+                                        child: Shimmer.fromColors(
+                                          baseColor: Colors.red,
+                                          highlightColor: Colors.yellow,
+                                          child: Text(
+                                            _baseListProvider.list[index].type,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        )),
+                                    Container(
+                                        padding: EdgeInsets.only(left: 10, top: 5),
+                                        child: TextButton(
+                                          onPressed: () {
+                                            NavigatorUtils.push(
+                                                context, "${PlayerRouter.playerMorePage}?type=${Uri.encodeComponent(typeStr[index])}");
+                                          },
+                                          child: Shimmer.fromColors(
+                                            baseColor: Colors.red,
+                                            highlightColor: Colors.yellow,
+                                            child: Text(
+                                              "查看更多>",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ))
+                                  ],
+                                ),
                                 Gaps.vGap8,
                                 Container(
                                     padding: EdgeInsets.only(left: 10),
@@ -151,8 +176,7 @@ class _PlayerListPageState extends State<PlayerListPage>
                                                             child: Container(
                                                               padding: EdgeInsets.all(5),
                                                               decoration: BoxDecoration(
-                                                                  color: Colors.black45,
-                                                                  borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                                  color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
                                                               child: Text(
                                                                 _baseListProvider.list[index].playlist[i].pingfen,
                                                                 style: TextStyle(fontSize: 12, color: Colors.white),
@@ -172,11 +196,10 @@ class _PlayerListPageState extends State<PlayerListPage>
                                                   ],
                                                 ),
                                                 onTap: () {
-                                                  String jsonString =
-                                                      jsonEncode(_baseListProvider.list[index].playlist[i]);
+                                                  String jsonString = jsonEncode(_baseListProvider.list[index].playlist[i]);
 
-                                                  NavigatorUtils.push(context,
-                                                      '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                                  NavigatorUtils.push(
+                                                      context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                                 },
                                               )).toList(),
                                     )),

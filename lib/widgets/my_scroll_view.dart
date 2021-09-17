@@ -10,8 +10,8 @@ class MyScrollView extends StatelessWidget {
   /// 注意：同时存在底部按钮与keyboardConfig配置时，为保证软键盘弹出高度正常。需要在`Scaffold`使用 `resizeToAvoidBottomInset: defaultTargetPlatform != TargetPlatform.iOS,`
   /// 除非Android与iOS平台均使用keyboard_actions
   const MyScrollView({
-    Key key,
-    @required this.children,
+    Key? key,
+    required this.children,
     this.padding,
     this.physics = const BouncingScrollPhysics(),
     this.crossAxisAlignment = CrossAxisAlignment.start,
@@ -22,11 +22,11 @@ class MyScrollView extends StatelessWidget {
   }) : super(key: key);
 
   final List<Widget> children;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
   final ScrollPhysics physics;
   final CrossAxisAlignment crossAxisAlignment;
-  final Widget bottomButton;
-  final KeyboardActionsConfig keyboardConfig;
+  final Widget? bottomButton;
+  final KeyboardActionsConfig? keyboardConfig;
 
   /// 键盘外部按下将其关闭
   final bool tapOutsideToDismiss;
@@ -45,14 +45,14 @@ class MyScrollView extends StatelessWidget {
       /// iOS 键盘处理
 
       if (padding != null) {
-        contents = Padding(padding: padding, child: contents);
+        contents = Padding(padding: padding!, child: contents);
       }
 
       contents = KeyboardActions(
           isDialog: bottomButton != null,
           overscroll: overScroll,
-          config: keyboardConfig,
-          tapOutsideToDismiss: tapOutsideToDismiss,
+          config: keyboardConfig!,
+          tapOutsideBehavior: tapOutsideToDismiss ? TapOutsideBehavior.opaqueDismiss : TapOutsideBehavior.none,
           child: contents);
     } else {
       contents = SingleChildScrollView(
@@ -64,7 +64,7 @@ class MyScrollView extends StatelessWidget {
 
     if (bottomButton != null) {
       contents = Column(
-        children: <Widget>[Expanded(child: contents), SafeArea(child: bottomButton)],
+        children: <Widget>[Expanded(child: contents), SafeArea(child: bottomButton!)],
       );
     }
 

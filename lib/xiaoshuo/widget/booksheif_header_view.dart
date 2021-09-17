@@ -23,30 +23,30 @@ class BookshelfHeader extends StatefulWidget {
 }
 
 class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
+  AnimationController? controller;
+  Animation<double>? animation;
   XiaoShuoProvider _xiaoShuoProvider = XiaoShuoProvider();
 
   @override
   initState() {
     _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
     controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
-    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller!);
 
-    animation.addStatusListener((status) {
+    animation!.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        controller.reverse();
+        controller!.reverse();
       } else if (status == AnimationStatus.dismissed) {
-        controller.forward();
+        controller!.forward();
       }
     });
-    controller.forward();
+    controller!.forward();
 
     super.initState();
   }
 
   dispose() {
-    controller.dispose();
+    controller!.dispose();
     super.dispose();
   }
 
@@ -72,7 +72,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
           Positioned(
             bottom: 0,
             child: BookshelfCloudWidget(
-              animation: animation,
+              animation: animation!,
               width: width,
             ),
           ),
@@ -120,8 +120,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
                   Text(novel.name, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
                   Row(
                     children: <Widget>[
-                      Text(' 读至${Random.secure().nextInt(100)}%     继续阅读 ',
-                          style: TextStyle(fontSize: 14, color: Colours.paper)),
+                      Text(' 读至${Random.secure().nextInt(100)}%     继续阅读 ', style: TextStyle(fontSize: 14, color: Colours.paper)),
                       Image.asset('assets/images/book/bookshelf_continue_read.png'),
                     ],
                   ),

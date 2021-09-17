@@ -7,14 +7,14 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 /// 搜索页的AppBar
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   const SearchBar(
-      {Key key, this.hintText = '', this.backImg = 'assets/images/ic_back_black.png', this.onPressed, this.isBack = false, @required this.focus})
+      {Key? key, this.hintText = '', this.backImg = 'assets/images/ic_back_black.png', this.onPressed, this.isBack = false, required this.focus})
       : super(key: key);
 
   final String backImg;
   final String hintText;
   final bool isBack;
   final FocusNode focus;
-  final Function(String) onPressed;
+  final Function(String)? onPressed;
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -84,7 +84,7 @@ class _SearchBarState extends State<SearchBar> {
           onSubmitted: (val) {
             widget.focus.unfocus();
             // 点击软键盘的动作按钮时的回调
-            widget.onPressed(val);
+            widget.onPressed!(val);
           },
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.only(top: 0.0, left: -8.0, right: -16.0, bottom: 14.0),
@@ -107,7 +107,7 @@ class _SearchBarState extends State<SearchBar> {
               ),
               onTap: () {
                 /// https://github.com/flutter/flutter/issues/35848
-                SchedulerBinding.instance.addPostFrameCallback((_) {
+                SchedulerBinding.instance!.addPostFrameCallback((_) {
                   _controller.text = '';
                 });
               },
@@ -129,14 +129,15 @@ class _SearchBarState extends State<SearchBar> {
           ),
         ),
       ),
-      child: FlatButton(
-        textColor: isDark ? Colours.dark_button_text : Colors.white,
-        color: isDark ? Colours.dark_app_main : Colours.app_main,
+      child: TextButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(isDark ? Colours.dark_app_main : Colours.app_main),
+        ),
         onPressed: () {
           widget.focus.unfocus();
-          widget.onPressed(_controller.text);
+          widget.onPressed!(_controller.text);
         },
-        child: Text('搜索', style: TextStyle(fontSize: Dimens.font_sp14)),
+        child: Text('搜索', style: TextStyle(fontSize: Dimens.font_sp14, color: isDark ? Colours.dark_button_text : Colors.white)),
       ),
     );
 

@@ -27,13 +27,13 @@ import '../manhua_router.dart';
 
 class ManhuaDetailPage extends StatefulWidget {
   const ManhuaDetailPage({
-    Key key,
-    @required this.url,
-    @required this.title,
+    Key? key,
+    this.url,
+    this.title,
   }) : super(key: key);
 
-  final String url;
-  final String title;
+  final String? url;
+  final String? title;
 
   @override
   _ManhuaDetailPageState createState() => _ManhuaDetailPageState();
@@ -43,7 +43,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   bool startedPlaying = false;
 
   ManhuaDetailProvider _manhuaProvider = ManhuaDetailProvider();
-  CollectProvider _collectProvider;
+  late CollectProvider _collectProvider;
   String actionName = "";
 
   int yueduIndex = 0;
@@ -64,8 +64,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
 
   Future initData() async {
     _manhuaProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url},
-        onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url}, onSuccess: (data) {
       _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data));
       _manhuaProvider.setZhanghjie();
       if (getFilterData(_manhuaProvider.catLog)) {
@@ -167,9 +166,9 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                               TextButton(
                                 child: const Text('保存到相册', style: TextStyle(color: Colors.white)),
                                 onPressed: () async {
-                                  ByteData byteData = await QSCommon.capturePngToByteData(haibaoKey2);
+                                  ByteData? byteData = await QSCommon.capturePngToByteData(haibaoKey2);
                                   // 保存
-                                  var result = await QSCommon.saveImageToCamera(byteData);
+                                  var result = await QSCommon.saveImageToCamera(byteData!);
                                   if (result["isSuccess"]) {
                                     Toast.show("保存成功, 快去分享吧");
                                   } else {
@@ -202,7 +201,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
               child: Selector<ManhuaDetailProvider, String>(
                   builder: (_, actionName, __) {
                     return MyAppBar(
-                        centerTitle: widget.title,
+                        centerTitle: widget.title!,
                         actionName: actionName,
                         onPressed: () {
                           if (getFilterData(_manhuaProvider.catLog)) {
@@ -272,9 +271,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                 children: [
                                   Text(provider.shunxuText),
                                   IconButton(
-                                      icon: Icon(provider.currentOrder
-                                          ? Icons.vertical_align_bottom_rounded
-                                          : Icons.vertical_align_top_rounded),
+                                      icon: Icon(provider.currentOrder ? Icons.vertical_align_bottom_rounded : Icons.vertical_align_top_rounded),
                                       onPressed: () {
                                         provider.changeShunxu(!provider.currentOrder);
                                       })

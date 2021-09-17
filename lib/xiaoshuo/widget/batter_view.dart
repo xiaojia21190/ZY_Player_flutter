@@ -12,7 +12,7 @@ class BatteryView extends StatefulWidget {
 class _BatteryViewState extends State<BatteryView> {
   double batteryLevel = 0;
 
-  Timer _timer;
+  Timer? _timer;
 
   @override
   void initState() {

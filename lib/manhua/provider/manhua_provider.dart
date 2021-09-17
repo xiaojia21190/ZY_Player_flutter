@@ -11,7 +11,7 @@ class ManhuaProvider extends ChangeNotifier {
   List<Types> _list = [];
   List<Types> get list => _list;
 
-  ManhuaCatlogDetail _catLog;
+  late ManhuaCatlogDetail _catLog;
   ManhuaCatlogDetail get catLog => _catLog;
 
   List<String> _images = [];
@@ -29,7 +29,7 @@ class ManhuaProvider extends ChangeNotifier {
   }
 
   setWords() {
-    _words = SpUtil.getStringList("ManHuaWords", defValue: []);
+    _words = SpUtil.getStringList("ManHuaWords", defValue: [])!;
   }
 
   setList(List<Types> list) {

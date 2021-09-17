@@ -11,7 +11,7 @@ class ManhuaDetailProvider extends ChangeNotifier {
   List<ManhuaDetail> _list = [];
   List<ManhuaDetail> get list => _list;
 
-  ManhuaCatlogDetail _catLog;
+  late ManhuaCatlogDetail _catLog;
   ManhuaCatlogDetail get catLog => _catLog;
 
   List<String> _kanguozhangjie = [];
@@ -27,7 +27,7 @@ class ManhuaDetailProvider extends ChangeNotifier {
   bool get currentOrder => _currentOrder;
 
   setZhanghjie() {
-    _kanguozhangjie = SpUtil.getStringList("KGzhangjie", defValue: []);
+    _kanguozhangjie = SpUtil.getStringList("KGzhangjie", defValue: [])!;
   }
 
   changeShunxu(bool shuxu) {
@@ -57,7 +57,7 @@ class ManhuaDetailProvider extends ChangeNotifier {
   }
 
   setWords() {
-    _words = SpUtil.getStringList("ManHuaWords", defValue: []);
+    _words = SpUtil.getStringList("ManHuaWords", defValue: [])!;
   }
 
   setList(List<ManhuaDetail> list) {

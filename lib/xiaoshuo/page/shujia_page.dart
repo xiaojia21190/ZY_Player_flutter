@@ -10,32 +10,30 @@ import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/booksheif_header_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/bookshelf_item_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
-import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ShuJiaPage extends StatefulWidget {
-  ShuJiaPage({Key key}) : super(key: key);
+  ShuJiaPage({Key? key}) : super(key: key);
 
   @override
   _ShuJiaPageState createState() => _ShuJiaPageState();
 }
 
-class _ShuJiaPageState extends State<ShuJiaPage>
-    with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
+class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMixin<ShuJiaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
-  AnimationController controller;
-  Animation<double> animation;
+  AnimationController? controller;
+  Animation<double>? animation;
 
   XiaoShuoProvider _xiaoShuoProvider = XiaoShuoProvider();
 
   @override
   void initState() {
     controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
-    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller!);
     _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
     _xiaoShuoProvider.setListXiaoshuoResource();
     _xiaoShuoProvider.getReadList();
@@ -104,7 +102,7 @@ class _ShuJiaPageState extends State<ShuJiaPage>
                           ],
                         );
                 },
-                selector: (_, store) => store.lastread),
+                selector: (_, store) => store.lastread!),
           )
         ];
       },

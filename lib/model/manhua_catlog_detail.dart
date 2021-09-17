@@ -45,7 +45,7 @@ class ManhuaCatlogDetail extends Object {
 
   factory ManhuaCatlogDetail.fromJson(Map<String, dynamic> srcJson) => _$ManhuaCatlogDetailFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$ManhuaCatlogDetailToJson(this);
+  Map<dynamic, dynamic> toJson() => _$ManhuaCatlogDetailToJson(this);
 }
 
 @JsonSerializable()

@@ -27,7 +27,9 @@ import 'package:ZY_Player_flutter/xiaoshuo/widget/batter_view.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_screen/flutter_screen.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -36,8 +38,8 @@ import 'package:video_player/video_player.dart';
 
 class PlayerDetailPage extends StatefulWidget {
   const PlayerDetailPage({
-    Key key,
-    @required this.playerList,
+    Key? key,
+    required this.playerList,
   }) : super(key: key);
 
   final String playerList;
@@ -50,33 +52,33 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
-  CollectProvider _collectProvider;
-  AppStateProvider appStateProvider;
-  StreamSubscription _currentPosSubs;
+  CollectProvider? _collectProvider;
+  AppStateProvider? appStateProvider;
+  StreamSubscription? _currentPosSubs;
 
   String actionName = "";
 
   int currentVideoIndex = -1;
   String currentVideo = "";
-  Timer searchTimer;
+  Timer? searchTimer;
 
   String currentUrl = "";
   String currentUrlName = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Playlist _playlist;
+  Playlist? _playlist;
 
-  VideoPlayerController _videoPlayerController;
-  ChewieController _chewieController;
+  VideoPlayerController? _videoPlayerController;
+  ChewieController? _chewieController;
 
   int bofangIndex = 0;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     var result = jsonDecode(widget.playerList);
     _playlist = Playlist.fromJson(result);
-    getPlayDownLoadUrl(_playlist.url);
+    getPlayDownLoadUrl(_playlist!.url);
     _collectProvider = Store.value<CollectProvider>(context);
     appStateProvider = Store.value<AppStateProvider>(context);
     bofangIndex = 0;
@@ -121,7 +123,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     }, onError: (_, msg) {
       currentVideoIndex = index;
       Toast.show(msg);
-      appStateProvider.setloadingState(false);
+      appStateProvider!.setloadingState(false);
     });
   }
 
@@ -132,11 +134,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       List.generate(data.length, (index) => playDownUrl.add(ZiyuanUrl.fromJson(data[index])));
     }, onError: (_, msg) {
       Toast.show(msg);
-      appStateProvider.setloadingState(false);
+      appStateProvider!.setloadingState(false);
     });
   }
 
-  Future LaunchDownLoadUrl(String videoUrl) async {
+  Future launchDownLoadUrl(String videoUrl) async {
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.getVideoDwonUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) async {
       if (await canLaunch(data)) {
         await launch(data);
@@ -145,13 +147,13 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       }
     }, onError: (_, __) {
       Toast.show("获取下载链接失败，请从新获取");
-      appStateProvider.setloadingState(false);
+      appStateProvider!.setloadingState(false);
     });
   }
 
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist.url}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist!.url}, onSuccess: (data) {
       if (data != null && data.length > 0) {
         List.generate(data.length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data[index])));
         _detailProvider.setJuji();
@@ -159,8 +161,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       } else {
         _detailProvider.setStateType(StateType.network);
       }
-      _collectProvider.changeNoti();
-      if (getFilterData(_playlist.url)) {
+      _collectProvider!.changeNoti();
+      if (getFilterData(_playlist!.url)) {
         _detailProvider.setActionName("取消");
       } else {
         _detailProvider.setActionName("收藏");
@@ -246,9 +248,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                               TextButton(
                                 child: const Text('保存到相册', style: TextStyle(color: Colors.white)),
                                 onPressed: () async {
-                                  ByteData byteData = await QSCommon.capturePngToByteData(haibaoKey);
+                                  ByteData? byteData = await QSCommon.capturePngToByteData(haibaoKey);
                                   // 保存
-                                  var result = await QSCommon.saveImageToCamera(byteData);
+                                  var result = await QSCommon.saveImageToCamera(byteData!);
                                   if (result["isSuccess"]) {
                                     Toast.show("保存成功, 快去分享吧");
                                   } else {
@@ -270,21 +272,22 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   void _videoListener() async {
-    if (_videoPlayerController.value.isInitialized) {
+    if (_videoPlayerController!.value.isInitialized) {
       if (!_detailProvider.isInitPlayer) {
         _detailProvider.setInitPlayer(true);
       }
     }
-    _detailProvider.saveRecordNof("${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}");
+    _detailProvider.saveRecordNof(
+        "${_playlist!.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController!.value.position.inSeconds}");
 
     // 存储播放记录
     PlayerModel playerModel = PlayerModel(
-        videoId: "${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController.value.position.inSeconds}",
-        name: "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}",
+        videoId: "${_playlist!.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_${_videoPlayerController!.value.position.inSeconds}",
+        name: "${_playlist!.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}",
         url: currentUrl,
-        cover: _playlist.cover,
-        startAt: "${_videoPlayerController.value.position.inSeconds}");
-    appStateProvider.savePlayerRecord(playerModel);
+        cover: _playlist!.cover,
+        startAt: "${_videoPlayerController!.value.position.inSeconds}");
+    appStateProvider!.savePlayerRecord(playerModel);
   }
 
   dlnaDevicesDialog() {
@@ -318,13 +321,14 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                 return TextButton(
                                   child: Text(devices[index]["name"]),
                                   onPressed: () async {
-                                    _chewieController.pause();
-                                    Toast.show("推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${devices[index]["name"]}");
-                                    await appStateProvider.dlnaManager.setDevice(devices[index]["id"]);
-                                    await appStateProvider.dlnaManager
-                                        .setVideoUrlAndName(currentUrl, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
-                                    await appStateProvider.dlnaManager.startAndPlay();
-                                    appStateProvider.setloadingState(false);
+                                    _chewieController!.pause();
+                                    Toast.show(
+                                        "推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${devices[index]["name"]}");
+                                    await appStateProvider!.dlnaManager.setDevice(devices[index]["id"]);
+                                    await appStateProvider!.dlnaManager.setVideoUrlAndName(currentUrl,
+                                        _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
+                                    await appStateProvider!.dlnaManager.startAndPlay();
+                                    appStateProvider!.setloadingState(false);
                                     Navigator.pop(context);
                                   },
                                 );
@@ -344,7 +348,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   searchDialog() {
     // 提示是否继续搜索
-    appStateProvider.setSearchText("点击开始搜索设备");
+    appStateProvider!.setSearchText("点击开始搜索设备");
     showDialog(
         context: context,
         builder: (_) => Selector<AppStateProvider, String>(
@@ -361,22 +365,22 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                 buttonOkText: Text("重新搜索"),
                 buttonCancelText: Text("停止搜索"),
                 onOkButtonPressed: () async {
-                  await appStateProvider.searchDlna(1);
+                  await appStateProvider!.searchDlna(1);
                 },
                 onCancelButtonPressed: () async {
                   Navigator.pop(context);
-                  await appStateProvider.dlnaManager.stop();
+                  await appStateProvider!.dlnaManager.stop();
                 },
               );
             },
             selector: (_, store) => store.searchText));
   }
 
-  Offset _initialSwipeOffset;
-  Offset _finalSwipeOffset;
+  Offset? _initialSwipeOffset;
+  Offset? _finalSwipeOffset;
 
-  Offset _initialVerLightOffset;
-  Offset _finalVerLightOffset;
+  Offset? _initialVerLightOffset;
+  Offset? _finalVerLightOffset;
   double light = 0;
 
   void _onHorizontalDragStart(DragStartDetails details) {
@@ -387,44 +391,44 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     _finalSwipeOffset = details.globalPosition;
     var text = "";
     if (_initialSwipeOffset != null) {
-      final offsetDifference = _initialSwipeOffset.dx - _finalSwipeOffset.dx;
+      final offsetDifference = _initialSwipeOffset!.dx - _finalSwipeOffset!.dx;
       String fintext = "";
       // 最多滑动20分钟
       var offsetAbs = offsetDifference.abs() / Screen.widthOt;
 
       fintext = offsetDifference < 0 ? "快进到：" : "后退到：";
       if (offsetDifference < 0) {
-        var endTime = offsetAbs * (_videoPlayerController.value.duration.inSeconds - _videoPlayerController.value.position.inSeconds);
-        text = "$fintext${Duration(seconds: _videoPlayerController.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
+        var endTime = offsetAbs * (_videoPlayerController!.value.duration.inSeconds - _videoPlayerController!.value.position.inSeconds);
+        text = "$fintext${Duration(seconds: _videoPlayerController!.value.position.inSeconds + endTime.toInt()).toString().split(".")[0]}";
       } else {
-        var endTime = offsetAbs * (_videoPlayerController.value.position.inSeconds);
-        text = "$fintext${Duration(seconds: _videoPlayerController.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
+        var endTime = offsetAbs * (_videoPlayerController!.value.position.inSeconds);
+        text = "$fintext${Duration(seconds: _videoPlayerController!.value.position.inSeconds - endTime.toInt()).toString().split(".")[0]}";
       }
-      appStateProvider.setVerSwiper(true, text);
+      appStateProvider!.setVerSwiper(true, text);
     }
   }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
     if (_initialSwipeOffset != null) {
-      final offsetDifference = _initialSwipeOffset.dx - _finalSwipeOffset.dx;
+      final offsetDifference = _initialSwipeOffset!.dx - _finalSwipeOffset!.dx;
       var offsetAbs = offsetDifference.abs() / Screen.widthOt;
       if (offsetDifference > 0) {
-        var endTime = offsetAbs * (_videoPlayerController.value.position.inSeconds);
-        if (_videoPlayerController.value.isPlaying) {
-          Log.d(Duration(seconds: _videoPlayerController.value.position.inSeconds - endTime.toInt()).toString());
-          _videoPlayerController.position.then((value) => {_videoPlayerController.seekTo(value - Duration(seconds: endTime.toInt()))});
+        var endTime = offsetAbs * (_videoPlayerController!.value.position.inSeconds);
+        if (_videoPlayerController!.value.isPlaying) {
+          Log.d(Duration(seconds: _videoPlayerController!.value.position.inSeconds - endTime.toInt()).toString());
+          _videoPlayerController!.position.then((value) => {_videoPlayerController!.seekTo(value! - Duration(seconds: endTime.toInt()))});
         }
       } else {
-        var endTime = offsetAbs * (_videoPlayerController.value.duration.inSeconds - _videoPlayerController.value.position.inSeconds);
-        if (Duration(seconds: _videoPlayerController.value.position.inSeconds + endTime.toInt()) <= _videoPlayerController.value.duration) {
-          Log.d(Duration(seconds: _videoPlayerController.value.position.inSeconds + endTime.toInt()).toString());
-          if (_videoPlayerController.value.isPlaying) {
-            _videoPlayerController.position.then((value) => {_videoPlayerController.seekTo(value + Duration(seconds: endTime.toInt()))});
+        var endTime = offsetAbs * (_videoPlayerController!.value.duration.inSeconds - _videoPlayerController!.value.position.inSeconds);
+        if (Duration(seconds: _videoPlayerController!.value.position.inSeconds + endTime.toInt()) <= _videoPlayerController!.value.duration) {
+          Log.d(Duration(seconds: _videoPlayerController!.value.position.inSeconds + endTime.toInt()).toString());
+          if (_videoPlayerController!.value.isPlaying) {
+            _videoPlayerController!.position.then((value) => {_videoPlayerController!.seekTo(value! + Duration(seconds: endTime.toInt()))});
           }
         }
       }
     }
-    appStateProvider.setVerSwiper(false, "");
+    appStateProvider!.setVerSwiper(false, "");
   }
 
   void _onVerticalDragStart(DragStartDetails details) {
@@ -433,7 +437,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   Future _onVerticalDragUpdate(DragUpdateDetails details) async {
     _finalVerLightOffset = details.globalPosition;
-    final offsetDifference = _initialVerLightOffset.dy - _finalVerLightOffset.dy;
+    final offsetDifference = _initialVerLightOffset!.dy - _finalVerLightOffset!.dy;
     var offsetAbs = offsetDifference.abs() / 300;
     // Log.d(offsetAbs.toString());
     var entLight;
@@ -451,40 +455,40 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       FlutterScreen.setBrightness(entLight);
     }
     var verLightText = "亮度：${(entLight * 100).toInt()}%";
-    appStateProvider.setVerLight(true, verLightText);
+    appStateProvider!.setVerLight(true, verLightText);
   }
 
   void _onVerticalDragEnd(DragEndDetails details) {
     if (_initialVerLightOffset != null) {
       getLight();
-      appStateProvider.setVerLight(false, "");
+      appStateProvider!.setVerLight(false, "");
     }
   }
 
   Future playVideo2(int index, List<ZiyuanUrl> urls, int chooseIndex) async {
-    _videoPlayerController?.removeListener(_videoListener);
-    _videoPlayerController?.pause();
+    _videoPlayerController!.removeListener(_videoListener);
+    _videoPlayerController!.pause();
     currentVideoIndex = index;
     currentVideo = "${index}_$chooseIndex";
-    appStateProvider.setloadingState(true);
+    appStateProvider!.setloadingState(true);
     Toast.show("正在解析地址");
     try {
       await getPlayVideoUrl(urls[currentVideoIndex].url, currentVideoIndex);
-      currentUrlName = "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}";
-      _detailProvider.saveJuji("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
-      var record = _detailProvider.getRecord("${_playlist.url}_${chooseIndex}_$currentVideoIndex");
+      currentUrlName = "${_playlist!.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}";
+      _detailProvider.saveJuji("${_playlist!.url}_${chooseIndex}_$currentVideoIndex");
+      var record = _detailProvider.getRecord("${_playlist!.url}_${chooseIndex}_$currentVideoIndex");
       var startAt = Duration(seconds: 0);
       if (record != null) {
         startAt = Duration(seconds: int.parse(record));
       }
       _videoPlayerController = VideoPlayerController.network(currentUrl);
 
-      await _videoPlayerController.initialize();
-      _videoPlayerController.addListener(_videoListener);
+      await _videoPlayerController!.initialize();
+      _videoPlayerController!.addListener(_videoListener);
 
       _chewieController = ChewieController(
         // customControls: MyControls(_playlist.title, urls.length),
-        videoPlayerController: _videoPlayerController,
+        videoPlayerController: _videoPlayerController!,
         autoPlay: false,
         allowedScreenSleep: false,
         looping: false,
@@ -495,7 +499,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
           return Center(
             child: TextButton.icon(
                 onPressed: () {
-                  _chewieController.exitFullScreen();
+                  _chewieController!.exitFullScreen();
                 },
                 icon: Icon(
                   Icons.error,
@@ -508,7 +512,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         routePageBuilder: (context, animation, __, provider) {
           return AnimatedBuilder(
             animation: animation,
-            builder: (BuildContext context, Widget child) {
+            builder: (BuildContext context, Widget? child) {
               return Scaffold(
                   backgroundColor: Colors.black,
                   body: GestureDetector(
@@ -529,11 +533,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                           child: TextButton.icon(
                               onPressed: () async {
                                 // 取消全屏
-                                _chewieController.exitFullScreen();
+                                _chewieController!.exitFullScreen();
                                 // 延迟点击
                                 Future.delayed(Duration(seconds: 1), () {
                                   // 点击显示投屏数据
-                                  if (appStateProvider.dlnaDevices.length == 0) {
+                                  if (appStateProvider!.dlnaDevices.length == 0) {
                                     // 没有搜索到
                                     searchDialog();
                                   } else {
@@ -553,7 +557,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                         ),
                       ),
                       Consumer<AppStateProvider>(builder: (_, provider, __) {
-                        return provider.verSwiper && _videoPlayerController.value.isPlaying
+                        return provider.verSwiper && _videoPlayerController!.value.isPlaying
                             ? Positioned.fill(
                                 child: Align(
                                   alignment: Alignment.center,
@@ -617,16 +621,16 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
       // 存储播放记录
       PlayerModel playerModel = PlayerModel(
-          videoId: "${_playlist.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_$record}",
-          name: "${_playlist.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}",
+          videoId: "${_playlist!.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_$record}",
+          name: "${_playlist!.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}",
           url: currentUrl,
-          cover: _playlist.cover,
+          cover: _playlist!.cover,
           startAt: record);
-      appStateProvider.savePlayerRecord(playerModel);
+      appStateProvider!.savePlayerRecord(playerModel);
     } catch (e) {
-      appStateProvider.setloadingState(false);
+      appStateProvider!.setloadingState(false);
     }
-    appStateProvider.setloadingState(false);
+    appStateProvider!.setloadingState(false);
   }
 
   Future playVideo(int index, List<ZiyuanUrl> urls, int chooseIndex) async {
@@ -652,7 +656,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                 width: 100,
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: _detailProvider.kanguojuji.contains("${_playlist.url}_${chooseIndex}_$index") ? Colors.redAccent : Colors.blueAccent,
+                    color: _detailProvider.kanguojuji.contains("${_playlist!.url}_${chooseIndex}_$index") ? Colors.redAccent : Colors.blueAccent,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: currentClickIndex == index
                         ? Border.all(
@@ -674,7 +678,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     );
   }
 
-  List<Widget> textWidget(provider) {
+  List<DropdownMenuItem<int>> textWidget(provider) {
     return List.generate(
         provider.detailReource.length,
         (index) => DropdownMenuItem(
@@ -683,15 +687,15 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
             )).toList();
   }
 
-  bool getFilterData(String url) {
+  bool getFilterData(String? url) {
     if (url != null) {
-      var result = _collectProvider.listDetailResource.where((element) => element.url == url).toList();
+      var result = _collectProvider!.listDetailResource.where((element) => element.url == url).toList();
       return result.length > 0;
     }
     return false;
   }
 
-  DateTime startTime;
+  DateTime? startTime;
   rangeDownload() async {}
 
   @override
@@ -709,17 +713,17 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                   child: Selector<DetailProvider, String>(
                       builder: (_, actionName, __) {
                         return MyAppBar(
-                            centerTitle: _playlist.title,
+                            centerTitle: _playlist!.title,
                             actionName: actionName,
                             onPressed: () {
-                              if (getFilterData(_playlist.url)) {
+                              if (getFilterData(_playlist!.url)) {
                                 Log.d("点击取消");
-                                _collectProvider.removeResource(_playlist.url);
+                                _collectProvider!.removeResource(_playlist!.url);
                                 _detailProvider.setActionName("收藏");
                               } else {
                                 Log.d("点击收藏");
-                                _collectProvider.addResource(
-                                  _playlist,
+                                _collectProvider!.addResource(
+                                  _playlist!,
                                 );
                                 _detailProvider.setActionName("取消");
                               }
@@ -737,7 +741,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                           builder: (_, isplayer, __) {
                             return isplayer
                                 ? Chewie(
-                                    controller: _chewieController,
+                                    controller: _chewieController!,
                                   )
                                 : Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -755,7 +759,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                   TextButton.icon(
                       onPressed: () {
                         // 弹窗
-                        return showElasticDialog<void>(
+                        showElasticDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
                             return Material(
@@ -774,7 +778,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                     itemBuilder: (_, i) {
                                       return TextButton(
                                           onPressed: () async {
-                                            await LaunchDownLoadUrl(playDownUrl[i].url);
+                                            await launchDownLoadUrl(playDownUrl[i].url);
                                           },
                                           child: Text(playDownUrl[i].title));
                                     }),
@@ -800,15 +804,15 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: [
-                                          buildShare(_playlist.cover, _playlist.title),
+                                          buildShare(_playlist!.cover, _playlist!.title),
                                           //源切换
                                           Row(
                                             children: [
                                               Text("切换源:"),
                                               Gaps.hGap8,
                                               DropdownButton(
-                                                onChanged: (value) {
-                                                  provider.setChooseYuanIndex(value);
+                                                onChanged: (int? value) {
+                                                  provider.setChooseYuanIndex(value!);
                                                 },
                                                 items: textWidget(provider),
                                                 value: provider.chooseYuanIndex,
@@ -833,6 +837,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                 ],
               ),
             )),
-        onWillPop: () async => !appStateProvider.loadingState);
+        onWillPop: () async => !appStateProvider!.loadingState);
   }
 }

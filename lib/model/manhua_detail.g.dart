@@ -9,10 +9,9 @@ part of 'manhua_detail.dart';
 ManhuaDetail _$ManhuaDetailFromJson(Map<String, dynamic> json) {
   return ManhuaDetail(
     json['name'] as String,
-    (json['types'] as List)
-        ?.map(
-            (e) => e == null ? null : Types.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['types'] as List<dynamic>)
+        .map((e) => Types.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 

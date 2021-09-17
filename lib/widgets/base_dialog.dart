@@ -4,10 +4,10 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 
 /// 自定义dialog的模板
 class BaseDialog extends StatelessWidget {
-  const BaseDialog({Key key, this.title, this.onPressed, this.hiddenTitle = false, @required this.child}) : super(key: key);
+  const BaseDialog({Key? key, this.title, this.onPressed, this.hiddenTitle = false, required this.child}) : super(key: key);
 
-  final String title;
-  final VoidCallback onPressed;
+  final String? title;
+  final VoidCallback? onPressed;
   final Widget child;
   final bool hiddenTitle;
 
@@ -18,7 +18,7 @@ class BaseDialog extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Text(
-          hiddenTitle ? '' : title,
+          hiddenTitle ? '' : title ?? '',
           style: TextStyles.textBold18,
         ),
       ),
@@ -82,27 +82,27 @@ class BaseDialog extends StatelessWidget {
 
 class _DialogButton extends StatelessWidget {
   const _DialogButton({
-    Key key,
-    this.text,
+    Key? key,
+    required this.text,
     this.textColor,
     this.onPressed,
   }) : super(key: key);
 
   final String text;
-  final Color textColor;
-  final VoidCallback onPressed;
+  final Color? textColor;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: SizedBox(
         height: 48.0,
-        child: FlatButton(
+        child: ElevatedButton(
           child: Text(
             text,
             style: TextStyle(fontSize: Dimens.font_sp18),
           ),
-          textColor: textColor,
+          style: ButtonStyle(textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: textColor))),
           onPressed: onPressed,
         ),
       ),

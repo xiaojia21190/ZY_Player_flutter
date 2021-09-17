@@ -11,13 +11,13 @@ import 'package:provider/provider.dart';
 
 class ManhuaImagePage extends StatefulWidget {
   const ManhuaImagePage({
-    Key key,
-    @required this.url,
-    @required this.title,
+    Key? key,
+    this.url,
+    this.title,
   }) : super(key: key);
 
-  final String url;
-  final String title;
+  final String? url;
+  final String? title;
 
   @override
   _ManhuaImagePageState createState() => _ManhuaImagePageState();
@@ -64,7 +64,7 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
         create: (_) => _baseListProvider,
         child: Scaffold(
             appBar: MyAppBar(
-              title: widget.title,
+              title: widget.title!,
             ),
             body: Column(
               children: [

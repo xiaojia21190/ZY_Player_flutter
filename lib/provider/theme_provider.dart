@@ -7,26 +7,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  static const Map<ThemeMode, String> themes = {
-    ThemeMode.dark: 'Dark',
-    ThemeMode.light: 'Light',
-    ThemeMode.system: 'System'
-  };
+  static const Map<ThemeMode, String> themes = {ThemeMode.dark: 'Dark', ThemeMode.light: 'Light', ThemeMode.system: 'System'};
 
   void syncTheme() {
-    final String theme = SpUtil.getString(Constant.theme);
-    if (theme.isNotEmpty && theme != themes[ThemeMode.system]) {
+    final String? theme = SpUtil.getString(Constant.theme);
+    if (theme!.isNotEmpty && theme != themes[ThemeMode.system]) {
       notifyListeners();
     }
   }
 
   void setTheme(ThemeMode themeMode) {
-    SpUtil.putString(Constant.theme, themes[themeMode]);
+    SpUtil.putString(Constant.theme, themes[themeMode]!);
     notifyListeners();
   }
 
   ThemeMode getThemeMode() {
-    final String theme = SpUtil.getString(Constant.theme);
+    final String? theme = SpUtil.getString(Constant.theme);
     switch (theme) {
       case 'Dark':
         return ThemeMode.dark;

@@ -14,16 +14,16 @@ class PlayerModel {
   final String cover;
   final String startAt;
   final String url;
-  PlayerModel({this.name, this.cover, this.url, this.startAt, this.videoId});
+  PlayerModel({required this.name, required this.cover, required this.url, required this.startAt, required this.videoId});
 
-  PlayerModel.fromJson(Map<String, dynamic> json)
+  PlayerModel.fromJson(Map<dynamic, dynamic> json)
       : name = json['name'],
         cover = json['cover'],
         startAt = json['startAt'],
         videoId = json['videoId'],
         url = json['url'];
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
+  Map<dynamic, dynamic> toJson() => <String, dynamic>{
         'name': name,
         'startAt': startAt,
         'cover': cover,
@@ -52,13 +52,15 @@ class AppStateProvider extends ChangeNotifier {
   double _opacityLevel = 0.0;
   double get opacityLevel => _opacityLevel;
 
+  int playandzhibo = 0;
+
   setOpcity(double opc) {
     _opacityLevel = opc;
     notifyListeners();
   }
 
   getPlayerRecord() async {
-    _playerList = SpUtil.getObjList<PlayerModel>("player_record", (data) => PlayerModel.fromJson(data), defValue: []);
+    _playerList = SpUtil.getObjList<PlayerModel>("player_record", (data) => PlayerModel.fromJson(data), defValue: [])!;
     notifyListeners();
   }
 
@@ -71,9 +73,9 @@ class AppStateProvider extends ChangeNotifier {
     }
     SpUtil.putObjectList("player_record", _playerList);
 
-    List<String> list = SpUtil.getStringList("saverecord");
+    List<String>? list = SpUtil.getStringList("saverecord");
 
-    var indexa = list.indexWhere((element) =>
+    var indexa = list!.indexWhere((element) =>
         element.split("_")[0] == playerModel.videoId.split("_")[0] &&
         element.split("_")[1] == playerModel.videoId.split("_")[1] &&
         element.split("_")[2] == playerModel.videoId.split("_")[2]);
@@ -86,14 +88,14 @@ class AppStateProvider extends ChangeNotifier {
   }
 
   clearPlayerRecord() {
-    SpUtil.putObjectList("player_record", null);
+    SpUtil.putObjectList("player_record", []);
     _playerList = [];
     notifyListeners();
   }
 
   setConfig() {
-    _xsFontSize = SpUtil.getDouble("xsfontsize", defValue: 18);
-    _xsColor = Color(SpUtil.getInt("xscolor", defValue: 0xffCCF1CF));
+    _xsFontSize = SpUtil.getDouble("xsfontsize", defValue: 18)!;
+    _xsColor = Color(SpUtil.getInt("xscolor", defValue: 0xffCCF1CF)!);
   }
 
   setFontSize(double size) {
@@ -108,9 +110,9 @@ class AppStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setloadingState(bool state, [String text]) {
+  void setloadingState(bool state, [String? text]) {
     _loadingState = state;
-    _loadingText = text;
+    _loadingText = text!;
     if (_loadingState) {
       Loading.show(_loadingText);
     } else {
@@ -126,7 +128,7 @@ class AppStateProvider extends ChangeNotifier {
     _dlnaDevices = list;
     if (list.length > 0) {
       // 通知可以打开投屏列表
-      ApplicationEvent.event.fire(DeviceEvent());
+      ApplicationEvent.event.fire(DeviceEvent(playandzhibo));
     }
     notifyListeners();
   }
@@ -134,7 +136,7 @@ class AppStateProvider extends ChangeNotifier {
   FlutterDlna _dlnaManager = FlutterDlna();
   FlutterDlna get dlnaManager => _dlnaManager;
 
-  String _searchText = "设备搜索超时";
+  String _searchText = "点击开始搜索设备";
   String get searchText => _searchText;
 
   Future initDlnaManager() async {
@@ -143,7 +145,7 @@ class AppStateProvider extends ChangeNotifier {
       // 成功之后回调
       if (devices != null && devices.length > 0) {
         _searchText = "搜索成功，点击投屏按钮继续投屏";
-        Navigator.pop(Constant.navigatorKey.currentContext);
+        Navigator.pop(Constant.navigatorKey.currentContext!);
         setDlnaDevices(devices);
       } else {
         _searchText = "设备搜索超时";
@@ -152,7 +154,8 @@ class AppStateProvider extends ChangeNotifier {
     });
   }
 
-  Future searchDlna() async {
+  Future searchDlna(int i) async {
+    playandzhibo = i;
     _searchText = "正在搜索设备...";
     await dlnaManager.search();
 

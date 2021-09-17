@@ -9,7 +9,7 @@ import 'routers.dart';
 class NavigatorUtils {
   static void push(BuildContext context, String path, {bool replace = false, bool clearStack = false}) {
     unfocus();
-    Application.router.navigateTo(
+    Application.router!.navigateTo(
       context,
       path,
       replace: replace,
@@ -25,10 +25,9 @@ class NavigatorUtils {
     );
   }
 
-  static void pushResult(BuildContext context, String path, Function(Object) function,
-      {bool replace = false, bool clearStack = false}) {
+  static void pushResult(BuildContext context, String path, Function(Object) function, {bool replace = false, bool clearStack = false}) {
     unfocus();
-    Application.router
+    Application.router!
         .navigateTo(
       context,
       path,
@@ -42,12 +41,12 @@ class NavigatorUtils {
         child: child,
       ),
     )
-        .then((Object result) {
+        .then((Object? result) {
       // // 页面返回result为null
       // if (result == null) {
       //   return;
       // }
-      function(result);
+      function(result!);
     }).catchError((dynamic error) {
       print('$error');
     });
@@ -66,10 +65,9 @@ class NavigatorUtils {
   }
 
   /// 跳到WebView页
-  static void goWebViewPage(BuildContext context, String title, String url, {String flag}) {
+  static void goWebViewPage(BuildContext context, String title, String url) {
     //fluro 不支持传中文,需转换
-    push(context,
-        '${Routes.webViewPage}?title=${Uri.encodeComponent(title)}&url=${Uri.encodeComponent(url)}&flag=$flag');
+    push(context, '${Routes.webViewPage}?title=${Uri.encodeComponent(title)}&url=${Uri.encodeComponent(url)}');
   }
 
   static void unfocus() {

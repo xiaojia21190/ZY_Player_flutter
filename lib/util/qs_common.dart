@@ -12,15 +12,15 @@ import 'package:permission_handler/permission_handler.dart';
 
 class QSCommon {
   /// 截屏图片生成图片流ByteData
-  static Future<ByteData> capturePngToByteData(GlobalKey key) async {
+  static Future<ByteData?> capturePngToByteData(GlobalKey key) async {
     try {
-      RenderRepaintBoundary boundary = key.currentContext.findRenderObject();
+      RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
       double dpr = ui.window.devicePixelRatio; // 获取当前设备的像素比
       ui.Image image = await boundary.toImage(pixelRatio: dpr);
-      ByteData _byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      return _byteData;
+      ByteData? _byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      return _byteData!;
     } catch (e) {
-      debugPrint(e);
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -66,46 +66,4 @@ class QSCommon {
     final result = await ImageGallerySaver.saveImage(sourceBytes);
     return result;
   }
-
-  // static Future saveMp3({String url, String name, String leixing}) async {
-  //   await handlePhotosPermission();
-  //   DateTime startTime;
-  //
-  //   print("start");
-  //   bool isStarted = false;
-  //   // var url = "https://bilibili.xiang-kuyun.com/20210112/6629_161a98ad/index.m3u8";
-  //   // var url = "http://aod.cos.tx.xmcdn.com/group78/M04/90/CB/wKgO4F5Q_xizH989AJ8ygQ3qgts693.m4a";
-  //
-  //   Directory appDocDirectory = await getApplicationDocumentsDirectory();
-  //   if (leixing == "1") {
-  //     // 音频
-  //   } else {
-  //     // 小说 、漫画
-  //   }
-  //   var savePath = "${appDocDirectory.path}/download_result/dddd.mp4";
-  //   // var savePath = "${appDocDirectory.path}/download_result/music.mp3";
-  //
-  //   Response res = await RangeDownload.downloadWithChunks(url, savePath,
-  //       //isRangeDownload: false,//Support normal download
-  //       // maxChunk: 6,
-  //       // dio: Dio(),//Optional parameters "dio".Convenient to customize request settings.
-  //       onReceiveProgress: (received, total) {
-  //     if (!isStarted) {
-  //       startTime = DateTime.now();
-  //       isStarted = true;
-  //     }
-  //     if (total != -1) {
-  //       print("${(received / total * 100).floor()}%");
-  //     }
-  //     if ((received / total * 100).floor() >= 100) {
-  //       var duration = (DateTime.now().millisecondsSinceEpoch - startTime.millisecondsSinceEpoch) / 1000;
-  //       print(duration.toString() + "s");
-  //       print((duration ~/ 60).toString() + "m" + (duration % 60).toString() + "s");
-  //     }
-  //   });
-  //
-  //   print(res.statusCode);
-  //   print(res.statusMessage);
-  //   print(res.data);
-  // }
 }

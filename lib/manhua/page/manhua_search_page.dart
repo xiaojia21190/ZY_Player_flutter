@@ -21,9 +21,9 @@ class ManhuaSearchPage extends StatefulWidget {
 }
 
 class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
-  ManhuaProvider _searchProvider;
+  late ManhuaProvider _searchProvider;
   final FocusNode _focus = FocusNode();
-  AppStateProvider _appStateProvider;
+  late AppStateProvider _appStateProvider;
 
   @override
   void initState() {
@@ -43,8 +43,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
     _searchProvider.list.clear();
     _appStateProvider.setloadingState(true);
 
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords},
-        onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(resultList.length, (index) => Types.fromJson(resultList[index]));
       if (data.length == 0) {
         _searchProvider.setStateType(StateType.order);

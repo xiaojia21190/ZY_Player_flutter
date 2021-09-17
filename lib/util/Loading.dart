@@ -6,19 +6,19 @@ import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:flutter/material.dart';
 
 class Loading {
-  static LoadingView preToast;
+  static LoadingView? preToast;
 
   static show(String msg) {
-    preToast?.dismiss();
+    preToast!.dismiss();
     preToast = null;
-    OverlayState overlay = Constant.navigatorKey.currentState.overlay;
+    OverlayState? overlay = Constant.navigatorKey.currentState!.overlay;
     OverlayEntry overlayEntry;
     overlayEntry = new OverlayEntry(builder: (context) {
       return buildToastLayout(msg);
     });
 
     var toastView = LoadingView();
-    toastView.overlayState = overlay;
+    toastView.overlayState = overlay!;
     toastView.overlayEntry = overlayEntry;
 
     preToast = toastView;
@@ -26,10 +26,10 @@ class Loading {
   }
 
   static hide() {
-    preToast.dismiss();
+    preToast!.dismiss();
   }
 
-  static LayoutBuilder buildToastLayout(String msg) {
+  static LayoutBuilder buildToastLayout(String? msg) {
     return LayoutBuilder(builder: (context, constraints) {
       return AbsorbPointer(
         child: Material(
@@ -61,12 +61,12 @@ class Loading {
 }
 
 class LoadingView {
-  OverlayEntry overlayEntry;
-  OverlayState overlayState;
+  OverlayEntry? overlayEntry;
+  OverlayState? overlayState;
   bool dismissed = false;
 
   _show() async {
-    overlayState.insert(overlayEntry);
+    overlayState!.insert(overlayEntry!);
   }
 
   dismiss() async {

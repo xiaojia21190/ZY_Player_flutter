@@ -17,7 +17,7 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
-    final String theme = SpUtil.getString(Constant.theme);
+    final String? theme = SpUtil.getString(Constant.theme);
     String themeMode;
     switch (theme) {
       case 'Dark':
@@ -40,10 +40,8 @@ class _SettingPageState extends State<SettingPage> {
           Gaps.vGap5,
           ClickItem(title: '账号管理', onTap: () => NavigatorUtils.push(context, SettingRouter.accountManagerPage)),
           ClickItem(title: '清除缓存', content: '23.5MB', onTap: () {}),
-          ClickItem(
-              title: '夜间模式', content: themeMode, onTap: () => NavigatorUtils.push(context, SettingRouter.themePage)),
+          ClickItem(title: '夜间模式', content: themeMode, onTap: () => NavigatorUtils.push(context, SettingRouter.themePage)),
           // ClickItem(title: '检查更新', onTap: () => _showUpdateDialog()),
-          ClickItem(title: '关于我们', onTap: () => NavigatorUtils.push(context, SettingRouter.aboutPage)),
         ],
       ),
     );

@@ -21,6 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:screen_ratio_adapter/screen_ratio_adapter.dart';
 
 Future<void> main() async {
@@ -32,10 +33,10 @@ Future<void> main() async {
 
   /// sp初始化
   await SpUtil.getInstance();
-  final String accessToken = SpUtil.getString(Constant.accessToken);
+  final String? accessToken = SpUtil.getString(Constant.accessToken);
   runFxApp(
       Store.init(MyApp(
-        home: accessToken.isNotEmpty ? Home() : LoginPage(),
+        home: accessToken!.isNotEmpty ? Home() : LoginPage(),
         // home: Home(),
       )),
       uiBlueprints: BlueprintsRectangle(750, 1334));
@@ -48,8 +49,8 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final Widget home;
-  final ThemeData theme;
+  final Widget? home;
+  final ThemeData? theme;
 
   MyApp({this.home, this.theme}) {
     Log.init();
@@ -76,7 +77,7 @@ class MyApp extends StatelessWidget {
 
     setInitDio(
       //adb kill-server && adb server && adb shell
-      baseUrl: Constant.inProduction ? 'https://crawel.lppfk.top/' : 'https://crawel.lppfk.top/',
+      baseUrl: Constant.inProduction ? 'https://xxxx.xxx.xxx/' : 'http://127.0.0.1:7001',
       interceptors: interceptors,
     );
   }
@@ -97,7 +98,7 @@ class MyApp extends StatelessWidget {
                   darkTheme: provider.getTheme(isDarkMode: true),
                   themeMode: provider.getThemeMode(),
                   home: home,
-                  onGenerateRoute: Application.router.generator,
+                  onGenerateRoute: Application.router!.generator,
                   localizationsDelegates: const [
                     AppLocalizationsDelegate(),
                     GlobalMaterialLocalizations.delegate,
@@ -105,12 +106,12 @@ class MyApp extends StatelessWidget {
                     GlobalCupertinoLocalizations.delegate,
                   ],
                   supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
-                  builder: (context, child) {
+                  builder: (context, Widget? child) {
                     /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
                     return MediaQuery(
                       data: MediaQuery.of(context).copyWith(
                           textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
-                      child: child,
+                      child: child!,
                     );
                   },
 

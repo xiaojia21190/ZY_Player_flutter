@@ -8,14 +8,12 @@ part of 'player_hot.dart';
 
 PlayerHot _$PlayerHotFromJson(Map<String, dynamic> json) {
   return PlayerHot(
-    (json['swiper'] as List)
-        ?.map((e) =>
-            e == null ? null : SwiperList.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
-    (json['types'] as List)
-        ?.map(
-            (e) => e == null ? null : Types.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['swiper'] as List<dynamic>)
+        .map((e) => SwiperList.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    (json['types'] as List<dynamic>)
+        .map((e) => Types.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 
@@ -42,10 +40,9 @@ Map<String, dynamic> _$SwiperListToJson(SwiperList instance) =>
 Types _$TypesFromJson(Map<String, dynamic> json) {
   return Types(
     json['type'] as String,
-    (json['playlist'] as List)
-        ?.map((e) =>
-            e == null ? null : Playlist.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['playlist'] as List<dynamic>)
+        .map((e) => Playlist.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 

@@ -25,6 +25,6 @@ class Constant {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
-NavigatorState get navigatorState => Constant.navigatorKey.currentState;
-BuildContext get currentContext => navigatorState.context;
+NavigatorState? get navigatorState => Constant.navigatorKey.currentState;
+BuildContext get currentContext => navigatorState!.context;
 ThemeData get currentTheme => Theme.of(currentContext);

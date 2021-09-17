@@ -1,6 +1,7 @@
+import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:common_utils/common_utils.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart' as keyboard;
 import 'package:keyboard_actions/keyboard_actions_config.dart';
@@ -17,30 +18,19 @@ class Utils {
     }
   }
 
-  /// 调起二维码扫描页
-  // static Future<String> scan() async {
-  //   try {
-  //     const ScanOptions options = ScanOptions(
-  //       strings: {
-  //         'cancel': '取消',
-  //         'flash_on': '开启闪光灯',
-  //         'flash_off': '关闭闪光灯',
-  //       },
-  //     );
-  //     final ScanResult result = await BarcodeScanner.scan(options: options);
-  //     return result.rawContent;
-  //   } catch (e) {
-  //     if (e is PlatformException) {
-  //       if (e.code == BarcodeScanner.cameraAccessDenied) {
-  //         Toast.show('没有相机权限！');
-  //       }
-  //     }
-  //   }
-  //   return null;
-  // }
+  static Future<String> getUniqueId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Device.isIOS) {
+      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+      print("ios唯一设备码：" + iosDeviceInfo.identifierForVendor);
 
-  static String formatPrice(String price, {MoneyFormat format = MoneyFormat.END_INTEGER}) {
-    return MoneyUtil.changeYWithUnit(NumUtil.getDoubleByValueStr(price), MoneyUnit.YUAN, format: format);
+      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else {
+      AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
+      print("android唯一设备码：" + androidDeviceInfo.androidId);
+
+      return androidDeviceInfo.androidId; // unique ID on Android
+    }
   }
 
   static KeyboardActionsConfig getKeyboardActionsConfig(BuildContext context, List<FocusNode> list) {
@@ -67,20 +57,17 @@ class Utils {
   }
 }
 
-Future<T> showElasticDialog<T>({
-  @required BuildContext context,
+Future<T?> showElasticDialog<T>({
+  required BuildContext context,
   bool barrierDismissible = true,
-  WidgetBuilder builder,
+  required WidgetBuilder builder,
 }) {
-  final ThemeData theme = Theme.of(context);
   return showGeneralDialog(
     context: context,
     pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
       final Widget pageChild = Builder(builder: builder);
       return SafeArea(
-        child: Builder(builder: (BuildContext context) {
-          return theme != null ? Theme(data: theme, child: pageChild) : pageChild;
-        }),
+        child: pageChild,
       );
     },
     barrierDismissible: barrierDismissible,
@@ -91,8 +78,7 @@ Future<T> showElasticDialog<T>({
   );
 }
 
-Widget _buildDialogTransitions(
-    BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+Widget _buildDialogTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
   return FadeTransition(
     opacity: CurvedAnimation(
       parent: animation,
@@ -107,4 +93,8 @@ Widget _buildDialogTransitions(
       child: child,
     ),
   );
+}
+
+extension StringExtension on String? {
+  String get nullSafe => this ?? '';
 }

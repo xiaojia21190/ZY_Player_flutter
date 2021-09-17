@@ -8,12 +8,12 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 /// 封装下拉刷新与加载更多
 class DeerListView extends StatefulWidget {
   const DeerListView(
-      {Key key,
-      @required this.itemCount,
-      @required this.itemBuilder,
+      {Key? key,
+      required this.itemCount,
+      required this.itemBuilder,
+      required this.onRefresh,
       this.physics = const BouncingScrollPhysics(),
       this.loadMore,
-      this.onRefresh,
       this.hasMore = false,
       this.hasRefresh = true,
       this.stateType = StateType.empty,
@@ -23,8 +23,8 @@ class DeerListView extends StatefulWidget {
       this.scrollDirection = Axis.vertical})
       : super(key: key);
 
-  final RefreshCallback onRefresh;
-  final LoadMoreCallback loadMore;
+  final RefreshCallback? onRefresh;
+  final LoadMoreCallback? loadMore;
   final int itemCount;
   final bool hasMore;
   final bool hasRefresh;
@@ -37,8 +37,8 @@ class DeerListView extends StatefulWidget {
   final int pageSize;
 
   /// padding属性使用时注意会破坏原有的SafeArea，需要自行计算bottom大小
-  final EdgeInsetsGeometry padding;
-  final double itemExtent;
+  final EdgeInsetsGeometry? padding;
+  final double? itemExtent;
 
   @override
   _DeerListViewState createState() => _DeerListViewState();
@@ -56,19 +56,17 @@ class _DeerListViewState extends State<DeerListView> {
     Widget child;
     if (widget.hasRefresh) {
       child = RefreshIndicator(
-        onRefresh: widget.onRefresh,
+        onRefresh: widget.onRefresh!,
         child: widget.itemCount == 0
             ? StateLayout(
                 type: widget.stateType,
-                onRefresh: widget.onRefresh,
+                onRefresh: widget.onRefresh!,
               )
             : AnimationLimiter(
                 child: ListView.builder(
                   scrollDirection: widget.scrollDirection,
                   physics: widget.physics,
-                  itemCount: widget.loadMore == null
-                      ? widget.itemCount
-                      : widget.itemCount + 1,
+                  itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
                   padding: widget.padding,
                   itemExtent: widget.itemExtent,
                   itemBuilder: (BuildContext context, int index) {
@@ -78,8 +76,7 @@ class _DeerListViewState extends State<DeerListView> {
                     } else {
                       return index < widget.itemCount
                           ? widget.itemBuilder(context, index)
-                          : MoreWidget(widget.itemCount, widget.hasMore,
-                              widget.pageSize);
+                          : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
                     }
                   },
                 ),
@@ -90,15 +87,13 @@ class _DeerListViewState extends State<DeerListView> {
         child: widget.itemCount == 0
             ? StateLayout(
                 type: widget.stateType,
-                onRefresh: widget.onRefresh,
+                onRefresh: widget.onRefresh!,
               )
             : AnimationLimiter(
                 child: ListView.builder(
                   scrollDirection: widget.scrollDirection,
                   physics: widget.physics,
-                  itemCount: widget.loadMore == null
-                      ? widget.itemCount
-                      : widget.itemCount + 1,
+                  itemCount: widget.loadMore == null ? widget.itemCount : widget.itemCount + 1,
                   padding: widget.padding,
                   itemExtent: widget.itemExtent,
                   itemBuilder: (BuildContext context, int index) {
@@ -108,8 +103,7 @@ class _DeerListViewState extends State<DeerListView> {
                     } else {
                       return index < widget.itemCount
                           ? widget.itemBuilder(context, index)
-                          : MoreWidget(widget.itemCount, widget.hasMore,
-                              widget.pageSize);
+                          : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
                     }
                   },
                 ),
@@ -120,8 +114,7 @@ class _DeerListViewState extends State<DeerListView> {
     return NotificationListener(
       onNotification: (ScrollEndNotification note) {
         /// 确保是垂直方向滚动，且滑动至底部
-        if (note.metrics.pixels == note.metrics.maxScrollExtent &&
-            note.metrics.axis == Axis.vertical) {
+        if (note.metrics.pixels == note.metrics.maxScrollExtent && note.metrics.axis == Axis.vertical) {
           _loadMore();
         }
 
@@ -142,7 +135,7 @@ class _DeerListViewState extends State<DeerListView> {
       return;
     }
     _isLoading = true;
-    await widget.loadMore();
+    await widget.loadMore!();
     _isLoading = false;
   }
 }
@@ -156,9 +149,7 @@ class MoreWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle style = ThemeUtils.isDark(context)
-        ? const TextStyle(color: Color(0xFF878787))
-        : const TextStyle(color: Color(0x8A000000));
+    final TextStyle style = ThemeUtils.isDark(context) ? const TextStyle(color: Color(0xFF878787)) : const TextStyle(color: Color(0x8A000000));
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
@@ -166,8 +157,7 @@ class MoreWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           /// 只有一页的时候，就不显示FooterView了
-          Text(hasMore ? '正在加载中...' : (itemCount < pageSize ? '' : '没有了呦~'),
-              style: style),
+          Text(hasMore ? '正在加载中...' : (itemCount < pageSize ? '' : '没有了呦~'), style: style),
         ],
       ),
     );

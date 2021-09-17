@@ -10,11 +10,11 @@ class ThemeUtils {
     return Theme.of(context).brightness == Brightness.dark;
   }
 
-  static Color getDarkColor(BuildContext context, Color darkColor) {
+  static Color? getDarkColor(BuildContext context, Color darkColor) {
     return isDark(context) ? darkColor : null;
   }
 
-  static Color getIconColor(BuildContext context) {
+  static Color? getIconColor(BuildContext context) {
     return isDark(context) ? Colours.dark_text : null;
   }
 
@@ -34,7 +34,7 @@ class ThemeUtils {
     return isDark(context) ? Colours.dark_bg_gray_ : Colours.bg_gray;
   }
 
-  static Color getKeyboardActionsColor(BuildContext context) {
+  static Color? getKeyboardActionsColor(BuildContext context) {
     return isDark(context) ? Colours.dark_bg_color : Colors.grey[200];
   }
 

@@ -24,7 +24,7 @@ class PlayerSearchPage extends StatefulWidget {
 }
 
 class _PlayerSearchPageState extends State<PlayerSearchPage> {
-  PlayerProvider _playerProvider;
+  PlayerProvider? _playerProvider;
   BaseListProvider<ResourceData> _baseListProvider = BaseListProvider();
 
   final FocusNode _focus = FocusNode();
@@ -35,14 +35,14 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
   void initState() {
     _playerProvider = Store.value<PlayerProvider>(context);
     _baseListProvider.setStateType(StateType.empty);
-    _playerProvider.setWords();
+    _playerProvider!.setWords();
     super.initState();
   }
 
   Future getData() async {
     _baseListProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource,
-        queryParameters: {"keywords": keywords, "page": page}, onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "page": page},
+        onSuccess: (resultList) {
       List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
       if (resultList.length == 0) {
         _baseListProvider.setStateType(StateType.order);
@@ -132,8 +132,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                                         ),
                                         onTap: () {
                                           String jsonString = jsonEncode(_baseListProvider.list[index]);
-                                          NavigatorUtils.push(context,
-                                              '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                          NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                         },
                                       ))),
                             ),

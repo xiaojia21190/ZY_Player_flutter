@@ -6,7 +6,7 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 /// 自定义AppBar
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar(
-      {Key key,
+      {Key? key,
       this.backgroundColor,
       this.title = '',
       this.centerTitle = '',
@@ -16,12 +16,12 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.isBack = true})
       : super(key: key);
 
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final String title;
   final String centerTitle;
   final String backImg;
   final String actionName;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool isBack;
 
   @override
@@ -31,12 +31,11 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (backgroundColor == null) {
       _backgroundColor = ThemeUtils.getBackgroundColor(context);
     } else {
-      _backgroundColor = backgroundColor;
+      _backgroundColor = backgroundColor!;
     }
 
-    SystemUiOverlayStyle _overlayStyle = ThemeData.estimateBrightnessForColor(_backgroundColor) == Brightness.dark
-        ? SystemUiOverlayStyle.light
-        : SystemUiOverlayStyle.dark;
+    SystemUiOverlayStyle _overlayStyle =
+        ThemeData.estimateBrightnessForColor(_backgroundColor) == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
 
     var back = isBack
         ? IconButton(
@@ -63,10 +62,11 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
                   minWidth: 60.0,
                 ),
               ),
-              child: FlatButton(
+              child: TextButton(
                 child: Text(actionName, key: const Key('actionName')),
-                textColor: ThemeUtils.isDark(context) ? Colours.dark_text : Colours.text,
-                highlightColor: Colors.transparent,
+                style: ButtonStyle(
+                    overlayColor: MaterialStateProperty.all(Colors.transparent),
+                    textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: ThemeUtils.isDark(context) ? Colours.dark_text : Colours.text))),
                 onPressed: onPressed,
               ),
             ),

@@ -1,15 +1,17 @@
 import 'dart:async';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
+import 'package:ZY_Player_flutter/event/event_bus.dart';
+import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/player/provider/detail_provider.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/res/styles.dart';
+import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
-import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/batter_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,11 +24,10 @@ import 'package:video_player/video_player.dart';
 
 class ZhiboDetailPage extends StatefulWidget {
   const ZhiboDetailPage({
-    Key key,
-    @required this.url,
-    @required this.title,
+    Key? key,
+    required this.url,
+    required this.title,
   }) : super(key: key);
-
   final String url;
   final String title;
 
@@ -38,31 +39,38 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
   bool startedPlaying = false;
 
   DetailProvider _detailProvider = DetailProvider();
-  CollectProvider _collectProvider;
-  AppStateProvider appStateProvider;
-  StreamSubscription _currentPosSubs;
+  CollectProvider? _collectProvider;
+  AppStateProvider? appStateProvider;
 
   String actionName = "";
 
   int currentVideoIndex = -1;
-  Timer searchTimer;
+  Timer? searchTimer;
 
   String currentUrl = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  VideoPlayerController _videoPlayerController;
-  ChewieController _chewieController;
+  VideoPlayerController? _videoPlayerController;
+  ChewieController? _chewieController;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     _collectProvider = Store.value<CollectProvider>(context);
     appStateProvider = Store.value<AppStateProvider>(context);
-    _collectProvider.setListDetailResource("collcetPlayer");
 
     initData();
 
     getLight();
+
+    ApplicationEvent.event.on<DeviceEvent>().listen((event) async {
+      if (event.device == 1) return;
+      // 弹出dlna的弹窗
+      if (mounted) {
+        dlnaDevicesDialog();
+      }
+    });
+
     super.initState();
   }
 
@@ -77,11 +85,10 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     _videoPlayerController?.dispose();
     _videoPlayerController?.removeListener(_videoListener);
     _chewieController?.dispose();
-    _currentPosSubs?.cancel();
   }
 
   void _videoListener() async {
-    if (_videoPlayerController.value.isInitialized) {
+    if (_videoPlayerController!.value.isInitialized) {
       _detailProvider.setInitPlayer(true);
     }
   }
@@ -117,12 +124,12 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
                                   return TextButton(
                                     child: Text(devices[index]["name"]),
                                     onPressed: () async {
-                                      _chewieController.pause();
+                                      _chewieController!.pause();
                                       Toast.show("推送视频 ${widget.title} 到设备：${devices[index]["name"]}");
-                                      await appStateProvider.dlnaManager.setDevice(devices[index]["id"]);
-                                      await appStateProvider.dlnaManager.setVideoUrlAndName(widget.url, widget.title);
-                                      await appStateProvider.dlnaManager.startAndPlay();
-                                      appStateProvider.setloadingState(false);
+                                      await appStateProvider!.dlnaManager.setDevice(devices[index]["id"]);
+                                      await appStateProvider!.dlnaManager.setVideoUrlAndName(widget.url, widget.title);
+                                      await appStateProvider!.dlnaManager.startAndPlay();
+                                      appStateProvider!.setloadingState(false);
                                       Navigator.pop(context);
                                     },
                                   );
@@ -141,7 +148,7 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
 
   searchDialog() {
     // 提示是否继续搜索
-    appStateProvider.setSearchText("设备搜索超时");
+    appStateProvider!.setSearchText("设备搜索超时");
     showDialog(
         context: context,
         builder: (_) => Selector<AppStateProvider, String>(
@@ -149,8 +156,7 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
               return FlareGiffyDialog(
                 flarePath: 'assets/images/space_demo.flr',
                 flareAnimation: 'loading',
-                title: Text(words,
-                    textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
+                title: Text(words, textAlign: TextAlign.center, style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
                 description: Text(
                   '请打开相关设备后点击重新搜索',
                   textAlign: TextAlign.center,
@@ -159,19 +165,19 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
                 buttonOkText: Text("重新搜索"),
                 buttonCancelText: Text("停止搜索"),
                 onOkButtonPressed: () async {
-                  await appStateProvider.searchDlna();
+                  await appStateProvider!.searchDlna(0);
                 },
                 onCancelButtonPressed: () async {
                   Navigator.pop(context);
-                  await appStateProvider.dlnaManager.stop();
+                  await appStateProvider!.dlnaManager.stop();
                 },
               );
             },
             selector: (_, store) => store.searchText));
   }
 
-  Offset _initialVerLightOffset;
-  Offset _finalVerLightOffset;
+  Offset? _initialVerLightOffset;
+  Offset? _finalVerLightOffset;
   double light = 0;
 
   void _onVerticalDragStart(DragStartDetails details) {
@@ -180,7 +186,7 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
 
   Future _onVerticalDragUpdate(DragUpdateDetails details) async {
     _finalVerLightOffset = details.globalPosition;
-    final offsetDifference = _initialVerLightOffset.dy - _finalVerLightOffset.dy;
+    final offsetDifference = _initialVerLightOffset!.dy - _finalVerLightOffset!.dy;
     var offsetAbs = offsetDifference.abs() / 300;
     // Log.d(offsetAbs.toString());
     var entLight;
@@ -198,13 +204,13 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
       FlutterScreen.setBrightness(entLight);
     }
     var verLightText = "亮度：${(entLight * 100).toInt()}%";
-    appStateProvider.setVerLight(true, verLightText);
+    appStateProvider!.setVerLight(true, verLightText);
   }
 
   void _onVerticalDragEnd(DragEndDetails details) {
     if (_initialVerLightOffset != null) {
       getLight();
-      appStateProvider.setVerLight(false, "");
+      appStateProvider!.setVerLight(false, "");
     }
   }
 
@@ -213,21 +219,21 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
     _videoPlayerController?.pause();
 
     _videoPlayerController = VideoPlayerController.network(widget.url);
-    await _videoPlayerController.initialize();
-    _videoPlayerController.addListener(_videoListener);
+    await _videoPlayerController!.initialize();
+    _videoPlayerController!.addListener(_videoListener);
     _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController,
+        videoPlayerController: _videoPlayerController!,
         autoPlay: false,
         allowedScreenSleep: false,
         looping: false,
         isLive: true,
-        aspectRatio: _videoPlayerController.value.aspectRatio,
+        aspectRatio: _videoPlayerController!.value.aspectRatio,
         placeholder: CachedNetworkImage(imageUrl: 'https://tva2.sinaimg.cn/large/007UW77jly1g5elwuwv4rj30sg0g0wfo.jpg'),
         autoInitialize: true,
         routePageBuilder: (context, animation, __, provider) {
           return AnimatedBuilder(
             animation: animation,
-            builder: (BuildContext context, Widget child) {
+            builder: (BuildContext context, Widget? child) {
               return Scaffold(
                   backgroundColor: Colors.black,
                   body: GestureDetector(
@@ -245,11 +251,11 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
                           child: TextButton.icon(
                               onPressed: () async {
                                 // 取消全屏
-                                _chewieController.exitFullScreen();
+                                _chewieController!.exitFullScreen();
                                 // 延迟点击
                                 Future.delayed(Duration(seconds: 1), () {
                                   // 点击显示投屏数据
-                                  if (appStateProvider.dlnaDevices.length == 0) {
+                                  if (appStateProvider!.dlnaDevices.length == 0) {
                                     // 没有搜索到
                                     searchDialog();
                                   } else {
@@ -268,34 +274,6 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
                               )),
                         ),
                       ),
-                      _videoPlayerController.value.isBuffering
-                          ? Positioned.fill(
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Container(
-                                  height: 30,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                      color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text(
-                                            '正在加载中...',
-                                            style: Theme.of(context).textTheme.headline6,
-                                          ),
-                                          CircularProgressIndicator(),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(),
                       Consumer<AppStateProvider>(builder: (_, _detailProvider, __) {
                         return _detailProvider.verLight
                             ? Positioned.fill(
@@ -304,8 +282,7 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
                                     child: Container(
                                       height: 30,
                                       width: 80,
-                                      decoration: BoxDecoration(
-                                          color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
+                                      decoration: BoxDecoration(color: Colours.dark_bg_color, borderRadius: BorderRadius.circular(10)),
                                       child: Center(
                                         child: Text(
                                           _detailProvider.verLightText,
@@ -361,7 +338,7 @@ class _ZhiboDetailPageState extends State<ZhiboDetailPage> with WidgetsBindingOb
                       builder: (_, isplayer, __) {
                         return isplayer
                             ? Chewie(
-                                controller: _chewieController,
+                                controller: _chewieController!,
                               )
                             : Column(
                                 mainAxisAlignment: MainAxisAlignment.center,

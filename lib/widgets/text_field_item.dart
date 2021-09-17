@@ -4,22 +4,21 @@ import 'package:flutter/services.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/number_text_input_formatter.dart';
 
-/// 封装输入框
 class TextFieldItem extends StatelessWidget {
   const TextFieldItem({
-    Key key,
+    Key? key,
     this.controller,
-    @required this.title,
+    required this.title,
     this.keyboardType = TextInputType.text,
     this.hintText = '',
     this.focusNode,
   }) : super(key: key);
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String title;
   final String hintText;
   final TextInputType keyboardType;
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +60,12 @@ class TextFieldItem extends StatelessWidget {
     );
   }
 
-  List<TextInputFormatter> _getInputFormatters() {
-    if (keyboardType == TextInputType.numberWithOptions(decimal: true)) {
-      return [UsNumberTextInputFormatter()];
+  List<TextInputFormatter>? _getInputFormatters() {
+    if (keyboardType == const TextInputType.numberWithOptions(decimal: true)) {
+      return <TextInputFormatter>[UsNumberTextInputFormatter()];
     }
     if (keyboardType == TextInputType.number || keyboardType == TextInputType.phone) {
-      return [FilteringTextInputFormatter.digitsOnly];
+      return <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly];
     }
     return null;
   }

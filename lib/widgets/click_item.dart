@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 class ClickItem extends StatelessWidget {
   const ClickItem(
-      {Key key,
-      this.onTap,
-      @required this.title,
+      {Key? key,
+      required this.onTap,
+      required this.title,
       this.content = '',
       this.textAlign = TextAlign.start,
       this.slected = false,
@@ -41,7 +41,7 @@ class ClickItem extends StatelessWidget {
             maxLines: maxLines,
             textAlign: maxLines == 1 ? TextAlign.right : textAlign,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.subtitle2.copyWith(fontSize: Dimens.font_sp14),
+            style: Theme.of(context).textTheme.subtitle2!.copyWith(fontSize: Dimens.font_sp14),
           ),
         ),
         Gaps.hGap8,

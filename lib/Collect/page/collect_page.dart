@@ -23,15 +23,15 @@ class CollectPage extends StatefulWidget {
 class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-  PageController _pageController;
-  CollectProvider _collectProvider;
+  PageController? _pageController;
+  CollectProvider? _collectProvider;
 
   @override
   void initState() {
     _pageController = PageController(initialPage: 0);
 
     _collectProvider = Store.value<CollectProvider>(context);
-    _collectProvider.pageController = _pageController;
+    _collectProvider!.pageController = _pageController!;
     super.initState();
   }
 
@@ -85,7 +85,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                   itemCount: 2,
                   onPageChanged: (index) {
                     tab.animateTo(index);
-                    _collectProvider.index = index;
+                    _collectProvider!.index = index;
                   },
                   controller: _pageController,
                   itemBuilder: (_, pageIndex) {
@@ -106,10 +106,10 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                                     // 取消收藏
                                     if (pageIndex == 0) {
                                       // 影视
-                                      _collectProvider.removeResource(list[index].url);
+                                      _collectProvider!.removeResource(list[index].url);
                                     } else {
                                       // 漫画
-                                      _collectProvider.removeCatlogResource(list[index].url);
+                                      _collectProvider!.removeCatlogResource(list[index].url);
                                     }
                                     setState(() {});
                                   },

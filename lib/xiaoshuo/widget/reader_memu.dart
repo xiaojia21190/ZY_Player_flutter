@@ -8,12 +8,12 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
-import 'package:ZY_Player_flutter/util/screen_utils.dart';
-import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
+import 'package:ZY_Player_flutter/util/screen_utils.dart';
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
+import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
-import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screen/flutter_screen.dart';
 import 'package:provider/provider.dart';
@@ -25,14 +25,14 @@ class ColorCh {
 }
 
 class ReaderMenu extends StatefulWidget {
-  final String title;
-  final String id;
-  final int chpId;
-  final int articleIndex;
+  final String? title;
+  final String? id;
+  final int? chpId;
+  final int? articleIndex;
 
-  final VoidCallback onTap;
-  final VoidCallback onPreviousArticle;
-  final VoidCallback onNextArticle;
+  final VoidCallback? onTap;
+  final VoidCallback? onPreviousArticle;
+  final VoidCallback? onNextArticle;
 
   ReaderMenu({
     this.articleIndex,
@@ -49,9 +49,9 @@ class ReaderMenu extends StatefulWidget {
 }
 
 class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateMixin {
-  double progressValue;
+  double? progressValue;
   bool isTipVisible = false;
-  AppStateProvider _appStateProvider;
+  AppStateProvider? _appStateProvider;
   ScrollController scrollController = ScrollController();
 
   double light = 0;
@@ -70,13 +70,13 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
 
   List<XiaoshuoList> _list1 = [];
 
-  Future fetData;
+  Future? fetData;
 
   @override
   initState() {
     _appStateProvider = Store.value<AppStateProvider>(context);
     this.getLight();
-    fsise = _appStateProvider.xsFontSize;
+    fsise = _appStateProvider!.xsFontSize;
     fetData = fetchData();
     super.initState();
   }
@@ -86,13 +86,12 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   }
 
   Future fetchData() async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail,
-        queryParameters: {"id": widget.id, "page": -1, "reverse": "1"}, onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail, queryParameters: {"id": widget.id, "page": -1, "reverse": "1"},
+        onSuccess: (resultList) {
       XiaoshuoChap result = XiaoshuoChap.fromJson(resultList);
       List.generate(result.xiaoshuoList.length, (index) => _list1.add(result.xiaoshuoList[index]));
     }, onError: (_, __) {
       Toast.show("接口异常");
-      Navigator.pop(context);
     });
     return _list1;
   }
@@ -108,8 +107,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
       left: 0,
       right: 0,
       child: Container(
-        decoration:
-            BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+        decoration: BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
         height: Screen.navigationBarHeight - 40,
         padding: EdgeInsets.fromLTRB(20, 0, 5, 0),
         child: Row(
@@ -125,7 +123,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
             ),
             Expanded(
                 child: Container(
-              child: Text(widget.title),
+              child: Text(widget.title!),
             )),
           ],
         ),
@@ -136,7 +134,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   buildLightProgress() {
     return Container(
         width: Screen.widthOt,
-        height: _appStateProvider.opacityLevel == 1.0 ? 80 : 0,
+        height: _appStateProvider!.opacityLevel == 1.0 ? 80 : 0,
         color: Colors.black87,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
@@ -161,7 +159,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   buildSize() {
     return Container(
       width: Screen.widthOt,
-      height: _appStateProvider.opacityLevel == 1.0 ? 80 : 0,
+      height: _appStateProvider!.opacityLevel == 1.0 ? 80 : 0,
       color: Colors.black87,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -175,7 +173,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
             onChanged: (v) {
               setState(() {
                 fsise = v;
-                _appStateProvider.setFontSize(v);
+                _appStateProvider!.setFontSize(v);
               });
             },
             label: "字体大小:$fsise", //气泡的值
@@ -191,7 +189,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   buildColor() {
     return Container(
       width: Screen.widthOt,
-      height: _appStateProvider.opacityLevel == 1.0 ? 80 : 0,
+      height: _appStateProvider!.opacityLevel == 1.0 ? 80 : 0,
       color: Colors.black87,
       padding: EdgeInsets.only(top: 20),
       child: Wrap(
@@ -203,7 +201,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
             _list.length,
             (index) => GestureDetector(
                   onTap: () {
-                    _appStateProvider.setFontColor(_list[index].color);
+                    _appStateProvider!.setFontColor(_list[index].color);
                     setState(() {});
                   },
                   child: Column(
@@ -214,7 +212,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                         decoration: BoxDecoration(
                             color: _list[index].color,
                             borderRadius: BorderRadius.circular(8.0),
-                            border: _appStateProvider.xsColor == _list[index].color
+                            border: _appStateProvider!.xsColor == _list[index].color
                                 ? Border.all(color: Colors.redAccent, width: 3)
                                 : Border.all(color: Colors.transparent)),
                       ),
@@ -240,8 +238,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
           colorSlider ? buildColor() : Container(),
           sizeSlider ? buildSize() : Container(),
           Container(
-            decoration:
-                BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+            decoration: BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
             padding: EdgeInsets.only(bottom: Screen.bottomSafeHeight),
             child: Column(
               children: <Widget>[
@@ -256,6 +253,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   }
 
   buildBottomMenus() {
+    final bool isDark = ThemeUtils.isDark(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
@@ -272,17 +270,15 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                         return Container(
                           height: 550,
                           decoration: BoxDecoration(
-                              color: Colours.qingcaolv,
-                              borderRadius:
-                                  BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                              color: isDark ? Colours.dark_app_main : Colours.app_main,
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
                           child: Column(
                             children: [
                               _list.length > 0
                                   ? TextButton(
                                       onPressed: () {
                                         var index = _list1.indexWhere((element) => element.id == widget.chpId);
-                                        scrollController.animateTo(50.0 * index - 80,
-                                            duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                        scrollController.animateTo(50.0 * index - 80, duration: Duration(milliseconds: 300), curve: Curves.ease);
                                       },
                                       child: Text("去当前"))
                                   : Container(),
@@ -299,10 +295,8 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                                           return ClickItem(
                                             slected: widget.chpId == snapshot.data[index].id,
                                             title: snapshot.data[index].name,
-                                            content: snapshot.data[index].id.toString(),
                                             onTap: () {
-                                              ApplicationEvent.event.fire(LoadXiaoShuoEvent(
-                                                  snapshot.data[index].id, snapshot.data[index].name));
+                                              ApplicationEvent.event.fire(LoadXiaoShuoEvent(snapshot.data[index].id, snapshot.data[index].name));
                                               Navigator.pop(context);
                                             },
                                           );

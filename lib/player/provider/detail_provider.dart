@@ -8,7 +8,7 @@ class DetailProvider extends ChangeNotifier {
   List<DetailReource> _detailReource = [];
   List<DetailReource> get detailReource => _detailReource;
 
-  List<Playlist> _playerList;
+  List<Playlist> _playerList = [];
   List<Playlist> get playerList => _playerList;
 
   List<String> _kanguojuji = []; // 已经看过的剧集列表
@@ -59,8 +59,8 @@ class DetailProvider extends ChangeNotifier {
   }
 
   setJuji() {
-    _kanguojuji = SpUtil.getStringList("KGjuji", defValue: []);
-    _saveRecord = SpUtil.getStringList("saverecord", defValue: []);
+    _kanguojuji = SpUtil.getStringList("KGjuji", defValue: [])!;
+    _saveRecord = SpUtil.getStringList("saverecord", defValue: [])!;
   }
 
   saveJuji(String juji) {

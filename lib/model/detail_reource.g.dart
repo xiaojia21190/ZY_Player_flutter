@@ -9,10 +9,9 @@ part of 'detail_reource.dart';
 DetailReource _$DetailReourceFromJson(Map<String, dynamic> json) {
   return DetailReource(
     json['ziyuanName'] as String,
-    (json['ziyuanUrl'] as List)
-        ?.map((e) =>
-            e == null ? null : ZiyuanUrl.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['ziyuanUrl'] as List<dynamic>)
+        .map((e) => ZiyuanUrl.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 

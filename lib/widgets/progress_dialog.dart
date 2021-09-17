@@ -1,11 +1,11 @@
+import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ZY_Player_flutter/res/resources.dart';
 
 /// 加载中的弹框
 class ProgressDialog extends Dialog {
   const ProgressDialog({
-    Key key,
+    Key? key,
     this.hintText = '',
   }) : super(key: key);
 
@@ -13,7 +13,7 @@ class ProgressDialog extends Dialog {
 
   @override
   Widget build(BuildContext context) {
-    Widget progress = Column(
+    final Widget progress = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Theme(

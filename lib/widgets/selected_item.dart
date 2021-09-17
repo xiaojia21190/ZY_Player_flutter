@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 
 class SelectedItem extends StatelessWidget {
-  const SelectedItem({Key key, this.onTap, @required this.title, this.content = '', this.textAlign = TextAlign.start, this.style}) : super(key: key);
+  const SelectedItem({Key? key, this.onTap, required this.title, this.content = '', this.textAlign = TextAlign.start, this.style}) : super(key: key);
 
-  final GestureTapCallback onTap;
+  final GestureTapCallback? onTap;
   final String title;
   final String content;
   final TextAlign textAlign;
-  final TextStyle style;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {

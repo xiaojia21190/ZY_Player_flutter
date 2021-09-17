@@ -17,13 +17,13 @@ class PlayerProvider extends ChangeNotifier {
   StateType _stateType = StateType.empty;
   StateType get stateType => _stateType;
 
-  TabController tabController;
-  PageController pageController;
+  TabController? tabController;
+  PageController? pageController;
 
-  int index;
+  int? index;
 
   setWords() {
-    _words = SpUtil.getStringList("playerWords", defValue: []);
+    _words = SpUtil.getStringList("playerWords", defValue: [])!;
   }
 
   clearWords() {

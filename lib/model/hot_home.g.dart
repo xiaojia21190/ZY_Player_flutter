@@ -10,10 +10,9 @@ HotHome _$HotHomeFromJson(Map<String, dynamic> json) {
   return HotHome(
     json['zonghetitle'] as String,
     json['zongheicon'] as String,
-    (json['contentList'] as List)
-        ?.map((e) =>
-            e == null ? null : ContentList.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['contentList'] as List<dynamic>)
+        .map((e) => ContentList.fromJson(e as Map<String, dynamic>))
+        .toList(),
     json['update'] as String,
   );
 }

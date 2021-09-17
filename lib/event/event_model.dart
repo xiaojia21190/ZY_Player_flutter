@@ -1,6 +1,6 @@
 class TabBarChangeIndex {
   int index;
-  TabBarChangeIndex({this.index});
+  TabBarChangeIndex({required this.index});
 }
 
 class CurrentDownLoadVideo {
@@ -10,7 +10,8 @@ class CurrentDownLoadVideo {
   final double progress;
   final String speed;
   final int state;
-  CurrentDownLoadVideo({this.videoUrl, this.videoName, this.speed, this.videoCover, this.progress, this.state});
+  CurrentDownLoadVideo(
+      {required this.videoUrl, required this.videoName, required this.speed, required this.videoCover, required this.progress, required this.state});
 }
 
 class DeviceEvent {
@@ -32,7 +33,7 @@ class WebViewEvent {
   WebViewStateType stateType;
   String url;
   String id;
-  WebViewEvent({this.stateType, this.url, this.id});
+  WebViewEvent({required this.stateType, required this.url, required this.id});
 }
 
 enum WebViewStateType {

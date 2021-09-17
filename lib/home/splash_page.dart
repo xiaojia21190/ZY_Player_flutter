@@ -12,7 +12,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  Timer _timer;
+  late Timer _timer;
 
   @override
   void initState() {

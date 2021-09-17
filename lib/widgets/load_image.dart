@@ -5,12 +5,12 @@ import 'package:ZY_Player_flutter/util/image_utils.dart';
 
 /// 图片加载（支持本地与网络图片）
 class LoadImage extends StatelessWidget {
-  const LoadImage(this.image, {Key key, this.width, this.height, this.fit = BoxFit.cover, this.format = ImageFormat.png, this.holderImg = 'none'})
+  const LoadImage(this.image, {Key? key, this.width, this.height, this.fit = BoxFit.cover, this.format = ImageFormat.png, this.holderImg = 'none'})
       : super(key: key);
 
   final String image;
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
   final BoxFit fit;
   final ImageFormat format;
   final String holderImg;
@@ -45,17 +45,17 @@ class LoadImage extends StatelessWidget {
 /// 加载本地资源图片
 class LoadAssetImage extends StatelessWidget {
   const LoadAssetImage(this.image,
-      {Key key, this.width, this.height, this.cacheWidth, this.cacheHeight, this.fit, this.format = ImageFormat.png, this.color})
+      {Key? key, this.width, this.height, this.cacheWidth, this.cacheHeight, this.fit, this.format = ImageFormat.png, this.color})
       : super(key: key);
 
   final String image;
-  final double width;
-  final double height;
-  final int cacheWidth;
-  final int cacheHeight;
-  final BoxFit fit;
+  final double? width;
+  final double? height;
+  final int? cacheWidth;
+  final int? cacheHeight;
+  final BoxFit? fit;
   final ImageFormat format;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

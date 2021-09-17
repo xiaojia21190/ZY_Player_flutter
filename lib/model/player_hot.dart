@@ -91,5 +91,5 @@ class Playlist extends Object {
 
   factory Playlist.fromJson(Map<String, dynamic> srcJson) => _$PlaylistFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$PlaylistToJson(this);
+  Map<dynamic, dynamic> toJson() => _$PlaylistToJson(this);
 }

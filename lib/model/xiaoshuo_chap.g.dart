@@ -10,10 +10,9 @@ XiaoshuoChap _$XiaoshuoChapFromJson(Map<String, dynamic> json) {
   return XiaoshuoChap(
     json['page'] as int,
     json['total'] as int,
-    (json['xiaoshuoList'] as List)
-        ?.map((e) =>
-            e == null ? null : XiaoshuoList.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['xiaoshuoList'] as List<dynamic>)
+        .map((e) => XiaoshuoList.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 

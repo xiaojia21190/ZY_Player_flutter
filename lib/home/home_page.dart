@@ -43,7 +43,7 @@ import 'package:url_launcher/url_launcher.dart';
 class IconTitle {
   final IconData icon;
   final String title;
-  IconTitle({this.icon, this.title});
+  IconTitle({required this.icon, required this.title});
 }
 
 class Home extends StatefulWidget {
@@ -52,30 +52,30 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-  List<Widget> _pageList;
+  late List<Widget> _pageList;
 
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
 
-  AppStateProvider appStateProvider;
-  PlayerProvider playerProvider;
-  CollectProvider collectProvider;
+  late AppStateProvider appStateProvider;
+  late PlayerProvider playerProvider;
+  late CollectProvider collectProvider;
 
-  UpdateDialog dialog;
-  OtaEvent currentEvent;
+  late UpdateDialog dialog;
+  late OtaEvent currentEvent;
   String currentUpdateUrl = "";
   String currentVersion = "";
   String nextVersion = "";
   String currentUpdateText = "";
   bool isUpdating = false;
 
-  TabController _tabController;
-  TabController _tabControllerColl;
+  late TabController _tabController;
+  late TabController _tabControllerColl;
 
-  AnimationController _animationController;
-  Animation<double> animation;
-  CurvedAnimation curve;
+  late AnimationController _animationController;
+  late Animation<double> animation;
+  late CurvedAnimation curve;
 
   final iconList = <IconTitle>[
     IconTitle(icon: Icons.play_circle_fill, title: "影视"),
@@ -204,16 +204,16 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       HttpApi.queryUserInfo,
       onSuccess: (data) {
         List<XiaoshuoDetail> _xslist = [];
-        JsonUtil.getObjectList(data["xslist"], (v) => _xslist.add(XiaoshuoDetail.fromJson(v)));
+        JsonUtil.getObjectList(data["xslist"], (v) => _xslist.add(XiaoshuoDetail.fromJson(v as Map<String, dynamic>)));
         SpUtil.putObjectList("collcetXiaoshuo", _xslist);
 
         List<Playlist> _pylist = [];
-        JsonUtil.getObjectList(data["playlist"], (v) => _pylist.add(Playlist.fromJson(v)));
+        JsonUtil.getObjectList(data["playlist"], (v) => _pylist.add(Playlist.fromJson(v as Map<String, dynamic>)));
         SpUtil.putObjectList("collcetPlayer", _pylist);
         collectProvider.setListDetailResource("collcetPlayer", _pylist);
 
         List<ManhuaCatlogDetail> _mhlist = [];
-        JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v)));
+        JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v as Map<String, dynamic>)));
         SpUtil.putObjectList("collcetManhua", _mhlist);
         collectProvider.setListDetailResource("collcetManhua", _mhlist);
       },
@@ -294,9 +294,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     try {
       Toast.show("后台开始下载");
       OtaUpdate().execute(currentUpdateUrl, destinationFilename: "虱子聚合.apk").listen(
-        (OtaEvent event) {
-          if (event.status == OtaStatus.DOWNLOADING) {
-            dialog.update(double.parse(event.value) / 100);
+        (OtaEvent? event) {
+          if (event!.status == OtaStatus.DOWNLOADING) {
+            var value = event.value;
+            dialog.update(double.parse(value!) / 100);
           } else if (event.status == OtaStatus.INSTALLING) {
             Toast.show("升级成功");
           } else {
@@ -390,7 +391,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
 
-    final String theme = SpUtil.getString(Constant.theme);
+    final String? theme = SpUtil.getString(Constant.theme);
     String themeMode;
     switch (theme) {
       case 'Dark':
@@ -434,18 +435,15 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                   return;
                                 }
                                 playerProvider.index = index;
-                                tab?.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                tab.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
                               },
                             );
                           },
-                          selector: (_, store) => store.pageController);
-                      break;
+                          selector: (_, store) => store.pageController!);
                     case 1:
                       return Text("书架");
-                      break;
                     case 2:
                       return Text("漫画");
-                      break;
                     case 3:
                       return Selector<CollectProvider, PageController>(
                           builder: (_, tab, __) {
@@ -466,12 +464,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                   return;
                                 }
                                 collectProvider.index = index;
-                                tab?.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                tab.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
                               },
                             );
                           },
                           selector: (_, store) => store.pageController);
-                      break;
                     default:
                       break;
                   }
@@ -481,7 +478,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               leading: IconButton(
                   icon: Icon(Icons.settings),
                   onPressed: () {
-                    _scaffoldKey.currentState.openDrawer();
+                    _scaffoldKey.currentState!.openDrawer();
                   }),
               actions: [
                 Consumer<HomeProvider>(
@@ -495,7 +492,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             child: Icon(
                               Icons.search_sharp,
                             ));
-                        break;
                       case 1:
                         return TextButton(
                             onPressed: () {
@@ -504,7 +500,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             child: Icon(
                               Icons.search_sharp,
                             ));
-                        break;
                       case 2:
                         return TextButton(
                             onPressed: () {
@@ -513,7 +508,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             child: Icon(
                               Icons.search_sharp,
                             ));
-                        break;
                     }
                     return Container();
                   },
@@ -532,7 +526,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 onPressed: () {
                   _animationController.reset();
                   _animationController.forward();
-                  NavigatorUtils.goWebViewPage(context, "京东代挂", "https://shop.lppfk.top");
+                  NavigatorUtils.goWebViewPage(
+                    context,
+                    "京东代挂",
+                    "https://shop.lppfk.top",
+                  );
                 },
               ),
             ),
@@ -620,8 +618,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               onNotification: (ScrollNotification notification) {
                 /// PageView的onPageChanged是监听ScrollUpdateNotification，会造成滑动中卡顿。这里修改为监听滚动结束再更新、
                 if (notification.depth == 0 && notification is ScrollEndNotification) {
-                  final PageMetrics metrics = notification.metrics;
-                  final int currentPage = metrics.page.round();
+                  final PageMetrics metrics = notification.metrics as PageMetrics;
+                  final int currentPage = (metrics.page ?? 0).round();
                   if (currentPage != _lastReportedPage) {
                     _lastReportedPage = currentPage;
                     provider.value = currentPage;

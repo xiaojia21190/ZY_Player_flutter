@@ -3,28 +3,18 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 
 class MyCard extends StatelessWidget {
-  const MyCard({Key key, @required this.child, this.color, this.shadowColor}) : super(key: key);
+  const MyCard({Key? key, required this.child, this.color, this.shadowColor}) : super(key: key);
 
   final Widget child;
-  final Color color;
-  final Color shadowColor;
+  final Color? color;
+  final Color? shadowColor;
 
   @override
   Widget build(BuildContext context) {
-    Color _backgroundColor;
-    Color _shadowColor;
-    final bool isDark = ThemeUtils.isDark(context);
-    if (color == null) {
-      _backgroundColor = isDark ? Colours.dark_bg_gray_ : Colors.orange;
-    } else {
-      _backgroundColor = color;
-    }
+    final bool isDark = context.isDark;
 
-    if (shadowColor == null) {
-      _shadowColor = isDark ? Colors.transparent : const Color(0x80DCE7FA);
-    } else {
-      _shadowColor = isDark ? Colors.transparent : shadowColor;
-    }
+    final Color _backgroundColor = color ?? (isDark ? Colours.dark_bg_gray_ : Colors.white);
+    final Color _shadowColor = isDark ? Colors.transparent : (shadowColor ?? const Color(0x80DCE7FA));
 
     return DecoratedBox(
       decoration: BoxDecoration(

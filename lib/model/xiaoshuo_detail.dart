@@ -49,5 +49,5 @@ class XiaoshuoDetail extends Object {
 
   factory XiaoshuoDetail.fromJson(Map<String, dynamic> srcJson) => _$XiaoshuoDetailFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$XiaoshuoDetailToJson(this);
+  Map<dynamic, dynamic> toJson() => _$XiaoshuoDetailToJson(this);
 }

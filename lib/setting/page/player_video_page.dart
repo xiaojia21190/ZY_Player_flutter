@@ -10,12 +10,12 @@ import 'package:video_player/video_player.dart';
 
 class PlayerVideoPage extends StatefulWidget {
   const PlayerVideoPage({
-    Key key,
-    @required this.title,
-    @required this.url,
-    @required this.cover,
-    @required this.startAt,
-    @required this.videoId,
+    Key? key,
+    required this.title,
+    required this.url,
+    required this.cover,
+    required this.startAt,
+    required this.videoId,
   }) : super(key: key);
 
   final String title;
@@ -29,9 +29,9 @@ class PlayerVideoPage extends StatefulWidget {
 }
 
 class _PlayerVideoPageState extends State<PlayerVideoPage> {
-  AppStateProvider appStateProvider;
-  VideoPlayerController _videoPlayerController;
-  ChewieController _chewieController;
+  AppStateProvider? appStateProvider;
+  VideoPlayerController? _videoPlayerController;
+  ChewieController? _chewieController;
   SettingProvider settingProvider = SettingProvider();
 
   @override
@@ -54,11 +54,11 @@ class _PlayerVideoPageState extends State<PlayerVideoPage> {
     var startAt = Duration(seconds: int.parse(widget.startAt));
     _videoPlayerController = VideoPlayerController.network(widget.url);
 
-    await _videoPlayerController.initialize();
-    _videoPlayerController.addListener(_videoListener);
+    await _videoPlayerController!.initialize();
+    _videoPlayerController!.addListener(_videoListener);
 
     _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
+      videoPlayerController: _videoPlayerController!,
       autoPlay: true,
       allowedScreenSleep: false,
       looping: false,
@@ -69,7 +69,7 @@ class _PlayerVideoPageState extends State<PlayerVideoPage> {
   }
 
   void _videoListener() async {
-    if (_videoPlayerController.value.isInitialized) {
+    if (_videoPlayerController!.value.isInitialized) {
       if (!settingProvider.value) {
         settingProvider.value = true;
       }
@@ -80,8 +80,8 @@ class _PlayerVideoPageState extends State<PlayerVideoPage> {
           name: "${widget.title}",
           url: widget.url,
           cover: widget.cover,
-          startAt: "${_videoPlayerController.value.position.inSeconds}");
-      appStateProvider.savePlayerRecord(playerModel);
+          startAt: "${_videoPlayerController!.value.position.inSeconds}");
+      appStateProvider!.savePlayerRecord(playerModel);
     }
   }
 
@@ -104,7 +104,7 @@ class _PlayerVideoPageState extends State<PlayerVideoPage> {
                         builder: (_, isplayer, __) {
                           return isplayer
                               ? Chewie(
-                                  controller: _chewieController,
+                                  controller: _chewieController!,
                                 )
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,

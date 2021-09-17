@@ -15,14 +15,13 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ManhuaPage extends StatefulWidget {
-  ManhuaPage({Key key}) : super(key: key);
+  ManhuaPage({Key? key}) : super(key: key);
 
   @override
   _ManhuaPageState createState() => _ManhuaPageState();
 }
 
-class _ManhuaPageState extends State<ManhuaPage>
-    with AutomaticKeepAliveClientMixin<ManhuaPage>, SingleTickerProviderStateMixin {
+class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMixin<ManhuaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   BaseListProvider<ManhuaDetail> _baseListProvider = BaseListProvider();
