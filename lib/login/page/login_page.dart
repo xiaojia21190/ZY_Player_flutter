@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
   bool _clickable = false;
-  late AppStateProvider appStateProvider;
+  AppStateProvider? appStateProvider;
 
   @override
   Map<ChangeNotifier, List<VoidCallback>?>? changeNotifier() {
@@ -77,11 +77,11 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
   void _login() async {
     // 进行登录
     var uuid = await Utils.getUniqueId();
-    appStateProvider.setloadingState(true);
+    appStateProvider?.setloadingState(true);
     await DioUtils.instance.requestNetwork(Method.post, HttpApi.login,
         params: {"username": _nameController.text, "password": _passwordController.text, "uuid": uuid}, onSuccess: (data) {
       Log.d(data["token"]);
-      appStateProvider.setloadingState(false);
+      appStateProvider?.setloadingState(false);
       SpUtil.putString(Constant.accessToken, data["token"]);
       SpUtil.putString(Constant.email, _nameController.text);
       SpUtil.putString(Constant.orderid, data["orderid"] ?? "0");
@@ -89,7 +89,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
       SpUtil.putString(Constant.password, _passwordController.text);
       NavigatorUtils.push(context, Routes.home);
     }, onError: (_, __) {
-      appStateProvider.setloadingState(false);
+      appStateProvider?.setloadingState(false);
       Log.d('登录失败，账号，密码不正确！');
     });
   }
@@ -123,6 +123,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
           focusNode: _nodeText1,
           controller: _nameController,
           keyboardType: TextInputType.emailAddress,
+          maxLength: 100,
           hintText: "请输入邮箱",
         ),
         Gaps.vGap8,
@@ -154,6 +155,28 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
               onTap: () => NavigatorUtils.push(context, LoginRouter.registerPage),
-            ))
+            )),
+        Gaps.vGap16,
+        Divider(),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 20),
+          child: Center(
+            child: Text(
+              "不想注册,直接进入京东短信登陆",
+              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16),
+            ),
+          ),
+        ),
+        MyButton(
+          key: const Key('loginJd'),
+          minHeight: 50,
+          onPressed: () => NavigatorUtils.goWebViewPage(
+            context,
+            "京东短信登陆",
+            "https://bean.m.jd.com/bean/signIndex.action",
+          ),
+          text: "京东短信登陆",
+          fontSize: 20,
+        ),
       ];
 }

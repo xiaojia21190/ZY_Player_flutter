@@ -5,6 +5,7 @@ import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/util/Loading.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_dlna/flutter_dlna.dart';
 import 'package:intl/intl.dart';
 
@@ -110,9 +111,9 @@ class AppStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setloadingState(bool state, [String? text]) {
+  void setloadingState(bool state, [String text = "正在加载中..."]) {
     _loadingState = state;
-    _loadingText = text!;
+    _loadingText = text;
     if (_loadingState) {
       Loading.show(_loadingText);
     } else {

@@ -1,4 +1,3 @@
-import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/cupertino.dart';

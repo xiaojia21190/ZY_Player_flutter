@@ -41,9 +41,8 @@ class ManhuaDetailPage extends StatefulWidget {
 
 class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   bool startedPlaying = false;
-
   ManhuaDetailProvider _manhuaProvider = ManhuaDetailProvider();
-  late CollectProvider _collectProvider;
+  CollectProvider? _collectProvider;
   String actionName = "";
 
   int yueduIndex = 0;
@@ -83,11 +82,8 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   }
 
   bool getFilterData(ManhuaCatlogDetail data) {
-    if (data != null) {
-      var result = _collectProvider.manhuaCatlog.where((element) => element.url == data.url).toList();
-      return result.length > 0;
-    }
-    return false;
+    List<ManhuaCatlogDetail> result = _collectProvider!.manhuaCatlog.where((element) => element.url == data.url).toList();
+    return result.length > 0;
   }
 
   Widget buildShare(String image, String title) {
@@ -205,10 +201,10 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         actionName: actionName,
                         onPressed: () {
                           if (getFilterData(_manhuaProvider.catLog)) {
-                            _collectProvider.removeCatlogResource(_manhuaProvider.catLog.url);
+                            _collectProvider?.removeCatlogResource(_manhuaProvider.catLog.url);
                             _manhuaProvider.setActionName("收藏");
                           } else {
-                            _collectProvider.addCatlogResource(
+                            _collectProvider?.addCatlogResource(
                               _manhuaProvider.catLog,
                             );
                             _manhuaProvider.setActionName("取消");
@@ -217,7 +213,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                   },
                   selector: (_, store) => store.actionName)),
           body: Consumer<ManhuaDetailProvider>(builder: (_, provider, __) {
-            return provider.catLog != null
+            return provider.catLog.author != ""
                 ? CustomScrollView(
                     slivers: <Widget>[
                       SliverToBoxAdapter(

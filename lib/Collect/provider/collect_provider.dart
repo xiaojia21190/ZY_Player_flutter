@@ -69,7 +69,7 @@ class CollectProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  late TabController tabController;
-  late PageController pageController;
-  late int index;
+  TabController? tabController;
+  PageController? pageController;
+  int? index;
 }

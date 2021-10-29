@@ -23,15 +23,14 @@ class CollectPage extends StatefulWidget {
 class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClientMixin<CollectPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-  PageController? _pageController;
+  PageController? _pageController = PageController(initialPage: 0);
   CollectProvider? _collectProvider;
 
   @override
   void initState() {
-    _pageController = PageController(initialPage: 0);
-
     _collectProvider = Store.value<CollectProvider>(context);
-    _collectProvider!.pageController = _pageController!;
+    _collectProvider?.pageController = _pageController;
+
     super.initState();
   }
 
@@ -78,13 +77,13 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     return Scaffold(
       body: Container(
         color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
-        child: Selector<CollectProvider, TabController>(
+        child: Selector<CollectProvider, TabController?>(
             builder: (_, tab, __) {
               return PageView.builder(
                   key: const Key('pageView'),
                   itemCount: 2,
                   onPageChanged: (index) {
-                    tab.animateTo(index);
+                    tab?.animateTo(index);
                     _collectProvider!.index = index;
                   },
                   controller: _pageController,

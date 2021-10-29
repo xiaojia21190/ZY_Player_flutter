@@ -13,7 +13,7 @@ import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/reader_memu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screen/flutter_screen.dart';
+import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +47,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
   int? currentChpid;
 
   bool loadMoreFlag = false;
+  double light = 0;
 
   @override
   void initState() {
@@ -62,12 +63,18 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
       _appStateProvider!.setOpcity(0.0);
       fetchData(event.chpId);
     });
+    getLight();
+
     super.initState();
+  }
+
+  Future getLight() async {
+    light = await FlutterScreenWake.brightness;
   }
 
   @override
   void dispose() {
-    FlutterScreen.resetBrightness();
+    FlutterScreenWake.setBrightness(light);
     super.dispose();
   }
 

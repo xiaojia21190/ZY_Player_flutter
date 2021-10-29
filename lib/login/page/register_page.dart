@@ -49,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
     };
   }
 
-  late AppStateProvider appStateProvider;
+  AppStateProvider? appStateProvider;
   @override
   void initState() {
     appStateProvider = Store.value<AppStateProvider>(context);
@@ -79,12 +79,12 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
 
   void _register() async {
     var uuid = await Utils.getUniqueId();
-    appStateProvider.setloadingState(true);
+    appStateProvider?.setloadingState(true);
     await DioUtils.instance.requestNetwork(Method.post, HttpApi.register,
         params: {"username": _nameController.text, "code": _vCodeController.text, "password": _passwordController.text, "uuid": uuid},
         onSuccess: (data) {
       Log.d(data["token"]);
-      appStateProvider.setloadingState(false);
+      appStateProvider?.setloadingState(false);
       SpUtil.putString(Constant.accessToken, data["token"]);
       SpUtil.putString(Constant.email, _nameController.text);
       SpUtil.putString(Constant.orderid, "0");
@@ -92,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
       SpUtil.putString(Constant.password, _passwordController.text);
       NavigatorUtils.push(context, Routes.home);
     }, onError: (_, __) {
-      appStateProvider.setloadingState(false);
+      appStateProvider?.setloadingState(false);
       Log.d('登录失败，账号，密码不正确！');
     });
   }

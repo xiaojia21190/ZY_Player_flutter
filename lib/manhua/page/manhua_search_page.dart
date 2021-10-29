@@ -21,9 +21,9 @@ class ManhuaSearchPage extends StatefulWidget {
 }
 
 class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
-  late ManhuaProvider _searchProvider;
+  ManhuaProvider? _searchProvider;
   final FocusNode _focus = FocusNode();
-  late AppStateProvider _appStateProvider;
+  AppStateProvider? _appStateProvider;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
     _searchProvider = Store.value<ManhuaProvider>(context);
     _appStateProvider = Store.value<AppStateProvider>(context);
 
-    _searchProvider.setWords();
+    _searchProvider?.setWords();
   }
 
   @override
@@ -40,21 +40,21 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
   }
 
   Future getSearchWords(String keywords) async {
-    _searchProvider.list.clear();
-    _appStateProvider.setloadingState(true);
+    _searchProvider?.list.clear();
+    _appStateProvider?.setloadingState(true);
 
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(resultList.length, (index) => Types.fromJson(resultList[index]));
       if (data.length == 0) {
-        _searchProvider.setStateType(StateType.order);
+        _searchProvider?.setStateType(StateType.order);
       } else {
-        _searchProvider.setStateType(StateType.empty);
+        _searchProvider?.setStateType(StateType.empty);
       }
-      _searchProvider.setList(data);
-      _appStateProvider.setloadingState(false);
+      _searchProvider?.setList(data);
+      _appStateProvider?.setloadingState(false);
     }, onError: (_, __) {
-      _searchProvider.setStateType(StateType.network);
-      _appStateProvider.setloadingState(false);
+      _searchProvider?.setStateType(StateType.network);
+      _appStateProvider?.setloadingState(false);
     });
   }
 

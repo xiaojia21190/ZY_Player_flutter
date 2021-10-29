@@ -13,7 +13,7 @@ class ClickItem extends StatelessWidget {
       this.maxLines = 1})
       : super(key: key);
 
-  final GestureTapCallback onTap;
+  final GestureTapCallback? onTap;
   final String title;
   final String content;
   final TextAlign textAlign;

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
@@ -9,7 +7,7 @@ class Loading {
   static LoadingView? preToast;
 
   static show(String msg) {
-    preToast!.dismiss();
+    preToast?.dismiss();
     preToast = null;
     OverlayState? overlay = Constant.navigatorKey.currentState!.overlay;
     OverlayEntry overlayEntry;
@@ -26,7 +24,7 @@ class Loading {
   }
 
   static hide() {
-    preToast!.dismiss();
+    preToast?.dismiss();
   }
 
   static LayoutBuilder buildToastLayout(String? msg) {

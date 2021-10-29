@@ -26,7 +26,6 @@ import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
 import 'package:ZY_Player_flutter/widgets/bubble_tab_indicator.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
-import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/page/shujia_page.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
@@ -35,10 +34,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_update_dialog/flutter_update_dialog.dart';
 import 'package:ota_update/ota_update.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class IconTitle {
   final IconData icon;
@@ -52,30 +50,29 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-  late List<Widget> _pageList;
+  List<Widget> _pageList = [PlayerPage(), ShuJiaPage(), ManhuaPage(), CollectPage()];
 
   final PageController _pageController = PageController();
 
   HomeProvider provider = HomeProvider();
 
-  late AppStateProvider appStateProvider;
-  late PlayerProvider playerProvider;
-  late CollectProvider collectProvider;
+  AppStateProvider? appStateProvider;
+  PlayerProvider? playerProvider;
+  CollectProvider? collectProvider;
 
-  late UpdateDialog dialog;
-  late OtaEvent currentEvent;
+  UpdateDialog? dialog;
+  OtaEvent? currentEvent;
   String currentUpdateUrl = "";
   String currentVersion = "";
   String nextVersion = "";
   String currentUpdateText = "";
   bool isUpdating = false;
 
-  late TabController _tabController;
-  late TabController _tabControllerColl;
+  TabController? _tabControllerColl;
 
-  late AnimationController _animationController;
-  late Animation<double> animation;
-  late CurvedAnimation curve;
+  AnimationController? _animationController;
+  Animation<double>? animation;
+  CurvedAnimation? curve;
 
   final iconList = <IconTitle>[
     IconTitle(icon: Icons.play_circle_fill, title: "影视"),
@@ -86,7 +83,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    super.initState();
     // 获取更新数据
     if (Device.isAndroid) {
       checkUpDate();
@@ -98,19 +94,16 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     checkJihuo();
 
     // 获得Player数据
-    initData();
     appStateProvider = Store.value<AppStateProvider>(context);
     playerProvider = Store.value<PlayerProvider>(context);
     collectProvider = Store.value<CollectProvider>(context);
     // 初始化投屏数据
-    appStateProvider.initDlnaManager();
-    _tabController = TabController(vsync: this, length: 2);
+    appStateProvider?.initDlnaManager();
     _tabControllerColl = TabController(vsync: this, length: 2);
-    playerProvider.tabController = _tabController;
-    collectProvider.tabController = _tabControllerColl;
+    collectProvider?.tabController = _tabControllerColl;
 
     Future.microtask(() async {
-      appStateProvider.getPlayerRecord();
+      appStateProvider?.getPlayerRecord();
       await getUserInfo();
     });
 
@@ -119,7 +112,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       vsync: this,
     );
     curve = CurvedAnimation(
-      parent: _animationController,
+      parent: _animationController!,
       curve: Interval(
         0.5,
         1.0,
@@ -129,11 +122,36 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     animation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(curve);
+    ).animate(curve!);
 
     Future.delayed(
       Duration(seconds: 1),
-      () => _animationController.forward(),
+      () => _animationController?.forward(),
+    );
+
+    super.initState();
+  }
+
+  Future getUserInfo() async {
+    await DioUtils.instance.requestNetwork(
+      Method.get,
+      HttpApi.queryUserInfo,
+      onSuccess: (data) {
+        List<XiaoshuoDetail> _xslist = [];
+        JsonUtil.getObjectList(data["xslist"], (v) => _xslist.add(XiaoshuoDetail.fromJson(v as Map<String, dynamic>)));
+        SpUtil.putObjectList("collcetXiaoshuo", _xslist);
+
+        List<Playlist> _pylist = [];
+        JsonUtil.getObjectList(data["playlist"], (v) => _pylist.add(Playlist.fromJson(v as Map<String, dynamic>)));
+        SpUtil.putObjectList("collcetPlayer", _pylist);
+        collectProvider?.setListDetailResource("collcetPlayer", _pylist);
+
+        List<ManhuaCatlogDetail> _mhlist = [];
+        JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v as Map<String, dynamic>)));
+        SpUtil.putObjectList("collcetManhua", _mhlist);
+        collectProvider?.setListDetailResource("collcetManhua", _mhlist);
+      },
+      onError: (code, msg) {},
     );
   }
 
@@ -198,29 +216,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
-  Future getUserInfo() async {
-    await DioUtils.instance.requestNetwork(
-      Method.get,
-      HttpApi.queryUserInfo,
-      onSuccess: (data) {
-        List<XiaoshuoDetail> _xslist = [];
-        JsonUtil.getObjectList(data["xslist"], (v) => _xslist.add(XiaoshuoDetail.fromJson(v as Map<String, dynamic>)));
-        SpUtil.putObjectList("collcetXiaoshuo", _xslist);
-
-        List<Playlist> _pylist = [];
-        JsonUtil.getObjectList(data["playlist"], (v) => _pylist.add(Playlist.fromJson(v as Map<String, dynamic>)));
-        SpUtil.putObjectList("collcetPlayer", _pylist);
-        collectProvider.setListDetailResource("collcetPlayer", _pylist);
-
-        List<ManhuaCatlogDetail> _mhlist = [];
-        JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v as Map<String, dynamic>)));
-        SpUtil.putObjectList("collcetManhua", _mhlist);
-        collectProvider.setListDetailResource("collcetManhua", _mhlist);
-      },
-      onError: (code, msg) {},
-    );
-  }
-
   Future checkJihuo() async {
     await DioUtils.instance.requestNetwork(
       Method.get,
@@ -266,9 +261,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   openUpdateDialog() {
-    if (dialog != null && dialog.isShowing()) {
+    if (dialog != null && dialog!.isShowing()) {
       return;
     }
+
     isUpdating = false;
     dialog = UpdateDialog.showUpdate(context,
         width: 250,
@@ -297,19 +293,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         (OtaEvent? event) {
           if (event!.status == OtaStatus.DOWNLOADING) {
             var value = event.value;
-            dialog.update(double.parse(value!) / 100);
+            dialog?.update(double.parse(value!) / 100);
           } else if (event.status == OtaStatus.INSTALLING) {
             Toast.show("升级成功");
           } else {
             Toast.show("升级失败，请从新下载");
-            dialog.dismiss();
+            dialog?.dismiss();
             openUpdateDialog();
           }
         },
       );
     } catch (e) {
       Toast.show("升级失败，请从新下载");
-      dialog.dismiss();
+      dialog?.dismiss();
       openUpdateDialog();
     }
   }
@@ -323,69 +319,65 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     return false;
   }
 
-  void initData() {
-    _pageList = [PlayerPage(), ShuJiaPage(), ManhuaPage(), CollectPage()];
-  }
-
   int _lastReportedPage = 0;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  _showQQDialog() {
-    GlobalKey qqerweima = GlobalKey();
-    showElasticDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Material(
-          type: MaterialType.transparency,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RepaintBoundary(
-                  key: qqerweima,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: context.dialogBackgroundColor,
-                    ),
-                    width: 300,
-                    height: 350,
-                    child: Column(
-                      children: <Widget>[
-                        LoadImage(
-                          "qq",
-                          height: 350,
-                          width: 400,
-                          // width: ,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton(
-                      child: const Text('点击加好友', style: TextStyle(color: Colors.white)),
-                      onPressed: () async {
-                        const url = "https://qm.qq.com/cgi-bin/qm/qr?k=CQQAk3iXGmdhvNPK0mWpZkIXSgYcJtOr&noverify=0";
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        } else {
-                          throw 'Could not launch $url';
-                        }
-                      },
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // _showQQDialog() {
+  //   GlobalKey qqerweima = GlobalKey();
+  //   showElasticDialog<void>(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Material(
+  //         type: MaterialType.transparency,
+  //         child: Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               RepaintBoundary(
+  //                 key: qqerweima,
+  //                 child: Container(
+  //                   decoration: BoxDecoration(
+  //                     color: context.dialogBackgroundColor,
+  //                   ),
+  //                   width: 300,
+  //                   height: 350,
+  //                   child: Column(
+  //                     children: <Widget>[
+  //                       LoadImage(
+  //                         "qq",
+  //                         height: 350,
+  //                         width: 400,
+  //                         // width: ,
+  //                         fit: BoxFit.fitWidth,
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   TextButton(
+  //                     child: const Text('点击加好友', style: TextStyle(color: Colors.white)),
+  //                     onPressed: () async {
+  //                       const url = "https://qm.qq.com/cgi-bin/qm/qr?k=CQQAk3iXGmdhvNPK0mWpZkIXSgYcJtOr&noverify=0";
+  //                       if (await canLaunch(url)) {
+  //                         await launch(url);
+  //                       } else {
+  //                         throw 'Could not launch $url';
+  //                       }
+  //                     },
+  //                   ),
+  //                 ],
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -416,36 +408,22 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 builder: (_, provider, __) {
                   switch (provider.value) {
                     case 0:
-                      return Selector<PlayerProvider, PageController>(
-                          builder: (_, tab, __) {
-                            return TabBar(
-                              controller: _tabController,
-                              isScrollable: true,
-                              labelPadding: EdgeInsets.all(12.0),
-                              indicatorSize: TabBarIndicatorSize.label,
-                              labelColor: Colours.white,
-                              unselectedLabelColor: isDark ? Colors.white : Colors.black,
-                              indicator: BubbleTabIndicator(),
-                              tabs: const <Widget>[
-                                Text("影视"),
-                                Text("直播"),
-                              ],
-                              onTap: (index) {
-                                if (!mounted) {
-                                  return;
-                                }
-                                playerProvider.index = index;
-                                tab.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
-                              },
-                            );
-                          },
-                          selector: (_, store) => store.pageController!);
+                      return Text(
+                        "影视",
+                        style: TextStyle(color: Colors.white),
+                      );
                     case 1:
-                      return Text("书架");
+                      return Text(
+                        "书架",
+                        style: TextStyle(color: Colors.white),
+                      );
                     case 2:
-                      return Text("漫画");
+                      return Text(
+                        "漫画",
+                        style: TextStyle(color: Colors.white),
+                      );
                     case 3:
-                      return Selector<CollectProvider, PageController>(
+                      return Selector<CollectProvider, PageController?>(
                           builder: (_, tab, __) {
                             return TabBar(
                               controller: _tabControllerColl,
@@ -463,8 +441,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                 if (!mounted) {
                                   return;
                                 }
-                                collectProvider.index = index;
-                                tab.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                collectProvider?.index = index;
+                                tab?.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
                               },
                             );
                           },
@@ -491,6 +469,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             },
                             child: Icon(
                               Icons.search_sharp,
+                              color: Colors.white,
                             ));
                       case 1:
                         return TextButton(
@@ -499,6 +478,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             },
                             child: Icon(
                               Icons.search_sharp,
+                              color: Colors.white,
                             ));
                       case 2:
                         return TextButton(
@@ -507,6 +487,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             },
                             child: Icon(
                               Icons.search_sharp,
+                              color: Colors.white,
                             ));
                     }
                     return Container();
@@ -515,7 +496,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               ],
             ),
             floatingActionButton: ScaleTransition(
-              scale: animation,
+              scale: animation!,
               child: FloatingActionButton(
                 elevation: 8,
                 backgroundColor: HexColor('#FFA400'),
@@ -524,12 +505,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () {
-                  _animationController.reset();
-                  _animationController.forward();
+                  _animationController?.reset();
+                  _animationController?.forward();
                   NavigatorUtils.goWebViewPage(
                     context,
-                    "京东代挂",
-                    "https://shop.lppfk.top",
+                    "京东短信登陆",
+                    "https://bean.m.jd.com/bean/signIndex.action",
                   );
                 },
               ),
@@ -569,8 +550,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         NavigatorUtils.push(context, LoginRouter.loginPage);
                       }),
                   ClickItem(
-                    title: '加好友',
-                    onTap: () => _showQQDialog(),
+                    title: '关注公众号<日落知多少>',
+                    onTap: () => {Toast.show("关注公众号<日落知多少>")},
                   ),
                 ],
               ),

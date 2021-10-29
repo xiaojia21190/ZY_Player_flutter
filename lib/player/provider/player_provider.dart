@@ -17,9 +17,6 @@ class PlayerProvider extends ChangeNotifier {
   StateType _stateType = StateType.empty;
   StateType get stateType => _stateType;
 
-  TabController? tabController;
-  PageController? pageController;
-
   int? index;
 
   setWords() {

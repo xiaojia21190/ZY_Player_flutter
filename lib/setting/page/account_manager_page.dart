@@ -15,8 +15,7 @@ import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:fradio/fradio.dart';
+import 'package:fradio_nullsafety/fradio_nullsafety.dart';
 import 'package:intl/intl.dart';
 
 /// design/8设置/index.html#artboard1
@@ -108,7 +107,7 @@ class _AccountManagerPageState extends State<AccountManagerPage> {
                                 height: 80,
                                 value: index,
                                 groupValue: tabIndex,
-                                onChanged: (int value) {
+                                onChanged: (int? value) {
                                   setState(() {
                                     tabIndex = value;
                                   });

@@ -12,6 +12,7 @@ import 'package:ZY_Player_flutter/routes/routers.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
+import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flustars/flustars.dart';
@@ -21,31 +22,27 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:screen_ratio_adapter/screen_ratio_adapter.dart';
 
+var uiSize = BlueprintsRectangle(360, 510);
 Future<void> main() async {
 //  debugProfileBuildsEnabled = true;
 //  debugPaintLayerBordersEnabled = true;
 //  debugProfilePaintsEnabled = true;
 //  debugRepaintRainbowEnabled = true;
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
+  FxWidgetsFlutterBinding.ensureInitialized(uiBlueprints: uiSize);
 
   /// sp初始化
   await SpUtil.getInstance();
   final String? accessToken = SpUtil.getString(Constant.accessToken);
-  runFxApp(
-      Store.init(MyApp(
-        home: accessToken!.isNotEmpty ? Home() : LoginPage(),
-        // home: Home(),
-      )),
-      uiBlueprints: BlueprintsRectangle(750, 1334));
+  runApp(
+    Store.init(MyApp(
+      home: accessToken!.isNotEmpty ? Home() : LoginPage(),
+    )),
+  );
 
-  // 透明状态栏
-  if (Device.isAndroid) {
-    final SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-  }
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 }
 
 class MyApp extends StatelessWidget {
@@ -77,7 +74,7 @@ class MyApp extends StatelessWidget {
 
     setInitDio(
       //adb kill-server && adb server && adb shell
-      baseUrl: Constant.inProduction ? 'https://xxxx.xxx.xxx/' : 'http://127.0.0.1:7001',
+      baseUrl: Constant.inProduction ? 'https://crawel.lppfk.top/' : 'https://crawel.lppfk.top/',
       interceptors: interceptors,
     );
   }
@@ -87,41 +84,43 @@ class MyApp extends StatelessWidget {
     return OKToast(
         child: Consumer2<ThemeProvider, AppStateProvider>(
           builder: (_, provider, appStateProvider, __) {
-            return Shortcuts(
-                shortcuts: <LogicalKeySet, Intent>{
-                  LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
-                },
-                child: MaterialApp(
-                  navigatorKey: Constant.navigatorKey,
-                  title: '虱子聚合',
-                  theme: theme ?? provider.getTheme(),
-                  darkTheme: provider.getTheme(isDarkMode: true),
-                  themeMode: provider.getThemeMode(),
-                  home: home,
-                  onGenerateRoute: Application.router!.generator,
-                  localizationsDelegates: const [
-                    AppLocalizationsDelegate(),
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
-                  builder: (context, Widget? child) {
-                    /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
-                    return MediaQuery(
-                      data: MediaQuery.of(context).copyWith(
-                          textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
-                      child: child!,
-                    );
-                  },
+            return MaterialApp(
+              navigatorKey: Constant.navigatorKey,
+              title: '虱子聚合',
+              theme: theme ?? provider.getTheme(),
+              darkTheme: provider.getTheme(isDarkMode: true),
+              themeMode: provider.getThemeMode(),
+              home: home,
+              onGenerateRoute: Application.router!.generator,
+              localizationsDelegates: const [
+                AppLocalizationsDelegate(),
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
+              builder: FxTransitionBuilder(builder: (context, Widget? child) {
+                /// 仅针对安卓
+                if (Device.isAndroid) {
+                  /// 切换深色模式会触发此方法，这里设置导航栏颜色
+                  ThemeUtils.setSystemNavigationBar(provider.getThemeMode());
+                }
 
-                  /// 因为使用了fluro，这里设置主要针对Web
-                  onUnknownRoute: (_) {
-                    return MaterialPageRoute(
-                      builder: (BuildContext context) => PageNotFound(),
-                    );
-                  },
-                ));
+                /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                  child: child!,
+                );
+              }),
+
+              /// 因为使用了fluro，这里设置主要针对Web
+              onUnknownRoute: (_) {
+                return MaterialPageRoute(
+                  builder: (BuildContext context) => PageNotFound(),
+                );
+              },
+            );
           },
         ),
 

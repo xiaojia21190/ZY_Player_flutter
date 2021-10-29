@@ -28,16 +28,16 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
   AnimationController? controller;
   Animation<double>? animation;
 
-  XiaoShuoProvider _xiaoShuoProvider = XiaoShuoProvider();
+  XiaoShuoProvider? _xiaoShuoProvider;
 
   @override
   void initState() {
     controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
     animation = Tween(begin: 0.0, end: 1.0).animate(controller!);
     _xiaoShuoProvider = Store.value<XiaoShuoProvider>(context);
-    _xiaoShuoProvider.setListXiaoshuoResource();
-    _xiaoShuoProvider.getReadList();
-    _xiaoShuoProvider.getLastRead();
+    _xiaoShuoProvider?.setListXiaoshuoResource();
+    _xiaoShuoProvider?.getReadList();
+    _xiaoShuoProvider?.getLastRead();
     super.initState();
   }
 
@@ -47,9 +47,9 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
     super.dispose();
   }
 
-  Widget buildFavoriteView(List<XiaoshuoDetail> list) {
+  Widget buildFavoriteView(List<XiaoshuoDetail>? list) {
     List<Widget> children = [];
-    if (list.length > 0) {
+    if (list!.length > 0) {
       list.forEach((novel) {
         children.add(BookshelfItemView(novel, "-1"));
       });
@@ -83,7 +83,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return [
           SliverToBoxAdapter(
-            child: Selector<XiaoShuoProvider, XiaoshuoDetail>(
+            child: Selector<XiaoShuoProvider, XiaoshuoDetail?>(
                 builder: (_, lastread, __) {
                   return lastread != null
                       ? BookshelfHeader(lastread)
@@ -102,7 +102,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
                           ],
                         );
                 },
-                selector: (_, store) => store.lastread!),
+                selector: (_, store) => store.lastread),
           )
         ];
       },
@@ -110,7 +110,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
         color: isDark ? Colours.dark_bg_gray_ : Colours.lightGray,
         child: MyScrollView(
           children: [
-            buildFavoriteView(_xiaoShuoProvider.xiaoshuo),
+            buildFavoriteView(_xiaoShuoProvider?.xiaoshuo),
           ],
         ),
       ),

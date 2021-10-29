@@ -84,7 +84,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
           isBack: true,
           onPressed: (text) {
             Toast.show('搜索内容：$text');
-            if (text != null) {
+            if (text != "") {
               keywords = text;
               this._onFresh();
             }

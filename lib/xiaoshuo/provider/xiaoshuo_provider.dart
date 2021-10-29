@@ -38,7 +38,7 @@ class XiaoShuoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setLastRead(XiaoshuoDetail xiaoshuoDetail) {
+  setLastRead(XiaoshuoDetail? xiaoshuoDetail) {
     _lastread = xiaoshuoDetail;
     SpUtil.putObject("lastread", _lastread!);
     notifyListeners();

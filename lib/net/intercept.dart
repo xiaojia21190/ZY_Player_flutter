@@ -46,7 +46,7 @@ class TokenInterceptor extends Interceptor {
   @override
   Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async {
     //401代表token过期
-    if (response != null && response.statusCode == ExceptionHandle.unauthorized) {
+    if (response.statusCode == ExceptionHandle.unauthorized) {
       if (SpUtil.getString(Constant.email) == null && SpUtil.getString(Constant.password) == null) {
         Log.d('-----------必须先登录------------');
         // 返回登录页面
@@ -54,12 +54,12 @@ class TokenInterceptor extends Interceptor {
       } else {
         Log.d('-----------自动刷新Token------------');
         final Dio dio = DioUtils.instance.dio;
-        dio.interceptors.requestLock.lock();
+        dio.lock();
         final String? accessToken = await getToken(); // 获取新的accessToken
         Log.e('-----------NewToken: $accessToken ------------');
         SpUtil.putString(Constant.accessToken, accessToken!);
-
-        if (accessToken != null) {
+        dio.unlock();
+        if (accessToken != "") {
           // 重新请求失败接口
           final RequestOptions request = response.requestOptions;
           request.headers['Authorization'] = '$accessToken';

@@ -91,7 +91,7 @@ class DetailProvider extends ChangeNotifier {
   }
 
   String getRecord(String playerList) {
-    var record;
+    var record = "0";
     for (var i = 0; i < _saveRecord.length; i++) {
       var splitEle = _saveRecord[i].split("_");
       var splitEle1 = playerList.split("_");

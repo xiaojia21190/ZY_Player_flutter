@@ -1,7 +1,7 @@
-
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+
 /// https://medium.com/gskinner-team/flutter-simplify-platform-screen-size-detection-4cb6fc4f7ed1
 class Device {
   static bool get isDesktop => !isWeb && (isWindows || isLinux || isMacOS);

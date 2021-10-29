@@ -144,7 +144,7 @@ class _SearchBarState extends State<SearchBar> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
       child: Material(
-        color: ThemeUtils.getBackgroundColor(context),
+        color: context.backgroundColor,
         child: SafeArea(
           child: Container(
             child: Row(

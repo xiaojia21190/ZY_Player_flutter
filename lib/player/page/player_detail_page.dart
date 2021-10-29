@@ -27,9 +27,7 @@ import 'package:ZY_Player_flutter/xiaoshuo/widget/batter_view.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_screen/flutter_screen.dart';
-// ignore: import_of_legacy_library_into_null_safe
+import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -73,6 +71,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   int bofangIndex = 0;
 
+  double light = 0;
+
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
@@ -98,7 +98,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   Future getLight() async {
-    light = await FlutterScreen.brightness;
+    light = await FlutterScreenWake.brightness;
   }
 
   @override
@@ -113,7 +113,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     _videoPlayerController?.dispose();
     _videoPlayerController?.removeListener(_videoListener);
     _currentPosSubs?.cancel();
-    FlutterScreen.resetBrightness();
+    FlutterScreenWake.setBrightness(light);
     super.dispose();
   }
 
@@ -161,7 +161,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       } else {
         _detailProvider.setStateType(StateType.network);
       }
-      _collectProvider!.changeNoti();
+      _collectProvider?.changeNoti();
       if (getFilterData(_playlist!.url)) {
         _detailProvider.setActionName("取消");
       } else {
@@ -381,7 +381,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   Offset? _initialVerLightOffset;
   Offset? _finalVerLightOffset;
-  double light = 0;
 
   void _onHorizontalDragStart(DragStartDetails details) {
     _initialSwipeOffset = details.globalPosition;
@@ -446,13 +445,13 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       if (entLight >= 1) {
         entLight = 1.0;
       }
-      FlutterScreen.setBrightness(entLight);
+      FlutterScreenWake.setBrightness(entLight);
     } else {
       entLight = light - offsetAbs;
       if (entLight <= 0) {
         entLight = 0.0;
       }
-      FlutterScreen.setBrightness(entLight);
+      FlutterScreenWake.setBrightness(entLight);
     }
     var verLightText = "亮度：${(entLight * 100).toInt()}%";
     appStateProvider!.setVerLight(true, verLightText);
@@ -466,8 +465,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   Future playVideo2(int index, List<ZiyuanUrl> urls, int chooseIndex) async {
-    _videoPlayerController!.removeListener(_videoListener);
-    _videoPlayerController!.pause();
+    _videoPlayerController?.removeListener(_videoListener);
+    _videoPlayerController?.pause();
     currentVideoIndex = index;
     currentVideo = "${index}_$chooseIndex";
     appStateProvider!.setloadingState(true);
@@ -477,10 +476,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       currentUrlName = "${_playlist!.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}";
       _detailProvider.saveJuji("${_playlist!.url}_${chooseIndex}_$currentVideoIndex");
       var record = _detailProvider.getRecord("${_playlist!.url}_${chooseIndex}_$currentVideoIndex");
-      var startAt = Duration(seconds: 0);
-      if (record != null) {
-        startAt = Duration(seconds: int.parse(record));
-      }
+      var startAt = Duration(seconds: int.parse(record));
       _videoPlayerController = VideoPlayerController.network(currentUrl);
 
       await _videoPlayerController!.initialize();
@@ -689,8 +685,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
 
   bool getFilterData(String? url) {
     if (url != null) {
-      var result = _collectProvider!.listDetailResource.where((element) => element.url == url).toList();
-      return result.length > 0;
+      List<Playlist>? result = _collectProvider?.listDetailResource.where((element) => element.url == url).toList();
+      return result!.length > 0;
     }
     return false;
   }
@@ -718,11 +714,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                             onPressed: () {
                               if (getFilterData(_playlist!.url)) {
                                 Log.d("点击取消");
-                                _collectProvider!.removeResource(_playlist!.url);
+                                _collectProvider?.removeResource(_playlist!.url);
                                 _detailProvider.setActionName("收藏");
                               } else {
                                 Log.d("点击收藏");
-                                _collectProvider!.addResource(
+                                _collectProvider?.addResource(
                                   _playlist!,
                                 );
                                 _detailProvider.setActionName("取消");
@@ -790,7 +786,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                       icon: Icon(Icons.download_rounded),
                       label: Text("下载")),
                   Expanded(child: Consumer<DetailProvider>(builder: (_, provider, __) {
-                    return provider.detailReource != null && provider.detailReource.length > 0
+                    return provider.detailReource.length > 0
                         ? MyScrollView(
                             children: [
                               Container(

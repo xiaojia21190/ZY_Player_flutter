@@ -4,12 +4,9 @@ import 'dart:convert';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
-import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:ZY_Player_flutter/provider/base_list_provider.dart';
-import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
@@ -17,9 +14,7 @@ import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../player_router.dart';
 
@@ -40,9 +35,6 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
   bool get wantKeepAlive => true;
   BaseListProvider<Playlist> _baseListProvider = BaseListProvider();
 
-  List<SwiperList> _list = [];
-  PlayerProvider? _playerProvider;
-
   int groupValue = 0;
   int page = 1;
   String typeStr = "";
@@ -53,7 +45,6 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
   @override
   void initState() {
     _onRefresh();
-    _playerProvider = Store.value<PlayerProvider>(context);
     super.initState();
   }
 

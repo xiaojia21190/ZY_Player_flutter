@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
+import 'package:ZY_Player_flutter/widgets/my_button.dart';
 
 /// 自定义AppBar
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -12,6 +13,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.centerTitle = '',
       this.actionName = '',
       this.backImg = 'assets/images/ic_back_black.png',
+      this.backImgColor,
       this.onPressed,
       this.isBack = true})
       : super(key: key);
@@ -20,60 +22,60 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String centerTitle;
   final String backImg;
+  final Color? backImgColor;
   final String actionName;
   final VoidCallback? onPressed;
   final bool isBack;
 
   @override
   Widget build(BuildContext context) {
-    Color _backgroundColor;
+    final Color _backgroundColor = backgroundColor ?? context.backgroundColor;
 
-    if (backgroundColor == null) {
-      _backgroundColor = ThemeUtils.getBackgroundColor(context);
-    } else {
-      _backgroundColor = backgroundColor!;
-    }
-
-    SystemUiOverlayStyle _overlayStyle =
+    final SystemUiOverlayStyle _overlayStyle =
         ThemeData.estimateBrightnessForColor(_backgroundColor) == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
 
-    var back = isBack
+    final Widget back = isBack
         ? IconButton(
-            onPressed: () {
+            onPressed: () async {
               FocusManager.instance.primaryFocus?.unfocus();
-              Navigator.maybePop(context);
+              final isBack = await Navigator.maybePop(context);
+              if (!isBack) {
+                await SystemNavigator.pop();
+              }
             },
             tooltip: 'Back',
             padding: const EdgeInsets.all(12.0),
             icon: Image.asset(
               backImg,
-              color: ThemeUtils.getIconColor(context),
+              color: backImgColor ?? ThemeUtils.getIconColor(context),
             ),
           )
         : Gaps.empty;
 
-    var action = actionName.isNotEmpty
+    final Widget action = actionName.isNotEmpty
         ? Positioned(
             right: 0.0,
             child: Theme(
               data: Theme.of(context).copyWith(
-                buttonTheme: ButtonThemeData(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                buttonTheme: const ButtonThemeData(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
                   minWidth: 60.0,
                 ),
               ),
-              child: TextButton(
-                child: Text(actionName, key: const Key('actionName')),
-                style: ButtonStyle(
-                    overlayColor: MaterialStateProperty.all(Colors.transparent),
-                    textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: ThemeUtils.isDark(context) ? Colours.dark_text : Colours.text))),
+              child: MyButton(
+                key: const Key('actionName'),
+                fontSize: Dimens.font_sp14,
+                minWidth: null,
+                text: actionName,
+                textColor: context.isDark ? Colours.dark_text : Colours.text,
+                backgroundColor: Colors.transparent,
                 onPressed: onPressed,
               ),
             ),
           )
         : Gaps.empty;
 
-    var titleWidget = Semantics(
+    final Widget titleWidget = Semantics(
       namesRoute: true,
       header: true,
       child: Container(
@@ -81,10 +83,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         width: double.infinity,
         child: Text(
           title.isEmpty ? centerTitle : title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: Dimens.font_sp18,
           ),
-          overflow: TextOverflow.ellipsis,
         ),
         margin: const EdgeInsets.symmetric(horizontal: 48.0),
       ),
@@ -109,5 +110,5 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(48.0);
+  Size get preferredSize => const Size.fromHeight(48.0);
 }

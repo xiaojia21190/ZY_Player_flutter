@@ -11,7 +11,7 @@ class ManhuaDetailProvider extends ChangeNotifier {
   List<ManhuaDetail> _list = [];
   List<ManhuaDetail> get list => _list;
 
-  late ManhuaCatlogDetail _catLog;
+  ManhuaCatlogDetail _catLog = ManhuaCatlogDetail("", "", "", "", "", "", "", [], "");
   ManhuaCatlogDetail get catLog => _catLog;
 
   List<String> _kanguozhangjie = [];

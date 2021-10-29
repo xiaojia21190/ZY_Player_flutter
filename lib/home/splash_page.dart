@@ -12,7 +12,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  late Timer _timer;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _SplashPageState extends State<SplashPage> {
   // 开屏广告倒计时
   startTime() {
     _timer = Timer(Duration(milliseconds: 2200), () {
-      _timer.cancel();
+      _timer?.cancel();
       NavigatorUtils.push(context, '${Routes.home}', replace: true);
     });
   }
@@ -39,7 +39,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        color: ThemeUtils.getBackgroundColor(context),
+        color: context.backgroundColor,
         child: const LoadAssetImage(
           'ic_background',
           fit: BoxFit.cover,

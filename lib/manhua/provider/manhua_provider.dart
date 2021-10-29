@@ -11,7 +11,7 @@ class ManhuaProvider extends ChangeNotifier {
   List<Types> _list = [];
   List<Types> get list => _list;
 
-  late ManhuaCatlogDetail _catLog;
+  ManhuaCatlogDetail _catLog = ManhuaCatlogDetail("", "", "", "", "", "", "", [], "");
   ManhuaCatlogDetail get catLog => _catLog;
 
   List<String> _images = [];
