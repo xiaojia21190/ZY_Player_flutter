@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
 
     setInitDio(
       //adb kill-server && adb server && adb shell
-      baseUrl: Constant.inProduction ? 'https://crawel.lppfk.top/' : 'https://crawel.lppfk.top/',
+      baseUrl: Constant.inProduction ? 'http://127.0.0.1:7001/' : 'http://127.0.0.1:7001/',
       interceptors: interceptors,
     );
   }
