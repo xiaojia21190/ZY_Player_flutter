@@ -59,8 +59,3 @@ Flutter版本视频播放器，免费无广告
 ### License
 
 [MIT](LICENSE)
-
-## 如果觉得有用，请小哥喝杯茶
-
-<img src="./images/微信图片_20210113220740.jpg" width="200px" />
-
