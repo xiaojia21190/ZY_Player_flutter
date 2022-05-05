@@ -9,6 +9,11 @@ Flutter版本视频播放器，免费无广告
 ### 版本安装
 - [android v2.4.3](https://gamehall-1255478053.cos.ap-chengdu.myqcloud.com/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk)
 
+
+###
+测试账号 (dd111@qq.com)
+密码 (123456)
+
 ### 截图
 
 |                   影视热门列表                   |                   影视资源播放                   |                       搜索页                       |
