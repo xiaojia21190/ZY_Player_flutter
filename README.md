@@ -3,12 +3,6 @@
 Flutter版本视频播放器，免费无广告
 
 
-
-### 声明
-后台不维护了,有需要联系作者
-
-
-
 ### 订阅新版本
 <img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
