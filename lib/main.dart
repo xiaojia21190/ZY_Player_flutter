@@ -17,7 +17,6 @@ import 'package:dio/dio.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
@@ -74,7 +73,7 @@ class MyApp extends StatelessWidget {
 
     setInitDio(
       //adb kill-server && adb server && adb shell
-      baseUrl: Constant.inProduction ? 'http://127.0.0.1:7001/' : 'http://127.0.0.1:7001/',
+      baseUrl: Constant.inProduction ? 'https://crawel.lppfk.top/' : 'https://crawel.lppfk.top/',
       interceptors: interceptors,
     );
   }
@@ -108,8 +107,7 @@ class MyApp extends StatelessWidget {
 
                 /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
                 return MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
+                  data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
                   child: child!,
                 );
               }),
