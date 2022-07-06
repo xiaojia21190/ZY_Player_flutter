@@ -7,6 +7,6 @@ class CollectRouter implements IRouterProvider {
 
   @override
   void initRouter(FluroRouter router) {
-    router.define(collectPage, handler: Handler(handlerFunc: (_, __) => CollectPage()));
+    router.define(collectPage, handler: Handler(handlerFunc: (_, params) => CollectPage(catIndex: params["catIndex"]!.first)));
   }
 }
