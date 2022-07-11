@@ -1,3 +1,5 @@
+import 'package:ZY_Player_flutter/model/audio_detail.dart';
+import 'package:ZY_Player_flutter/model/audio_loc.dart';
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
@@ -5,12 +7,18 @@ import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
 
+
+
+
 class CollectProvider extends ChangeNotifier {
   List<Playlist> _listDetailResource = [];
   List<Playlist> get listDetailResource => _listDetailResource;
 
   List<ManhuaCatlogDetail> _manhuaCatlog = [];
   List<ManhuaCatlogDetail> get manhuaCatlog => _manhuaCatlog;
+
+  List<AudioLoc> _list = [];
+  List<AudioLoc> get list => _list;
 
   setListDetailResource(String collect, dynamic result) async {
     switch (collect) {
@@ -22,10 +30,30 @@ class CollectProvider extends ChangeNotifier {
         _manhuaCatlog.clear();
         _manhuaCatlog.addAll(result);
         break;
+      case "collcetTingshu":
+          _list.clear();
+          _list.addAll(result);
+        break;
       default:
     }
     notifyListeners();
   }
+
+  addTingshu(AudioLoc data) {
+    var glll = _list.where((element) => element.url == data.url).toList().length;
+    if (glll == 0) {
+      _list.add(data);
+      SpUtil.putObjectList("collcetTingshu", _list);
+      notifyListeners();
+    }
+  }
+
+  removeTingshu(String id) {
+    _list.removeWhere((element) => element.url == id);
+    SpUtil.putObjectList("collcetTingshu", _list);
+    notifyListeners();
+  }
+
 
   addResource(Playlist data) async {
     var glll = _listDetailResource.where((element) => element.url == data.url).toList().length;
@@ -69,7 +97,4 @@ class CollectProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  TabController? tabController;
-  PageController? pageController;
-  int? index;
 }
