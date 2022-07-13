@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:ZY_Player_flutter/Collect/collect_router.dart';
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
@@ -5,6 +8,8 @@ import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/login/login_router.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
+import 'package:ZY_Player_flutter/model/audio_detail.dart';
+import 'package:ZY_Player_flutter/model/audio_loc.dart';
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
@@ -17,6 +22,8 @@ import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/setting/setting_router.dart';
+import 'package:ZY_Player_flutter/tingshu/page/tingshu_page.dart';
+import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
 import 'package:ZY_Player_flutter/util/hex_color.dart';
@@ -24,14 +31,13 @@ import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
-import 'package:ZY_Player_flutter/widgets/bubble_tab_indicator.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/page/shujia_page.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flustars/flustars.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:flutter_update_dialog/flutter_update_dialog.dart';
 import 'package:ota_update/ota_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -50,7 +56,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-  List<Widget> _pageList = [PlayerPage(), ShuJiaPage(), ManhuaPage(), CollectPage()];
+  List<Widget> _pageList = [PlayerPage(), ShuJiaPage(), ManhuaPage(), TingShuPage()];
 
   final PageController _pageController = PageController();
 
@@ -78,7 +84,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     IconTitle(icon: Icons.play_circle_fill, title: "影视"),
     IconTitle(icon: Icons.book, title: "小说"),
     IconTitle(icon: Icons.theater_comedy, title: "漫画"),
-    IconTitle(icon: Icons.favorite, title: "收藏"),
+    IconTitle(icon: Icons.favorite, title: "听书"),
   ];
 
   @override
@@ -99,8 +105,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     collectProvider = Store.value<CollectProvider>(context);
     // 初始化投屏数据
     appStateProvider?.initDlnaManager();
-    _tabControllerColl = TabController(vsync: this, length: 2);
-    collectProvider?.tabController = _tabControllerColl;
 
     Future.microtask(() async {
       appStateProvider?.getPlayerRecord();
@@ -129,7 +133,15 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       () => _animationController?.forward(),
     );
 
+    getLight();
+
     super.initState();
+  }
+
+  Future getLight() async {
+    var light = await FlutterScreenWake.brightness;
+    debugPrint("light:$light");
+    appStateProvider?.setLightLevel(light);
   }
 
   Future getUserInfo() async {
@@ -150,6 +162,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v as Map<String, dynamic>)));
         SpUtil.putObjectList("collcetManhua", _mhlist);
         collectProvider?.setListDetailResource("collcetManhua", _mhlist);
+
+        List<AudioLoc> _tslist = [];
+        JsonUtil.getObjectList(data["tslist"], (v) => _tslist.add(AudioLoc.fromJson(v as Map<String, dynamic>)));
+        SpUtil.putObjectList("collcetTingshu", _tslist);
+        collectProvider?.setListDetailResource("collcetTingshu", _tslist);
       },
       onError: (code, msg) {},
     );
@@ -332,53 +349,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   //         type: MaterialType.transparency,
   //         child: Center(
   //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               RepaintBoundary(
-  //                 key: qqerweima,
-  //                 child: Container(
-  //                   decoration: BoxDecoration(
-  //                     color: context.dialogBackgroundColor,
-  //                   ),
-  //                   width: 300,
-  //                   height: 350,
-  //                   child: Column(
-  //                     children: <Widget>[
-  //                       LoadImage(
-  //                         "qq",
-  //                         height: 350,
-  //                         width: 400,
-  //                         // width: ,
-  //                         fit: BoxFit.fitWidth,
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                 children: [
-  //                   TextButton(
-  //                     child: const Text('点击加好友', style: TextStyle(color: Colors.white)),
-  //                     onPressed: () async {
-  //                       const url = "https://qm.qq.com/cgi-bin/qm/qr?k=CQQAk3iXGmdhvNPK0mWpZkIXSgYcJtOr&noverify=0";
-  //                       if (await canLaunch(url)) {
-  //                         await launch(url);
-  //                       } else {
-  //                         throw 'Could not launch $url';
-  //                       }
-  //                     },
-  //                   ),
-  //                 ],
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
@@ -423,30 +393,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         style: TextStyle(color: Colors.white),
                       );
                     case 3:
-                      return Selector<CollectProvider, PageController?>(
-                          builder: (_, tab, __) {
-                            return TabBar(
-                              controller: _tabControllerColl,
-                              isScrollable: true,
-                              labelPadding: EdgeInsets.all(12.0),
-                              indicatorSize: TabBarIndicatorSize.label,
-                              labelColor: Colours.white,
-                              unselectedLabelColor: isDark ? Colors.white : Colors.black,
-                              indicator: BubbleTabIndicator(),
-                              tabs: const <Widget>[
-                                Text("影视"),
-                                Text("漫画"),
-                              ],
-                              onTap: (index) {
-                                if (!mounted) {
-                                  return;
-                                }
-                                collectProvider?.index = index;
-                                tab?.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
-                              },
-                            );
-                          },
-                          selector: (_, store) => store.pageController);
+                      return Text("听书", style: TextStyle(color: Colors.white));
                     default:
                       break;
                   }
@@ -454,7 +401,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 },
               ),
               leading: IconButton(
-                  icon: Icon(Icons.settings),
+                  icon: Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                  ),
                   onPressed: () {
                     _scaffoldKey.currentState!.openDrawer();
                   }),
@@ -464,13 +414,49 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     switch (provider.value) {
                       case 0:
                         return TextButton(
+                          onPressed: () {
+                            NavigatorUtils.push(context, '${CollectRouter.collectPage}?catIndex=1');
+                          },
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.white,
+                          ),
+                        );
+                      case 2:
+                        return TextButton(
                             onPressed: () {
-                              NavigatorUtils.push(context, PlayerRouter.searchPage);
+                              NavigatorUtils.push(context, '${CollectRouter.collectPage}?catIndex=2');
                             },
                             child: Icon(
-                              Icons.search_sharp,
+                              Icons.star,
                               color: Colors.white,
                             ));
+                      case 3:
+                        return TextButton(
+                            onPressed: () {
+                              NavigatorUtils.push(context, '${CollectRouter.collectPage}?catIndex=3');
+                            },
+                            child: Icon(
+                              Icons.star,
+                              color: Colors.white,
+                            ));
+                    }
+                    return Container();
+                  },
+                ),
+                Consumer<HomeProvider>(
+                  builder: (_, provider, __) {
+                    switch (provider.value) {
+                      case 0:
+                        return TextButton(
+                          onPressed: () {
+                            NavigatorUtils.push(context, PlayerRouter.searchPage);
+                          },
+                          child: Icon(
+                            Icons.search_sharp,
+                            color: Colors.white,
+                          ),
+                        );
                       case 1:
                         return TextButton(
                             onPressed: () {
@@ -482,13 +468,24 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             ));
                       case 2:
                         return TextButton(
-                            onPressed: () {
-                              NavigatorUtils.push(context, ManhuaRouter.searchPage);
-                            },
-                            child: Icon(
-                              Icons.search_sharp,
-                              color: Colors.white,
-                            ));
+                          onPressed: () {
+                            NavigatorUtils.push(context, ManhuaRouter.searchPage);
+                          },
+                          child: Icon(
+                            Icons.search_sharp,
+                            color: Colors.white,
+                          ),
+                        );
+                      case 3:
+                        return TextButton(
+                          onPressed: () {
+                            NavigatorUtils.push(context, TingshuRouter.searchPage);
+                          },
+                          child: Icon(
+                            Icons.search_sharp,
+                            color: Colors.white,
+                          ),
+                        );
                     }
                     return Container();
                   },
@@ -573,9 +570,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           color: color,
                         ),
                         const SizedBox(height: 4),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Text(iconList[index].title, maxLines: 1, style: TextStyle(color: color)))
+                        Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text(iconList[index].title, maxLines: 1, style: TextStyle(color: color)))
                       ],
                     );
                   },
@@ -618,4 +613,51 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       ),
     );
   }
+
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               RepaintBoundary(
+  //                 key: qqerweima,
+  //                 child: Container(
+  //                   decoration: BoxDecoration(
+  //                     color: context.dialogBackgroundColor,
+  //                   ),
+  //                   width: 300,
+  //                   height: 350,
+  //                   child: Column(
+  //                     children: <Widget>[
+  //                       LoadImage(
+  //                         "qq",
+  //                         height: 350,
+  //                         width: 400,
+  //                         // width: ,
+  //                         fit: BoxFit.fitWidth,
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   TextButton(
+  //                     child: const Text('点击加好友', style: TextStyle(color: Colors.white)),
+  //                     onPressed: () async {
+  //                       const url = "https://qm.qq.com/cgi-bin/qm/qr?k=CQQAk3iXGmdhvNPK0mWpZkIXSgYcJtOr&noverify=0";
+  //                       if (await canLaunch(url)) {
+  //                         await launch(url);
+  //                       } else {
+  //                         throw 'Could not launch $url';
+  //                       }
+  //                     },
+  //                   ),
+  //                 ],
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
