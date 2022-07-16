@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:ZY_Player_flutter/net/net.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +31,17 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
   bool isLangu = true;
   bool isLoading = true;
 
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
-    if (Device.isAndroid) WebView.platform = SurfaceAndroidWebView();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -97,16 +103,18 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                           Log.d("pt_key======>$ptKey");
                           if (ptPin != "" && ptKey != "") {
                             Clipboard.setData(ClipboardData(text: "pt_pin=$ptPin;pt_key=$ptKey;"));
-                            Toast.show("已把凭证复制到剪切板, 如果自动上传失败,请到微信公众号<日落知多少>提交");
                             try {
                               // 直接发送链接
-                              await DioUtils.instance.requestNetwork(Method.post, "api/saveCkLyq",
-                                  queryParameters: {"value": "pt_pin=$ptPin;pt_key=$ptKey;"}, onSuccess: (data) {
-                                Toast.show("上传成功!");
-                                NavigatorUtils.goBack(context);
+                              await DioUtils.instance.requestNetwork(Method.post, "api/saveCkLyq", queryParameters: {"value": "pt_pin=$ptPin;pt_key=$ptKey;"}, onSuccess: (data) {
+                                Toast.show("上传成功,5s后退回到上一个页面!!!!!", duration: 5 * 1000);
+                                timer = Timer.periodic(Duration(seconds: 5), (timer) {
+                                  NavigatorUtils.goBack(context);
+                                });
                               }, onError: (_, msg) {
-                                Toast.show("上传失败,已把凭证复制到剪切板, 如果自动上传失败,请到微信公众号<日落知多少>提交!");
-                                NavigatorUtils.goBack(context);
+                                Toast.show(msg, duration: 3 * 1000);
+                                timer = Timer.periodic(Duration(seconds: 3), (timer) {
+                                  NavigatorUtils.goBack(context);
+                                });
                               });
                             } catch (e) {}
                           }
@@ -127,24 +135,6 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
                         cookieManager.clearCookies();
                       },
                     ),
-                    isLoading
-                        ? Center(
-                            heightFactor: 15,
-                            child: Text(
-                              "登陆跳转后,将自动获取登录凭证,上传. \n 如果自动上传失败,凭证会自动复制到剪切板, 请到微信公众号<日落知多少>提交",
-                              style: TextStyle(color: Colors.black),
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        : Align(
-                            alignment: Alignment.bottomCenter,
-                            heightFactor: 12,
-                            child: Text(
-                              "登陆跳转后,将自动获取登录凭证,上传. \n 如果自动上传失败,凭证会自动复制到剪切板, 请到微信公众号<日落知多少>提交",
-                              style: TextStyle(color: Colors.black),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
                     isLoading
                         ? Container(
                             color: Colors.black26,
