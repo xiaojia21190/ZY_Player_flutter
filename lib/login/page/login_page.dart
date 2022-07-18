@@ -16,9 +16,7 @@ import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
 import 'package:flustars/flustars.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../login_router.dart';
 
@@ -78,8 +76,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
     // 进行登录
     var uuid = await Utils.getUniqueId();
     appStateProvider?.setloadingState(true);
-    await DioUtils.instance.requestNetwork(Method.post, HttpApi.login,
-        params: {"username": _nameController.text, "password": _passwordController.text, "uuid": uuid}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.post, HttpApi.login, params: {"username": _nameController.text, "password": _passwordController.text, "uuid": uuid}, onSuccess: (data) {
       Log.d(data["token"]);
       appStateProvider?.setloadingState(false);
       SpUtil.putString(Constant.accessToken, data["token"]);
