@@ -8,7 +8,6 @@ import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 /// design/1注册登录/index.html#artboard9
 class ResetPasswordPage extends StatefulWidget {
