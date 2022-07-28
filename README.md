@@ -9,6 +9,9 @@
 ### 版本安装
 - [android v2.6.6](https://gamehall-1255478053.cos.ap-chengdu.myqcloud.com/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk)
 
+### 测试账号
+- 账号 (dd111@qq.com)
+- 密码 (123456)
 
 ### 截图
 
