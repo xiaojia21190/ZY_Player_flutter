@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:ZY_Player_flutter/Collect/collect_router.dart';
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
-import 'package:ZY_Player_flutter/main.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
@@ -19,7 +17,6 @@ import 'package:provider/provider.dart';
 import '../../widgets/load_image.dart';
 
 class CollectPage extends StatefulWidget {
-
   const CollectPage({
     Key? key,
     required this.catIndex,
@@ -70,9 +67,9 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
           if (index == 1) {
             String jsonString = jsonEncode(data);
             NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
-          } else if(index == 2) {
+          } else if (index == 2) {
             NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
-          }else{
+          } else {
             NavigatorUtils.push(context, '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}&cover=${Uri.encodeComponent(data.cover)}');
           }
         },
@@ -85,7 +82,13 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     final bool isDark = ThemeUtils.isDark(context);
     super.build(context);
     return Scaffold(
-      appBar: MyAppBar(centerTitle: changeIndex == 1 ? '影视收藏' : changeIndex == 2?'漫画收藏':'听书收藏' ,),
+      appBar: MyAppBar(
+        centerTitle: changeIndex == 1
+            ? '影视收藏'
+            : changeIndex == 2
+                ? '漫画收藏'
+                : '听书收藏',
+      ),
       body: Container(
         color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
         child: Selector<CollectProvider, dynamic>(builder: (_, list, __) {
@@ -110,10 +113,10 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                           if (changeIndex == 1) {
                             // 影视
                             _collectProvider!.removeResource(list[index].url);
-                          } else if(changeIndex == 2) {
+                          } else if (changeIndex == 2) {
                             // 漫画
                             _collectProvider!.removeCatlogResource(list[index].url);
-                          }else{
+                          } else {
                             _collectProvider!.removeTingshu(list[index].id);
                           }
                           setState(() {});
@@ -130,7 +133,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
         }, selector: (_, store) {
           if (changeIndex == 1) {
             return store.listDetailResource;
-          }else if(changeIndex == 2){
+          } else if (changeIndex == 2) {
             return store.manhuaCatlog;
           }
           return store.list;
