@@ -16,7 +16,7 @@
          FlutterApplication and put your custom class here. -->
 
     <application android:requestLegacyExternalStorage="true" android:usesCleartextTraffic="true" android:name="${applicationName}" android:label="虱子聚合" android:icon="@mipmap/ic_launcher">
-        <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:launchMode="singleTop" android:screenOrientation="portrait" android:name=".MainActivity" android:theme="@style/LaunchTheme" android:windowSoftInputMode="adjustResize">
+        <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:launchMode="singleTop" android:screenOrientation="portrait" android:name=".MainActivity" android:theme="@style/LaunchTheme" android:exported="true" android:windowSoftInputMode="adjustResize">
             <!-- Specify that the launch screen should continue being displayed -->
             <!-- until Flutter renders its first frame. -->
             <meta-data android:name="io.flutter.embedding.android.SplashScreenDrawable" android:resource="@drawable/launch_background" />
