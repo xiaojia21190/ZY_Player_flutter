@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:ZY_Player_flutter/Collect/collect_router.dart';
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
-import 'package:ZY_Player_flutter/collect/page/collect_page.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
 import 'package:ZY_Player_flutter/login/login_router.dart';
 import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
-import 'package:ZY_Player_flutter/model/audio_detail.dart';
 import 'package:ZY_Player_flutter/model/audio_loc.dart';
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
@@ -28,14 +26,13 @@ import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
 import 'package:ZY_Player_flutter/util/hex_color.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
-import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/util/utils.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/page/shujia_page.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:flustars/flustars.dart';
+import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:flutter_update_dialog/flutter_update_dialog.dart';
@@ -74,7 +71,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   String currentUpdateText = "";
   bool isUpdating = false;
 
-  TabController? _tabControllerColl;
+  // TabController? _tabControllerColl;
 
   AnimationController? _animationController;
   Animation<double>? animation;
@@ -351,7 +348,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   //           child: Column(
   @override
   Widget build(BuildContext context) {
-    final bool isDark = ThemeUtils.isDark(context);
+    // final bool isDark = ThemeUtils.isDark(context);
 
     final String? theme = SpUtil.getString(Constant.theme);
     String themeMode;
