@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
@@ -10,18 +9,7 @@ import 'package:ZY_Player_flutter/widgets/my_button.dart';
 
 /// 登录模块的输入框封装
 class MyTextField extends StatefulWidget {
-  const MyTextField(
-      {Key? key,
-      required this.controller,
-      this.maxLength = 16,
-      this.autoFocus = false,
-      this.keyboardType = TextInputType.text,
-      this.hintText = '',
-      this.focusNode,
-      this.isInputPwd = false,
-      this.getVCode,
-      this.keyName})
-      : super(key: key);
+  const MyTextField({Key? key, required this.controller, this.maxLength = 16, this.autoFocus = false, this.keyboardType = TextInputType.text, this.hintText = '', this.focusNode, this.isInputPwd = false, this.getVCode, this.keyName}) : super(key: key);
 
   final TextEditingController controller;
   final int maxLength;
@@ -109,9 +97,7 @@ class _MyTextFieldState extends State<MyTextField> {
       textInputAction: TextInputAction.done,
       keyboardType: widget.keyboardType,
       // 数字、手机号限制格式为0到9， 密码限制不包含汉字
-      inputFormatters: (widget.keyboardType == TextInputType.number || widget.keyboardType == TextInputType.phone)
-          ? [FilteringTextInputFormatter.allow(RegExp('[0-9]'))]
-          : [FilteringTextInputFormatter.deny(RegExp('[\u4e00-\u9fa5]'))],
+      inputFormatters: (widget.keyboardType == TextInputType.number || widget.keyboardType == TextInputType.phone) ? [FilteringTextInputFormatter.allow(RegExp('[0-9]'))] : [FilteringTextInputFormatter.deny(RegExp('[\u4e00-\u9fa5]'))],
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
         hintText: widget.hintText,
