@@ -15,22 +15,15 @@ import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:fluro/fluro.dart';
-import 'package:flustars/flustars.dart';
+import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
-import 'package:screen_ratio_adapter/screen_ratio_adapter.dart';
 
-var uiSize = BlueprintsRectangle(360, 510);
 Future<void> main() async {
-//  debugProfileBuildsEnabled = true;
-//  debugPaintLayerBordersEnabled = true;
-//  debugProfilePaintsEnabled = true;
-//  debugRepaintRainbowEnabled = true;
-  // WidgetsFlutterBinding.ensureInitialized();
-  FxWidgetsFlutterBinding.ensureInitialized(uiBlueprints: uiSize);
+  WidgetsFlutterBinding.ensureInitialized();
 
   /// sp初始化
   await SpUtil.getInstance();
@@ -81,6 +74,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OKToast(
+        backgroundColor: Colors.black54,
+        textPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        radius: 20.0,
+        position: ToastPosition.bottom,
         child: Consumer2<ThemeProvider, AppStateProvider>(
           builder: (_, provider, appStateProvider, __) {
             return MaterialApp(
@@ -98,7 +95,7 @@ class MyApp extends StatelessWidget {
                 GlobalCupertinoLocalizations.delegate,
               ],
               supportedLocales: const <Locale>[Locale('zh', 'CN'), Locale('en', 'US')],
-              builder: FxTransitionBuilder(builder: (context, Widget? child) {
+              builder: (context, Widget? child) {
                 /// 仅针对安卓
                 if (Device.isAndroid) {
                   /// 切换深色模式会触发此方法，这里设置导航栏颜色
@@ -110,7 +107,7 @@ class MyApp extends StatelessWidget {
                   data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), // 或者 MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(textScaleFactor: 1.0),
                   child: child!,
                 );
-              }),
+              },
 
               /// 因为使用了fluro，这里设置主要针对Web
               onUnknownRoute: (_) {
@@ -120,12 +117,6 @@ class MyApp extends StatelessWidget {
               },
             );
           },
-        ),
-
-        /// Toast 配置
-        backgroundColor: Colors.black54,
-        textPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-        radius: 20.0,
-        position: ToastPosition.bottom);
+        ));
   }
 }
