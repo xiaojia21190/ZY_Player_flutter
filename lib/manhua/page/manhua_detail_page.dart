@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/manhua/provider/manhua_detail_provider.dart';
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/http_api.dart';
-import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
@@ -115,6 +113,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                     width: 300,
                                     // width: ,
                                     fit: BoxFit.cover,
+                                    isManhua: true,
                                   ),
                                   Expanded(
                                       child: Row(
@@ -228,6 +227,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                 provider.catLog.cover,
                                 width: 100,
                                 fit: BoxFit.contain,
+                                isManhua: true,
                               ),
                               Expanded(
                                   child: Container(
@@ -296,19 +296,12 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                   child: ScaleAnimation(
                                     child: FadeInAnimation(
                                       child: Container(
-                                          decoration: BoxDecoration(
-                                              color: _manhuaProvider.kanguozhangjie.contains(
-                                                      "${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}")
-                                                  ? Colors.redAccent
-                                                  : Colors.blueAccent,
-                                              borderRadius: BorderRadius.all(Radius.circular(5))),
+                                          decoration: BoxDecoration(color: _manhuaProvider.kanguozhangjie.contains("${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}") ? Colors.redAccent : Colors.blueAccent, borderRadius: BorderRadius.all(Radius.circular(5))),
                                           alignment: Alignment.center,
                                           child: InkWell(
                                               onTap: () {
-                                                _manhuaProvider.saveZhangjie(
-                                                    "${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}");
-                                                NavigatorUtils.push(context,
-                                                    '${ManhuaRouter.imagesPage}?title=${Uri.encodeComponent(provider.catLog.catlogs[index].text)}&url=${Uri.encodeComponent(provider.catLog.catlogs[index].url)}');
+                                                _manhuaProvider.saveZhangjie("${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}");
+                                                NavigatorUtils.push(context, '${ManhuaRouter.imagesPage}?title=${Uri.encodeComponent(provider.catLog.catlogs[index].text)}&url=${Uri.encodeComponent(provider.catLog.catlogs[index].url)}');
                                               },
                                               child: Text(
                                                 '${provider.catLog.catlogs[index].text}',
