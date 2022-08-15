@@ -1,7 +1,7 @@
 import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
 import 'package:ZY_Player_flutter/model/manhua_detail.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flustars/flustars.dart';
+import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
 
 class ManhuaDetailProvider extends ChangeNotifier {

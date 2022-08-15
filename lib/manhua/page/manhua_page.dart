@@ -115,6 +115,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                                                     width: 100,
                                                     height: 150,
                                                     fit: BoxFit.cover,
+                                                    isManhua: true,
                                                   ),
                                                   Gaps.vGap8,
                                                   Container(

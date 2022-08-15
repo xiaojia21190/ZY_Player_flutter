@@ -93,6 +93,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
                             leading: LoadImage(
                               provider.list[index].cover,
                               fit: BoxFit.cover,
+                              isManhua: true,
                             ),
                             trailing: Icon(Icons.keyboard_arrow_right),
                             onTap: () {
