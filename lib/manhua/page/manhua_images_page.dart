@@ -76,7 +76,10 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
                       pageSize: _baseListProvider.list.length,
                       hasMore: false,
                       itemBuilder: (_, index) {
-                        return LoadImage(_baseListProvider.list[index]);
+                        return LoadImage(
+                          _baseListProvider.list[index],
+                          isManhua: true,
+                        );
                       });
                 })),
               ],
