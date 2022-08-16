@@ -43,7 +43,7 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
     var bofang = "12万";
     return Card(
       elevation: 5,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5)),
           side: BorderSide(
             style: BorderStyle.solid,
@@ -51,8 +51,12 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
           )),
       child: ListTile(
         title: Text(data.title),
-        subtitle: index == 1 ? Text("播放量:${data.bofang ?? bofang}") : Text(data.gengxin),
-        trailing: Icon(Icons.keyboard_arrow_right),
+        subtitle: index == 1
+            ? Text("播放量:${data.bofang ?? bofang}")
+            : index == 2
+                ? Text(data.gengxin)
+                : const Text("无"),
+        trailing: const Icon(Icons.keyboard_arrow_right),
         leading: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -90,13 +94,12 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                 : '听书收藏',
       ),
       body: Container(
-        color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
+        color: isDark ? Colours.dark_bg_gray_ : const Color(0xfff5f5f5),
         child: Selector<CollectProvider, dynamic>(builder: (_, list, __) {
           return ListView.builder(
               itemCount: list.length,
               itemBuilder: (_, index) {
                 return Slidable(
-                  child: getData(list[index], changeIndex),
                   startActionPane: ActionPane(
                     // A motion is a widget used to control how the pane animates.
                     motion: const ScrollMotion(),
@@ -121,13 +124,14 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
                           }
                           setState(() {});
                         },
-                        backgroundColor: Color(0xFFFE4A48),
+                        backgroundColor: const Color(0xFFFE4A48),
                         foregroundColor: Colors.white,
                         icon: Icons.delete,
                         label: '取消收藏',
                       ),
                     ],
                   ),
+                  child: getData(list[index], changeIndex),
                 );
               });
         }, selector: (_, store) {
