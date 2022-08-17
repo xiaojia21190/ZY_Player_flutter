@@ -109,12 +109,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     });
 
     _animationController = AnimationController(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
     curve = CurvedAnimation(
       parent: _animationController!,
-      curve: Interval(
+      curve: const Interval(
         0.5,
         1.0,
         curve: Curves.fastOutSlowIn,
@@ -126,7 +126,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     ).animate(curve!);
 
     Future.delayed(
-      Duration(seconds: 1),
+      const Duration(seconds: 1),
       () => _animationController?.forward(),
     );
 
@@ -180,7 +180,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  decoration: BoxDecoration(color: Colours.qingcaolv, borderRadius: BorderRadius.all(Radius.circular(10))),
+                  decoration: const BoxDecoration(color: Colours.qingcaolv, borderRadius: BorderRadius.all(Radius.circular(10))),
                   width: 250,
                   height: 250,
                   child: Column(
@@ -191,10 +191,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         child: Shimmer.fromColors(
                           baseColor: Colors.red,
                           highlightColor: Colors.yellow,
-                          child: Text(
+                          child: const Text(
                             "公告",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -207,7 +207,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           child: Text(
                             "$gongao",
                             softWrap: true,
-                            style: TextStyle(color: Colours.text, letterSpacing: 1.2),
+                            style: const TextStyle(color: Colours.text, letterSpacing: 1.2),
                           ),
                         ),
                       )
@@ -215,7 +215,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   ),
                 ),
                 IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.close,
                       color: Colors.white,
                     ),
@@ -283,15 +283,15 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     dialog = UpdateDialog.showUpdate(context,
         width: 250,
         title: "当前版本是$currentVersion,否升级到$nextVersion？",
-        updateContent: "$currentUpdateText",
+        updateContent: currentUpdateText,
         titleTextSize: 14,
         contentTextSize: 12,
         buttonTextSize: 12,
         topImage: Image.asset('assets/images/bg_update_top.png'),
         extraHeight: 5,
         radius: 8,
-        themeColor: Color(0xFFFFAC5D),
-        progressBackgroundColor: Color(0x5AFFAC5D),
+        themeColor: const Color(0xFFFFAC5D),
+        progressBackgroundColor: const Color(0x5AFFAC5D),
         isForce: true,
         enableIgnore: false,
         updateButtonText: '开始升级',
@@ -375,22 +375,22 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 builder: (_, provider, __) {
                   switch (provider.value) {
                     case 0:
-                      return Text(
+                      return const Text(
                         "影视",
                         style: TextStyle(color: Colors.white),
                       );
                     case 1:
-                      return Text(
+                      return const Text(
                         "书架",
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       );
                     case 2:
-                      return Text(
+                      return const Text(
                         "漫画",
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       );
                     case 3:
-                      return Text("听书", style: TextStyle(color: Colors.white));
+                      return const Text("听书", style: const TextStyle(color: Colors.white));
                     default:
                       break;
                   }
@@ -398,7 +398,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 },
               ),
               leading: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.settings,
                     color: Colors.white,
                   ),
@@ -414,7 +414,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           onPressed: () {
                             NavigatorUtils.push(context, '${CollectRouter.collectPage}?catIndex=1');
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.star,
                             color: Colors.white,
                           ),
@@ -424,7 +424,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             onPressed: () {
                               NavigatorUtils.push(context, '${CollectRouter.collectPage}?catIndex=2');
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.star,
                               color: Colors.white,
                             ));
@@ -433,7 +433,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             onPressed: () {
                               NavigatorUtils.push(context, '${CollectRouter.collectPage}?catIndex=3');
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.star,
                               color: Colors.white,
                             ));
@@ -449,7 +449,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           onPressed: () {
                             NavigatorUtils.push(context, PlayerRouter.searchPage);
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.search_sharp,
                             color: Colors.white,
                           ),
@@ -459,7 +459,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             onPressed: () {
                               NavigatorUtils.push(context, XiaoShuoRouter.searchPage);
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.search_sharp,
                               color: Colors.white,
                             ));
@@ -468,7 +468,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           onPressed: () {
                             NavigatorUtils.push(context, ManhuaRouter.searchPage);
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.search_sharp,
                             color: Colors.white,
                           ),
@@ -478,7 +478,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           onPressed: () {
                             NavigatorUtils.push(context, TingshuRouter.searchPage);
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.search_sharp,
                             color: Colors.white,
                           ),
@@ -494,7 +494,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               child: FloatingActionButton(
                 elevation: 8,
                 backgroundColor: HexColor('#FFA400'),
-                child: Text(
+                child: const Text(
                   "挂京东",
                   style: TextStyle(color: Colors.white),
                 ),
@@ -515,14 +515,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 padding: EdgeInsets.zero,
                 children: <Widget>[
                   DrawerHeader(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colours.app_main,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           '虱子聚合',
                           style: TextStyle(
                             color: Colors.white,
@@ -581,7 +581,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   leftCornerRadius: 0,
                   rightCornerRadius: 0,
                   onTap: (index) {
-                    _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                    _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
                   },
                 );
               },
@@ -604,7 +604,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 controller: _pageController,
                 onPageChanged: (index) => provider.value == index,
                 children: _pageList,
-                physics: NeverScrollableScrollPhysics(), // 禁止滑动
+                physics: const NeverScrollableScrollPhysics(), // 禁止滑动
               ),
             )),
       ),
