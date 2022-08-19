@@ -81,7 +81,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
 
   bool getFilterData(ManhuaCatlogDetail data) {
     List<ManhuaCatlogDetail> result = _collectProvider!.manhuaCatlog.where((element) => element.url == data.url).toList();
-    return result.length > 0;
+    return result.isNotEmpty;
   }
 
   Widget buildShare(String image, String title) {
