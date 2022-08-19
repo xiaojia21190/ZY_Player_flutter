@@ -6,14 +6,12 @@ part of 'manhua_detail.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ManhuaDetail _$ManhuaDetailFromJson(Map<String, dynamic> json) {
-  return ManhuaDetail(
-    json['name'] as String,
-    (json['types'] as List<dynamic>)
-        .map((e) => Types.fromJson(e as Map<String, dynamic>))
-        .toList(),
-  );
-}
+ManhuaDetail _$ManhuaDetailFromJson(Map<String, dynamic> json) => ManhuaDetail(
+      json['name'] as String,
+      (json['types'] as List<dynamic>)
+          .map((e) => Types.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$ManhuaDetailToJson(ManhuaDetail instance) =>
     <String, dynamic>{
@@ -21,14 +19,12 @@ Map<String, dynamic> _$ManhuaDetailToJson(ManhuaDetail instance) =>
       'types': instance.types,
     };
 
-Types _$TypesFromJson(Map<String, dynamic> json) {
-  return Types(
-    json['url'] as String,
-    json['title'] as String,
-    json['author'] as String,
-    json['cover'] as String,
-  );
-}
+Types _$TypesFromJson(Map<String, dynamic> json) => Types(
+      json['url'] as String,
+      json['title'] as String,
+      json['author'] as String,
+      json['cover'] as String,
+    );
 
 Map<String, dynamic> _$TypesToJson(Types instance) => <String, dynamic>{
       'url': instance.url,
