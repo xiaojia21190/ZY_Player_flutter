@@ -6,14 +6,13 @@ part of 'detail_reource.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DetailReource _$DetailReourceFromJson(Map<String, dynamic> json) {
-  return DetailReource(
-    json['ziyuanName'] as String,
-    (json['ziyuanUrl'] as List<dynamic>)
-        .map((e) => ZiyuanUrl.fromJson(e as Map<String, dynamic>))
-        .toList(),
-  );
-}
+DetailReource _$DetailReourceFromJson(Map<String, dynamic> json) =>
+    DetailReource(
+      json['ziyuanName'] as String,
+      (json['ziyuanUrl'] as List<dynamic>)
+          .map((e) => ZiyuanUrl.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) =>
     <String, dynamic>{
@@ -21,12 +20,10 @@ Map<String, dynamic> _$DetailReourceToJson(DetailReource instance) =>
       'ziyuanUrl': instance.ziyuanUrl,
     };
 
-ZiyuanUrl _$ZiyuanUrlFromJson(Map<String, dynamic> json) {
-  return ZiyuanUrl(
-    json['url'] as String,
-    json['title'] as String,
-  );
-}
+ZiyuanUrl _$ZiyuanUrlFromJson(Map<String, dynamic> json) => ZiyuanUrl(
+      json['url'] as String,
+      json['title'] as String,
+    );
 
 Map<String, dynamic> _$ZiyuanUrlToJson(ZiyuanUrl instance) => <String, dynamic>{
       'url': instance.url,
