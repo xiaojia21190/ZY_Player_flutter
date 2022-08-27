@@ -6,15 +6,13 @@ part of 'hot_search.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-HotSearch _$HotSearchFromJson(Map<String, dynamic> json) {
-  return HotSearch(
-    json['url'] as String,
-    json['title'] as String,
-    json['cover'] as String,
-    json['shuming'] as String,
-    json['updatetime'] as String,
-  );
-}
+HotSearch _$HotSearchFromJson(Map<String, dynamic> json) => HotSearch(
+      json['url'] as String,
+      json['title'] as String,
+      json['cover'] as String,
+      json['shuming'] as String,
+      json['updatetime'] as String,
+    );
 
 Map<String, dynamic> _$HotSearchToJson(HotSearch instance) => <String, dynamic>{
       'url': instance.url,

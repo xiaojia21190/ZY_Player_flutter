@@ -6,16 +6,14 @@ part of 'hot_xiaoshuo.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-HotXiaoshuo _$HotXiaoshuoFromJson(Map<String, dynamic> json) {
-  return HotXiaoshuo(
-    json['Id'] as int,
-    json['Name'] as String,
-    json['Author'] as String,
-    json['Img'] as String,
-    json['CName'] as String,
-    json['Score'] as String,
-  );
-}
+HotXiaoshuo _$HotXiaoshuoFromJson(Map<String, dynamic> json) => HotXiaoshuo(
+      json['Id'] as int,
+      json['Name'] as String,
+      json['Author'] as String,
+      json['Img'] as String,
+      json['CName'] as String,
+      json['Score'] as String,
+    );
 
 Map<String, dynamic> _$HotXiaoshuoToJson(HotXiaoshuo instance) =>
     <String, dynamic>{
