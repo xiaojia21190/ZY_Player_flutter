@@ -129,8 +129,8 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
         controller: _vCodeController,
         keyboardType: TextInputType.number,
         getVCode: () async {
-          final String regexEmail = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$";
-          bool flag = new RegExp(regexEmail).hasMatch(_nameController.text);
+          const String regexEmail = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$";
+          bool flag = RegExp(regexEmail).hasMatch(_nameController.text);
           if (flag) {
             Toast.show("开始发送验证码");
             //sendMailSms

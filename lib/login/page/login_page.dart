@@ -94,7 +94,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
+      appBar: const MyAppBar(
         isBack: false,
         // actionName: AppLocalizations.of(context).verificationCodeLogin,
         // onPressed: () {
@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
   }
 
   List<Widget> get _buildBody => <Widget>[
-        Text(
+        const Text(
           "邮箱登录",
           style: TextStyles.textBold26,
         ),
@@ -154,9 +154,9 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
               onTap: () => NavigatorUtils.push(context, LoginRouter.registerPage),
             )),
         Gaps.vGap16,
-        Divider(),
+        const Divider(),
         Container(
-          margin: EdgeInsets.symmetric(vertical: 20),
+          margin: const EdgeInsets.symmetric(vertical: 20),
           child: Center(
             child: Text(
               "不想注册,直接进入京东短信登陆",
