@@ -2,7 +2,7 @@ name: ZY_Player_flutter
 description: 免费影视资源播放
 
 publish_to: 'none'
-version_name: 2.7.0
+version_name: 2.7.1
 
 environment:
     sdk: '>=2.12.0 <3.0.0'

@@ -6,20 +6,19 @@ part of 'player_reource.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PlayerReource _$PlayerReourceFromJson(Map<String, dynamic> json) {
-  return PlayerReource(
-    json['key'] as String,
-    json['name'] as String,
-    json['url'] as String,
-    json['new'] as String,
-    json['view'] as String,
-    json['search'] as String,
-    json['type'] as int,
-    (json['tags'] as List<dynamic>)
-        .map((e) => Tags.fromJson(e as Map<String, dynamic>))
-        .toList(),
-  );
-}
+PlayerReource _$PlayerReourceFromJson(Map<String, dynamic> json) =>
+    PlayerReource(
+      json['key'] as String,
+      json['name'] as String,
+      json['url'] as String,
+      json['new'] as String,
+      json['view'] as String,
+      json['search'] as String,
+      json['type'] as int,
+      (json['tags'] as List<dynamic>)
+          .map((e) => Tags.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$PlayerReourceToJson(PlayerReource instance) =>
     <String, dynamic>{
@@ -33,13 +32,11 @@ Map<String, dynamic> _$PlayerReourceToJson(PlayerReource instance) =>
       'tags': instance.tags,
     };
 
-Tags _$TagsFromJson(Map<String, dynamic> json) {
-  return Tags(
-    json['title'] as String,
-    json['id'] as int,
-    json['children'] as List<dynamic>,
-  );
-}
+Tags _$TagsFromJson(Map<String, dynamic> json) => Tags(
+      json['title'] as String,
+      json['id'] as int,
+      json['children'] as List<dynamic>,
+    );
 
 Map<String, dynamic> _$TagsToJson(Tags instance) => <String, dynamic>{
       'title': instance.title,
