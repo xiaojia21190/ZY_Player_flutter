@@ -26,7 +26,7 @@ class ColorCh {
 
 class ReaderMenu extends StatefulWidget {
   final String? title;
-  final String? id;
+  final int? id;
   final int? chpId;
   final int? articleIndex;
 
@@ -81,24 +81,24 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
     super.initState();
   }
 
+  @override
+  void dispose() {
+    FlutterScreenWake.setBrightness(light);
+    super.dispose();
+  }
+
   Future getLight() async {
-    light = (await FlutterScreenWake.brightness);
+    light = _appStateProvider!.lightLevel;
   }
 
   Future fetchData() async {
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail, queryParameters: {"id": widget.id, "page": -1, "reverse": "1"},
-        onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail, queryParameters: {"id": widget.id, "page": -1, "reverse": "1"}, onSuccess: (resultList) {
       XiaoshuoChap result = XiaoshuoChap.fromJson(resultList);
       List.generate(result.xiaoshuoList.length, (index) => _list1.add(result.xiaoshuoList[index]));
     }, onError: (_, __) {
       Toast.show("接口异常");
     });
     return _list1;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   buildTopView(BuildContext context) {
@@ -209,12 +209,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                       Container(
                         height: 30,
                         width: 30,
-                        decoration: BoxDecoration(
-                            color: _list[index].color,
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: _appStateProvider!.xsColor == _list[index].color
-                                ? Border.all(color: Colors.redAccent, width: 3)
-                                : Border.all(color: Colors.transparent)),
+                        decoration: BoxDecoration(color: _list[index].color, borderRadius: BorderRadius.circular(8.0), border: _appStateProvider!.xsColor == _list[index].color ? Border.all(color: Colors.redAccent, width: 3) : Border.all(color: Colors.transparent)),
                       ),
                       Text(
                         _list[index].name,
@@ -269,9 +264,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                       builder: (BuildContext context) {
                         return Container(
                           height: 550,
-                          decoration: BoxDecoration(
-                              color: isDark ? Colours.dark_app_main : Colours.app_main,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                          decoration: BoxDecoration(color: isDark ? Colours.dark_app_main : Colours.app_main, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
                           child: Column(
                             children: [
                               _list.length > 0

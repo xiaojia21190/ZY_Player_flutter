@@ -17,7 +17,6 @@ import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -80,8 +79,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
 
   Future fetchData() async {
     _baseListProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail,
-        queryParameters: {"id": _detail!.id, "page": page, "reverse": reverse}, onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getSearchXszjDetail, queryParameters: {"id": _detail!.id, "page": page, "reverse": reverse}, onSuccess: (resultList) {
       if (resultList == null) {
         _baseListProvider.setStateType(StateType.order);
       } else {
@@ -156,8 +154,8 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                                           Container(
                                             child: Text(
                                               "$title",
-                                              overflow: TextOverflow.ellipsis,
                                               softWrap: true,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                           Text("点击复制链接"),
@@ -262,8 +260,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                       builder: (ctx, offset) => GestureDetector(
                             onTap: () {
                               _xiaoShuoProvider.setReadList("${_detail!.id}_${_detail!.lastChapterId}_${_detail!.lastChapter}");
-                              NavigatorUtils.push(context,
-                                  '${XiaoShuoRouter.contentPage}?id=${_detail!.id}&chpId=${_detail!.lastChapterId}&title=${Uri.encodeComponent(_detail!.lastChapter)}');
+                              NavigatorUtils.push(context, '${XiaoShuoRouter.contentPage}?id=${_detail!.id}&chpId=${_detail!.lastChapterId}&title=${Uri.encodeComponent(_detail!.lastChapter)}');
                             },
                             child: Container(
                               alignment: Alignment.center,
@@ -288,9 +285,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                       child: GestureDetector(
                         onTap: () {
                           int index = _xiaoShuoProvider.readList.lastIndexWhere((element) => element.split("_")[0] == _detail!.id);
-                          NavigatorUtils.pushResult(context,
-                              '${XiaoShuoRouter.contentPage}?id=${_detail!.id}&chpId=${_xiaoShuoProvider.readList[index].split("_")[1]}&title=${Uri.encodeComponent(_xiaoShuoProvider.readList[index].split("_")[2])}',
-                              (res) {
+                          NavigatorUtils.pushResult(context, '${XiaoShuoRouter.contentPage}?id=${_detail!.id}&chpId=${_xiaoShuoProvider.readList[index].split("_")[1]}&title=${Uri.encodeComponent(_xiaoShuoProvider.readList[index].split("_")[2])}', (res) {
                             findLastZj();
                             setState(() {});
                           });
@@ -383,19 +378,10 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                               child: FadeInAnimation(
                                 child: Consumer<XiaoShuoProvider>(
                                     builder: (_, provider, __) => ListTile(
-                                          selected: provider.readList
-                                                      .where((element) => element.split("_")[1] == "${_baseListProvider.list[index].id}")
-                                                      .toList()
-                                                      .length >
-                                                  0
-                                              ? true
-                                              : false,
+                                          selected: provider.readList.where((element) => element.split("_")[1] == "${_baseListProvider.list[index].id}").toList().length > 0 ? true : false,
                                           onTap: () {
-                                            provider.setReadList(
-                                                "${_detail!.id}_${_baseListProvider.list[index].id}_${_baseListProvider.list[index].name}");
-                                            NavigatorUtils.pushResult(context,
-                                                '${XiaoShuoRouter.contentPage}?id=${_detail!.id}&chpId=${_baseListProvider.list[index].id}&title=${Uri.encodeComponent(_baseListProvider.list[index].name)}',
-                                                (res) {
+                                            provider.setReadList("${_detail!.id}_${_baseListProvider.list[index].id}_${_baseListProvider.list[index].name}");
+                                            NavigatorUtils.pushResult(context, '${XiaoShuoRouter.contentPage}?id=${_detail!.id}&chpId=${_baseListProvider.list[index].id}&title=${Uri.encodeComponent(_baseListProvider.list[index].name)}', (res) {
                                               findLastZj();
                                               setState(() {});
                                             });
@@ -430,6 +416,5 @@ class PersistentHeaderBuilder extends SliverPersistentHeaderDelegate {
   double get minExtent => min;
 
   @override
-  bool shouldRebuild(covariant PersistentHeaderBuilder oldDelegate) =>
-      max != oldDelegate.max || min != oldDelegate.min || builder != oldDelegate.builder;
+  bool shouldRebuild(covariant PersistentHeaderBuilder oldDelegate) => max != oldDelegate.max || min != oldDelegate.min || builder != oldDelegate.builder;
 }

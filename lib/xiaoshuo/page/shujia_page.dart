@@ -10,12 +10,11 @@ import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/booksheif_header_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/bookshelf_item_view.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ShuJiaPage extends StatefulWidget {
-  ShuJiaPage({Key? key}) : super(key: key);
+  const ShuJiaPage({Key? key}) : super(key: key);
 
   @override
   _ShuJiaPageState createState() => _ShuJiaPageState();
@@ -49,15 +48,18 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
 
   Widget buildFavoriteView(List<XiaoshuoDetail>? list) {
     List<Widget> children = [];
-    if (list!.length > 0) {
-      list.forEach((novel) {
-        children.add(BookshelfItemView(novel, "-1"));
-      });
+    if (list!.isNotEmpty) {
+      for (var novel in list) {
+        children.add(BookshelfItemView(novel, "-1", removeChap: () {
+          _xiaoShuoProvider?.removeXiaoshuoResource(novel.id);
+          setState(() {});
+        }));
+      }
     }
     var width = (Screen.widthOt - 15 * 2 - 24 * 2) / 3;
     children.add(GestureDetector(
       onTap: () {
-        NavigatorUtils.push(context, '${XiaoShuoRouter.searchPage}');
+        NavigatorUtils.push(context, XiaoShuoRouter.searchPage);
       },
       child: Container(
         color: Colours.paper,
@@ -67,7 +69,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
       ),
     ));
     return Container(
-      padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
+      padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
       child: Wrap(
         spacing: 23,
         children: children,
@@ -97,7 +99,7 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
                             Positioned(
                               top: 230 / 2,
                               left: Screen.widthOt / 2 - 60,
-                              child: Text("点击加号添加小说"),
+                              child: const Text("点击加号添加小说"),
                             )
                           ],
                         );
@@ -106,12 +108,26 @@ class _ShuJiaPageState extends State<ShuJiaPage> with AutomaticKeepAliveClientMi
           )
         ];
       },
-      body: Container(
-        color: isDark ? Colours.dark_bg_gray_ : Colours.lightGray,
-        child: MyScrollView(
-          children: [
-            buildFavoriteView(_xiaoShuoProvider?.xiaoshuo),
-          ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 2), () => setState(() {}));
+        },
+        child: Container(
+          color: isDark ? Colours.dark_bg_gray_ : Colours.lightGray,
+          child: MyScrollView(
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                child: Text("长按可以删除图书"),
+              ),
+              Selector<XiaoShuoProvider, List<XiaoshuoDetail>>(
+                builder: (_, sss, __) {
+                  return buildFavoriteView(sss);
+                },
+                selector: (_, store) => store.xiaoshuo,
+              )
+            ],
+          ),
         ),
       ),
     );

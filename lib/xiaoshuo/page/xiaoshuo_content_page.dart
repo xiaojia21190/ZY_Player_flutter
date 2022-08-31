@@ -14,7 +14,6 @@ import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/reader_memu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_wake/flutter_screen_wake.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
 class XiaoShuoContentPage extends StatefulWidget {
@@ -25,7 +24,7 @@ class XiaoShuoContentPage extends StatefulWidget {
     required this.title,
   }) : super(key: key);
 
-  final String id;
+  final int id;
   final String chpId;
   final String title;
 
@@ -48,6 +47,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
 
   bool loadMoreFlag = false;
   double light = 0;
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -69,19 +69,23 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
   }
 
   Future getLight() async {
-    light = await FlutterScreenWake.brightness;
+    light = _appStateProvider!.lightLevel;
+  }
+
+  Future setLight() async {
+    FlutterScreenWake.setBrightness(-1);
+    _appStateProvider?.setLightLevel(-1);
   }
 
   @override
   void dispose() {
-    FlutterScreenWake.setBrightness(light);
+    setLight();
     super.dispose();
   }
 
   Future fetchData([int? chaId]) async {
     _baseListProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getxiaoshuoDetail, queryParameters: {"id": widget.id, "capid": chaId},
-        onSuccess: (result) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getxiaoshuoDetail, queryParameters: {"id": widget.id, "capid": chaId}, onSuccess: (result) {
       _xiaoShuoProvider!.setReadList("${widget.id}_${result['cid']}_${result['cname']}");
       currentChpid = result['cid'];
       _baseListProvider.add(XiaoshuoContent.fromJson(result));
@@ -113,81 +117,58 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
 
   @override
   Widget build(BuildContext context) {
-    return Selector<AppStateProvider, Color>(
-        builder: (_, colorCh, __) {
+    return ChangeNotifierProvider<BaseListProvider<XiaoshuoContent>>(
+        create: (_) => _baseListProvider,
+        child: Consumer2<BaseListProvider<XiaoshuoContent>, AppStateProvider>(builder: (_, _baseListProvider, appStateProvider, __) {
           return Scaffold(
-              backgroundColor: colorCh,
+              backgroundColor: appStateProvider.xsColor,
               body: SafeArea(
                 child: Stack(
                   children: <Widget>[
                     // ReaderOverlayer(title: title, page: 1, topSafeHeight: Screen.topSafeHeight),
-                    buildContent(),
-                    ReaderMenu(title: title, id: widget.id, chpId: currentChpid)
+                    MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        child: DeerListView(
+                          itemCount: _baseListProvider.list.length,
+                          stateType: _baseListProvider.stateType,
+                          onRefresh: _onRefresh,
+                          hasRefresh: false,
+                          pageSize: _baseListProvider.list.length,
+                          hasMore: _baseListProvider.hasMore,
+                          loadMore: loadMore,
+                          itemBuilder: (_, index) {
+                            return GestureDetector(
+                                onTap: () {
+                                  var opacityLevel = _appStateProvider!.opacityLevel == 0 ? 1.0 : 0.0;
+                                  _appStateProvider!.setOpcity(opacityLevel);
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(left: 10, top: 10),
+                                      child: Text(
+                                        _baseListProvider.list[index].cname,
+                                        style: TextStyle(fontSize: 14, color: Colours.golden),
+                                      ),
+                                    ),
+                                    Container(
+                                      color: Colors.transparent,
+                                      margin: EdgeInsets.fromLTRB(10, 10, 5, 10),
+                                      child: Text.rich(
+                                        TextSpan(children: [TextSpan(text: _baseListProvider.list[index].content, style: TextStyle(wordSpacing: -5, fontSize: appStateProvider.xsFontSize, color: appStateProvider.xsColor == Colours.cunhei ? Color(0xff4c4c4c) : Colours.text))]),
+                                        textAlign: TextAlign.justify,
+                                      ),
+                                    ),
+                                  ],
+                                ));
+                          },
+                        )),
+                    ReaderMenu(title: currentIndex == 0 ? title : _baseListProvider.list[currentIndex].cname, id: currentIndex == 0 ? widget.id : _baseListProvider.list[currentIndex].id, chpId: currentChpid)
                   ],
                 ),
-              ));
-        },
-        selector: (_, store) => store.xsColor);
-  }
-
-  buildContent() {
-    return ChangeNotifierProvider<BaseListProvider<XiaoshuoContent>>(
-        create: (_) => _baseListProvider,
-        child: Consumer2<BaseListProvider<XiaoshuoContent>, AppStateProvider>(builder: (_, _baseListProvider, appStateProvider, __) {
-          return MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              child: DeerListView(
-                itemCount: _baseListProvider.list.length,
-                stateType: _baseListProvider.stateType,
-                onRefresh: _onRefresh,
-                hasRefresh: false,
-                pageSize: _baseListProvider.list.length,
-                hasMore: _baseListProvider.hasMore,
-                loadMore: loadMore,
-                itemBuilder: (_, index) {
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      verticalOffset: 50.0,
-                      child: FadeInAnimation(
-                          child: GestureDetector(
-                              onTap: () {
-                                var opacityLevel = _appStateProvider!.opacityLevel == 0 ? 1.0 : 0.0;
-                                _appStateProvider!.setOpcity(opacityLevel);
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(left: 10, top: 10),
-                                    child: Text(
-                                      _baseListProvider.list[index].cname,
-                                      style: TextStyle(fontSize: 14, color: Colours.golden),
-                                    ),
-                                  ),
-                                  Container(
-                                    color: Colors.transparent,
-                                    margin: EdgeInsets.fromLTRB(10, 10, 5, 10),
-                                    child: Text.rich(
-                                      TextSpan(children: [
-                                        TextSpan(
-                                            text: _baseListProvider.list[index].content,
-                                            style: TextStyle(
-                                                wordSpacing: -5,
-                                                fontSize: appStateProvider.xsFontSize,
-                                                color: appStateProvider.xsColor == Colours.cunhei ? Color(0xFF878787) : Colours.text))
-                                      ]),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                  ),
-                                ],
-                              ))),
-                    ),
-                  );
-                },
               ));
         }));
   }
