@@ -4,12 +4,9 @@ import 'package:ZY_Player_flutter/login/login_router.dart';
 import 'package:ZY_Player_flutter/net/net.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:dio/dio.dart';
-import 'package:flustars/flustars.dart';
+import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
-
-import 'dio_utils.dart';
-import 'error_handle.dart';
 
 class AuthInterceptor extends Interceptor {
   @override
@@ -32,6 +29,7 @@ class TokenInterceptor extends Interceptor {
     params['password'] = SpUtil.getString(Constant.password)!;
 
     try {
+      _tokenDio ??= Dio();
       _tokenDio!.options = DioUtils.instance.dio.options;
       final Response response = await _tokenDio!.post(HttpApi.login, data: params);
       if (response.statusCode == ExceptionHandle.success) {
@@ -73,7 +71,7 @@ class TokenInterceptor extends Interceptor {
           } on DioError catch (error) {
             handler.reject(error, true);
           } finally {
-            dio.interceptors.requestLock.unlock();
+            dio.unlock();
           }
         }
       }

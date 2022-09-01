@@ -24,7 +24,7 @@ class HttpApi {
 
   static const String getXmlyHot = "getXmlyHot";
   static const String getXmlySearch = "getXmlySearch";
-  static const String getXmlyHotSearch = "getXmlyHotSearch";
+  static const String getXmlyHotDetail = "getXmlyHotDetail";
   static const String getXmlyDetail = "getXmlyDetail";
   static const String getXmlyDetailMp3 = "getXmlyDetailMp3";
   static const String login = "login";
