@@ -41,8 +41,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
 
   Future getData() async {
     _baseListProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "page": page},
-        onSuccess: (resultList) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "page": page}, onSuccess: (resultList) {
       List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
       if (resultList.length == 0) {
         _baseListProvider.setStateType(StateType.order);
@@ -62,16 +61,17 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
   Future _onFresh() async {
     _baseListProvider.clear();
     page = 1;
-    this.getData();
+    getData();
   }
 
   Future _onLoadMore() async {
     page++;
-    this.getData();
+    getData();
   }
 
   @override
   void dispose() {
+    _baseListProvider.clear();
     super.dispose();
   }
 
@@ -86,7 +86,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
             Toast.show('搜索内容：$text');
             if (text != "") {
               keywords = text;
-              this._onFresh();
+              _onFresh();
             }
           }),
       body: Column(
@@ -94,16 +94,16 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
           Expanded(
               child: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
                   create: (_) => _baseListProvider,
-                  child: Consumer<BaseListProvider<ResourceData>>(builder: (_, _baseListProvider, __) {
+                  child: Consumer<BaseListProvider<ResourceData>>(builder: (_, baseListProvider, __) {
                     return DeerListView(
-                        itemCount: _baseListProvider.list.length,
-                        stateType: _baseListProvider.stateType,
+                        itemCount: baseListProvider.list.length,
+                        stateType: baseListProvider.stateType,
                         hasRefresh: false,
                         onRefresh: _onFresh,
                         loadMore: _onLoadMore,
-                        physics: AlwaysScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         pageSize: 10,
-                        hasMore: _baseListProvider.hasMore,
+                        hasMore: baseListProvider.hasMore,
                         itemBuilder: (_, index) {
                           return AnimationConfiguration.staggeredList(
                             position: index,
@@ -113,25 +113,25 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                               child: FadeInAnimation(
                                   child: Card(
                                       elevation: 5,
-                                      shape: RoundedRectangleBorder(
+                                      shape: const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(5)),
                                           side: BorderSide(
                                             style: BorderStyle.solid,
                                             color: Colours.orange,
                                           )),
-                                      margin: EdgeInsets.all(10),
+                                      margin: const EdgeInsets.all(10),
                                       child: ListTile(
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: const EdgeInsets.all(10),
                                         leading: LoadImage(
-                                          _baseListProvider.list[index].cover,
+                                          baseListProvider.list[index].cover,
                                           fit: BoxFit.cover,
                                         ),
                                         title: Text(
-                                          _baseListProvider.list[index].title,
+                                          baseListProvider.list[index].title,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         onTap: () {
-                                          String jsonString = jsonEncode(_baseListProvider.list[index]);
+                                          String jsonString = jsonEncode(baseListProvider.list[index]);
                                           NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                         },
                                       ))),

@@ -11,9 +11,7 @@ import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_refresh_list.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 import '../player_router.dart';
@@ -205,8 +203,7 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                                                                 left: 10,
                                                                 child: Container(
                                                                   padding: EdgeInsets.all(5),
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                                  decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
                                                                   child: Text(
                                                                     _baseListProvider.list[i].pingfen,
                                                                     style: TextStyle(fontSize: 12, color: Colors.white),
@@ -228,8 +225,7 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                                                     onTap: () {
                                                       String jsonString = jsonEncode(_baseListProvider.list[i]);
 
-                                                      NavigatorUtils.push(
-                                                          context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                                      NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                                     },
                                                   )).toList(),
                                         ),
