@@ -11,9 +11,7 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -112,8 +110,7 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                         padding: EdgeInsets.only(left: 10, top: 5),
                                         child: TextButton(
                                           onPressed: () {
-                                            NavigatorUtils.push(
-                                                context, "${PlayerRouter.playerMorePage}?type=${Uri.encodeComponent(typeStr[index])}");
+                                            NavigatorUtils.push(context, "${PlayerRouter.playerMorePage}?type=${Uri.encodeComponent(typeStr[index])}");
                                           },
                                           child: Shimmer.fromColors(
                                             baseColor: Colors.red,
@@ -175,8 +172,7 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                                             left: 10,
                                                             child: Container(
                                                               padding: EdgeInsets.all(5),
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                              decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
                                                               child: Text(
                                                                 _baseListProvider.list[index].playlist[i].pingfen,
                                                                 style: TextStyle(fontSize: 12, color: Colors.white),
@@ -197,9 +193,7 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                                 ),
                                                 onTap: () {
                                                   String jsonString = jsonEncode(_baseListProvider.list[index].playlist[i]);
-
-                                                  NavigatorUtils.push(
-                                                      context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                                  NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                                 },
                                               )).toList(),
                                     )),

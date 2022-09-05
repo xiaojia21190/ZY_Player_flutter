@@ -6,7 +6,6 @@ import 'package:ZY_Player_flutter/res/gaps.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/screen_utils.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
@@ -108,16 +107,14 @@ class _ZhiboListPageState extends State<ZhiboListPage> with AutomaticKeepAliveCl
                                             (i) => InkWell(
                                                   child: Container(
                                                     padding: EdgeInsets.all(10),
-                                                    decoration:
-                                                        BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                    decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
                                                     child: Text(
                                                       _zhiboListProvider.list[index].m3uResult[i].title,
                                                       style: TextStyle(fontSize: 12, color: Colors.white),
                                                     ),
                                                   ),
                                                   onTap: () {
-                                                    NavigatorUtils.push(context,
-                                                        '${PlayerRouter.detailZhiboPage}?url=${Uri.encodeComponent(_zhiboListProvider.list[index].m3uResult[i].url)}&title=${Uri.encodeComponent(_zhiboListProvider.list[index].m3uResult[i].title)}');
+                                                    NavigatorUtils.push(context, '${PlayerRouter.detailZhiboPage}?url=${Uri.encodeComponent(_zhiboListProvider.list[index].m3uResult[i].url)}&title=${Uri.encodeComponent(_zhiboListProvider.list[index].m3uResult[i].title)}');
                                                   },
                                                 )).toList(),
                                       )),

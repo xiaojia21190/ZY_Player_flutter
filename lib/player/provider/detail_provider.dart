@@ -1,7 +1,7 @@
 import 'package:ZY_Player_flutter/model/detail_reource.dart';
 import 'package:ZY_Player_flutter/model/player_hot.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flustars/flustars.dart';
+import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
 
 class DetailProvider extends ChangeNotifier {
