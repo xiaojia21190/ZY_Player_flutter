@@ -1,8 +1,6 @@
-import 'dart:ui';
-
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
-import 'package:flustars/flustars.dart';
+import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

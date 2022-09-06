@@ -3,7 +3,7 @@ import 'package:ZY_Player_flutter/event/event_bus.dart';
 import 'package:ZY_Player_flutter/event/event_model.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/util/Loading.dart';
-import 'package:flustars/flustars.dart';
+import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/cupertino.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_dlna/flutter_dlna.dart';
@@ -55,6 +55,14 @@ class AppStateProvider extends ChangeNotifier {
 
   int playandzhibo = 0;
 
+  double _lightLevel = 0.0;
+  double get lightLevel => _lightLevel;
+
+  setLightLevel(double lightLevel) {
+    _lightLevel = lightLevel;
+    notifyListeners();
+  }
+
   setOpcity(double opc) {
     _opacityLevel = opc;
     notifyListeners();
@@ -76,12 +84,8 @@ class AppStateProvider extends ChangeNotifier {
 
     List<String>? list = SpUtil.getStringList("saverecord");
 
-    var indexa = list!.indexWhere((element) =>
-        element.split("_")[0] == playerModel.videoId.split("_")[0] &&
-        element.split("_")[1] == playerModel.videoId.split("_")[1] &&
-        element.split("_")[2] == playerModel.videoId.split("_")[2]);
-    var replaceText =
-        "${playerModel.videoId.split("_")[0]}_${playerModel.videoId.split("_")[1]}_${playerModel.videoId.split("_")[2]}_${playerModel.startAt}";
+    var indexa = list!.indexWhere((element) => element.split("_")[0] == playerModel.videoId.split("_")[0] && element.split("_")[1] == playerModel.videoId.split("_")[1] && element.split("_")[2] == playerModel.videoId.split("_")[2]);
+    var replaceText = "${playerModel.videoId.split("_")[0]}_${playerModel.videoId.split("_")[1]}_${playerModel.videoId.split("_")[2]}_${playerModel.startAt}";
     list[indexa] = replaceText;
     SpUtil.putStringList("saverecord", list);
 
