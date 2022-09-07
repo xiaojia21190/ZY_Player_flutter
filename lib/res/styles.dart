@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'colors.dart';
 import 'dimens.dart';
@@ -36,16 +35,12 @@ class TextStyles {
       color: Colours.text,
       // https://github.com/flutter/flutter/issues/40248
       textBaseline: TextBaseline.alphabetic);
-  static const TextStyle textDark =
-      TextStyle(fontSize: Dimens.font_sp14, color: Colours.dark_text, textBaseline: TextBaseline.alphabetic);
+  static const TextStyle textDark = TextStyle(fontSize: Dimens.font_sp14, color: Colours.dark_text, textBaseline: TextBaseline.alphabetic);
 
-  static const TextStyle textDarkWhite =
-      TextStyle(fontSize: Dimens.font_sp14, color: Colours.white, textBaseline: TextBaseline.alphabetic);
+  static const TextStyle textDarkWhite = TextStyle(fontSize: Dimens.font_sp14, color: Colours.white, textBaseline: TextBaseline.alphabetic);
 
-  static const TextStyle textGray12 =
-      TextStyle(fontSize: Dimens.font_sp12, color: Colours.text_gray, fontWeight: FontWeight.normal);
-  static const TextStyle textDarkGray12 =
-      TextStyle(fontSize: Dimens.font_sp12, color: Colours.dark_text_gray, fontWeight: FontWeight.normal);
+  static const TextStyle textGray12 = TextStyle(fontSize: Dimens.font_sp12, color: Colours.text_gray, fontWeight: FontWeight.normal);
+  static const TextStyle textDarkGray12 = TextStyle(fontSize: Dimens.font_sp12, color: Colours.dark_text_gray, fontWeight: FontWeight.normal);
 
   static const TextStyle textHint14 = TextStyle(fontSize: Dimens.font_sp14, color: Colours.dark_unselected_item_color);
 

@@ -57,7 +57,7 @@ class Colours {
   static const Color yinhebai = Color(0xffFFFFFF);
   static const Color xingrenhuang = Color(0xffF6F3E0);
   static const Color qingcaolv = Color(0xffCCF1CF);
-  static const Color cunhei = Color(0xff212830);
+  static const Color cunhei = Color.fromARGB(255, 7, 7, 7);
 
   // 其他颜色
   static const Color background = Color(0xff171a1f);
