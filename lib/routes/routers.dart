@@ -7,6 +7,7 @@ import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/routes/404.dart';
 import 'package:ZY_Player_flutter/routes/router_init.dart';
 import 'package:ZY_Player_flutter/setting/setting_router.dart';
+import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class Routes {
     _listRouter.add(PlayerRouter());
     _listRouter.add(ManhuaRouter());
     _listRouter.add(XiaoShuoRouter());
+    _listRouter.add(TingshuRouter());
     _listRouter.add(CollectRouter());
 
     /// 初始化路由

@@ -13,7 +13,7 @@ import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
-import 'package:flustars/flustars.dart';
+import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
 import 'package:fradio_nullsafety/fradio_nullsafety.dart';
 import 'package:intl/intl.dart';
@@ -62,10 +62,9 @@ class _AccountManagerPageState extends State<AccountManagerPage> {
     await DioUtils.instance.requestNetwork(Method.post, HttpApi.zhjfu, params: {"zhifuType": tabIndex}, onSuccess: (data) {
       appStateProvider!.setloadingState(false);
       //点击前往支付宝
-      NavigatorUtils.push(
-          context, "${SettingRouter.payPage}?qrcode=${Uri.encodeComponent(data['qrCode'])}&money=${Uri.encodeComponent(moneyInt[tabIndex!])}");
+      NavigatorUtils.push(context, "${SettingRouter.payPage}?qrcode=${Uri.encodeComponent(data['qrCode'])}&money=${Uri.encodeComponent(moneyInt[tabIndex!])}");
       checkStatus();
-      timer = Timer.periodic(Duration(seconds: 10), (r) => checkStatus());
+      timer = Timer.periodic(const Duration(seconds: 10), (r) => checkStatus());
     }, onError: (_, __) {
       appStateProvider!.setloadingState(false);
     });
@@ -79,15 +78,11 @@ class _AccountManagerPageState extends State<AccountManagerPage> {
       ),
       body: Column(
         children: <Widget>[
-          ClickItem(
-              onTap: () {},
-              title: '会员到期时间',
-              content:
-                  "到期时间:${new DateFormat('yyyy-MM-dd').format(DateTime.fromMillisecondsSinceEpoch(int.parse(SpUtil.getString(Constant.jihuoDate)! + '000')))}"),
+          ClickItem(onTap: () {}, title: '会员到期时间', content: "到期时间:${DateFormat('yyyy-MM-dd').format(DateTime.fromMillisecondsSinceEpoch(int.parse('${SpUtil.getString(Constant.jihuoDate)!}000')))}"),
           Gaps.vGap12,
           Container(
-            padding: EdgeInsets.all(10),
-            child: Text("享有播放视频，听书， 看电视直播，看小说，看漫画。"),
+            padding: const EdgeInsets.all(10),
+            child: const Text("享有播放视频，听书， 看电视直播，看小说，看漫画。"),
           ),
           Gaps.vGap12,
           SpUtil.getString(Constant.orderid) == "0"
@@ -101,7 +96,7 @@ class _AccountManagerPageState extends State<AccountManagerPage> {
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.only(right: 10),
                               child: FRadio(
                                 width: 80,
                                 height: 80,
@@ -112,7 +107,7 @@ class _AccountManagerPageState extends State<AccountManagerPage> {
                                     tabIndex = value;
                                   });
                                 },
-                                gradient: LinearGradient(
+                                gradient: const LinearGradient(
                                   colors: [
                                     Color(0xffFEFDBB),
                                     Color(0xffFFE16C),
@@ -123,18 +118,18 @@ class _AccountManagerPageState extends State<AccountManagerPage> {
                                   end: Alignment(1.0, 1.0),
                                   stops: [0.0, 0.2, 0.7, 1.0],
                                 ),
-                                selectedColor: Color(0xffffc900),
+                                selectedColor: const Color(0xffffc900),
                                 hasSpace: false,
                                 border: 2,
-                                child: Text(
-                                  "${money[index]}",
-                                  style: TextStyle(color: Colours.app_main, fontSize: 13),
-                                ),
                                 hoverChild: Text(
-                                  "${money[index]}",
-                                  style: TextStyle(color: Colors.deepOrangeAccent, fontSize: 13),
+                                  money[index],
+                                  style: const TextStyle(color: Colors.deepOrangeAccent, fontSize: 13),
                                 ),
-                                selectedChild: Text("${money[index]}", style: TextStyle(color: Colors.deepOrangeAccent, fontSize: 13)),
+                                selectedChild: Text(money[index], style: const TextStyle(color: Colors.deepOrangeAccent, fontSize: 13)),
+                                child: Text(
+                                  money[index],
+                                  style: const TextStyle(color: Colours.app_main, fontSize: 13),
+                                ),
                               ),
                             );
                           }),
@@ -154,7 +149,7 @@ class _AccountManagerPageState extends State<AccountManagerPage> {
                       text: "购买会员",
                     ),
                     Gaps.vGap12,
-                    Text("购买成功后，等待刷新状态"),
+                    const Text("购买成功后，等待刷新状态"),
                   ],
                 )
               : Container(),

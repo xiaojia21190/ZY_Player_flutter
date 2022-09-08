@@ -30,9 +30,9 @@ class _PayPageState extends State<PayPage> {
     appStateProvider = Store.value<AppStateProvider>(context);
 
     Future.microtask(() async {
-      var url = "alipayqr://platformapi/startapp?saId=10000007&qrcode=${Uri.encodeComponent(widget.qrcode)}";
-      if (await canLaunch(url)) {
-        await launch(url);
+      var url = Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=${Uri.encodeComponent(widget.qrcode)}");
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
       } else {
         throw 'Could not launch $url';
       }
@@ -47,10 +47,10 @@ class _PayPageState extends State<PayPage> {
       ),
       body: Column(
         children: <Widget>[
-          Text("手机截图保存到相册使用扫码完成支付"),
+          const Text("手机截图保存到相册使用扫码完成支付"),
           Gaps.vGap10,
           QrImage(
-            padding: EdgeInsets.all(7),
+            padding: const EdgeInsets.all(7),
             backgroundColor: Colors.white,
             data: widget.qrcode,
             size: 100,
@@ -58,27 +58,28 @@ class _PayPageState extends State<PayPage> {
           Gaps.vGap10,
           Text("应付金额：${widget.money}"),
           Gaps.vGap10,
-          Text(
+          const Text(
             "(支付完成需要耐心等待一会！！！)",
             style: TextStyle(color: Colors.red),
           ),
           Gaps.vGap10,
-          Divider(
+          const Divider(
             color: Colors.black12,
           ),
           Gaps.vGap15,
-          Text(
+          const Text(
             "正在打开支付宝...",
           ),
           Gaps.vGap10,
-          Text(
+          const Text(
             "如果没有打开支付宝",
           ),
           MyButton(
             onPressed: () async {
-              var url = "alipayqr://platformapi/startapp?saId=10000007&qrcode=${Uri.encodeComponent(widget.qrcode)}";
-              if (await canLaunch(url)) {
-                await launch(url);
+              var url = Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=${Uri.encodeComponent(widget.qrcode)}");
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+                // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               } else {
                 throw 'Could not launch $url';
@@ -89,7 +90,7 @@ class _PayPageState extends State<PayPage> {
             text: "点击重新唤起支付宝",
           ),
           Gaps.vGap10,
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 40),
             child: Text(
               "如果自动打开支付宝无法支付 请关闭支付宝应用后 手动保存二维码 再次打开支付宝扫码支付！",
