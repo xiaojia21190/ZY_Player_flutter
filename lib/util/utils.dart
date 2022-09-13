@@ -1,7 +1,7 @@
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart' as keyboard;
 import 'package:keyboard_actions/keyboard_actions_config.dart';
@@ -10,26 +10,26 @@ import 'package:url_launcher/url_launcher.dart';
 class Utils {
   /// 调起拨号页
   static void launchTelURL(String phone) async {
-    final String url = 'tel:' + phone;
-    if (await canLaunch(url)) {
-      await launch(url);
+    final Uri url = Uri.parse('tel:' + phone);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
     } else {
       Toast.show('拨号失败！');
     }
   }
 
-  static Future<String> getUniqueId() async {
+  static Future<String?> getUniqueId() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Device.isIOS) {
       IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
-      print("ios唯一设备码：" + iosDeviceInfo.identifierForVendor);
+      print("ios唯一设备码：" + iosDeviceInfo.identifierForVendor!);
 
       return iosDeviceInfo.identifierForVendor; // unique ID on iOS
     } else {
       AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
-      print("android唯一设备码：" + androidDeviceInfo.androidId);
+      print("android唯一设备码：" + androidDeviceInfo.id!);
 
-      return androidDeviceInfo.androidId; // unique ID on Android
+      return androidDeviceInfo.id; // unique ID on Android
     }
   }
 
