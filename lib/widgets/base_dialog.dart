@@ -33,7 +33,7 @@ class BaseDialog extends StatelessWidget {
         ),
         const SizedBox(
           height: 48.0,
-          width: 0.6,
+          width: 16,
           child: VerticalDivider(),
         ),
         _DialogButton(
@@ -54,7 +54,10 @@ class BaseDialog extends StatelessWidget {
           Flexible(child: child),
           Gaps.vGap8,
           Gaps.line,
-          bottomButton,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: bottomButton,
+          )
         ],
       ),
     );
@@ -98,12 +101,12 @@ class _DialogButton extends StatelessWidget {
       child: SizedBox(
         height: 48.0,
         child: ElevatedButton(
-          child: Text(
-            text,
-            style: TextStyle(fontSize: Dimens.font_sp18),
-          ),
           style: ButtonStyle(textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: textColor))),
           onPressed: onPressed,
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: Dimens.font_sp18),
+          ),
         ),
       ),
     );
