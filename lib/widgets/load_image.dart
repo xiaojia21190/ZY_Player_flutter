@@ -5,7 +5,8 @@ import 'package:ZY_Player_flutter/util/image_utils.dart';
 
 /// 图片加载（支持本地与网络图片）
 class LoadImage extends StatelessWidget {
-  const LoadImage(this.image, {Key? key, this.width, this.height, this.fit = BoxFit.cover, this.format = ImageFormat.png, this.holderImg = 'none'})
+  const LoadImage(this.image,
+      {Key? key, this.width, this.height, this.fit = BoxFit.cover, this.format = ImageFormat.png, this.holderImg = 'none', this.isManhua = false})
       : super(key: key);
 
   final String image;
@@ -14,6 +15,7 @@ class LoadImage extends StatelessWidget {
   final BoxFit fit;
   final ImageFormat format;
   final String holderImg;
+  final bool isManhua;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class LoadImage extends StatelessWidget {
     } else {
       if (image.startsWith('http') || image.startsWith('https')) {
         return CachedNetworkImage(
+          httpHeaders: isManhua ? {'Referer': 'https://m.gufengmh9.com/'} : {},
           imageUrl: image,
           placeholder: (_, __) => LoadAssetImage(holderImg, height: height, width: width, fit: fit),
           errorWidget: (_, __, dynamic error) => LoadAssetImage(holderImg, height: height, width: width, fit: fit),

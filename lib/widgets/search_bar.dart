@@ -6,9 +6,7 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 
 /// 搜索页的AppBar
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
-  const SearchBar(
-      {Key? key, this.hintText = '', this.backImg = 'assets/images/ic_back_black.png', this.onPressed, this.isBack = false, required this.focus})
-      : super(key: key);
+  const SearchBar({Key? key, this.hintText = '', this.backImg = 'assets/images/ic_back_black.png', this.onPressed, this.isBack = false, required this.focus}) : super(key: key);
 
   final String backImg;
   final String hintText;
@@ -107,7 +105,7 @@ class _SearchBarState extends State<SearchBar> {
               ),
               onTap: () {
                 /// https://github.com/flutter/flutter/issues/35848
-                SchedulerBinding.instance!.addPostFrameCallback((_) {
+                SchedulerBinding.instance.addPostFrameCallback((_) {
                   _controller.text = '';
                 });
               },

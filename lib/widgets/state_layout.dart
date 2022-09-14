@@ -1,5 +1,4 @@
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/image_utils.dart';

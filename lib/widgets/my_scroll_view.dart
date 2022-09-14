@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-import 'package:keyboard_actions/keyboard_actions_config.dart';
 
 /// 本项目通用的布局（SingleChildScrollView）
 /// 1.底部存在按钮
@@ -48,12 +47,7 @@ class MyScrollView extends StatelessWidget {
         contents = Padding(padding: padding!, child: contents);
       }
 
-      contents = KeyboardActions(
-          isDialog: bottomButton != null,
-          overscroll: overScroll,
-          config: keyboardConfig!,
-          tapOutsideBehavior: tapOutsideToDismiss ? TapOutsideBehavior.opaqueDismiss : TapOutsideBehavior.none,
-          child: contents);
+      contents = KeyboardActions(isDialog: bottomButton != null, overscroll: overScroll, config: keyboardConfig!, tapOutsideBehavior: tapOutsideToDismiss ? TapOutsideBehavior.opaqueDismiss : TapOutsideBehavior.none, child: contents);
     } else {
       contents = SingleChildScrollView(
         padding: padding,

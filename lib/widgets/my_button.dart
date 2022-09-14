@@ -8,7 +8,7 @@ class MyButton extends StatelessWidget {
   const MyButton({
     Key? key,
     this.text = '',
-    this.fontSize = Dimens.font_sp18,
+    this.fontSize = Dimens.font_sp16,
     this.textColor,
     this.disabledTextColor,
     this.backgroundColor,
@@ -16,7 +16,7 @@ class MyButton extends StatelessWidget {
     this.minHeight = 48.0,
     this.minWidth = double.infinity,
     this.padding = const EdgeInsets.symmetric(horizontal: 16.0),
-    this.radius = 2.0,
+    this.radius = 5.0,
     this.side = BorderSide.none,
     required this.onPressed,
   }) : super(key: key);

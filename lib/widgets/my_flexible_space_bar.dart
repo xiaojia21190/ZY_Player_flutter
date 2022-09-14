@@ -1,9 +1,7 @@
 // Copyright 2016 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 /// The part of a material design [AppBar] that expands and collapses.
 ///
@@ -149,7 +147,7 @@ class _FlexibleSpaceBarState extends State<MyFlexibleSpaceBar> {
   @override
   void initState() {
     //监听Widget是否绘制完毕
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final RenderBox? renderBoxRed = _key.currentContext!.findRenderObject() as RenderBox?;
       _offset = renderBoxRed!.size.width / 2;
     });

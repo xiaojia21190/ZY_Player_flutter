@@ -1,6 +1,5 @@
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
@@ -73,9 +72,7 @@ class _DeerListViewState extends State<DeerListView> {
                     if (widget.loadMore == null) {
                       return widget.itemBuilder(context, index);
                     } else {
-                      return index < widget.itemCount
-                          ? widget.itemBuilder(context, index)
-                          : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
+                      return index < widget.itemCount ? widget.itemBuilder(context, index) : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
                     }
                   },
                 ),
@@ -100,9 +97,7 @@ class _DeerListViewState extends State<DeerListView> {
                     if (widget.loadMore == null) {
                       return widget.itemBuilder(context, index);
                     } else {
-                      return index < widget.itemCount
-                          ? widget.itemBuilder(context, index)
-                          : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
+                      return index < widget.itemCount ? widget.itemBuilder(context, index) : MoreWidget(widget.itemCount, widget.hasMore, widget.pageSize);
                     }
                   },
                 ),
@@ -148,7 +143,7 @@ class MoreWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle style = ThemeUtils.isDark(context) ? const TextStyle(color: Color(0xFF878787)) : const TextStyle(color: Color(0x8A000000));
+    final TextStyle style = ThemeUtils.isDark(context) ? const TextStyle(color: Color(0xFF878787), fontSize: 18) : const TextStyle(color: Color(0x8A000000), fontSize: 18);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
