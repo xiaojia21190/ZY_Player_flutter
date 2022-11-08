@@ -7,7 +7,7 @@
 <img src="https://timqian-imgs.s3.ap-southeast-1.amazonaws.com/2020-09-Screen%20Shot%202020-09-01%20at%205.15.54%20PM.png" alt="hackernews daily" width="400"/>
 
 ### 版本安装
-- [android v2.6.6](https://gamehall-1255478053.cos.ap-chengdu.myqcloud.com/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk)
+- [android v2.7.4](https://jizutang.oss-cn-beijing.aliyuncs.com/download/upload/%E8%99%B1%E5%AD%90%E8%81%9A%E5%90%88.apk)
 
 ### 测试账号
 - 账号 (dd111@qq.com)
