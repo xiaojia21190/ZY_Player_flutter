@@ -26,7 +26,8 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPage> {
+class _LoginPageState extends State<LoginPage>
+    with ChangeNotifierMixin<LoginPage> {
   //定义一个controller
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -76,7 +77,11 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
     // 进行登录
     var uuid = await Utils.getUniqueId();
     appStateProvider?.setloadingState(true);
-    await DioUtils.instance.requestNetwork(Method.post, HttpApi.login, params: {"username": _nameController.text, "password": _passwordController.text, "uuid": uuid}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.post, HttpApi.login, params: {
+      "username": _nameController?.text,
+      "password": _passwordController?.text,
+      "uuid": uuid
+    }, onSuccess: (data) {
       Log.d(data["token"]);
       appStateProvider?.setloadingState(false);
       SpUtil.putString(Constant.accessToken, data["token"]);
@@ -102,7 +107,8 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
         // },
       ),
       body: MyScrollView(
-        keyboardConfig: Utils.getKeyboardActionsConfig(context, <FocusNode>[_nodeText1, _nodeText2]),
+        keyboardConfig: Utils.getKeyboardActionsConfig(
+            context, <FocusNode>[_nodeText1, _nodeText2]),
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
         children: _buildBody,
       ),
@@ -151,29 +157,31 @@ class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPag
                 key: const Key('noAccountRegister'),
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
-              onTap: () => NavigatorUtils.push(context, LoginRouter.registerPage),
+              onTap: () =>
+                  NavigatorUtils.push(context, LoginRouter.registerPage),
             )),
         Gaps.vGap16,
         const Divider(),
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 20),
-          child: Center(
-            child: Text(
-              "不想注册,直接进入京东短信登陆",
-              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16),
-            ),
-          ),
-        ),
-        MyButton(
-          key: const Key('loginJd'),
-          minHeight: 50,
-          onPressed: () => NavigatorUtils.goWebViewPage(
-            context,
-            "京东短信登陆",
-            "https://bean.m.jd.com/bean/signIndex.action",
-          ),
-          text: "京东短信登陆",
-          fontSize: 20,
-        ),
+        // Container(
+        //   margin: const EdgeInsets.symmetric(vertical: 20),
+        //   child: Center(
+        //     child: Text(
+        //       "不想注册,直接进入京东短信登陆",
+        //       style: TextStyle(
+        //           color: Theme.of(context).primaryColor, fontSize: 16),
+        //     ),
+        //   ),
+        // ),
+        // MyButton(
+        //   key: const Key('loginJd'),
+        //   minHeight: 50,
+        //   onPressed: () => NavigatorUtils.goWebViewPage(
+        //     context,
+        //     "京东短信登陆",
+        //     "https://bean.m.jd.com/bean/signIndex.action",
+        //   ),
+        //   text: "京东短信登陆",
+        //   fontSize: 20,
+        // ),
       ];
 }
