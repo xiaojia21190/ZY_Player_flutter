@@ -78,7 +78,13 @@ class _RegisterPageState extends State<RegisterPage> with ChangeNotifierMixin<Re
   void _register() async {
     var uuid = await Utils.getUniqueId();
     appStateProvider?.setloadingState(true);
-    await DioUtils.instance.requestNetwork(Method.post, HttpApi.register, params: {"username": _nameController.text, "code": _vCodeController.text, "password": _passwordController.text, "uuid": uuid}, onSuccess: (data) {
+    await DioUtils.instance
+        .requestNetwork(Method.post, HttpApi.register, params: {
+      "username": _nameController.text,
+      "code": _vCodeController.text,
+      "password": _passwordController.text,
+      "uuid": uuid
+    }, onSuccess: (data) {
       Log.d(data["token"]);
       appStateProvider?.setloadingState(false);
       SpUtil.putString(Constant.accessToken, data["token"]);
