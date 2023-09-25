@@ -61,7 +61,8 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
 
   Future initData() async {
     _manhuaProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua, queryParameters: {"url": widget.url}, onSuccess: (data) {
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailManhua,
+        queryParameters: {"url": widget.url}, onSuccess: (data) {
       _manhuaProvider.setManhuaDetail(ManhuaCatlogDetail.fromJson(data));
       _manhuaProvider.setZhanghjie();
       if (getFilterData(_manhuaProvider.catLog)) {
@@ -80,7 +81,9 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   }
 
   bool getFilterData(ManhuaCatlogDetail data) {
-    List<ManhuaCatlogDetail> result = _collectProvider!.manhuaCatlog.where((element) => element.url == data.url).toList();
+    List<ManhuaCatlogDetail> result = _collectProvider!.manhuaCatlog
+        .where((element) => element.url == data.url)
+        .toList();
     return result.isNotEmpty;
   }
 
@@ -117,12 +120,16 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                   ),
                                   Expanded(
                                       child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Text("分享 虱子聚合"),
                                           Container(
@@ -136,12 +143,12 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                           Text("或者保存到相册分享")
                                         ],
                                       ),
-                                      QrImage(
-                                        padding: EdgeInsets.all(7),
-                                        backgroundColor: Colors.white,
-                                        data: "https://crawel.lppfk.top/static/index.html",
-                                        size: 100,
-                                      ),
+                                      // QrImage(
+                                      //   padding: EdgeInsets.all(7),
+                                      //   backgroundColor: Colors.white,
+                                      //   data: "https://crawel.lppfk.top/static/index.html",
+                                      //   size: 100,
+                                      // ),
                                     ],
                                   ))
                                 ],
@@ -152,18 +159,25 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               TextButton(
-                                child: const Text('点击复制链接', style: TextStyle(color: Colors.white)),
+                                child: const Text('点击复制链接',
+                                    style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                  Clipboard.setData(ClipboardData(text: "https://crawel.lppfk.top/static/index.html"));
+                                  Clipboard.setData(ClipboardData(
+                                      text:
+                                          "https://crawel.lppfk.top/static/index.html"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
                               TextButton(
-                                child: const Text('保存到相册', style: TextStyle(color: Colors.white)),
+                                child: const Text('保存到相册',
+                                    style: TextStyle(color: Colors.white)),
                                 onPressed: () async {
-                                  ByteData? byteData = await QSCommon.capturePngToByteData(haibaoKey2);
+                                  ByteData? byteData =
+                                      await QSCommon.capturePngToByteData(
+                                          haibaoKey2);
                                   // 保存
-                                  var result = await QSCommon.saveImageToCamera(byteData!);
+                                  var result = await QSCommon.saveImageToCamera(
+                                      byteData!);
                                   if (result["isSuccess"]) {
                                     Toast.show("保存成功, 快去分享吧");
                                   } else {
@@ -200,7 +214,8 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         actionName: actionName,
                         onPressed: () {
                           if (getFilterData(_manhuaProvider.catLog)) {
-                            _collectProvider?.removeCatlogResource(_manhuaProvider.catLog.url);
+                            _collectProvider?.removeCatlogResource(
+                                _manhuaProvider.catLog.url);
                             _manhuaProvider.setActionName("收藏");
                           } else {
                             _collectProvider?.addCatlogResource(
@@ -232,7 +247,8 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                               Expanded(
                                   child: Container(
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
@@ -250,7 +266,8 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         ),
                       ),
                       SliverToBoxAdapter(
-                        child: buildShare(provider.catLog.cover, provider.catLog.title),
+                        child: buildShare(
+                            provider.catLog.cover, provider.catLog.title),
                       ),
                       SliverToBoxAdapter(
                         child: Gaps.vGap8,
@@ -267,9 +284,12 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                 children: [
                                   Text(provider.shunxuText),
                                   IconButton(
-                                      icon: Icon(provider.currentOrder ? Icons.vertical_align_bottom_rounded : Icons.vertical_align_top_rounded),
+                                      icon: Icon(provider.currentOrder
+                                          ? Icons.vertical_align_bottom_rounded
+                                          : Icons.vertical_align_top_rounded),
                                       onPressed: () {
-                                        provider.changeShunxu(!provider.currentOrder);
+                                        provider.changeShunxu(
+                                            !provider.currentOrder);
                                       })
                                 ],
                               )
@@ -282,7 +302,8 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         sliver: AnimationLimiter(
                           child: SliverGrid(
                             //Grid
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 4, //Grid按两列显示
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
@@ -296,18 +317,30 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                   child: ScaleAnimation(
                                     child: FadeInAnimation(
                                       child: Container(
-                                          decoration: BoxDecoration(color: _manhuaProvider.kanguozhangjie.contains("${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}") ? Colors.redAccent : Colors.blueAccent, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                          decoration: BoxDecoration(
+                                              color: _manhuaProvider
+                                                      .kanguozhangjie
+                                                      .contains(
+                                                          "${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}")
+                                                  ? Colors.redAccent
+                                                  : Colors.blueAccent,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5))),
                                           alignment: Alignment.center,
                                           child: InkWell(
                                               onTap: () {
-                                                _manhuaProvider.saveZhangjie("${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}");
-                                                NavigatorUtils.push(context, '${ManhuaRouter.imagesPage}?title=${Uri.encodeComponent(provider.catLog.catlogs[index].text)}&url=${Uri.encodeComponent(provider.catLog.catlogs[index].url)}');
+                                                _manhuaProvider.saveZhangjie(
+                                                    "${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}");
+                                                NavigatorUtils.push(context,
+                                                    '${ManhuaRouter.imagesPage}?title=${Uri.encodeComponent(provider.catLog.catlogs[index].text)}&url=${Uri.encodeComponent(provider.catLog.catlogs[index].url)}');
                                               },
                                               child: Text(
                                                 '${provider.catLog.catlogs[index].text}',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                  color: isDark ? Colours.dark_text : Colors.white,
+                                                  color: isDark
+                                                      ? Colours.dark_text
+                                                      : Colors.white,
                                                 ),
                                               ))),
                                     ),
