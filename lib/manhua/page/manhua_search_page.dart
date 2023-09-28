@@ -43,8 +43,10 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
     _searchProvider?.list.clear();
     _appStateProvider?.setloadingState(true);
 
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
-      var data = List.generate(resultList.length, (index) => Types.fromJson(resultList[index]));
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchManhua,
+        queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
+      var data = List.generate(
+          resultList.length, (index) => Types.fromJson(resultList[index]));
       if (data.length == 0) {
         _searchProvider?.setStateType(StateType.order);
       } else {
@@ -61,7 +63,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SearchBar(
+      appBar: MySearchBar(
           focus: _focus,
           isBack: true,
           hintText: '请输入漫画名称查询',
@@ -81,7 +83,8 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
                       return Card(
                           elevation: 5,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
                               side: BorderSide(
                                 style: BorderStyle.solid,
                                 color: Colours.orange,
