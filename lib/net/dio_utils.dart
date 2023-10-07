@@ -11,17 +11,17 @@ import 'package:flutter/foundation.dart';
 import 'error_handle.dart';
 
 /// 默认dio配置
-int _connectTimeout = 1000 * 50;
-int _receiveTimeout = 1000 * 50;
-int _sendTimeout = 10000;
+Duration _connectTimeout = Duration(seconds: 50);
+Duration _receiveTimeout = Duration(seconds: 50);
+Duration _sendTimeout = Duration(seconds: 10);
 String _baseUrl = '';
 List<Interceptor> _interceptors = [];
 
 /// 初始化Dio配置
 void setInitDio({
-  int? connectTimeout,
-  int? receiveTimeout,
-  int? sendTimeout,
+  Duration? connectTimeout,
+  Duration? receiveTimeout,
+  Duration? sendTimeout,
   String? baseUrl,
   List<Interceptor>? interceptors,
 }) {
@@ -106,7 +106,8 @@ class DioUtils {
       /// 主要目的减少不必要的性能开销
       final bool isCompute = !Constant.isDriverTest && data.length > 10 * 1024;
       debugPrint('isCompute:$isCompute');
-      final Map<String, dynamic> _map = isCompute ? await compute(parseData, data) : parseData(data);
+      final Map<String, dynamic> _map =
+          isCompute ? await compute(parseData, data) : parseData(data);
       return _map;
     } catch (e) {
       debugPrint(e.toString());
@@ -144,7 +145,8 @@ class DioUtils {
         }
       } else {
         if (result["code"] == ExceptionHandle.red_huiyuan) {
-          NavigatorUtils.push(navigatorState!.context, SettingRouter.accountManagerPage);
+          NavigatorUtils.push(
+              navigatorState!.context, SettingRouter.accountManagerPage);
           Toast.show('接口请求异常： ${result["message"]}');
         }
         _onError(result["code"], result["message"], onError!);
@@ -181,7 +183,8 @@ class DioUtils {
         }
       } else {
         if (result["code"] == ExceptionHandle.red_huiyuan) {
-          NavigatorUtils.push(navigatorState!.context, SettingRouter.accountManagerPage);
+          NavigatorUtils.push(
+              navigatorState!.context, SettingRouter.accountManagerPage);
         } else {
           _onError(result["code"], result["message"], onError!);
         }
@@ -194,7 +197,7 @@ class DioUtils {
   }
 
   void _cancelLogPrint(dynamic e, String url) {
-    if (e is DioError && CancelToken.isCancel(e)) {
+    if (e is DioException && CancelToken.isCancel(e)) {
       Log.e('取消请求接口： $url');
     }
   }
@@ -218,5 +221,6 @@ enum Method { get, post, put, patch, delete, head }
 /// 使用拓展枚举替代 switch判断取值
 /// https://zhuanlan.zhihu.com/p/98545689
 extension MethodExtension on Method {
-  String get value => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD'][this.index];
+  String get value =>
+      ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD'][this.index];
 }
