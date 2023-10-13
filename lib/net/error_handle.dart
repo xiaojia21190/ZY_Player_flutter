@@ -20,8 +20,9 @@ class ExceptionHandle {
 
   static NetError handleException(dynamic error) {
     print(error);
-    if (error is DioError) {
-      if (error.type == DioErrorType.other || error.type == DioErrorType.response) {
+    if (error is DioException) {
+      if (error.type == DioExceptionType.unknown ||
+          error.type == DioExceptionType.badResponse) {
         dynamic e = error.error;
         if (e is SocketException) {
           return NetError(socket_error, '网络异常，请检查你的网络！');
@@ -33,11 +34,11 @@ class ExceptionHandle {
           return NetError(parse_error, '数据解析错误！');
         }
         return NetError(net_error, '网络异常，请检查你的网络！');
-      } else if (error.type == DioErrorType.connectTimeout ||
-          error.type == DioErrorType.sendTimeout ||
-          error.type == DioErrorType.receiveTimeout) {
+      } else if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.sendTimeout ||
+          error.type == DioExceptionType.receiveTimeout) {
         return NetError(timeout_error, '连接超时！');
-      } else if (error.type == DioErrorType.cancel) {
+      } else if (error.type == DioExceptionType.cancel) {
         return NetError(cancel_error, '取消请求');
       } else {
         return NetError(unknown_error, '未知异常');
