@@ -31,7 +31,8 @@ class TokenInterceptor extends Interceptor {
     try {
       _tokenDio ??= Dio();
       _tokenDio!.options = DioUtils.instance.dio.options;
-      final Response response = await _tokenDio!.post(HttpApi.login, data: params);
+      final Response response =
+          await _tokenDio!.post(HttpApi.login, data: params);
       if (response.statusCode == ExceptionHandle.success) {
         return json.decode(response.data.toString())["data"]['token'];
       }
@@ -42,21 +43,21 @@ class TokenInterceptor extends Interceptor {
   }
 
   @override
-  Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async {
+  Future<void> onResponse(
+      Response response, ResponseInterceptorHandler handler) async {
     //401代表token过期
     if (response.statusCode == ExceptionHandle.unauthorized) {
-      if (SpUtil.getString(Constant.email) == null && SpUtil.getString(Constant.password) == null) {
+      if (SpUtil.getString(Constant.email) == null &&
+          SpUtil.getString(Constant.password) == null) {
         Log.d('-----------必须先登录------------');
         // 返回登录页面
         NavigatorUtils.push(navigatorState!.context, LoginRouter.loginPage);
       } else {
         Log.d('-----------自动刷新Token------------');
         final Dio dio = DioUtils.instance.dio;
-        dio.lock();
         final String? accessToken = await getToken(); // 获取新的accessToken
         Log.e('-----------NewToken: $accessToken ------------');
         SpUtil.putString(Constant.accessToken, accessToken!);
-        dio.unlock();
         if (accessToken != "") {
           // 重新请求失败接口
           final RequestOptions request = response.requestOptions;
@@ -68,11 +69,9 @@ class TokenInterceptor extends Interceptor {
             /// 避免重复执行拦截器，使用tokenDio
             final Response response = await _tokenDio!.fetch(request);
             handler.next(response);
-          } on DioError catch (error) {
+          } on DioException catch (error) {
             handler.reject(error, true);
-          } finally {
-            dio.unlock();
-          }
+          } finally {}
         }
       }
     }
@@ -91,7 +90,11 @@ class LoggingInterceptor extends Interceptor {
     if (options.queryParameters.isEmpty) {
       Log.d('RequestUrl: ' + options.baseUrl + options.path);
     } else {
-      Log.d('RequestUrl: ' + options.baseUrl + options.path + '?' + Transformer.urlEncodeMap(options.queryParameters));
+      Log.d('RequestUrl: ' +
+          options.baseUrl +
+          options.path +
+          '?' +
+          Transformer.urlEncodeMap(options.queryParameters));
     }
     Log.d('RequestMethod: ' + options.method);
     Log.d('RequestHeaders:' + options.headers.toString());
