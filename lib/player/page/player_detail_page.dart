@@ -25,12 +25,12 @@ import 'package:ZY_Player_flutter/widgets/my_scroll_view.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/batter_view.dart';
 import 'package:chewie/chewie.dart';
+import 'package:dlna_dart/dlna.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screen_wake/flutter_screen_wake.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+// import 'package:qr_flutter/qr_flutter.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayerDetailPage extends StatefulWidget {
@@ -131,30 +131,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     });
   }
 
-  // List<ZiyuanUrl> playDownUrl = [];
-
-  // Future getPlayDownLoadUrl(String videoUrl) async {
-  //   await DioUtils.instance.requestNetwork(Method.get, HttpApi.getDwonUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) {
-  //     List.generate(data.length, (index) => playDownUrl.add(ZiyuanUrl.fromJson(data[index])));
-  //   }, onError: (_, msg) {
-  //     Toast.show(msg);
-  //     appStateProvider!.setloadingState(false);
-  //   });
-  // }
-
-  // Future launchDownLoadUrl(String videoUrl) async {
-  //   await DioUtils.instance.requestNetwork(Method.get, HttpApi.getVideoDwonUrl, queryParameters: {"url": videoUrl}, onSuccess: (data) async {
-  //     if (await canLaunch(data)) {
-  //       await launch(data);
-  //     } else {
-  //       throw 'Could not launch $data';
-  //     }
-  //   }, onError: (_, __) {
-  //     Toast.show("获取下载链接失败，请从新获取");
-  //     appStateProvider!.setloadingState(false);
-  //   });
-  // }
-
   Future initData() async {
     _detailProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist!.url}, onSuccess: (data) {
@@ -216,23 +192,21 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
                                           const Text("分享 虱子聚合"),
-                                          Container(
-                                            child: Text(
-                                              "$title",
-                                              overflow: TextOverflow.ellipsis,
-                                              softWrap: true,
-                                            ),
+                                          Text(
+                                            title,
+                                            overflow: TextOverflow.ellipsis,
+                                            softWrap: true,
                                           ),
                                           const Text("点击复制链接"),
                                           const Text("或者保存到相册分享")
                                         ],
                                       ),
-                                      QrImage(
-                                        padding: const EdgeInsets.all(7),
-                                        backgroundColor: Colors.white,
-                                        data: "https://crawel.lppfk.top/static/index.html",
-                                        size: 100,
-                                      ),
+                                      // QrImage(
+                                      //   padding: const EdgeInsets.all(7),
+                                      //   backgroundColor: Colors.white,
+                                      //   data: "https://crawel.lppfk.top/static/index.html",
+                                      //   size: 100,
+                                      // ),
                                     ],
                                   ))
                                 ],
@@ -316,20 +290,21 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                     ),
                     Gaps.vGap16,
                     Expanded(
-                      child: Selector<AppStateProvider, List>(
+                      child: Selector<AppStateProvider, List<DLNADevice>>(
                           builder: (_, devices, __) {
                             return ListView.separated(
                               itemCount: devices.length,
                               itemBuilder: (_, index) {
                                 return TextButton(
-                                  child: Text(devices[index]["name"]),
+                                  child: Text(devices[index].info.friendlyName),
                                   onPressed: () async {
                                     _chewieController!.pause();
-                                    Toast.show("推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${devices[index]["name"]}");
-                                    await appStateProvider!.dlnaManager.setDevice(devices[index]["id"]);
-                                    await appStateProvider!.dlnaManager.setVideoUrlAndName(currentUrl, _detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title);
-                                    await appStateProvider!.dlnaManager.startAndPlay();
+                                    Toast.show("推送视频 ${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title} 到设备：${devices[index].info.friendlyName}");
+                                    await devices[index].setUrl(currentUrl);
+                                    await devices[index].play();
                                     appStateProvider!.setloadingState(false);
+
+                                    // ignore: use_build_context_synchronously
                                     Navigator.pop(context);
                                   },
                                 );
@@ -337,7 +312,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                               separatorBuilder: (_, index) => const Divider(),
                             );
                           },
-                          selector: (_, store) => store.dlnaDevices),
+                          selector: (_, store) => store.deviceList.values.toList()),
                     )
                   ],
                 )),
@@ -354,28 +329,24 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         context: context,
         builder: (_) => Selector<AppStateProvider, String>(
             builder: (_, words, __) {
-              return FlareGiffyDialog(
-                flarePath: 'assets/images/space_demo.flr',
-                flareAnimation: 'loading',
-                title: Text(words, textAlign: TextAlign.center, style: const TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
-                description: const Text(
-                  '请打开相关设备后点击重新搜索',
-                  textAlign: TextAlign.center,
-                ),
-                entryAnimation: EntryAnimation.BOTTOM,
-                buttonOkText: const Text(
-                  "重新搜索",
-                ),
-                buttonCancelText: const Text(
-                  "停止搜索",
-                ),
-                onOkButtonPressed: () async {
-                  await appStateProvider!.searchDlna(1);
-                },
-                onCancelButtonPressed: () async {
-                  Navigator.pop(context);
-                  await appStateProvider!.dlnaManager.stop();
-                },
+              return SimpleDialog(
+                title: Text(words),
+                children: <Widget>[
+                  SimpleDialogOption(
+                    onPressed: () async {
+                      await appStateProvider!.searchDlna(1);
+                    },
+                    child: const Text('开始搜索'),
+                  ),
+                  SimpleDialogOption(
+                    onPressed: () async {
+                      await appStateProvider!.searcher.stop();
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    },
+                    child: const Text('停止搜索'),
+                  ),
+                ],
               );
             },
             selector: (_, store) => store.searchText));
@@ -484,7 +455,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       _detailProvider.saveJuji("${_playlist!.url}_${chooseIndex}_$currentVideoIndex");
       var record = _detailProvider.getRecord("${_playlist!.url}_${chooseIndex}_$currentVideoIndex");
       var startAt = Duration(seconds: int.parse(record));
-      _videoPlayerController = VideoPlayerController.network(currentUrl);
+
+      _videoPlayerController = VideoPlayerController.networkUrl(currentUrl as Uri);
 
       await _videoPlayerController!.initialize();
       _videoPlayerController!.addListener(_videoListener);
@@ -547,7 +519,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                 // 延迟点击
                                 Future.delayed(const Duration(seconds: 1), () {
                                   // 点击显示投屏数据
-                                  if (appStateProvider!.dlnaDevices.length == 0) {
+                                  if (appStateProvider!.deviceList.isEmpty) {
                                     // 没有搜索到
                                     searchDialog();
                                   } else {
