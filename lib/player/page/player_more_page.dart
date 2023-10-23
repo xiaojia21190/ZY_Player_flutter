@@ -119,10 +119,10 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
-                    children: [Radio(value: 0, groupValue: groupValue, onChanged: _isLoading ? null : updateGroupValue), Text("最近更新")],
+                    children: [Radio(value: 0, groupValue: groupValue, onChanged: _isLoading ? null : updateGroupValue), const Text("最近更新")],
                   ),
                   Row(
-                    children: [Radio(value: 1, groupValue: groupValue, onChanged: _isLoading ? null : updateGroupValue), Text("加入时间")],
+                    children: [Radio(value: 1, groupValue: groupValue, onChanged: _isLoading ? null : updateGroupValue), const Text("加入时间")],
                   ),
                 ],
               ),
@@ -130,10 +130,10 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
-                    children: [Radio(value: 2, groupValue: groupValue, onChanged: _isLoading ? null : updateGroupValue), Text("评分最高")],
+                    children: [Radio(value: 2, groupValue: groupValue, onChanged: _isLoading ? null : updateGroupValue), const Text("评分最高")],
                   ),
                   Row(
-                    children: [Radio(value: 3, groupValue: groupValue, onChanged: _isLoading ? null : updateGroupValue), Text("评分人数")],
+                    children: [Radio(value: 3, groupValue: groupValue, onChanged: _isLoading ? null : updateGroupValue), const Text("评分人数")],
                   ),
                 ],
               ),
@@ -152,7 +152,7 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                   child: CustomScrollView(
                     slivers: [
                       SliverPadding(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         sliver: SliverToBoxAdapter(
                           child: Consumer<BaseListProvider<Playlist>>(builder: (_, _baseListProvider, __) {
                             return _baseListProvider.list.length > 0
@@ -183,17 +183,17 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                                                                 right: 0,
                                                                 child: Container(
                                                                   color: Colors.black45,
-                                                                  padding: EdgeInsets.all(2),
+                                                                  padding: const EdgeInsets.all(2),
                                                                   child: Row(
                                                                     children: [
                                                                       Text(
                                                                         _baseListProvider.list[i].bofang,
-                                                                        style: TextStyle(fontSize: 12, color: Colors.white),
+                                                                        style: const TextStyle(fontSize: 12, color: Colors.white),
                                                                       ),
                                                                       Gaps.hGap4,
                                                                       Text(
                                                                         _baseListProvider.list[i].qingxi,
-                                                                        style: TextStyle(fontSize: 12, color: Colors.white),
+                                                                        style: const TextStyle(fontSize: 12, color: Colors.white),
                                                                       )
                                                                     ],
                                                                   ),
@@ -202,11 +202,11 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                                                                 top: 10,
                                                                 left: 10,
                                                                 child: Container(
-                                                                  padding: EdgeInsets.all(5),
-                                                                  decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                                  padding: const EdgeInsets.all(5),
+                                                                  decoration: const BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
                                                                   child: Text(
                                                                     _baseListProvider.list[i].pingfen,
-                                                                    style: TextStyle(fontSize: 12, color: Colors.white),
+                                                                    style: const TextStyle(fontSize: 12, color: Colors.white),
                                                                   ),
                                                                 ))
                                                           ],
