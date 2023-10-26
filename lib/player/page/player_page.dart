@@ -43,7 +43,7 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
           SliverToBoxAdapter(
             child: Selector<PlayerProvider, List<SwiperList>>(
                 builder: (_, list, __) {
-                  return list.length > 0
+                  return list.isNotEmpty
                       ? Swiper(
                           autoplay: true,
                           itemBuilder: (BuildContext context, int index) {
