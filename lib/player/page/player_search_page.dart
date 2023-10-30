@@ -41,8 +41,11 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
 
   Future getData() async {
     _baseListProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource, queryParameters: {"keywords": keywords, "page": page}, onSuccess: (resultList) {
-      List.generate(resultList.length, (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchResource,
+        queryParameters: {"keywords": keywords, "page": page},
+        onSuccess: (resultList) {
+      List.generate(resultList.length,
+          (i) => _baseListProvider.add(ResourceData.fromJson(resultList[i])));
       if (resultList.length == 0) {
         _baseListProvider.setStateType(StateType.order);
       } else {
@@ -78,7 +81,7 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SearchBar(
+      appBar: MySearchBar(
           focus: _focus,
           hintText: '请输入资源名称查询',
           isBack: true,
@@ -94,7 +97,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
           Expanded(
               child: ChangeNotifierProvider<BaseListProvider<ResourceData>>(
                   create: (_) => _baseListProvider,
-                  child: Consumer<BaseListProvider<ResourceData>>(builder: (_, baseListProvider, __) {
+                  child: Consumer<BaseListProvider<ResourceData>>(
+                      builder: (_, baseListProvider, __) {
                     return DeerListView(
                         itemCount: baseListProvider.list.length,
                         stateType: baseListProvider.stateType,
@@ -114,14 +118,16 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                                   child: Card(
                                       elevation: 5,
                                       shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
                                           side: BorderSide(
                                             style: BorderStyle.solid,
                                             color: Colours.orange,
                                           )),
                                       margin: const EdgeInsets.all(10),
                                       child: ListTile(
-                                        contentPadding: const EdgeInsets.all(10),
+                                        contentPadding:
+                                            const EdgeInsets.all(10),
                                         leading: LoadImage(
                                           baseListProvider.list[index].cover,
                                           fit: BoxFit.cover,
@@ -131,8 +137,10 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         onTap: () {
-                                          String jsonString = jsonEncode(baseListProvider.list[index]);
-                                          NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                          String jsonString = jsonEncode(
+                                              baseListProvider.list[index]);
+                                          NavigatorUtils.push(context,
+                                              '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                         },
                                       ))),
                             ),
