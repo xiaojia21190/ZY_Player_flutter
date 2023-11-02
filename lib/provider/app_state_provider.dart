@@ -6,7 +6,7 @@ import 'package:ZY_Player_flutter/util/Loading.dart';
 import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/cupertino.dart';
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_dlna/flutter_dlna.dart';
+import 'package:dlna_dart/dlna.dart';
 import 'package:intl/intl.dart';
 
 class PlayerModel {
@@ -126,35 +126,35 @@ class AppStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List _dlnaDevices = [];
-  List get dlnaDevices => _dlnaDevices;
-
-  setDlnaDevices(List list) {
-    _dlnaDevices = list;
-    if (list.length > 0) {
+  setDlnaDevices(Map<String, DLNADevice> list) {
+    if (list.isNotEmpty) {
       // 通知可以打开投屏列表
       ApplicationEvent.event.fire(DeviceEvent(playandzhibo));
     }
     notifyListeners();
   }
 
-  FlutterDlna _dlnaManager = FlutterDlna();
-  FlutterDlna get dlnaManager => _dlnaManager;
+  late DLNAManager searcher;
+  late final DeviceManager m;
+  Map<String, DLNADevice> deviceList = {};
+
+  // FlutterDlna _dlnaManager = FlutterDlna();
+  // FlutterDlna get dlnaManager => _dlnaManager;
 
   String _searchText = "点击开始搜索设备";
   String get searchText => _searchText;
 
   Future initDlnaManager() async {
-    await dlnaManager.init();
-    dlnaManager.setSearchCallback((devices) {
-      // 成功之后回调
-      if (devices != null && devices.length > 0) {
+    searcher = DLNAManager();
+    m.devices.stream.listen((dlist) {
+      if (dlist.isNotEmpty) {
         _searchText = "搜索成功，点击投屏按钮继续投屏";
         Navigator.pop(Constant.navigatorKey.currentContext!);
-        setDlnaDevices(devices);
+        deviceList = dlist;
+        setDlnaDevices(deviceList);
       } else {
         _searchText = "设备搜索超时";
-        setDlnaDevices([]);
+        setDlnaDevices(deviceList);
       }
     });
   }
@@ -162,7 +162,7 @@ class AppStateProvider extends ChangeNotifier {
   Future searchDlna(int i) async {
     playandzhibo = i;
     _searchText = "正在搜索设备...";
-    await dlnaManager.search();
+    m = await searcher.start();
 
     notifyListeners();
   }
