@@ -49,12 +49,12 @@ class _PayPageState extends State<PayPage> {
         children: <Widget>[
           const Text("手机截图保存到相册使用扫码完成支付"),
           Gaps.vGap10,
-          QrImage(
-            padding: const EdgeInsets.all(7),
-            backgroundColor: Colors.white,
-            data: widget.qrcode,
-            size: 100,
-          ),
+          // QrImage(
+          //   padding: const EdgeInsets.all(7),
+          //   backgroundColor: Colors.white,
+          //   data: widget.qrcode,
+          //   size: 100,
+          // ),
           Gaps.vGap10,
           Text("应付金额：${widget.money}"),
           Gaps.vGap10,
