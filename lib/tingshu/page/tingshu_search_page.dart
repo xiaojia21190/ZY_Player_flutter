@@ -40,8 +40,13 @@ class _TingshuSearchPageState extends State<TingshuSearchPage> {
 
   Future getData() async {
     _baseListProvider.setStateType(StateType.loading);
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getXmlySearch, queryParameters: {"searchword": keywords, "page": page}, onSuccess: (resultList) {
-      List.generate(resultList.length, (i) => _baseListProvider.add(CategoryTabDetail.fromJson(resultList[i])));
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.getXmlySearch,
+        queryParameters: {"searchword": keywords, "page": page},
+        onSuccess: (resultList) {
+      List.generate(
+          resultList.length,
+          (i) =>
+              _baseListProvider.add(CategoryTabDetail.fromJson(resultList[i])));
       if (resultList.length == 0) {
         _baseListProvider.setStateType(StateType.order);
       } else {
@@ -71,7 +76,7 @@ class _TingshuSearchPageState extends State<TingshuSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SearchBar(
+      appBar: MySearchBar(
           focus: _focus,
           isBack: true,
           hintText: '请输入听书名称查询',
@@ -85,9 +90,11 @@ class _TingshuSearchPageState extends State<TingshuSearchPage> {
       body: Column(
         children: [
           Expanded(
-              child: ChangeNotifierProvider<BaseListProvider<CategoryTabDetail>>(
+              child: ChangeNotifierProvider<
+                      BaseListProvider<CategoryTabDetail>>(
                   create: (_) => _baseListProvider,
-                  child: Consumer<BaseListProvider<CategoryTabDetail>>(builder: (_, baseListProvider, __) {
+                  child: Consumer<BaseListProvider<CategoryTabDetail>>(
+                      builder: (_, baseListProvider, __) {
                     return DeerListView(
                         itemCount: baseListProvider.list.length,
                         stateType: baseListProvider.stateType,
@@ -107,33 +114,39 @@ class _TingshuSearchPageState extends State<TingshuSearchPage> {
                                   child: Card(
                                       elevation: 5,
                                       shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
                                           side: BorderSide(
                                             style: BorderStyle.solid,
                                             color: Colours.orange,
                                           )),
                                       margin: const EdgeInsets.all(10),
                                       child: ListTile(
-                                        contentPadding: const EdgeInsets.all(10),
+                                        contentPadding:
+                                            const EdgeInsets.all(10),
                                         leading: LoadImage(
                                           baseListProvider.list[index].coverImg,
                                           fit: BoxFit.cover,
                                         ),
                                         subtitle: Text(
-                                          baseListProvider.list[index].title ?? baseListProvider.list[index].albumName,
+                                          baseListProvider.list[index].title ??
+                                              baseListProvider
+                                                  .list[index].albumName,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         trailing: Text(
-                                          baseListProvider.list[index].artistName,
+                                          baseListProvider
+                                              .list[index].artistName,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         title: Text(
-                                          baseListProvider.list[index].albumName,
+                                          baseListProvider
+                                              .list[index].albumName,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         onTap: () {
-                                          NavigatorUtils.push(
-                                              context, '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(baseListProvider.list[index].albumId.toString())}&title=${Uri.encodeComponent(baseListProvider.list[index].albumName)}&cover=${Uri.encodeComponent(baseListProvider.list[index].coverImg)}');
+                                          NavigatorUtils.push(context,
+                                              '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(baseListProvider.list[index].albumId.toString())}&title=${Uri.encodeComponent(baseListProvider.list[index].albumName)}&cover=${Uri.encodeComponent(baseListProvider.list[index].coverImg)}');
                                         },
                                       ))),
                             ),
