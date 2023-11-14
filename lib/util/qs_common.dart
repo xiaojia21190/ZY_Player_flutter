@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 class QSCommon {
   /// 截屏图片生成图片流ByteData
@@ -41,25 +41,25 @@ class QSCommon {
   }
 
   /// 图片存储权限处理
-  static Future<Null> handlePhotosPermission() async {
-    // 判断是否有权限
-    Map<Permission, PermissionStatus> statuses = await [
-      // Permission.camera,
-      // Permission.photos,
-      Permission.storage,
-    ].request();
-    //statuses[Permission.camera] == PermissionStatus.denied ||
-    //         statuses[Permission.photos] == PermissionStatus.denied ||
-    if (statuses[Permission.storage] == PermissionStatus.denied) {
-      // 无权限的话就显示设置页面
-      openAppSettings();
-      Log.d("无权限");
-    }
-  }
+  // static Future<Null> handlePhotosPermission() async {
+  //   // 判断是否有权限
+  //   Map<Permission, PermissionStatus> statuses = await [
+  //     // Permission.camera,
+  //     // Permission.photos,
+  //     Permission.storage,
+  //   ].request();
+  //   //statuses[Permission.camera] == PermissionStatus.denied ||
+  //   //         statuses[Permission.photos] == PermissionStatus.denied ||
+  //   if (statuses[Permission.storage] == PermissionStatus.denied) {
+  //     // 无权限的话就显示设置页面
+  //     openAppSettings();
+  //     Log.d("无权限");
+  //   }
+  // }
 
   /// 保存图片到相册
   static Future saveImageToCamera(ByteData byteData) async {
-    await handlePhotosPermission();
+    // await handlePhotosPermission();
 
     Uint8List sourceBytes = byteData.buffer.asUint8List();
     final result = await ImageGallerySaver.saveImage(sourceBytes);
