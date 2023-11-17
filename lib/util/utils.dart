@@ -19,21 +19,35 @@ class Utils {
   }
 
   static Future<String?> getUniqueId() async {
+    String deviceIdentifier = "unknown";
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
     if (Device.isIOS) {
       IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
       print("ios唯一设备码：" + iosDeviceInfo.identifierForVendor!);
 
-      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else {
+      deviceIdentifier =
+          iosDeviceInfo.identifierForVendor.toString(); // unique ID on iOS
+    } else if (Device.isAndroid) {
       AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
       print("android唯一设备码：" + androidDeviceInfo.id!);
 
-      return androidDeviceInfo.id; // unique ID on Android
+      deviceIdentifier = androidDeviceInfo.id; // unique ID on Android
+    } else if (Device.isWeb) {
+      // The web doesnt have a device UID, so use a combination fingerprint as an example
+      WebBrowserInfo webInfo = await deviceInfo.webBrowserInfo;
+      deviceIdentifier = webInfo.vendor.toString() +
+          webInfo.userAgent.toString() +
+          webInfo.hardwareConcurrency.toString();
+    } else if (Device.isLinux) {
+      LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
+      deviceIdentifier = linuxInfo.machineId.toString();
     }
+    return deviceIdentifier;
   }
 
-  static KeyboardActionsConfig getKeyboardActionsConfig(BuildContext context, List<FocusNode> list) {
+  static KeyboardActionsConfig getKeyboardActionsConfig(
+      BuildContext context, List<FocusNode> list) {
     return KeyboardActionsConfig(
       keyboardBarColor: ThemeUtils.getKeyboardActionsColor(context),
       nextFocus: true,
@@ -64,7 +78,8 @@ Future<T?> showElasticDialog<T>({
 }) {
   return showGeneralDialog(
     context: context,
-    pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
+    pageBuilder: (BuildContext buildContext, Animation<double> animation,
+        Animation<double> secondaryAnimation) {
       final Widget pageChild = Builder(builder: builder);
       return SafeArea(
         child: pageChild,
@@ -78,14 +93,19 @@ Future<T?> showElasticDialog<T>({
   );
 }
 
-Widget _buildDialogTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+Widget _buildDialogTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child) {
   return FadeTransition(
     opacity: CurvedAnimation(
       parent: animation,
       curve: Curves.easeOut,
     ),
     child: SlideTransition(
-      position: Tween<Offset>(begin: const Offset(0.0, 0.3), end: Offset.zero).animate(CurvedAnimation(
+      position: Tween<Offset>(begin: const Offset(0.0, 0.3), end: Offset.zero)
+          .animate(CurvedAnimation(
         parent: animation,
         curve: const ElasticOutCurve(0.85),
         reverseCurve: Curves.easeOutBack,
