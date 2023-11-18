@@ -38,10 +38,6 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
     return TextButton(
-        child: Text(
-          text,
-          style: TextStyle(fontSize: fontSize),
-        ),
         onPressed: onPressed,
         style: ButtonStyle(
           // 文字颜色
@@ -73,6 +69,10 @@ class MyButton extends StatelessWidget {
             ),
           ),
           side: MaterialStateProperty.all<BorderSide>(side),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(fontSize: fontSize),
         ));
   }
 }
