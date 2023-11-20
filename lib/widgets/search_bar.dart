@@ -5,9 +5,15 @@ import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 
 /// 搜索页的AppBar
-class SearchBar extends StatefulWidget implements PreferredSizeWidget {
-  const SearchBar({Key? key, this.hintText = '', this.backImg = 'assets/images/ic_back_black.png', this.onPressed, this.isBack = false, required this.focus}) : super(key: key);
-
+class MySearchBar extends StatefulWidget implements PreferredSizeWidget {
+  const MySearchBar(
+      {Key? key,
+      this.hintText = '',
+      this.backImg = 'assets/images/ic_back_black.png',
+      this.onPressed,
+      this.isBack = false,
+      required this.focus})
+      : super(key: key);
   final String backImg;
   final String hintText;
   final bool isBack;
@@ -21,9 +27,8 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(48.0);
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _SearchBarState extends State<MySearchBar> {
   final TextEditingController _controller = TextEditingController();
-  // final FocusNode _focus = FocusNode();
 
   @override
   void initState() {
@@ -40,7 +45,8 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     final bool isDark = ThemeUtils.isDark(context);
-    final Color iconColor = isDark ? Colours.dark_text_gray : Colours.text_gray_c;
+    final Color iconColor =
+        isDark ? Colours.dark_text_gray : Colours.text_gray_c;
 
     Widget back = Semantics(
       label: '返回',
@@ -85,7 +91,8 @@ class _SearchBarState extends State<SearchBar> {
             widget.onPressed!(val);
           },
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.only(top: 0.0, left: -8.0, right: -16.0, bottom: 14.0),
+            contentPadding: const EdgeInsets.only(
+                top: 0.0, left: -8.0, right: -16.0, bottom: 14.0),
             border: InputBorder.none,
             icon: Padding(
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
@@ -99,8 +106,10 @@ class _SearchBarState extends State<SearchBar> {
               child: Semantics(
                 label: '清空',
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, top: 8.0, bottom: 8.0),
-                  child: Image.asset('assets/images/order_delete.png', color: iconColor),
+                  padding:
+                      const EdgeInsets.only(left: 16.0, top: 8.0, bottom: 8.0),
+                  child: Image.asset('assets/images/order_delete.png',
+                      color: iconColor),
                 ),
               ),
               onTap: () {
@@ -121,7 +130,8 @@ class _SearchBarState extends State<SearchBar> {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           height: 32.0,
           minWidth: 44.0,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 距顶部距离为0
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          // 距顶部距离为0
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4.0),
           ),
@@ -129,13 +139,17 @@ class _SearchBarState extends State<SearchBar> {
       ),
       child: TextButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(isDark ? Colours.dark_app_main : Colours.app_main),
+          backgroundColor: MaterialStateProperty.all<Color>(
+              isDark ? Colours.dark_app_main : Colours.app_main),
         ),
         onPressed: () {
           widget.focus.unfocus();
           widget.onPressed!(_controller.text);
         },
-        child: Text('搜索', style: TextStyle(fontSize: Dimens.font_sp14, color: isDark ? Colours.dark_button_text : Colors.white)),
+        child: Text('搜索',
+            style: TextStyle(
+                fontSize: Dimens.font_sp14,
+                color: isDark ? Colours.dark_button_text : Colors.white)),
       ),
     );
 
