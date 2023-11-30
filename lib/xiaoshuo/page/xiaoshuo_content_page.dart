@@ -148,17 +148,17 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.only(left: 10, top: 10),
+                                      margin: const EdgeInsets.only(left: 10, top: 10),
                                       child: Text(
                                         _baseListProvider.list[index].cname,
-                                        style: TextStyle(fontSize: 14, color: Colours.golden),
+                                        style: const TextStyle(fontSize: 14, color: Colours.golden),
                                       ),
                                     ),
                                     Container(
                                       color: Colors.transparent,
-                                      margin: EdgeInsets.fromLTRB(10, 10, 5, 10),
+                                      margin: const EdgeInsets.fromLTRB(10, 10, 5, 10),
                                       child: Text.rich(
-                                        TextSpan(children: [TextSpan(text: _baseListProvider.list[index].content, style: TextStyle(wordSpacing: -5, fontSize: appStateProvider.xsFontSize, color: appStateProvider.xsColor == Colours.cunhei ? Color(0xff4c4c4c) : Colours.text))]),
+                                        TextSpan(children: [TextSpan(text: _baseListProvider.list[index].content, style: TextStyle(wordSpacing: -5, fontSize: appStateProvider.xsFontSize, color: appStateProvider.xsColor == Colours.cunhei ? const Color(0xff4c4c4c) : Colours.text))]),
                                         textAlign: TextAlign.justify,
                                       ),
                                     ),

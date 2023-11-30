@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
 
   # Localization https://github.com/dart-lang/intl
-  intl: ^0.18.1
+  intl: ^0.18.0
   # Toast插件 https://github.com/OpenFlutter/flutter_oktoast
   oktoast: ^3.3.1
   # 网络库 https://github.com/flutterchina/dio
@@ -54,11 +54,7 @@ dependencies:
   #动画
   flutter_staggered_animations: ^1.0.0
   # 视频推送
-  flutter_dlna:
-    git:
-      url: https://github.com/xiaojia21190/flutter_dlna.git
-  #dialog https://github.com/apgapg/giffy_dialog.git
-  #  giffy_dialog: ^2.0.0+2
+  dlna_dart: '>=0.0.8'
   #权限
   #  permission_handler: ^10.4.3
   #二维码

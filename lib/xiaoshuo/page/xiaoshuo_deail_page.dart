@@ -150,7 +150,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text("分享 虱子聚合"),
+                                          const Text("分享 虱子聚合"),
                                           Container(
                                             child: Text(
                                               "$title",
@@ -158,16 +158,16 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          Text("点击复制链接"),
-                                          Text("或者保存到相册分享")
+                                          const Text("点击复制链接"),
+                                          const Text("或者保存到相册分享")
                                         ],
                                       ),
-                                      QrImage(
-                                        padding: EdgeInsets.all(7),
-                                        backgroundColor: Colors.white,
-                                        data: "https://crawel.lppfk.top/static/index.html",
-                                        size: 100,
-                                      ),
+                                      // QrImage(
+                                      //   padding: EdgeInsets.all(7),
+                                      //   backgroundColor: Colors.white,
+                                      //   data: "https://crawel.lppfk.top/static/index.html",
+                                      //   size: 100,
+                                      // ),
                                     ],
                                   ))
                                 ],
@@ -180,7 +180,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                               TextButton(
                                 child: const Text('点击复制链接', style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                  Clipboard.setData(ClipboardData(text: "https://crawel.lppfk.top/static/index.html"));
+                                  Clipboard.setData(const ClipboardData(text: "https://crawel.lppfk.top/static/index.html"));
                                   Toast.show("复制链接成功，快去分享吧");
                                 },
                               ),
@@ -206,8 +206,8 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                 },
               )
             },
-        icon: Icon(Icons.share),
-        label: Text("分享小说"));
+        icon: const Icon(Icons.share),
+        label: const Text("分享小说"));
   }
 
   @override
@@ -268,13 +268,13 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
+                                  const Text(
                                     "最新章节",
                                     style: TextStyle(fontSize: 14, color: Colors.white),
                                   ),
                                   Text(
                                     _detail!.lastChapter,
-                                    style: TextStyle(fontSize: 14, color: Colors.white),
+                                    style: const TextStyle(fontSize: 14, color: Colors.white),
                                   )
                                 ],
                               ),
@@ -297,23 +297,23 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
+                              const Text(
                                 "最后阅读章节",
                                 style: TextStyle(fontSize: 14, color: Colours.text_gray),
                               ),
                               Text(
                                 readLastZj,
-                                style: TextStyle(fontSize: 14, color: Colours.text_gray),
+                                style: const TextStyle(fontSize: 14, color: Colours.text_gray),
                               )
                             ],
                           ),
                         ),
                       ),
                     )
-                  : SliverToBoxAdapter(),
+                  : const SliverToBoxAdapter(),
               SliverToBoxAdapter(
                 child: Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,

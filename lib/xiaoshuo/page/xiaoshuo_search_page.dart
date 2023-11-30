@@ -18,7 +18,8 @@ import 'package:provider/provider.dart';
 
 class XiaoShuoSearchSearchPage extends StatefulWidget {
   @override
-  _XiaoShuoSearchSearchPageState createState() => _XiaoShuoSearchSearchPageState();
+  _XiaoShuoSearchSearchPageState createState() =>
+      _XiaoShuoSearchSearchPageState();
 }
 
 class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
@@ -43,8 +44,10 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
   Future getSearchWords(String keywords) async {
     _appStateProvider!.setloadingState(true);
 
-    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchXiaoshuo, queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
-      var data = List.generate(resultList.length, (index) => XiaoshuoDetail.fromJson(resultList[index]));
+    await DioUtils.instance.requestNetwork(Method.get, HttpApi.searchXiaoshuo,
+        queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
+      var data = List.generate(resultList.length,
+          (index) => XiaoshuoDetail.fromJson(resultList[index]));
       if (data.length == 0) {
         _xiaoShuoProvider!.setStateType(StateType.order);
       } else {
@@ -61,7 +64,7 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SearchBar(
+      appBar: MySearchBar(
           focus: _focus,
           isBack: true,
           hintText: '请输入小说名称或者作者',
@@ -73,7 +76,8 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
           }),
       body: Column(
         children: [
-          Expanded(child: Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
+          Expanded(
+              child: Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
             return provider.list.length > 0
                 ? ListView.builder(
                     itemCount: provider.list.length,
@@ -96,8 +100,10 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
                           ),
                           trailing: Icon(Icons.keyboard_arrow_right),
                           onTap: () {
-                            String jsonString = jsonEncode(provider.list[index]);
-                            NavigatorUtils.push(context, '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
+                            String jsonString =
+                                jsonEncode(provider.list[index]);
+                            NavigatorUtils.push(context,
+                                '${XiaoShuoRouter.zjPage}?xiaoshuodetail=${Uri.encodeComponent(jsonString)}');
                           },
                         ),
                       );
