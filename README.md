@@ -49,8 +49,7 @@
 </p>
 
 ### ThanksDartNode
-[![DartNodeLogo](https://app.dartnode.com/assets/dash/images/brand/logo.png)](https:dartnode.com)
-
+[![DartNodeLogo](https://app.dartnode.com/assets/dash/images/brand/logo.png)](https://dartnode.com)
 ### License
 
 [MIT](LICENSE)
