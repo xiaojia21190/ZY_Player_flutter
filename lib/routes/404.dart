@@ -3,6 +3,8 @@ import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
 
 class PageNotFound extends StatelessWidget {
+  const PageNotFound({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
