@@ -8,7 +8,7 @@
             "name": "Flutter",
             "request": "launch",
             "type": "dart",
-            "args": ["--no-sound-null-safety", "--enable-software-rendering"]
+            "args": [ "--enable-software-rendering"]
         }
     ]
 }
