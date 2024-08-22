@@ -7,13 +7,13 @@ import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
 
 class CollectProvider extends ChangeNotifier {
-  List<Playlist> _listDetailResource = [];
+  final List<Playlist> _listDetailResource = [];
   List<Playlist> get listDetailResource => _listDetailResource;
 
-  List<ManhuaCatlogDetail> _manhuaCatlog = [];
+  final List<ManhuaCatlogDetail> _manhuaCatlog = [];
   List<ManhuaCatlogDetail> get manhuaCatlog => _manhuaCatlog;
 
-  List<AudioLoc> _list = [];
+  final List<AudioLoc> _list = [];
   List<AudioLoc> get list => _list;
 
   setListDetailResource(String collect, dynamic result) async {
