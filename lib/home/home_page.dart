@@ -3,43 +3,21 @@ import 'dart:async';
 import 'package:ZY_Player_flutter/Collect/collect_router.dart';
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/common/common.dart';
+import 'package:ZY_Player_flutter/home/empty_webview.dart';
 import 'package:ZY_Player_flutter/home/provider/home_provider.dart';
-import 'package:ZY_Player_flutter/login/login_router.dart';
-import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
-import 'package:ZY_Player_flutter/manhua/page/manhua_page.dart';
-import 'package:ZY_Player_flutter/model/audio_loc.dart';
-import 'package:ZY_Player_flutter/model/manhua_catlog_detail.dart';
-import 'package:ZY_Player_flutter/model/player_hot.dart';
-import 'package:ZY_Player_flutter/model/xiaoshuo_detail.dart';
-import 'package:ZY_Player_flutter/net/dio_utils.dart';
-import 'package:ZY_Player_flutter/net/http_api.dart';
 import 'package:ZY_Player_flutter/player/page/player_page.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/player/provider/player_provider.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
-import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/setting/setting_router.dart';
-import 'package:ZY_Player_flutter/tingshu/page/tingshu_page.dart';
-import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
-import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:ZY_Player_flutter/util/double_tap_back_exit_app.dart';
 import 'package:ZY_Player_flutter/util/hex_color.dart';
-import 'package:ZY_Player_flutter/util/provider.dart';
-import 'package:ZY_Player_flutter/util/toast.dart';
-import 'package:ZY_Player_flutter/util/utils.dart';
-import 'package:ZY_Player_flutter/widgets/click_item.dart';
-import 'package:ZY_Player_flutter/xiaoshuo/page/shujia_page.dart';
-import 'package:ZY_Player_flutter/xiaoshuo/xiaoshuo_router.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:flutter_update_dialog/flutter_update_dialog.dart';
-import 'package:ota_update/ota_update.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 class IconTitle {
   final IconData icon;
@@ -48,12 +26,15 @@ class IconTitle {
 }
 
 class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
+  // ignore: library_private_types_in_public_api
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-  List<Widget> _pageList = [PlayerPage(), ShuJiaPage(), ManhuaPage(), TingShuPage()];
+  final List<Widget> _pageList = [const PlayerPage(), EmptyWebview()];
 
   final PageController _pageController = PageController();
 
@@ -64,7 +45,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   CollectProvider? collectProvider;
 
   UpdateDialog? dialog;
-  OtaEvent? currentEvent;
   String currentUpdateUrl = "";
   String currentVersion = "";
   String nextVersion = "";
@@ -79,33 +59,31 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   final iconList = <IconTitle>[
     IconTitle(icon: Icons.play_circle_fill, title: "影视"),
-    IconTitle(icon: Icons.book, title: "小说"),
-    IconTitle(icon: Icons.theater_comedy, title: "漫画"),
-    IconTitle(icon: Icons.favorite, title: "听书"),
+    IconTitle(icon: Icons.favorite, title: "挂京东"),
   ];
 
   @override
   void initState() {
     // 获取更新数据
-    if (Device.isAndroid) {
-      checkUpDate();
-    } else {
-      // ios 应用商店
-    }
+    // if (Device.isAndroid) {
+    // checkUpDate();
+    // } else {
+    // ios 应用商店
+    // }
 
     // 获取是否激活
-    checkJihuo();
+    // checkJihuo();
 
     // 获得Player数据
-    appStateProvider = Store.value<AppStateProvider>(context);
-    playerProvider = Store.value<PlayerProvider>(context);
-    collectProvider = Store.value<CollectProvider>(context);
+    // appStateProvider = Store.value<AppStateProvider>(context);
+    // playerProvider = Store.value<PlayerProvider>(context);
+    // collectProvider = Store.value<CollectProvider>(context);
     // 初始化投屏数据
     appStateProvider?.initDlnaManager();
 
     Future.microtask(() async {
       appStateProvider?.getPlayerRecord();
-      await getUserInfo();
+      // await getUserInfo();
     });
 
     _animationController = AnimationController(
@@ -136,202 +114,204 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Future getLight() async {
-    var light = await FlutterScreenWake.brightness;
+    var light = await ScreenBrightness().current;
+    ScreenBrightness().setAutoReset(true);
+    ScreenBrightness().setAnimate(true);
     debugPrint("light:$light");
     appStateProvider?.setLightLevel(light);
   }
 
-  Future getUserInfo() async {
-    await DioUtils.instance.requestNetwork(
-      Method.get,
-      HttpApi.queryUserInfo,
-      onSuccess: (data) {
-        List<XiaoshuoDetail> _xslist = [];
-        JsonUtil.getObjectList(data["xslist"], (v) => _xslist.add(XiaoshuoDetail.fromJson(v as Map<String, dynamic>)));
-        SpUtil.putObjectList("collcetXiaoshuo", _xslist);
+  // Future getUserInfo() async {
+  //   await DioUtils.instance.requestNetwork(
+  //     Method.get,
+  //     HttpApi.queryUserInfo,
+  //     onSuccess: (data) {
+  //       List<XiaoshuoDetail> _xslist = [];
+  //       JsonUtil.getObjectList(data["xslist"], (v) => _xslist.add(XiaoshuoDetail.fromJson(v as Map<String, dynamic>)));
+  //       SpUtil.putObjectList("collcetXiaoshuo", _xslist);
 
-        List<Playlist> _pylist = [];
-        JsonUtil.getObjectList(data["playlist"], (v) => _pylist.add(Playlist.fromJson(v as Map<String, dynamic>)));
-        SpUtil.putObjectList("collcetPlayer", _pylist);
-        collectProvider?.setListDetailResource("collcetPlayer", _pylist);
+  //       List<Playlist> _pylist = [];
+  //       JsonUtil.getObjectList(data["playlist"], (v) => _pylist.add(Playlist.fromJson(v as Map<String, dynamic>)));
+  //       SpUtil.putObjectList("collcetPlayer", _pylist);
+  //       collectProvider?.setListDetailResource("collcetPlayer", _pylist);
 
-        List<ManhuaCatlogDetail> _mhlist = [];
-        JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v as Map<String, dynamic>)));
-        SpUtil.putObjectList("collcetManhua", _mhlist);
-        collectProvider?.setListDetailResource("collcetManhua", _mhlist);
+  //       List<ManhuaCatlogDetail> _mhlist = [];
+  //       JsonUtil.getObjectList(data["mhlist"], (v) => _mhlist.add(ManhuaCatlogDetail.fromJson(v as Map<String, dynamic>)));
+  //       SpUtil.putObjectList("collcetManhua", _mhlist);
+  //       collectProvider?.setListDetailResource("collcetManhua", _mhlist);
 
-        List<AudioLoc> _tslist = [];
-        JsonUtil.getObjectList(data["tslist"], (v) => _tslist.add(AudioLoc.fromJson(v as Map<String, dynamic>)));
-        SpUtil.putObjectList("collcetTingshu", _tslist);
-        collectProvider?.setListDetailResource("collcetTingshu", _tslist);
-      },
-      onError: (code, msg) {},
-    );
-  }
+  //       List<AudioLoc> _tslist = [];
+  //       JsonUtil.getObjectList(data["tslist"], (v) => _tslist.add(AudioLoc.fromJson(v as Map<String, dynamic>)));
+  //       SpUtil.putObjectList("collcetTingshu", _tslist);
+  //       collectProvider?.setListDetailResource("collcetTingshu", _tslist);
+  //     },
+  //     onError: (code, msg) {},
+  //   );
+  // }
 
-  gongGao(String gongao) async {
-    return showElasticDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Material(
-          type: MaterialType.transparency,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: const BoxDecoration(color: Colours.qingcaolv, borderRadius: BorderRadius.all(Radius.circular(10))),
-                  width: 250,
-                  height: 250,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Shimmer.fromColors(
-                          baseColor: Colors.red,
-                          highlightColor: Colors.yellow,
-                          child: const Text(
-                            "公告",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "$gongao",
-                            softWrap: true,
-                            style: const TextStyle(color: Colours.text, letterSpacing: 1.2),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    })
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // gongGao(String gongao) async {
+  //   return showElasticDialog<void>(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Material(
+  //         type: MaterialType.transparency,
+  //         child: Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               Container(
+  //                 decoration: const BoxDecoration(color: Colours.qingcaolv, borderRadius: BorderRadius.all(Radius.circular(10))),
+  //                 width: 250,
+  //                 height: 250,
+  //                 child: Column(
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: <Widget>[
+  //                     Padding(
+  //                       padding: const EdgeInsets.all(8.0),
+  //                       child: Shimmer.fromColors(
+  //                         baseColor: Colors.red,
+  //                         highlightColor: Colors.yellow,
+  //                         child: const Text(
+  //                           "公告",
+  //                           textAlign: TextAlign.center,
+  //                           style: const TextStyle(
+  //                             fontSize: 18,
+  //                             fontWeight: FontWeight.bold,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     Expanded(
+  //                       child: Padding(
+  //                         padding: const EdgeInsets.all(8.0),
+  //                         child: Text(
+  //                           "$gongao",
+  //                           softWrap: true,
+  //                           style: const TextStyle(color: Colours.text, letterSpacing: 1.2),
+  //                         ),
+  //                       ),
+  //                     )
+  //                   ],
+  //                 ),
+  //               ),
+  //               IconButton(
+  //                   icon: const Icon(
+  //                     Icons.close,
+  //                     color: Colors.white,
+  //                   ),
+  //                   onPressed: () {
+  //                     Navigator.pop(context);
+  //                   })
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
-  Future checkJihuo() async {
-    await DioUtils.instance.requestNetwork(
-      Method.get,
-      HttpApi.queryJihuo,
-      onSuccess: (data) {
-        SpUtil.putString(Constant.orderid, data["order"]);
-        SpUtil.putString(Constant.jihuoDate, data["jihuoDate"]);
-      },
-      onError: (code, msg) {},
-    );
-  }
+  // Future checkJihuo() async {
+  //   await DioUtils.instance.requestNetwork(
+  //     Method.get,
+  //     HttpApi.queryJihuo,
+  //     onSuccess: (data) {
+  //       SpUtil.putString(Constant.orderid, data["order"]);
+  //       SpUtil.putString(Constant.jihuoDate, data["jihuoDate"]);
+  //     },
+  //     onError: (code, msg) {},
+  //   );
+  // }
 
-  Future checkUpDate({bool jinru = false}) async {
-    await DioUtils.instance.requestNetwork(
-      Method.get,
-      HttpApi.updateApp,
-      onSuccess: (data) async {
-        // 获得本地version
-        PackageInfo packageInfo = await PackageInfo.fromPlatform();
-        currentVersion = packageInfo.version;
+  // Future checkUpDate({bool jinru = false}) async {
+  //   await DioUtils.instance.requestNetwork(
+  //     Method.get,
+  //     HttpApi.updateApp,
+  //     onSuccess: (data) async {
+  //       // 获得本地version
+  //       PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  //       currentVersion = packageInfo.version;
 
-        // 对比version
-        var checkResult = compareVersion(data["appVersion"], "$currentVersion");
-        if (checkResult) {
-          // 更新
-          currentUpdateUrl = data["updateUrl"];
-          nextVersion = data["appVersion"];
-          currentUpdateText = data["updateText"];
-          // String ignoreBb = SpUtil.getString("ignoreBb");
-          // if (currentVersion != ignoreBb) {
-          // }
-          openUpdateDialog();
-        } else {
-          if (jinru) {
-            Toast.show("已经是最新版本了");
-          } else {
-            gongGao(data["gonggao"]);
-          }
-        }
-      },
-      onError: (code, msg) {},
-    );
-  }
+  //       // 对比version
+  //       var checkResult = compareVersion(data["appVersion"], "$currentVersion");
+  //       if (checkResult) {
+  //         // 更新
+  //         currentUpdateUrl = data["updateUrl"];
+  //         nextVersion = data["appVersion"];
+  //         currentUpdateText = data["updateText"];
+  //         // String ignoreBb = SpUtil.getString("ignoreBb");
+  //         // if (currentVersion != ignoreBb) {
+  //         // }
+  //         openUpdateDialog();
+  //       } else {
+  //         if (jinru) {
+  //           Toast.show("已经是最新版本了");
+  //         } else {
+  //           gongGao(data["gonggao"]);
+  //         }
+  //       }
+  //     },
+  //     onError: (code, msg) {},
+  //   );
+  // }
 
-  openUpdateDialog() {
-    if (dialog != null && dialog!.isShowing()) {
-      return;
-    }
+  // openUpdateDialog() {
+  //   if (dialog != null && dialog!.isShowing()) {
+  //     return;
+  //   }
 
-    isUpdating = false;
-    dialog = UpdateDialog.showUpdate(context,
-        width: 250,
-        title: "当前版本是$currentVersion,否升级到$nextVersion？",
-        updateContent: currentUpdateText,
-        titleTextSize: 14,
-        contentTextSize: 12,
-        buttonTextSize: 12,
-        topImage: Image.asset('assets/images/bg_update_top.png'),
-        extraHeight: 5,
-        radius: 8,
-        themeColor: const Color(0xFFFFAC5D),
-        progressBackgroundColor: const Color(0x5AFFAC5D),
-        isForce: true,
-        enableIgnore: false,
-        updateButtonText: '开始升级',
-        onUpdate: tryOtaUpdate);
-  }
+  //   isUpdating = false;
+  //   dialog = UpdateDialog.showUpdate(context,
+  //       width: 250,
+  //       title: "当前版本是$currentVersion,否升级到$nextVersion？",
+  //       updateContent: currentUpdateText,
+  //       titleTextSize: 14,
+  //       contentTextSize: 12,
+  //       buttonTextSize: 12,
+  //       topImage: Image.asset('assets/images/bg_update_top.png'),
+  //       extraHeight: 5,
+  //       radius: 8,
+  //       themeColor: const Color(0xFFFFAC5D),
+  //       progressBackgroundColor: const Color(0x5AFFAC5D),
+  //       isForce: true,
+  //       enableIgnore: false,
+  //       updateButtonText: '开始升级',
+  //       onUpdate: tryOtaUpdate);
+  // }
 
-  Future tryOtaUpdate() async {
-    if (isUpdating) return;
-    isUpdating = true;
-    try {
-      Toast.show("后台开始下载");
-      OtaUpdate().execute(currentUpdateUrl, destinationFilename: "虱子聚合.apk").listen(
-        (OtaEvent? event) {
-          if (event!.status == OtaStatus.DOWNLOADING) {
-            var value = event.value;
-            dialog?.update(double.parse(value!) / 100);
-          } else if (event.status == OtaStatus.INSTALLING) {
-            Toast.show("升级成功");
-          } else {
-            Toast.show("升级失败，请从新下载");
-            dialog?.dismiss();
-            openUpdateDialog();
-          }
-        },
-      );
-    } catch (e) {
-      Toast.show("升级失败，请从新下载");
-      dialog?.dismiss();
-      openUpdateDialog();
-    }
-  }
+  // Future tryOtaUpdate() async {
+  //   if (isUpdating) return;
+  //   isUpdating = true;
+  //   try {
+  //     Toast.show("后台开始下载");
+  //     OtaUpdate().execute(currentUpdateUrl, destinationFilename: "虱子聚合.apk").listen(
+  //       (OtaEvent? event) {
+  //         if (event!.status == OtaStatus.DOWNLOADING) {
+  //           var value = event.value;
+  //           dialog?.update(double.parse(value!) / 100);
+  //         } else if (event.status == OtaStatus.INSTALLING) {
+  //           Toast.show("升级成功");
+  //         } else {
+  //           Toast.show("升级失败，请从新下载");
+  //           dialog?.dismiss();
+  //           openUpdateDialog();
+  //         }
+  //       },
+  //     );
+  //   } catch (e) {
+  //     Toast.show("升级失败，请从新下载");
+  //     dialog?.dismiss();
+  //     openUpdateDialog();
+  //   }
+  // }
 
-  bool compareVersion(String newVersion, String oldVersion) {
-    var result1 = newVersion.split(".").join("");
-    var result2 = oldVersion.split(".").join("");
-    if (int.parse(result1) > int.parse(result2)) {
-      return true;
-    }
-    return false;
-  }
+  // bool compareVersion(String newVersion, String oldVersion) {
+  //   var result1 = newVersion.split(".").join("");
+  //   var result2 = oldVersion.split(".").join("");
+  //   if (int.parse(result1) > int.parse(result2)) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   int _lastReportedPage = 0;
 
@@ -381,16 +361,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                       );
                     case 1:
                       return const Text(
-                        "书架",
-                        style: const TextStyle(color: Colors.white),
+                        "挂京东",
+                        style: TextStyle(color: Colors.white),
                       );
-                    case 2:
-                      return const Text(
-                        "漫画",
-                        style: const TextStyle(color: Colors.white),
-                      );
-                    case 3:
-                      return const Text("听书", style: const TextStyle(color: Colors.white));
                     default:
                       break;
                   }
@@ -419,24 +392,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             color: Colors.white,
                           ),
                         );
-                      case 2:
-                        return TextButton(
-                            onPressed: () {
-                              NavigatorUtils.push(context, '${CollectRouter.collectPage}?catIndex=2');
-                            },
-                            child: const Icon(
-                              Icons.star,
-                              color: Colors.white,
-                            ));
-                      case 3:
-                        return TextButton(
-                            onPressed: () {
-                              NavigatorUtils.push(context, '${CollectRouter.collectPage}?catIndex=3');
-                            },
-                            child: const Icon(
-                              Icons.star,
-                              color: Colors.white,
-                            ));
                     }
                     return Container();
                   },
@@ -454,103 +409,33 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             color: Colors.white,
                           ),
                         );
-                      case 1:
-                        return TextButton(
-                            onPressed: () {
-                              NavigatorUtils.push(context, XiaoShuoRouter.searchPage);
-                            },
-                            child: const Icon(
-                              Icons.search_sharp,
-                              color: Colors.white,
-                            ));
-                      case 2:
-                        return TextButton(
-                          onPressed: () {
-                            NavigatorUtils.push(context, ManhuaRouter.searchPage);
-                          },
-                          child: const Icon(
-                            Icons.search_sharp,
-                            color: Colors.white,
-                          ),
-                        );
-                      case 3:
-                        return TextButton(
-                          onPressed: () {
-                            NavigatorUtils.push(context, TingshuRouter.searchPage);
-                          },
-                          child: const Icon(
-                            Icons.search_sharp,
-                            color: Colors.white,
-                          ),
-                        );
                     }
                     return Container();
                   },
                 )
               ],
             ),
-            floatingActionButton: ScaleTransition(
-              scale: animation!,
-              child: FloatingActionButton(
-                elevation: 8,
-                backgroundColor: HexColor('#FFA400'),
-                child: const Text(
-                  "挂京东",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  _animationController?.reset();
-                  _animationController?.forward();
-                  NavigatorUtils.goWebViewPage(
-                    context,
-                    "京东短信登陆",
-                    "https://bean.m.jd.com/bean/signIndex.action",
-                  );
-                },
-              ),
-            ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-            drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  DrawerHeader(
-                    decoration: const BoxDecoration(
-                      color: Colours.app_main,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          '虱子聚合',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                          ),
-                        ),
-                        Text("userID: ${SpUtil.getString(Constant.email)}")
-                      ],
-                    ),
-                  ),
-                  ClickItem(title: '会员', onTap: () => NavigatorUtils.push(context, SettingRouter.accountManagerPage)),
-                  ClickItem(title: '观看记录', onTap: () => NavigatorUtils.push(context, SettingRouter.playerRecordPage)),
-                  ClickItem(title: '夜间模式', content: themeMode, onTap: () => NavigatorUtils.push(context, SettingRouter.themePage)),
-                  ClickItem(title: '检查更新', content: currentVersion, onTap: () => checkUpDate(jinru: true)),
-                  ClickItem(
-                      title: '切换账号',
-                      onTap: () {
-                        SpUtil.clear();
-                        NavigatorUtils.push(context, LoginRouter.loginPage);
-                      }),
-                  ClickItem(
-                    title: '关注公众号<日落知多少>',
-                    onTap: () => {Toast.show("关注公众号<日落知多少>")},
-                  ),
-                ],
-              ),
-            ),
-            drawerEnableOpenDragGesture: true,
+            // floatingActionButton: ScaleTransition(
+            //   scale: animation!,
+            //   child: FloatingActionButton(
+            //     elevation: 8,
+            //     backgroundColor: HexColor('#FFA400'),
+            //     child: const Text(
+            //       "挂京东",
+            //       style: TextStyle(color: Colors.white),
+            //     ),
+            //     onPressed: () {
+            //       _animationController?.reset();
+            //       _animationController?.forward();
+            //       NavigatorUtils.goWebViewPage(
+            //         context,
+            //         "京东短信登陆",
+            //         "https://bean.m.jd.com/bean/signIndex.action",
+            //       );
+            //     },
+            //   ),
+            // ),
+            // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: Consumer<HomeProvider>(
               builder: (_, provider, __) {
                 return AnimatedBottomNavigationBar.builder(
@@ -603,8 +488,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               child: PageView(
                 controller: _pageController,
                 onPageChanged: (index) => provider.value == index,
-                children: _pageList,
-                physics: const NeverScrollableScrollPhysics(), // 禁止滑动
+                physics: const NeverScrollableScrollPhysics(),
+                children: _pageList, // 禁止滑动
               ),
             )),
       ),
