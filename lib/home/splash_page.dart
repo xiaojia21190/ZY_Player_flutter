@@ -7,6 +7,8 @@ import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
+  const SplashPage({Key? key}) : super(key: key);
+
   @override
   _SplashPageState createState() => _SplashPageState();
 }
@@ -30,9 +32,9 @@ class _SplashPageState extends State<SplashPage> {
 
   // 开屏广告倒计时
   startTime() {
-    _timer = Timer(Duration(milliseconds: 2200), () {
+    _timer = Timer(const Duration(milliseconds: 2200), () {
       _timer?.cancel();
-      NavigatorUtils.push(context, '${Routes.home}', replace: true);
+      NavigatorUtils.push(context, Routes.home, replace: true);
     });
   }
 
