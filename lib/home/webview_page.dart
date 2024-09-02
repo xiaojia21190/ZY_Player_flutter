@@ -20,14 +20,13 @@ class WebViewPage extends StatefulWidget {
   final String url;
 
   @override
+  // ignore: library_private_types_in_public_api
   _WebViewPageState createState() => _WebViewPageState();
 }
 
 class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
-  WebViewController? _webViewController;
-  final Completer<WebViewController> _controller = Completer<WebViewController>();
-  final CookieManager cookieManager = CookieManager();
-
+  late WebViewController _webViewController;
+  final cookieManager = WebviewCookieManager();
   bool isLangu = true;
   bool isLoading = true;
 
@@ -35,117 +34,110 @@ class _WebViewPageState extends State<WebViewPage> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    cookieManager.clearCookies();
+    _webViewController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..clearCache()
+      ..clearLocalStorage()
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) async {
+            Log.d(url);
+            if (url.contains("https://bean.m.jd.com/bean/signIndex.action")) {
+              final gotCookies = await cookieManager.getCookies('https://bean.m.jd.com/bean/signIndex.action');
+
+              String ptPin = "";
+              String ptKey = "";
+
+              for (var item in gotCookies) {
+                switch (item.name) {
+                  case "pt_pin":
+                    ptPin = item.value;
+                    break;
+                  case "pt_key":
+                    ptKey = item.value;
+                    break;
+                  default:
+                }
+              }
+              // 后台发送cookie
+              Log.d("pt_pin======>$ptPin");
+              Log.d("pt_key======>$ptKey");
+              if (ptPin != "" && ptKey != "") {
+                Clipboard.setData(ClipboardData(text: "pt_pin=$ptPin;pt_key=$ptKey;"));
+                try {
+                  // 直接发送链接
+                  await DioUtils.instance.requestNetwork(Method.post, "api/saveCkLyq", queryParameters: {"value": "pt_pin=$ptPin;pt_key=$ptKey;"}, onSuccess: (data) {
+                    Toast.show("上传成功,5s后退回到上一个页面!!!!!", duration: 5 * 1000);
+                    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+                      if (mounted) {
+                        NavigatorUtils.goBack(context);
+                      }
+                    });
+                  }, onError: (_, msg) {
+                    Toast.show(msg, duration: 3 * 1000);
+                    timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+                      NavigatorUtils.goBack(context);
+                    });
+                  });
+                } catch (e) {}
+              }
+            }
+          },
+          onPageFinished: (String url) {
+            setState(() {
+              isLoading = false;
+            });
+          },
+          onHttpError: (HttpResponseError error) {},
+          onWebResourceError: (WebResourceError error) {},
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+
     super.initState();
   }
 
   @override
   void dispose() {
-    timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<WebViewController>(
-        future: _controller.future,
-        builder: (context, snapshot) {
-          return WillPopScope(
-            onWillPop: () async {
-              if (snapshot.hasData) {
-                var canGoBack = await snapshot.data!.canGoBack();
-                if (canGoBack) {
-                  // 网页可以返回时，优先返回上一页
-                  await snapshot.data!.goBack();
-                  return Future.value(false);
-                }
-              }
-              return Future.value(true);
-            },
-            child: Scaffold(
-                backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  centerTitle: true,
-                  title: Text(widget.title),
-                ),
-                body: SafeArea(
-                    child: Stack(
-                  children: <Widget>[
-                    WebView(
-                      initialUrl: widget.url,
-                      javascriptMode: JavascriptMode.unrestricted,
-                      navigationDelegate: (NavigationRequest request) async {
-                        return NavigationDecision.navigate;
-                      },
-                      onPageStarted: (String url) async {
-                        Log.d(url);
-
-                        if (url.indexOf("https://bean.m.jd.com/bean/signIndex.action") >= 0) {
-                          final cookieManager = WebviewCookieManager();
-                          final gotCookies = await cookieManager.getCookies('https://bean.m.jd.com/bean/signIndex.action');
-
-                          String ptPin = "";
-                          String ptKey = "";
-
-                          for (var item in gotCookies) {
-                            print(item);
-                            switch (item.name) {
-                              case "pt_pin":
-                                ptPin = item.value;
-                                break;
-                              case "pt_key":
-                                ptKey = item.value;
-                                break;
-                              default:
-                            }
-                          }
-                          // 后台发送cookie
-                          Log.d("pt_pin======>$ptPin");
-                          Log.d("pt_key======>$ptKey");
-                          if (ptPin != "" && ptKey != "") {
-                            Clipboard.setData(ClipboardData(text: "pt_pin=$ptPin;pt_key=$ptKey;"));
-                            try {
-                              // 直接发送链接
-                              await DioUtils.instance.requestNetwork(Method.post, "api/saveCkLyq", queryParameters: {"value": "pt_pin=$ptPin;pt_key=$ptKey;"}, onSuccess: (data) {
-                                Toast.show("上传成功,5s后退回到上一个页面!!!!!", duration: 5 * 1000);
-                                timer = Timer.periodic(Duration(seconds: 5), (timer) {
-                                  NavigatorUtils.goBack(context);
-                                });
-                              }, onError: (_, msg) {
-                                Toast.show(msg, duration: 3 * 1000);
-                                timer = Timer.periodic(Duration(seconds: 3), (timer) {
-                                  NavigatorUtils.goBack(context);
-                                });
-                              });
-                            } catch (e) {}
-                          }
-                        }
-                        setState(() {
-                          isLoading = true;
-                        });
-                      },
-                      onPageFinished: (finish) async {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      },
-                      onWebViewCreated: (WebViewController webViewController) {
-                        _controller.complete(webViewController);
-                        _webViewController = webViewController;
-                        _webViewController?.clearCache();
-                        cookieManager.clearCookies();
-                      },
-                    ),
-                    isLoading
-                        ? Container(
-                            color: Colors.black26,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : Container(),
-                  ],
-                ))),
-          );
-        });
+    return PopScope(
+      canPop: false,
+      // ignore: deprecated_member_use
+      onPopInvoked: (bool didPop) {
+        if (didPop) {
+          return; // really exit
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(widget.title),
+          ),
+          body: SafeArea(
+              child: Stack(
+            children: <Widget>[
+              isLoading
+                  ? Container(
+                      color: Colors.black26,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : WebViewWidget(controller: _webViewController),
+            ],
+          ))),
+    );
   }
 }
