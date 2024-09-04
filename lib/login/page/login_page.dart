@@ -22,6 +22,8 @@ import '../login_router.dart';
 
 /// design/1注册登录/index.html
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -78,8 +80,8 @@ class _LoginPageState extends State<LoginPage>
     var uuid = await Utils.getUniqueId();
     appStateProvider?.setloadingState(true);
     await DioUtils.instance.requestNetwork(Method.post, HttpApi.login, params: {
-      "username": _nameController?.text,
-      "password": _passwordController?.text,
+      "username": _nameController.text,
+      "password": _passwordController.text,
       "uuid": uuid
     }, onSuccess: (data) {
       Log.d(data["token"]);
