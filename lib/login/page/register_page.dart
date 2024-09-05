@@ -20,6 +20,8 @@ import 'package:flutter/material.dart';
 
 /// design/1注册登录/index.html#artboard11
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
