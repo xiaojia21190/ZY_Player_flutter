@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 
 /// design/1注册登录/index.html#artboard9
 class ResetPasswordPage extends StatefulWidget {
+  const ResetPasswordPage({Key? key}) : super(key: key);
+
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
