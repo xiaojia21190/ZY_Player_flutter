@@ -11,7 +11,7 @@ class ManhuaRouter implements IRouterProvider {
 
   @override
   void initRouter(FluroRouter router) {
-    router.define(searchPage, handler: Handler(handlerFunc: (_, __) => ManhuaSearchPage()));
+    router.define(searchPage, handler: Handler(handlerFunc: (_, __) => const ManhuaSearchPage()));
     router.define(imagesPage,
         handler: Handler(handlerFunc: (_, params) => ManhuaImagePage(url: params['url']?.first, title: params['title']?.first)));
     router.define(detailPage,
