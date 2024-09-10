@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import '../manhua_router.dart';
 
@@ -39,7 +38,7 @@ class ManhuaDetailPage extends StatefulWidget {
 
 class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
   bool startedPlaying = false;
-  ManhuaDetailProvider _manhuaProvider = ManhuaDetailProvider();
+  final ManhuaDetailProvider _manhuaProvider = ManhuaDetailProvider();
   CollectProvider? _collectProvider;
   String actionName = "";
 
@@ -131,16 +130,16 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          Text("分享 虱子聚合"),
+                                          const Text("分享 虱子聚合"),
                                           Container(
                                             child: Text(
-                                              "$title",
+                                              title,
                                               overflow: TextOverflow.ellipsis,
                                               softWrap: true,
                                             ),
                                           ),
-                                          Text("点击复制链接"),
-                                          Text("或者保存到相册分享")
+                                          const Text("点击复制链接"),
+                                          const Text("或者保存到相册分享")
                                         ],
                                       ),
                                       // QrImage(
@@ -162,7 +161,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                 child: const Text('点击复制链接',
                                     style: TextStyle(color: Colors.white)),
                                 onPressed: () {
-                                  Clipboard.setData(ClipboardData(
+                                  Clipboard.setData(const ClipboardData(
                                       text:
                                           "https://crawel.lppfk.top/static/index.html"));
                                   Toast.show("复制链接成功，快去分享吧");
@@ -194,8 +193,8 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                 },
               )
             },
-        icon: Icon(Icons.share),
-        label: Text("分享漫画"));
+        icon: const Icon(Icons.share),
+        label: const Text("分享漫画"));
   }
 
   @override
@@ -206,7 +205,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
         create: (_) => _manhuaProvider,
         child: Scaffold(
           appBar: PreferredSize(
-              preferredSize: Size.fromHeight(48.0),
+              preferredSize: const Size.fromHeight(48.0),
               child: Selector<ManhuaDetailProvider, String>(
                   builder: (_, actionName, __) {
                     return MyAppBar(
@@ -233,7 +232,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                       SliverToBoxAdapter(
                         child: Container(
                           height: 100,
-                          padding: EdgeInsets.symmetric(vertical: 5),
+                          padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,12 +268,12 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                         child: buildShare(
                             provider.catLog.cover, provider.catLog.title),
                       ),
-                      SliverToBoxAdapter(
+                      const SliverToBoxAdapter(
                         child: Gaps.vGap8,
                       ),
                       SliverToBoxAdapter(
                         child: Container(
-                          padding: EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(10),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,7 +302,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                           child: SliverGrid(
                             //Grid
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 4, //Grid按两列显示
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
@@ -324,7 +323,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                                           "${widget.url}_${provider.currentOrder ? index : provider.catLog.catlogs.length - index}")
                                                   ? Colors.redAccent
                                                   : Colors.blueAccent,
-                                              borderRadius: BorderRadius.all(
+                                              borderRadius: const BorderRadius.all(
                                                   Radius.circular(5))),
                                           alignment: Alignment.center,
                                           child: InkWell(
@@ -335,7 +334,7 @@ class _ManhuaDetailPageState extends State<ManhuaDetailPage> {
                                                     '${ManhuaRouter.imagesPage}?title=${Uri.encodeComponent(provider.catLog.catlogs[index].text)}&url=${Uri.encodeComponent(provider.catLog.catlogs[index].url)}');
                                               },
                                               child: Text(
-                                                '${provider.catLog.catlogs[index].text}',
+                                                provider.catLog.catlogs[index].text,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: isDark
