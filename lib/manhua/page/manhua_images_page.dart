@@ -24,7 +24,7 @@ class ManhuaImagePage extends StatefulWidget {
 }
 
 class _ManhuaImagePageState extends State<ManhuaImagePage> {
-  BaseListProvider<String> _baseListProvider = BaseListProvider();
+  final BaseListProvider<String> _baseListProvider = BaseListProvider();
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
       queryParameters: {"url": widget.url},
       onSuccess: (data) {
         _baseListProvider.addAll(List.generate(data.length, (index) => data[index]));
-        if (_baseListProvider.list.length == 0) {
+        if (_baseListProvider.list.isEmpty) {
           _baseListProvider.setStateType(StateType.order);
         } else {
           _baseListProvider.setStateType(StateType.empty);
@@ -55,7 +55,7 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
 
   Future _onRefresh() async {
     _baseListProvider.clear();
-    this.getData();
+    getData();
   }
 
   @override
@@ -68,16 +68,16 @@ class _ManhuaImagePageState extends State<ManhuaImagePage> {
             ),
             body: Column(
               children: [
-                Expanded(child: Consumer<BaseListProvider<String>>(builder: (_, _baseListProvider, __) {
+                Expanded(child: Consumer<BaseListProvider<String>>(builder: (_, baseListProvider, __) {
                   return DeerListView(
-                      itemCount: _baseListProvider.list.length,
-                      stateType: _baseListProvider.stateType,
+                      itemCount: baseListProvider.list.length,
+                      stateType: baseListProvider.stateType,
                       onRefresh: _onRefresh,
-                      pageSize: _baseListProvider.list.length,
+                      pageSize: baseListProvider.list.length,
                       hasMore: false,
                       itemBuilder: (_, index) {
                         return LoadImage(
-                          _baseListProvider.list[index],
+                          baseListProvider.list[index],
                           isManhua: true,
                         );
                       });
