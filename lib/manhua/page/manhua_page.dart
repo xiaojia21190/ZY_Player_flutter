@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ManhuaPage extends StatefulWidget {
-  ManhuaPage({Key? key}) : super(key: key);
+  const ManhuaPage({Key? key}) : super(key: key);
 
   @override
   _ManhuaPageState createState() => _ManhuaPageState();
@@ -23,7 +23,7 @@ class ManhuaPage extends StatefulWidget {
 class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMixin<ManhuaPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-  BaseListProvider<ManhuaDetail> _baseListProvider = BaseListProvider();
+  final BaseListProvider<ManhuaDetail> _baseListProvider = BaseListProvider();
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
 
   Future _onRefresh() async {
     _baseListProvider.clear();
-    this.getData();
+    getData();
   }
 
   @override
@@ -65,14 +65,14 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
           SliverFillRemaining(
             child: ChangeNotifierProvider<BaseListProvider<ManhuaDetail>>(
                 create: (_) => _baseListProvider,
-                child: Consumer<BaseListProvider<ManhuaDetail>>(builder: (_, _baseListProvider, __) {
+                child: Consumer<BaseListProvider<ManhuaDetail>>(builder: (_, baseListProvider, __) {
                   return DeerListView(
-                    itemCount: _baseListProvider.list.length,
-                    stateType: _baseListProvider.stateType,
+                    itemCount: baseListProvider.list.length,
+                    stateType: baseListProvider.stateType,
                     onRefresh: _onRefresh,
                     hasRefresh: false,
-                    pageSize: _baseListProvider.list.length,
-                    hasMore: _baseListProvider.hasMore,
+                    pageSize: baseListProvider.list.length,
+                    hasMore: baseListProvider.hasMore,
                     itemBuilder: (_, index) {
                       return AnimationConfiguration.staggeredList(
                         position: index,
@@ -85,14 +85,14 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                  padding: EdgeInsets.only(left: 10, top: 5),
+                                  padding: const EdgeInsets.only(left: 10, top: 5),
                                   child: Shimmer.fromColors(
                                     baseColor: Colors.red,
                                     highlightColor: Colors.yellow,
                                     child: Text(
-                                      _baseListProvider.list[index].name,
+                                      baseListProvider.list[index].name,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -100,18 +100,18 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                                   )),
                               Gaps.vGap8,
                               Container(
-                                  padding: EdgeInsets.only(left: 10),
+                                  padding: const EdgeInsets.only(left: 10),
                                   child: Wrap(
                                     crossAxisAlignment: WrapCrossAlignment.center,
                                     runSpacing: 20,
                                     spacing: 20,
                                     children: List.generate(
-                                        _baseListProvider.list[index].types.length,
+                                        baseListProvider.list[index].types.length,
                                         (i) => InkWell(
                                               child: Column(
                                                 children: [
                                                   LoadImage(
-                                                    _baseListProvider.list[index].types[i].cover,
+                                                    baseListProvider.list[index].types[i].cover,
                                                     width: 100,
                                                     height: 150,
                                                     fit: BoxFit.cover,
@@ -122,7 +122,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                                                     width: 100,
                                                     alignment: Alignment.center,
                                                     child: Text(
-                                                      _baseListProvider.list[index].types[i].title,
+                                                      baseListProvider.list[index].types[i].title,
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                   ),
@@ -131,7 +131,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                                                     width: 100,
                                                     alignment: Alignment.center,
                                                     child: Text(
-                                                      _baseListProvider.list[index].types[i].author,
+                                                      baseListProvider.list[index].types[i].author,
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                   ),
@@ -139,7 +139,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                                               ),
                                               onTap: () {
                                                 NavigatorUtils.push(context,
-                                                    '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(_baseListProvider.list[index].types[i].url)}&title=${Uri.encodeComponent(_baseListProvider.list[index].types[i].title)}');
+                                                    '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(baseListProvider.list[index].types[i].url)}&title=${Uri.encodeComponent(baseListProvider.list[index].types[i].title)}');
                                               },
                                             )).toList(),
                                   ))
@@ -148,7 +148,7 @@ class _ManhuaPageState extends State<ManhuaPage> with AutomaticKeepAliveClientMi
                         ),
                       );
                     },
-                    physics: AlwaysScrollableScrollPhysics(),
+                    physics: const AlwaysScrollableScrollPhysics(),
                   );
                 })),
           ),
