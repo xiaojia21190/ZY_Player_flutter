@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ManhuaSearchPage extends StatefulWidget {
+  const ManhuaSearchPage({Key? key}) : super(key: key);
+
   @override
   _ManhuaSearchPageState createState() => _ManhuaSearchPageState();
 }
@@ -47,7 +49,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
         queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(
           resultList.length, (index) => Types.fromJson(resultList[index]));
-      if (data.length == 0) {
+      if (data.isEmpty) {
         _searchProvider?.setStateType(StateType.order);
       } else {
         _searchProvider?.setStateType(StateType.empty);
@@ -76,20 +78,20 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
       body: Column(
         children: [
           Expanded(child: Consumer<ManhuaProvider>(builder: (_, provider, __) {
-            return provider.list.length > 0
+            return provider.list.isNotEmpty
                 ? ListView.builder(
                     itemCount: provider.list.length,
                     itemBuilder: (_, index) {
                       return Card(
                           elevation: 5,
-                          shape: RoundedRectangleBorder(
+                          shape: const RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5)),
                               side: BorderSide(
                                 style: BorderStyle.solid,
                                 color: Colours.orange,
                               )),
-                          margin: EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(10),
                           child: ListTile(
                             title: Text(provider.list[index].title),
                             subtitle: Text(provider.list[index].author),
@@ -98,7 +100,7 @@ class _ManhuaSearchPageState extends State<ManhuaSearchPage> {
                               fit: BoxFit.cover,
                               isManhua: true,
                             ),
-                            trailing: Icon(Icons.keyboard_arrow_right),
+                            trailing: const Icon(Icons.keyboard_arrow_right),
                             onTap: () {
                               Log.d('前往详情页');
                               NavigatorUtils.push(context,
