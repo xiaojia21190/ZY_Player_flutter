@@ -76,7 +76,7 @@ class ManhuaDetailProvider extends ChangeNotifier {
       return;
     }
     var whereWord = _words.where((element) => element == word);
-    if (whereWord.length == 0) {
+    if (whereWord.isEmpty) {
       _words.add(word);
       SpUtil.putStringList("ManHuaWords", _words);
       notifyListeners();
