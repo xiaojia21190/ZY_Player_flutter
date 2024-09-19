@@ -11,9 +11,9 @@ import 'package:flutter/foundation.dart';
 import 'error_handle.dart';
 
 /// 默认dio配置
-Duration _connectTimeout = Duration(seconds: 50);
-Duration _receiveTimeout = Duration(seconds: 50);
-Duration _sendTimeout = Duration(seconds: 10);
+Duration _connectTimeout = const Duration(seconds: 50);
+Duration _receiveTimeout = const Duration(seconds: 50);
+Duration _sendTimeout = const Duration(seconds: 10);
 String _baseUrl = '';
 List<Interceptor> _interceptors = [];
 
@@ -41,7 +41,7 @@ class DioUtils {
   factory DioUtils() => _singleton;
 
   DioUtils._() {
-    final BaseOptions _options = BaseOptions(
+    final BaseOptions options = BaseOptions(
       connectTimeout: _connectTimeout,
       receiveTimeout: _receiveTimeout,
       sendTimeout: _sendTimeout,
@@ -55,7 +55,7 @@ class DioUtils {
       baseUrl: _baseUrl,
 //      contentType: Headers.formUrlEncodedContentType, // 适用于post form表单提交
     );
-    _dio = Dio(_options);
+    _dio = Dio(options);
 
     /// Fiddler抓包代理配置 https://www.jianshu.com/p/d831b1f7c45b
 //    (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
@@ -69,9 +69,9 @@ class DioUtils {
 //    };
 
     /// 添加拦截器
-    _interceptors.forEach((interceptor) {
+    for (var interceptor in _interceptors) {
       _dio.interceptors.add(interceptor);
-    });
+    }
   }
 
   static final DioUtils _singleton = DioUtils._();
@@ -106,9 +106,9 @@ class DioUtils {
       /// 主要目的减少不必要的性能开销
       final bool isCompute = !Constant.isDriverTest && data.length > 10 * 1024;
       debugPrint('isCompute:$isCompute');
-      final Map<String, dynamic> _map =
+      final Map<String, dynamic> map =
           isCompute ? await compute(parseData, data) : parseData(data);
-      return _map;
+      return map;
     } catch (e) {
       debugPrint(e.toString());
       return {ExceptionHandle.parse_error, '数据解析错误！', null};
@@ -222,5 +222,5 @@ enum Method { get, post, put, patch, delete, head }
 /// https://zhuanlan.zhihu.com/p/98545689
 extension MethodExtension on Method {
   String get value =>
-      ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD'][this.index];
+      ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD'][index];
 }
