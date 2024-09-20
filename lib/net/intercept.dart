@@ -13,7 +13,7 @@ class AuthInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final String? accessToken = SpUtil.getString(Constant.accessToken);
     if (accessToken!.isNotEmpty) {
-      options.headers['Authorization'] = '$accessToken';
+      options.headers['Authorization'] = accessToken;
     }
 
     return super.onRequest(options, handler);
@@ -61,7 +61,7 @@ class TokenInterceptor extends Interceptor {
         if (accessToken != "") {
           // 重新请求失败接口
           final RequestOptions request = response.requestOptions;
-          request.headers['Authorization'] = '$accessToken';
+          request.headers['Authorization'] = accessToken;
 
           try {
             Log.e('----------- 重新请求接口 ------------');
@@ -88,16 +88,12 @@ class LoggingInterceptor extends Interceptor {
     _startTime = DateTime.now();
     Log.d('----------Start----------');
     if (options.queryParameters.isEmpty) {
-      Log.d('RequestUrl: ' + options.baseUrl + options.path);
+      Log.d('RequestUrl: ${options.baseUrl}${options.path}');
     } else {
-      Log.d('RequestUrl: ' +
-          options.baseUrl +
-          options.path +
-          '?' +
-          Transformer.urlEncodeMap(options.queryParameters));
+      Log.d('RequestUrl: ${options.baseUrl}${options.path}?${Transformer.urlEncodeMap(options.queryParameters)}');
     }
-    Log.d('RequestMethod: ' + options.method);
-    Log.d('RequestHeaders:' + options.headers.toString());
+    Log.d('RequestMethod: ${options.method}');
+    Log.d('RequestHeaders:${options.headers}');
     Log.d('RequestContentType: ${options.contentType}');
     Log.d('RequestData: ${options.data.toString()}');
     return super.onRequest(options, handler);
@@ -119,7 +115,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     Log.d('----------Error-----------');
     return super.onError(err, handler);
   }
