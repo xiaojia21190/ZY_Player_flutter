@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:ZY_Player_flutter/Collect/provider/collect_provider.dart';
 import 'package:ZY_Player_flutter/event/event_bus.dart';
@@ -28,8 +27,8 @@ import 'package:chewie/chewie.dart';
 import 'package:dlna_dart/dlna.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:provider/provider.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 // import 'package:qr_flutter/qr_flutter.dart';
 import 'package:video_player/video_player.dart';
 
@@ -48,7 +47,7 @@ class PlayerDetailPage extends StatefulWidget {
 class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBindingObserver {
   bool startedPlaying = false;
 
-  DetailProvider _detailProvider = DetailProvider();
+  final DetailProvider _detailProvider = DetailProvider();
   CollectProvider? _collectProvider;
   AppStateProvider? appStateProvider;
   StreamSubscription? _currentPosSubs;
@@ -107,17 +106,16 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   }
 
   Future setLight() async {
-    FlutterScreenWake.setBrightness(-1);
-    appStateProvider?.setLightLevel(-1);
+    // await ScreenBrightness().
   }
 
   @override
   void dispose() {
+    setLight();
     _chewieController?.dispose();
     _videoPlayerController?.dispose();
     _videoPlayerController?.removeListener(_videoListener);
     _currentPosSubs?.cancel();
-    setLight();
     super.dispose();
   }
 
@@ -415,20 +413,20 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     final offsetDifference = _initialVerLightOffset!.dy - _finalVerLightOffset!.dy;
     var offsetAbs = offsetDifference.abs() / 1000;
     // Log.d(offsetAbs.toString());
-    var entLight;
+    double entLight;
     if (offsetDifference > 0) {
       entLight = light + offsetAbs;
       if (entLight >= 1) {
         entLight = 1.0;
       }
-      FlutterScreenWake.setBrightness(entLight);
     } else {
       entLight = light - offsetAbs;
       if (entLight <= 0) {
         entLight = 0.0;
       }
-      FlutterScreenWake.setBrightness(entLight);
     }
+
+    ScreenBrightness().setScreenBrightness(entLight);
     var verLightText = "亮度：${(entLight * 100).toInt()}%";
     appStateProvider!.setVerLight(true, verLightText);
     // light 赋值 并不改变外界的 亮度值
@@ -456,7 +454,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
       var record = _detailProvider.getRecord("${_playlist!.url}_${chooseIndex}_$currentVideoIndex");
       var startAt = Duration(seconds: int.parse(record));
 
-      _videoPlayerController = VideoPlayerController.networkUrl(currentUrl as Uri);
+      _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(currentUrl));
 
       await _videoPlayerController!.initialize();
       _videoPlayerController!.addListener(_videoListener);
@@ -488,7 +486,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
         materialProgressColors: ChewieProgressColors(
           playedColor: Theme.of(context).primaryColor,
           handleColor: Theme.of(context).primaryColor,
-          bufferedColor: Theme.of(context).backgroundColor.withOpacity(0.5),
+          bufferedColor: Theme.of(context).colorScheme.surface.withOpacity(0.5),
           backgroundColor: Theme.of(context).disabledColor.withOpacity(.5),
         ),
         routePageBuilder: (context, animation, __, provider) {
@@ -534,7 +532,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                               ),
                               label: const Text(
                                 "投屏",
-                                style: const TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.white),
                               )),
                         ),
                       ),
@@ -582,11 +580,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                             alignment: Alignment.topLeft,
                             child: Container(
                               margin: const EdgeInsets.all(10),
-                              child: Row(
+                              child: const Row(
                                 children: [
-                                  const Text(
+                                  Text(
                                     "剩余电量:",
-                                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                                    style: TextStyle(color: Colors.white, fontSize: 12),
                                   ),
                                   Gaps.hGap5,
                                   BatteryView()
@@ -606,6 +604,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
           videoId: "${_playlist!.url}_${_detailProvider.chooseYuanIndex}_${currentVideoIndex}_$record}", name: "${_playlist!.title}_${_detailProvider.detailReource[_detailProvider.chooseYuanIndex].ziyuanUrl[currentVideoIndex].title}", url: currentUrl, cover: _playlist!.cover, startAt: record);
       appStateProvider!.savePlayerRecord(playerModel);
     } catch (e) {
+      print(e);
       appStateProvider!.setloadingState(false);
       Toast.show("可能资源已损坏,请点击切换源,查看其他资源!", duration: 5000);
     }
@@ -722,9 +721,9 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                                 ? Chewie(
                                     controller: _chewieController!,
                                   )
-                                : Column(
+                                : const Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
+                                    children: [
                                       SizedBox(height: 20),
                                       Text(
                                         '等待播放...',
@@ -769,7 +768,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
                   //     icon: Icon(Icons.download_rounded),
                   //     label: Text("下载")),
                   Expanded(child: Consumer<DetailProvider>(builder: (_, provider, __) {
-                    return provider.detailReource.length > 0
+                    return provider.detailReource.isNotEmpty
                         ? MyScrollView(
                             children: [
                               Container(
