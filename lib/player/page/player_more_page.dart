@@ -31,7 +31,7 @@ class PlayerMorePage extends StatefulWidget {
 class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAliveClientMixin<PlayerMorePage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-  BaseListProvider<Playlist> _baseListProvider = BaseListProvider();
+  final BaseListProvider<Playlist> _baseListProvider = BaseListProvider();
 
   int groupValue = 0;
   int page = 1;
@@ -46,10 +46,6 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   Future getData() async {
     if (widget.type == "mv") {
@@ -82,7 +78,7 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
 
   Future _onRefresh() async {
     _baseListProvider.clear();
-    this.getData();
+    getData();
   }
 
   Future _loadMore() async {
@@ -154,8 +150,8 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                       SliverPadding(
                         padding: const EdgeInsets.all(10),
                         sliver: SliverToBoxAdapter(
-                          child: Consumer<BaseListProvider<Playlist>>(builder: (_, _baseListProvider, __) {
-                            return _baseListProvider.list.length > 0
+                          child: Consumer<BaseListProvider<Playlist>>(builder: (_, baseListProvider, __) {
+                            return baseListProvider.list.isNotEmpty
                                 ? MediaQuery.removePadding(
                                     context: context,
                                     removeTop: true,
@@ -166,14 +162,14 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                                           runSpacing: 20,
                                           spacing: 20,
                                           children: List.generate(
-                                              _baseListProvider.list.length,
+                                              baseListProvider.list.length,
                                               (i) => InkWell(
                                                     child: Column(
                                                       children: [
                                                         Stack(
                                                           children: [
                                                             LoadImage(
-                                                              _baseListProvider.list[i].cover,
+                                                              baseListProvider.list[i].cover,
                                                               width: 100,
                                                               height: 150,
                                                               fit: BoxFit.cover,
@@ -187,12 +183,12 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                                                                   child: Row(
                                                                     children: [
                                                                       Text(
-                                                                        _baseListProvider.list[i].bofang,
+                                                                        baseListProvider.list[i].bofang,
                                                                         style: const TextStyle(fontSize: 12, color: Colors.white),
                                                                       ),
                                                                       Gaps.hGap4,
                                                                       Text(
-                                                                        _baseListProvider.list[i].qingxi,
+                                                                        baseListProvider.list[i].qingxi,
                                                                         style: const TextStyle(fontSize: 12, color: Colors.white),
                                                                       )
                                                                     ],
@@ -205,7 +201,7 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                                                                   padding: const EdgeInsets.all(5),
                                                                   decoration: const BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
                                                                   child: Text(
-                                                                    _baseListProvider.list[i].pingfen,
+                                                                    baseListProvider.list[i].pingfen,
                                                                     style: const TextStyle(fontSize: 12, color: Colors.white),
                                                                   ),
                                                                 ))
@@ -214,26 +210,26 @@ class _PlayerMorePageState extends State<PlayerMorePage> with AutomaticKeepAlive
                                                         Gaps.vGap8,
                                                         Container(
                                                           alignment: Alignment.center,
+                                                          width: 100,
                                                           child: Text(
-                                                            _baseListProvider.list[i].title,
+                                                            baseListProvider.list[i].title,
                                                             overflow: TextOverflow.ellipsis,
                                                           ),
-                                                          width: 100,
                                                         )
                                                       ],
                                                     ),
                                                     onTap: () {
-                                                      String jsonString = jsonEncode(_baseListProvider.list[i]);
+                                                      String jsonString = jsonEncode(baseListProvider.list[i]);
 
                                                       NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                                     },
                                                   )).toList(),
                                         ),
-                                        MoreWidget(_baseListProvider.list.length, hasMore, 42)
+                                        MoreWidget(baseListProvider.list.length, hasMore, 42)
                                       ],
                                     ))
                                 : StateLayout(
-                                    type: _baseListProvider.stateType,
+                                    type: baseListProvider.stateType,
                                     onRefresh: _onRefresh,
                                   );
                           }),
