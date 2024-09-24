@@ -15,7 +15,7 @@ import 'package:flutter_swiper_null_safety_flutter3/flutter_swiper_null_safety_f
 import 'package:provider/provider.dart';
 
 class PlayerPage extends StatefulWidget {
-  PlayerPage({Key? key}) : super(key: key);
+  const PlayerPage({Key? key}) : super(key: key);
 
   @override
   _PlayerPageState createState() => _PlayerPageState();
@@ -65,8 +65,8 @@ class _PlayerPageState extends State<PlayerPage> with AutomaticKeepAliveClientMi
         ];
       },
       body: Container(
-        color: isDark ? Colours.dark_bg_gray_ : Color(0xfff5f5f5),
-        child: PlayerListPage(),
+        color: isDark ? Colours.dark_bg_gray_ : const Color(0xfff5f5f5),
+        child: const PlayerListPage(),
       ),
     );
   }
