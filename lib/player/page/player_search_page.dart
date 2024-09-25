@@ -19,13 +19,15 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
 class PlayerSearchPage extends StatefulWidget {
+  const PlayerSearchPage({Key? key}) : super(key: key);
+
   @override
   _PlayerSearchPageState createState() => _PlayerSearchPageState();
 }
 
 class _PlayerSearchPageState extends State<PlayerSearchPage> {
   PlayerProvider? _playerProvider;
-  BaseListProvider<ResourceData> _baseListProvider = BaseListProvider();
+  final BaseListProvider<ResourceData> _baseListProvider = BaseListProvider();
 
   final FocusNode _focus = FocusNode();
   int page = 1;
