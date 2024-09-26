@@ -13,7 +13,7 @@ class PlayerRouter implements IRouterProvider {
   @override
   void initRouter(FluroRouter router) {
     router.define(searchPage,
-        handler: Handler(handlerFunc: (_, __) => PlayerSearchPage()));
+        handler: Handler(handlerFunc: (_, __) => const PlayerSearchPage()));
     router.define(detailPage,
         handler: Handler(
             handlerFunc: (_, params) =>
