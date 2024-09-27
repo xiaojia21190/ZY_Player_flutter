@@ -5,10 +5,10 @@ import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
 
 class DetailProvider extends ChangeNotifier {
-  List<DetailReource> _detailReource = [];
+  final List<DetailReource> _detailReource = [];
   List<DetailReource> get detailReource => _detailReource;
 
-  List<Playlist> _playerList = [];
+  final List<Playlist> _playerList = [];
   List<Playlist> get playerList => _playerList;
 
   List<String> _kanguojuji = []; // 已经看过的剧集列表
