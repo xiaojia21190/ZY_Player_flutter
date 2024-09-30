@@ -14,11 +14,14 @@ import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../player_router.dart';
 
 class PlayerListPage extends StatefulWidget {
+  const PlayerListPage({Key? key}) : super(key: key);
+
   @override
   _PlayerListPageState createState() => _PlayerListPageState();
 }
@@ -26,9 +29,9 @@ class PlayerListPage extends StatefulWidget {
 class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAliveClientMixin<PlayerListPage>, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-  BaseListProvider<Types> _baseListProvider = BaseListProvider();
+  final BaseListProvider<Types> _baseListProvider = BaseListProvider();
 
-  List<SwiperList> _list = [];
+  final List<SwiperList> _list = [];
   PlayerProvider? _playerProvider;
 
   @override
@@ -36,11 +39,6 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
     _onRefresh();
     _playerProvider = Store.value<PlayerProvider>(context);
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   Future getData() async {
@@ -61,7 +59,7 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
 
   Future _onRefresh() async {
     _baseListProvider.clear();
-    this.getData();
+    getData();
   }
 
   final typeStr = ["mv", "tv", "ac"];
@@ -71,13 +69,13 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
     super.build(context);
     return ChangeNotifierProvider<BaseListProvider<Types>>(
         create: (_) => _baseListProvider,
-        child: Consumer<BaseListProvider<Types>>(builder: (_, _baseListProvider, __) {
-          return _baseListProvider.list.length > 0
+        child: Consumer<BaseListProvider<Types>>(builder: (_, baseListProvider, __) {
+          return baseListProvider.list.isNotEmpty
               ? MediaQuery.removePadding(
                   context: context,
                   removeTop: true,
                   child: ListView.builder(
-                    itemCount: _baseListProvider.list.length,
+                    itemCount: baseListProvider.list.length,
                     itemBuilder: (__, index) {
                       return AnimationConfiguration.staggeredList(
                         position: index,
@@ -93,21 +91,21 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
-                                        padding: EdgeInsets.only(left: 10, top: 5),
+                                        padding: const EdgeInsets.only(left: 10, top: 5),
                                         child: Shimmer.fromColors(
                                           baseColor: Colors.red,
                                           highlightColor: Colors.yellow,
                                           child: Text(
-                                            _baseListProvider.list[index].type,
+                                            baseListProvider.list[index].type,
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         )),
                                     Container(
-                                        padding: EdgeInsets.only(left: 10, top: 5),
+                                        padding: const EdgeInsets.only(left: 10, top: 5),
                                         child: TextButton(
                                           onPressed: () {
                                             NavigatorUtils.push(context, "${PlayerRouter.playerMorePage}?type=${Uri.encodeComponent(typeStr[index])}");
@@ -115,7 +113,7 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                           child: Shimmer.fromColors(
                                             baseColor: Colors.red,
                                             highlightColor: Colors.yellow,
-                                            child: Text(
+                                            child: const Text(
                                               "查看更多>",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
@@ -129,21 +127,26 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                 ),
                                 Gaps.vGap8,
                                 Container(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Wrap(
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      runSpacing: 20,
-                                      spacing: 20,
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: ResponsiveGridList(
+                                      horizontalGridSpacing: 16, // Horizontal space between grid items
+                                      verticalGridSpacing: 16, // Vertical space between grid items
+                                      horizontalGridMargin: 50, // Horizontal space around the grid
+                                      verticalGridMargin: 50, // Vertical space around the grid
+                                      minItemWidth: 150, // The minimum item width (can be smaller, if the layout constraints are smaller)
+                                      minItemsPerRow: 2, // The minimum items to show in a single row. Takes precedence over minItemWidth
+                                      maxItemsPerRow: 5, // The maximum items to show in a single row. Can be useful on large screens
+                                      listViewBuilderOptions: ListViewBuilderOptions(),
                                       children: List.generate(
-                                          _baseListProvider.list[index].playlist.length,
+                                          baseListProvider.list[index].playlist.length,
                                           (i) => InkWell(
                                                 child: Column(
                                                   children: [
                                                     Stack(
                                                       children: [
                                                         LoadImage(
-                                                          _baseListProvider.list[index].playlist[i].cover,
-                                                          width: 100,
+                                                          baseListProvider.list[index].playlist[i].cover,
+                                                          width: 110,
                                                           height: 150,
                                                           fit: BoxFit.cover,
                                                         ),
@@ -152,17 +155,17 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                                             right: 0,
                                                             child: Container(
                                                               color: Colors.black45,
-                                                              padding: EdgeInsets.all(2),
+                                                              padding: const EdgeInsets.all(2),
                                                               child: Row(
                                                                 children: [
                                                                   Text(
-                                                                    _baseListProvider.list[index].playlist[i].bofang,
-                                                                    style: TextStyle(fontSize: 12, color: Colors.white),
+                                                                    baseListProvider.list[index].playlist[i].bofang,
+                                                                    style: const TextStyle(fontSize: 12, color: Colors.white),
                                                                   ),
                                                                   Gaps.hGap4,
                                                                   Text(
-                                                                    _baseListProvider.list[index].playlist[i].qingxi,
-                                                                    style: TextStyle(fontSize: 12, color: Colors.white),
+                                                                    baseListProvider.list[index].playlist[i].qingxi,
+                                                                    style: const TextStyle(fontSize: 12, color: Colors.white),
                                                                   )
                                                                 ],
                                                               ),
@@ -171,11 +174,11 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                                             top: 10,
                                                             left: 10,
                                                             child: Container(
-                                                              padding: EdgeInsets.all(5),
-                                                              decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                              padding: const EdgeInsets.all(5),
+                                                              decoration: const BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
                                                               child: Text(
-                                                                _baseListProvider.list[index].playlist[i].pingfen,
-                                                                style: TextStyle(fontSize: 12, color: Colors.white),
+                                                                baseListProvider.list[index].playlist[i].pingfen,
+                                                                style: const TextStyle(fontSize: 12, color: Colors.white),
                                                               ),
                                                             ))
                                                       ],
@@ -183,16 +186,16 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                                     Gaps.vGap8,
                                                     Container(
                                                       alignment: Alignment.center,
+                                                      width: 100,
                                                       child: Text(
-                                                        _baseListProvider.list[index].playlist[i].title,
+                                                        baseListProvider.list[index].playlist[i].title,
                                                         overflow: TextOverflow.ellipsis,
                                                       ),
-                                                      width: 100,
                                                     )
                                                   ],
                                                 ),
                                                 onTap: () {
-                                                  String jsonString = jsonEncode(_baseListProvider.list[index].playlist[i]);
+                                                  String jsonString = jsonEncode(baseListProvider.list[index].playlist[i]);
                                                   NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
                                                 },
                                               )).toList(),
@@ -205,7 +208,7 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                     },
                   ))
               : StateLayout(
-                  type: _baseListProvider.stateType,
+                  type: baseListProvider.stateType,
                   onRefresh: _onRefresh,
                 );
         }));
