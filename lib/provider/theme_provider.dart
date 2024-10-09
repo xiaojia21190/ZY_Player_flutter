@@ -38,12 +38,7 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData getTheme({bool isDarkMode = false}) {
     return ThemeData(
-      errorColor: isDarkMode ? Colours.dark_red : Colours.red,
       primaryColor: isDarkMode ? Colours.dark_app_main : Colours.app_main,
-      colorScheme: ColorScheme.fromSwatch().copyWith(
-        brightness: isDarkMode ? Brightness.dark : Brightness.light,
-        secondary: isDarkMode ? Colours.dark_app_main : Colours.app_main,
-      ),
       // Tab指示器颜色
       indicatorColor: isDarkMode ? Colours.dark_app_main : Colours.app_main,
       // 页面背景色
@@ -61,10 +56,10 @@ class ThemeProvider extends ChangeNotifier {
       ),
       textTheme: TextTheme(
         // TextField输入文字颜色
-        subtitle1: isDarkMode ? TextStyles.textDarkWhite : TextStyles.text,
+        titleMedium: isDarkMode ? TextStyles.textDarkWhite : TextStyles.text,
         // Text文字样式
-        bodyText2: isDarkMode ? TextStyles.textDarkWhite : TextStyles.text,
-        subtitle2: isDarkMode ? TextStyles.textDarkGray12 : TextStyles.textGray12,
+        bodyMedium: isDarkMode ? TextStyles.textDarkWhite : TextStyles.text,
+        titleSmall: isDarkMode ? TextStyles.textDarkGray12 : TextStyles.textGray12,
       ),
       inputDecorationTheme: InputDecorationTheme(
         hintStyle: isDarkMode ? TextStyles.textHint14 : TextStyles.textDarkGray14,
@@ -78,7 +73,13 @@ class ThemeProvider extends ChangeNotifier {
       cupertinoOverrideTheme: CupertinoThemeData(
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
       ),
-      visualDensity: VisualDensity.standard, // https://github.com/flutter/flutter/issues/77142
+      visualDensity: VisualDensity.standard,
+      colorScheme: ColorScheme.fromSwatch()
+          .copyWith(
+            brightness: isDarkMode ? Brightness.dark : Brightness.light,
+            secondary: isDarkMode ? Colours.dark_app_main : Colours.app_main,
+          )
+          .copyWith(error: isDarkMode ? Colours.dark_red : Colours.red), // https://github.com/flutter/flutter/issues/77142
     );
   }
 }
