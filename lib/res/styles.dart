@@ -45,6 +45,6 @@ class TextStyles {
   static const TextStyle textHint14 = TextStyle(fontSize: Dimens.font_sp14, color: Colours.dark_unselected_item_color);
 
   static List<BoxShadow> get borderShadow {
-    return [BoxShadow(color: Color(0x22000000), blurRadius: 8)];
+    return [const BoxShadow(color: Color(0x22000000), blurRadius: 8)];
   }
 }
