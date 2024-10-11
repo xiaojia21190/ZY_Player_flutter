@@ -23,10 +23,10 @@ class Routes {
     /// 指定路由跳转错误返回页
     router.notFoundHandler = Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       debugPrint('未找到目标页');
-      return PageNotFound();
+      return const PageNotFound();
     });
 
-    router.define(home, handler: Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) => Home()));
+    router.define(home, handler: Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) => const Home()));
 
     router.define(webViewPage, handler: Handler(handlerFunc: (_, params) {
       final String title = params['title']!.first;
@@ -46,8 +46,8 @@ class Routes {
     _listRouter.add(CollectRouter());
 
     /// 初始化路由
-    _listRouter.forEach((routerProvider) {
+    for (var routerProvider in _listRouter) {
       routerProvider.initRouter(router);
-    });
+    }
   }
 }
