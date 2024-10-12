@@ -8,6 +8,8 @@ import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class AboutPage extends StatefulWidget {
+  const AboutPage({Key? key}) : super(key: key);
+
   @override
   _AboutPageState createState() => _AboutPageState();
 }
@@ -32,7 +34,7 @@ class _AboutPageState extends State<AboutPage> {
       body: Column(
         children: <Widget>[
           Gaps.vGap50,
-          LoadImage("logo"),
+          const LoadImage("logo"),
           Gaps.vGap10,
           ClickItem(title: '公众号', content: '关注公众号《墨鱼玩》', onTap: () => Toast.show("关注公众号《墨鱼玩》")),
         ],
