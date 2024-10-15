@@ -4,7 +4,6 @@ import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/my_app_bar.dart';
 import 'package:ZY_Player_flutter/widgets/my_button.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// design/8设置/index.html#artboard1
