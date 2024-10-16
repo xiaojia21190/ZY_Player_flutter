@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PlayerRecordPage extends StatefulWidget {
+  const PlayerRecordPage({Key? key}) : super(key: key);
+
   @override
   _PlayerRecordPageState createState() => _PlayerRecordPageState();
 }
@@ -39,19 +41,19 @@ class _PlayerRecordPageState extends State<PlayerRecordPage> {
       ),
       body: Selector<AppStateProvider, List<PlayerModel>>(
           builder: (_, recordList, __) {
-            return recordList.length > 0
+            return recordList.isNotEmpty
                 ? ListView.builder(
                     itemCount: recordList.length,
                     itemBuilder: (_, index) {
                       return Card(
                           elevation: 5,
-                          shape: RoundedRectangleBorder(
+                          shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                               side: BorderSide(
                                 style: BorderStyle.solid,
                                 color: Colours.orange,
                               )),
-                          margin: EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(10),
                           child: ListTile(
                             title: Text(recordList[index].name),
                             subtitle: Text("播放进度:  ${Duration(seconds: int.parse(recordList[index].startAt)).toString().split(".")[0]}"),
@@ -59,7 +61,7 @@ class _PlayerRecordPageState extends State<PlayerRecordPage> {
                               recordList[index].cover,
                               fit: BoxFit.cover,
                             ),
-                            trailing: Icon(Icons.keyboard_arrow_right),
+                            trailing: const Icon(Icons.keyboard_arrow_right),
                             onTap: () {
                               // 前往播放页面
                               NavigatorUtils.push(context,
