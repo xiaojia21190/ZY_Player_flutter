@@ -77,7 +77,7 @@ class _PlayerVideoPageState extends State<PlayerVideoPage> {
       // 存储播放记录
       PlayerModel playerModel = PlayerModel(
           videoId: widget.videoId,
-          name: "${widget.title}",
+          name: widget.title,
           url: widget.url,
           cover: widget.cover,
           startAt: "${_videoPlayerController!.value.position.inSeconds}");
@@ -106,9 +106,9 @@ class _PlayerVideoPageState extends State<PlayerVideoPage> {
                               ? Chewie(
                                   controller: _chewieController!,
                                 )
-                              : Column(
+                              : const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     SizedBox(height: 20),
                                     Text(
                                       '等待播放...',
