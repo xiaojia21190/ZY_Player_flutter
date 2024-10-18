@@ -11,10 +11,10 @@ import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:ZY_Player_flutter/widgets/state_layout.dart';
+import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
-import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../player_router.dart';
@@ -137,11 +137,10 @@ class _PlayerListPageState extends State<PlayerListPage>
                                 ),
                                 Gaps.vGap8,
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  child: Wrap(
-                                    alignment: WrapAlignment.start,
-                                    spacing: 1,
-                                    runSpacing: 10, //交叉轴上子控件之间的间距
+                                  padding: const EdgeInsets.only(left: 15, right: 15),
+                                  child: FlexibleWrap(
+                                      isOneRowExpanded: true,
+                                      spacing: 5.0, //交叉轴上子控件之间的间距
                                     children: List.generate(
                                       baseListProvider
                                           .list[index].playlist.length,
@@ -155,7 +154,7 @@ class _PlayerListPageState extends State<PlayerListPage>
                                                       .list[index]
                                                       .playlist[i]
                                                       .cover,
-                                                  width: 110,
+                                                  width: 100,
                                                   height: 150,
                                                   fit: BoxFit.cover,
                                                 ),
