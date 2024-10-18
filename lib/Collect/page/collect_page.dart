@@ -5,7 +5,6 @@ import 'package:ZY_Player_flutter/manhua/manhua_router.dart';
 import 'package:ZY_Player_flutter/player/player_router.dart';
 import 'package:ZY_Player_flutter/res/colors.dart';
 import 'package:ZY_Player_flutter/routes/fluro_navigator.dart';
-import 'package:ZY_Player_flutter/tingshu/tingshu_router.dart';
 import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:ZY_Player_flutter/util/provider.dart';
@@ -74,7 +73,6 @@ class _CollectPageState extends State<CollectPage> with AutomaticKeepAliveClient
           } else if (index == 2) {
             NavigatorUtils.push(context, '${ManhuaRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}');
           } else {
-            NavigatorUtils.push(context, '${TingshuRouter.detailPage}?url=${Uri.encodeComponent(data.url)}&title=${Uri.encodeComponent(data.title)}&cover=${Uri.encodeComponent(data.cover)}');
           }
         },
       ),

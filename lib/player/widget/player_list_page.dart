@@ -26,7 +26,10 @@ class PlayerListPage extends StatefulWidget {
   _PlayerListPageState createState() => _PlayerListPageState();
 }
 
-class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAliveClientMixin<PlayerListPage>, SingleTickerProviderStateMixin {
+class _PlayerListPageState extends State<PlayerListPage>
+    with
+        AutomaticKeepAliveClientMixin<PlayerListPage>,
+        SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   final BaseListProvider<Types> _baseListProvider = BaseListProvider();
@@ -47,8 +50,10 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
       Method.get,
       HttpApi.getHotList,
       onSuccess: (data) {
-        List.generate(data["types"].length, (i) => _baseListProvider.add(Types.fromJson(data["types"][i])));
-        List.generate(data["swiper"].length, (i) => _list.add(SwiperList.fromJson(data["swiper"][i])));
+        List.generate(data["types"].length,
+            (i) => _baseListProvider.add(Types.fromJson(data["types"][i])));
+        List.generate(data["swiper"].length,
+            (i) => _list.add(SwiperList.fromJson(data["swiper"][i])));
         _playerProvider!.setSwiperList(_list);
       },
       onError: (code, msg) {
@@ -69,7 +74,8 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
     super.build(context);
     return ChangeNotifierProvider<BaseListProvider<Types>>(
         create: (_) => _baseListProvider,
-        child: Consumer<BaseListProvider<Types>>(builder: (_, baseListProvider, __) {
+        child: Consumer<BaseListProvider<Types>>(
+            builder: (_, baseListProvider, __) {
           return baseListProvider.list.isNotEmpty
               ? MediaQuery.removePadding(
                   context: context,
@@ -88,10 +94,12 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
-                                        padding: const EdgeInsets.only(left: 10, top: 5),
+                                        padding: const EdgeInsets.only(
+                                            left: 10, top: 5),
                                         child: Shimmer.fromColors(
                                           baseColor: Colors.red,
                                           highlightColor: Colors.yellow,
@@ -105,10 +113,12 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                           ),
                                         )),
                                     Container(
-                                        padding: const EdgeInsets.only(left: 10, top: 5),
+                                        padding: const EdgeInsets.only(
+                                            left: 10, top: 5),
                                         child: TextButton(
                                           onPressed: () {
-                                            NavigatorUtils.push(context, "${PlayerRouter.playerMorePage}?type=${Uri.encodeComponent(typeStr[index])}");
+                                            NavigatorUtils.push(context,
+                                                "${PlayerRouter.playerMorePage}?type=${Uri.encodeComponent(typeStr[index])}");
                                           },
                                           child: Shimmer.fromColors(
                                             baseColor: Colors.red,
@@ -126,80 +136,117 @@ class _PlayerListPageState extends State<PlayerListPage> with AutomaticKeepAlive
                                   ],
                                 ),
                                 Gaps.vGap8,
-                                Container(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: ResponsiveGridList(
-                                      horizontalGridSpacing: 16, // Horizontal space between grid items
-                                      verticalGridSpacing: 16, // Vertical space between grid items
-                                      horizontalGridMargin: 50, // Horizontal space around the grid
-                                      verticalGridMargin: 50, // Vertical space around the grid
-                                      minItemWidth: 150, // The minimum item width (can be smaller, if the layout constraints are smaller)
-                                      minItemsPerRow: 2, // The minimum items to show in a single row. Takes precedence over minItemWidth
-                                      maxItemsPerRow: 5, // The maximum items to show in a single row. Can be useful on large screens
-                                      listViewBuilderOptions: ListViewBuilderOptions(),
-                                      children: List.generate(
-                                          baseListProvider.list[index].playlist.length,
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Wrap(
+                                    alignment: WrapAlignment.start,
+                                    spacing: 1,
+                                    runSpacing: 10, //交叉轴上子控件之间的间距
+                                    children: List.generate(
+                                      baseListProvider
+                                          .list[index].playlist.length,
                                           (i) => InkWell(
-                                                child: Column(
-                                                  children: [
-                                                    Stack(
-                                                      children: [
-                                                        LoadImage(
-                                                          baseListProvider.list[index].playlist[i].cover,
-                                                          width: 110,
-                                                          height: 150,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                        Positioned(
-                                                            bottom: 0,
-                                                            right: 0,
-                                                            child: Container(
-                                                              color: Colors.black45,
-                                                              padding: const EdgeInsets.all(2),
-                                                              child: Row(
-                                                                children: [
-                                                                  Text(
-                                                                    baseListProvider.list[index].playlist[i].bofang,
-                                                                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                                                                  ),
-                                                                  Gaps.hGap4,
-                                                                  Text(
-                                                                    baseListProvider.list[index].playlist[i].qingxi,
-                                                                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            )),
-                                                        Positioned(
-                                                            top: 10,
-                                                            left: 10,
-                                                            child: Container(
-                                                              padding: const EdgeInsets.all(5),
-                                                              decoration: const BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(5))),
-                                                              child: Text(
-                                                                baseListProvider.list[index].playlist[i].pingfen,
-                                                                style: const TextStyle(fontSize: 12, color: Colors.white),
-                                                              ),
-                                                            ))
-                                                      ],
-                                                    ),
-                                                    Gaps.vGap8,
-                                                    Container(
-                                                      alignment: Alignment.center,
-                                                      width: 100,
-                                                      child: Text(
-                                                        baseListProvider.list[index].playlist[i].title,
-                                                        overflow: TextOverflow.ellipsis,
-                                                      ),
-                                                    )
-                                                  ],
+                                        child: Column(
+                                          children: [
+                                            Stack(
+                                              children: [
+                                                LoadImage(
+                                                  baseListProvider
+                                                      .list[index]
+                                                      .playlist[i]
+                                                      .cover,
+                                                  width: 110,
+                                                  height: 150,
+                                                  fit: BoxFit.cover,
                                                 ),
-                                                onTap: () {
-                                                  String jsonString = jsonEncode(baseListProvider.list[index].playlist[i]);
-                                                  NavigatorUtils.push(context, '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
-                                                },
-                                              )).toList(),
-                                    )),
+                                                Positioned(
+                                                    bottom: 0,
+                                                    right: 0,
+                                                    child: Container(
+                                                      color: Colors.black45,
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .all(2),
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            baseListProvider
+                                                                .list[index]
+                                                                .playlist[i]
+                                                                .bofang,
+                                                            style: const TextStyle(
+                                                                fontSize:
+                                                                12,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                          Gaps.hGap4,
+                                                          Text(
+                                                            baseListProvider
+                                                                .list[index]
+                                                                .playlist[i]
+                                                                .qingxi,
+                                                            style: const TextStyle(
+                                                                fontSize:
+                                                                12,
+                                                                color: Colors
+                                                                    .white),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    )),
+                                                Positioned(
+                                                    top: 10,
+                                                    left: 10,
+                                                    child: Container(
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .all(5),
+                                                      decoration: const BoxDecoration(
+                                                          color: Colors
+                                                              .black45,
+                                                          borderRadius: BorderRadius
+                                                              .all(Radius
+                                                              .circular(
+                                                              5))),
+                                                      child: Text(
+                                                        baseListProvider
+                                                            .list[index]
+                                                            .playlist[i]
+                                                            .pingfen,
+                                                        style:
+                                                        const TextStyle(
+                                                            fontSize:
+                                                            12,
+                                                            color: Colors
+                                                                .white),
+                                                      ),
+                                                    ))
+                                              ],
+                                            ),
+                                            Gaps.vGap8,
+                                            Container(
+                                              alignment: Alignment.center,
+                                              width: 100,
+                                              child: Text(
+                                                baseListProvider.list[index]
+                                                    .playlist[i].title,
+                                                overflow:
+                                                TextOverflow.ellipsis,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          String jsonString = jsonEncode(
+                                              baseListProvider
+                                                  .list[index].playlist[i]);
+                                          NavigatorUtils.push(context,
+                                              '${PlayerRouter.detailPage}?playerList=${Uri.encodeComponent(jsonString)}');
+                                        },
+                                      )).toList(),
+                                  ),
+                                ),
                               ],
                             ),
                           ),

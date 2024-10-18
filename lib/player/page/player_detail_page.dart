@@ -75,6 +75,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     var result = jsonDecode(widget.playerList);
+    if (result['bofang'] == null) {
+      result['bofang'] = "1";
+      result["qingxi"] = "1";
+      result["pingfen"] = "1";
+    }
     _playlist = Playlist.fromJson(result);
     // getPlayDownLoadUrl(_playlist!.url);
     _collectProvider = Store.value<CollectProvider>(context);
