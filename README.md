@@ -53,3 +53,8 @@
 ### License
 
 [MIT](LICENSE)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=xiaojia21190/ZY_Player_flutter&type=Date)](https://star-history.com/#xiaojia21190/ZY_Player_flutter&Date)
+
