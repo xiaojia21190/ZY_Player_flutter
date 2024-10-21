@@ -10,6 +10,8 @@ import '../setting_router.dart';
 
 /// design/8设置/index.html
 class SettingPage extends StatefulWidget {
+  const SettingPage({Key? key}) : super(key: key);
+
   @override
   _SettingPageState createState() => _SettingPageState();
 }
