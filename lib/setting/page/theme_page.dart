@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ThemePage extends StatefulWidget {
+  const ThemePage({Key? key}) : super(key: key);
+
   @override
   _ThemePageState createState() => _ThemePageState();
 }
@@ -52,7 +54,7 @@ class _ThemePageState extends State<ThemePage> {
                   Expanded(
                     child: Text(_list[index]),
                   ),
-                  Opacity(opacity: themeMode == _list[index] ? 1 : 0, child: Icon(Icons.done, color: Colors.blue))
+                  Opacity(opacity: themeMode == _list[index] ? 1 : 0, child: const Icon(Icons.done, color: Colors.blue))
                 ],
               ),
             ),
