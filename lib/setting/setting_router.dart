@@ -17,8 +17,8 @@ class SettingRouter implements IRouterProvider {
 
   @override
   void initRouter(FluroRouter router) {
-    router.define(themePage, handler: Handler(handlerFunc: (_, __) => ThemePage()));
-    router.define(playerRecordPage, handler: Handler(handlerFunc: (_, __) => PlayerRecordPage()));
+    router.define(themePage, handler: Handler(handlerFunc: (_, __) => const ThemePage()));
+    router.define(playerRecordPage, handler: Handler(handlerFunc: (_, __) => const PlayerRecordPage()));
     router.define(payPage, handler: Handler(handlerFunc: (_, params) => PayPage(qrcode: params["qrcode"]!.first, money: params["money"]!.first)));
     router.define(playerVideoPage,
         handler: Handler(
@@ -28,6 +28,6 @@ class SettingRouter implements IRouterProvider {
                 cover: params["cover"]!.first,
                 videoId: params["videoId"]!.first,
                 startAt: params["startAt"]!.first)));
-    router.define(accountManagerPage, handler: Handler(handlerFunc: (_, __) => AccountManagerPage()));
+    router.define(accountManagerPage, handler: Handler(handlerFunc: (_, __) => const AccountManagerPage()));
   }
 }
