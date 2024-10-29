@@ -11,7 +11,7 @@ class Loading {
     preToast = null;
     OverlayState? overlay = Constant.navigatorKey.currentState!.overlay;
     OverlayEntry overlayEntry;
-    overlayEntry = new OverlayEntry(builder: (context) {
+    overlayEntry = OverlayEntry(builder: (context) {
       return buildToastLayout(msg);
     });
 
@@ -37,6 +37,7 @@ class Loading {
             height: Screen.heightOt,
             padding: const EdgeInsets.all(15),
             decoration: const BoxDecoration(color: Colors.black54),
+            alignment: Alignment.center,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -46,11 +47,10 @@ class Loading {
                 Gaps.vGap8,
                 Text(
                   msg ?? "正在加载中...",
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 )
               ],
             ),
-            alignment: Alignment.center,
           ),
         ),
       );
@@ -71,7 +71,7 @@ class LoadingView {
     if (dismissed) {
       return;
     }
-    this.dismissed = true;
+    dismissed = true;
     overlayEntry?.remove();
   }
 }
