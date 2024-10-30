@@ -56,9 +56,9 @@ class Log {
         value = '"$value"';
       }
       if (value is Map) {
-        if (value.isEmpty)
+        if (value.isEmpty) {
           LogUtil.v('${_indent(tabs)} $key: $value${!isLast ? ',' : ''}', tag: tag);
-        else {
+        } else {
           LogUtil.v('${_indent(tabs)} $key: {', tag: tag);
           _printMap(value, tabs: tabs);
         }
