@@ -2,10 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:ZY_Player_flutter/util/log_utils.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 // import 'package:permission_handler/permission_handler.dart';
 
@@ -14,10 +12,10 @@ class QSCommon {
   static Future<ByteData?> capturePngToByteData(GlobalKey key) async {
     try {
       RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      double dpr = ui.window.devicePixelRatio; // 获取当前设备的像素比
+      double dpr = ui.window.devicePixelRatio;
       ui.Image image = await boundary.toImage(pixelRatio: dpr);
-      ByteData? _byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      return _byteData!;
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      return byteData!;
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -31,7 +29,7 @@ class QSCommon {
     Directory tempDir = await getTemporaryDirectory();
 
     String storagePath = tempDir.path;
-    File file = new File('$storagePath/海报截图.png');
+    File file = File('$storagePath/海报截图.png');
 
     if (!file.existsSync()) {
       file.createSync();
@@ -61,8 +59,8 @@ class QSCommon {
   static Future saveImageToCamera(ByteData byteData) async {
     // await handlePhotosPermission();
 
-    Uint8List sourceBytes = byteData.buffer.asUint8List();
-    final result = await ImageGallerySaver.saveImage(sourceBytes);
-    return result;
+    // Uint8List sourceBytes = byteData.buffer.asUint8List();
+    // final result = await ImageGallerySaver.saveImage(sourceBytes);
+    // return result;
   }
 }
