@@ -7,7 +7,6 @@ import 'package:ZY_Player_flutter/res/resources.dart';
 import 'package:ZY_Player_flutter/util/device_utils.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'device_utils.dart';
 
 class ThemeUtils {
   static bool isDark(BuildContext context) {
@@ -41,11 +40,11 @@ class ThemeUtils {
     /// 主题切换动画（AnimatedTheme）时间为200毫秒，延时设置导航栏颜色，这样过渡相对自然。
     _subscription?.cancel();
     _subscription = Stream.value(1).delay(const Duration(milliseconds: 200)).listen((_) {
-      bool _isDark = false;
+      bool isDark = false;
       if (mode == ThemeMode.dark || (mode == ThemeMode.system && window.platformBrightness == Brightness.dark)) {
-        _isDark = true;
+        isDark = true;
       }
-      setSystemBarStyle(isDark: _isDark);
+      setSystemBarStyle(isDark: isDark);
     });
   }
 
@@ -53,13 +52,13 @@ class ThemeUtils {
   /// 本项目在android MainActivity中已设置，不需要覆盖设置。
   static void setSystemBarStyle({bool? isDark}) {
     if (Device.isAndroid) {
-      final bool _isDark = isDark ?? window.platformBrightness == Brightness.dark;
-      debugPrint('isDark: $_isDark');
+      final bool isDark0 = isDark ?? window.platformBrightness == Brightness.dark;
+      debugPrint('isDark: $isDark0');
       final SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
         /// 透明状态栏
         statusBarColor: Colors.transparent,
-        systemNavigationBarColor: _isDark ? Colours.dark_bg_color : Colors.white,
-        systemNavigationBarIconBrightness: _isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarColor: isDark0 ? Colours.dark_bg_color : Colors.white,
+        systemNavigationBarIconBrightness: isDark0 ? Brightness.light : Brightness.dark,
       );
       SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     }
