@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 class Utils {
   /// 调起拨号页
   static void launchTelURL(String phone) async {
-    final Uri url = Uri.parse('tel:' + phone);
+    final Uri url = Uri.parse('tel:$phone');
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -24,13 +24,13 @@ class Utils {
 
     if (Device.isIOS) {
       IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
-      print("ios唯一设备码：" + iosDeviceInfo.identifierForVendor!);
+      print("ios唯一设备码：${iosDeviceInfo.identifierForVendor!}");
 
       deviceIdentifier =
           iosDeviceInfo.identifierForVendor.toString(); // unique ID on iOS
     } else if (Device.isAndroid) {
       AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
-      print("android唯一设备码：" + androidDeviceInfo.id!);
+      print("android唯一设备码：${androidDeviceInfo.id}");
 
       deviceIdentifier = androidDeviceInfo.id; // unique ID on Android
     } else if (Device.isWeb) {
