@@ -101,7 +101,7 @@ class _DialogButton extends StatelessWidget {
       child: SizedBox(
         height: 48.0,
         child: ElevatedButton(
-          style: ButtonStyle(textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: textColor))),
+          style: ButtonStyle(textStyle: WidgetStateProperty.all<TextStyle>(TextStyle(color: textColor))),
           onPressed: onPressed,
           child: Text(
             text,
