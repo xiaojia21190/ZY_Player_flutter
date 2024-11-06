@@ -3,15 +3,7 @@ import 'package:ZY_Player_flutter/util/theme_utils.dart';
 import 'package:flutter/material.dart';
 
 class ClickItem extends StatelessWidget {
-  const ClickItem(
-      {Key? key,
-      required this.onTap,
-      required this.title,
-      this.content = '',
-      this.textAlign = TextAlign.start,
-      this.slected = false,
-      this.maxLines = 1})
-      : super(key: key);
+  const ClickItem({Key? key, required this.onTap, required this.title, this.content = '', this.textAlign = TextAlign.start, this.slected = false, this.maxLines = 1}) : super(key: key);
 
   final GestureTapCallback? onTap;
   final String title;
@@ -41,7 +33,7 @@ class ClickItem extends StatelessWidget {
             maxLines: maxLines,
             textAlign: maxLines == 1 ? TextAlign.right : textAlign,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.subtitle2!.copyWith(fontSize: Dimens.font_sp14),
+            style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: Dimens.font_sp14),
           ),
         ),
         Gaps.hGap8,
@@ -59,7 +51,7 @@ class ClickItem extends StatelessWidget {
     /// 分隔线
     child = Container(
       padding: const EdgeInsets.fromLTRB(0, 15.0, 15.0, 15.0),
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         maxHeight: double.infinity,
         minHeight: 50.0,
       ),
