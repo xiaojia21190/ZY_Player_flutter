@@ -6,17 +6,7 @@ import 'package:ZY_Player_flutter/widgets/my_button.dart';
 
 /// 自定义AppBar
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const MyAppBar(
-      {Key? key,
-      this.backgroundColor,
-      this.title = '',
-      this.centerTitle = '',
-      this.actionName = '',
-      this.backImg = 'assets/images/ic_back_black.png',
-      this.backImgColor,
-      this.onPressed,
-      this.isBack = true})
-      : super(key: key);
+  const MyAppBar({Key? key, this.backgroundColor, this.title = '', this.centerTitle = '', this.actionName = '', this.backImg = 'assets/images/ic_back_black.png', this.backImgColor, this.onPressed, this.isBack = true}) : super(key: key);
 
   final Color? backgroundColor;
   final String title;
@@ -29,10 +19,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color _backgroundColor = backgroundColor ?? context.backgroundColor;
+    final Color backgroundColor = context.backgroundColor;
 
-    final SystemUiOverlayStyle _overlayStyle =
-        ThemeData.estimateBrightnessForColor(_backgroundColor) == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
+    final SystemUiOverlayStyle overlayStyle = ThemeData.estimateBrightnessForColor(backgroundColor) == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
 
     final Widget back = isBack
         ? IconButton(
@@ -81,20 +70,20 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         alignment: centerTitle.isEmpty ? Alignment.centerLeft : Alignment.center,
         width: double.infinity,
+        margin: const EdgeInsets.symmetric(horizontal: 48.0),
         child: Text(
           title.isEmpty ? centerTitle : title,
           style: const TextStyle(
             fontSize: Dimens.font_sp18,
           ),
         ),
-        margin: const EdgeInsets.symmetric(horizontal: 48.0),
       ),
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: _overlayStyle,
+      value: overlayStyle,
       child: Material(
-        color: _backgroundColor,
+        color: backgroundColor,
         child: SafeArea(
           child: Stack(
             alignment: Alignment.centerLeft,
