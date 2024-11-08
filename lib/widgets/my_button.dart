@@ -41,34 +41,34 @@ class MyButton extends StatelessWidget {
         onPressed: onPressed,
         style: ButtonStyle(
           // 文字颜色
-          foregroundColor: MaterialStateProperty.resolveWith(
+          foregroundColor: WidgetStateProperty.resolveWith(
             (states) {
-              if (states.contains(MaterialState.disabled)) {
+              if (states.contains(WidgetState.disabled)) {
                 return disabledTextColor ?? (isDark ? Colours.dark_text_disabled : Colours.text_disabled);
               }
               return textColor ?? (isDark ? Colours.dark_button_text : Colors.white);
             },
           ),
           // 背景颜色
-          backgroundColor: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.disabled)) {
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
               return disabledBackgroundColor ?? (isDark ? Colours.dark_button_disabled : Colours.button_disabled);
             }
             return backgroundColor ?? (isDark ? Colours.dark_app_main : Colours.app_main);
           }),
           // 水波纹
-          overlayColor: MaterialStateProperty.resolveWith((states) {
+          overlayColor: WidgetStateProperty.resolveWith((states) {
             return (textColor ?? (isDark ? Colours.dark_button_text : Colors.white)).withOpacity(0.12);
           }),
           // 按钮最小大小
-          minimumSize: (minWidth == null || minHeight == null) ? null : MaterialStateProperty.all<Size>(Size(minWidth!, minHeight!)),
-          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(padding),
-          shape: MaterialStateProperty.all<OutlinedBorder>(
+          minimumSize: (minWidth == null || minHeight == null) ? null : WidgetStateProperty.all<Size>(Size(minWidth!, minHeight!)),
+          padding: WidgetStateProperty.all<EdgeInsetsGeometry>(padding),
+          shape: WidgetStateProperty.all<OutlinedBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radius),
             ),
           ),
-          side: MaterialStateProperty.all<BorderSide>(side),
+          side: WidgetStateProperty.all<BorderSide>(side),
         ),
         child: Text(
           text,
