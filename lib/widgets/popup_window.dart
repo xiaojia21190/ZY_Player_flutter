@@ -30,15 +30,15 @@ Future<T?> showPopupWindow<T>({
     case TargetPlatform.windows:
       semanticLabel ??= MaterialLocalizations.of(context).popupMenuLabel;
   }
-  final RenderBox? overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox?;
+  final RenderBox? overlay = Overlay.of(context).context.findRenderObject() as RenderBox?;
 
   // 默认位置锚点下方
-  final Offset _offset = Offset(0, anchor.size.height);
+  final Offset offset0 = Offset(0, anchor.size.height);
 
   if (offset == null) {
-    offset = _offset;
+    offset = offset0;
   } else {
-    offset = offset + _offset;
+    offset = offset + offset0;
   }
   // 获得控件左下方的坐标
   final a = anchor.localToGlobal(offset, ancestor: overlay);
@@ -220,12 +220,12 @@ class _PopupWindowLayoutDelegate extends SingleChildLayoutDelegate {
 
     // Avoid going outside an area defined as the rectangle 8.0 pixels from the
     // edge of the screen in every direction.
-    if (x < _kWindowScreenPadding)
+    if (x < _kWindowScreenPadding) {
       x = _kWindowScreenPadding;
-    else if (x + childSize.width > size.width - _kWindowScreenPadding) x = size.width - childSize.width - _kWindowScreenPadding;
-    if (y < _kWindowScreenPadding)
+    } else if (x + childSize.width > size.width - _kWindowScreenPadding) x = size.width - childSize.width - _kWindowScreenPadding;
+    if (y < _kWindowScreenPadding) {
       y = _kWindowScreenPadding;
-    else if (y + childSize.height > size.height - _kWindowScreenPadding) y = size.height - childSize.height - _kWindowScreenPadding;
+    } else if (y + childSize.height > size.height - _kWindowScreenPadding) y = size.height - childSize.height - _kWindowScreenPadding;
     return Offset(x, y);
   }
 
