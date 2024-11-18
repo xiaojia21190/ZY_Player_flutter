@@ -139,7 +139,7 @@ class _SearchBarState extends State<MySearchBar> {
       ),
       child: TextButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(
+          backgroundColor: WidgetStateProperty.all<Color>(
               isDark ? Colours.dark_app_main : Colours.app_main),
         ),
         onPressed: () {
