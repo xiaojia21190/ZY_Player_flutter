@@ -50,7 +50,7 @@ class StateLayout extends StatelessWidget {
         ),
         Text(
           hintText ?? type.hintText,
-          style: Theme.of(context).textTheme.subtitle2!.copyWith(fontSize: Dimens.font_sp14),
+          style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: Dimens.font_sp14),
         ),
         Gaps.vGap50,
       ],
@@ -61,7 +61,7 @@ class StateLayout extends StatelessWidget {
 enum StateType { order, network, account, loading, empty }
 
 extension StateTypeExtension on StateType {
-  String get img => ['zwdd', 'zwwl', 'zwzh', '', ''][this.index];
+  String get img => ['zwdd', 'zwwl', 'zwzh', '', ''][index];
 
-  String get hintText => ['暂无资源', '无网络连接', '没有页面', '正在加载中...', ''][this.index];
+  String get hintText => ['暂无资源', '无网络连接', '没有页面', '正在加载中...', ''][index];
 }
