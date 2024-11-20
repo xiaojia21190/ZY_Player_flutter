@@ -13,11 +13,11 @@ import 'package:ZY_Player_flutter/widgets/state_layout.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/provider/xiaoshuo_provider.dart';
 import 'package:ZY_Player_flutter/xiaoshuo/widget/reader_memu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:provider/provider.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 class XiaoShuoContentPage extends StatefulWidget {
-  XiaoShuoContentPage({
+  const XiaoShuoContentPage({
     Key? key,
     required this.id,
     required this.chpId,
@@ -35,7 +35,7 @@ class XiaoShuoContentPage extends StatefulWidget {
 class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerProviderStateMixin {
   AppStateProvider? _appStateProvider;
   XiaoShuoProvider? _xiaoShuoProvider;
-  BaseListProvider<XiaoshuoContent> _baseListProvider = BaseListProvider();
+  final BaseListProvider<XiaoshuoContent> _baseListProvider = BaseListProvider();
   ScrollController scrollController = ScrollController();
 
   List<Map<String, int>>? chpPage;
@@ -73,8 +73,8 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
   }
 
   Future setLight() async {
-    FlutterScreenWake.setBrightness(-1);
-    _appStateProvider?.setLightLevel(-1);
+    ScreenBrightness().setScreenBrightness(0);
+    _appStateProvider?.setLightLevel(0);
   }
 
   @override
@@ -119,7 +119,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<BaseListProvider<XiaoshuoContent>>(
         create: (_) => _baseListProvider,
-        child: Consumer2<BaseListProvider<XiaoshuoContent>, AppStateProvider>(builder: (_, _baseListProvider, appStateProvider, __) {
+        child: Consumer2<BaseListProvider<XiaoshuoContent>, AppStateProvider>(builder: (_, baseListProvider, appStateProvider, __) {
           return Scaffold(
               backgroundColor: appStateProvider.xsColor,
               body: SafeArea(
@@ -130,12 +130,12 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
                         context: context,
                         removeTop: true,
                         child: DeerListView(
-                          itemCount: _baseListProvider.list.length,
-                          stateType: _baseListProvider.stateType,
+                          itemCount: baseListProvider.list.length,
+                          stateType: baseListProvider.stateType,
                           onRefresh: _onRefresh,
                           hasRefresh: false,
-                          pageSize: _baseListProvider.list.length,
-                          hasMore: _baseListProvider.hasMore,
+                          pageSize: baseListProvider.list.length,
+                          hasMore: baseListProvider.hasMore,
                           loadMore: loadMore,
                           itemBuilder: (_, index) {
                             return GestureDetector(
@@ -150,7 +150,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
                                     Container(
                                       margin: const EdgeInsets.only(left: 10, top: 10),
                                       child: Text(
-                                        _baseListProvider.list[index].cname,
+                                        baseListProvider.list[index].cname,
                                         style: const TextStyle(fontSize: 14, color: Colours.golden),
                                       ),
                                     ),
@@ -158,7 +158,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
                                       color: Colors.transparent,
                                       margin: const EdgeInsets.fromLTRB(10, 10, 5, 10),
                                       child: Text.rich(
-                                        TextSpan(children: [TextSpan(text: _baseListProvider.list[index].content, style: TextStyle(wordSpacing: -5, fontSize: appStateProvider.xsFontSize, color: appStateProvider.xsColor == Colours.cunhei ? const Color(0xff4c4c4c) : Colours.text))]),
+                                        TextSpan(children: [TextSpan(text: baseListProvider.list[index].content, style: TextStyle(wordSpacing: -5, fontSize: appStateProvider.xsFontSize, color: appStateProvider.xsColor == Colours.cunhei ? const Color(0xff4c4c4c) : Colours.text))]),
                                         textAlign: TextAlign.justify,
                                       ),
                                     ),
@@ -166,7 +166,7 @@ class _XiaoShuoContentPageState extends State<XiaoShuoContentPage> with TickerPr
                                 ));
                           },
                         )),
-                    ReaderMenu(title: currentIndex == 0 ? title : _baseListProvider.list[currentIndex].cname, id: currentIndex == 0 ? widget.id : _baseListProvider.list[currentIndex].id, chpId: currentChpid)
+                    ReaderMenu(title: currentIndex == 0 ? title : baseListProvider.list[currentIndex].cname, id: currentIndex == 0 ? widget.id : baseListProvider.list[currentIndex].id, chpId: currentChpid)
                   ],
                 ),
               ));
