@@ -21,12 +21,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import '../xiaoshuo_router.dart';
 
 class XiaoShuoDetailPage extends StatefulWidget {
-  XiaoShuoDetailPage({
+  const XiaoShuoDetailPage({
     Key? key,
     required this.xiaoshuodetail,
   }) : super(key: key);
@@ -39,7 +38,7 @@ class XiaoShuoDetailPage extends StatefulWidget {
 
 class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
   XiaoShuoProvider _xiaoShuoProvider = XiaoShuoProvider();
-  BaseListProvider<XiaoshuoList> _baseListProvider = BaseListProvider();
+  final BaseListProvider<XiaoshuoList> _baseListProvider = BaseListProvider();
 
   XiaoshuoDetail? _detail;
 
@@ -153,7 +152,7 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                                           const Text("分享 虱子聚合"),
                                           Container(
                                             child: Text(
-                                              "$title",
+                                              title,
                                               softWrap: true,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -340,14 +339,14 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                       Consumer<XiaoShuoProvider>(
                           builder: (_, provider, __) => TextButton(
                               onPressed: () {
-                                if (provider.xiaoshuo.where((element) => element.id == _detail!.id).toList().length > 0) {
+                                if (provider.xiaoshuo.where((element) => element.id == _detail!.id).toList().isNotEmpty) {
                                   _xiaoShuoProvider.removeXiaoshuoResource(_detail!.id);
                                 } else {
                                   _xiaoShuoProvider.addXiaoshuoResource(_detail!);
                                 }
                               },
                               child: Text(
-                                provider.xiaoshuo.where((element) => element.id == _detail!.id).toList().length > 0 ? "移出书架" : "加入书架",
+                                provider.xiaoshuo.where((element) => element.id == _detail!.id).toList().isNotEmpty ? "移出书架" : "加入书架",
                               ))),
                     ],
                   ),
@@ -357,18 +356,18 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
           },
           body: ChangeNotifierProvider<BaseListProvider<XiaoshuoList>>(
               create: (_) => _baseListProvider,
-              child: Consumer<BaseListProvider<XiaoshuoList>>(builder: (_, _baseListProvider, __) {
+              child: Consumer<BaseListProvider<XiaoshuoList>>(builder: (_, baseListProvider, __) {
                 return MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
                     child: DeerListView(
-                        itemCount: _baseListProvider.list.length,
-                        stateType: _baseListProvider.stateType,
+                        itemCount: baseListProvider.list.length,
+                        stateType: baseListProvider.stateType,
                         hasRefresh: false,
                         loadMore: _onLoadMore,
                         pageSize: 20,
                         onRefresh: () => _refush(false),
-                        hasMore: _baseListProvider.hasMore,
+                        hasMore: baseListProvider.hasMore,
                         itemBuilder: (_, index) {
                           return AnimationConfiguration.staggeredList(
                             position: index,
@@ -378,15 +377,15 @@ class _XiaoShuoDetailPageState extends State<XiaoShuoDetailPage> {
                               child: FadeInAnimation(
                                 child: Consumer<XiaoShuoProvider>(
                                     builder: (_, provider, __) => ListTile(
-                                          selected: provider.readList.where((element) => element.split("_")[1] == "${_baseListProvider.list[index].id}").toList().length > 0 ? true : false,
+                                          selected: provider.readList.where((element) => element.split("_")[1] == "${baseListProvider.list[index].id}").toList().isNotEmpty ? true : false,
                                           onTap: () {
-                                            provider.setReadList("${_detail!.id}_${_baseListProvider.list[index].id}_${_baseListProvider.list[index].name}");
-                                            NavigatorUtils.pushResult(context, '${XiaoShuoRouter.contentPage}?id=${_detail!.id}&chpId=${_baseListProvider.list[index].id}&title=${Uri.encodeComponent(_baseListProvider.list[index].name)}', (res) {
+                                            provider.setReadList("${_detail!.id}_${baseListProvider.list[index].id}_${baseListProvider.list[index].name}");
+                                            NavigatorUtils.pushResult(context, '${XiaoShuoRouter.contentPage}?id=${_detail!.id}&chpId=${baseListProvider.list[index].id}&title=${Uri.encodeComponent(baseListProvider.list[index].name)}', (res) {
                                               findLastZj();
                                               setState(() {});
                                             });
                                           },
-                                          title: Text(_baseListProvider.list[index].name),
+                                          title: Text(baseListProvider.list[index].name),
                                         )),
                               ),
                             ),
