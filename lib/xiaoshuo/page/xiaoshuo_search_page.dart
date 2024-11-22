@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class XiaoShuoSearchSearchPage extends StatefulWidget {
+  const XiaoShuoSearchSearchPage({Key? key}) : super(key: key);
+
   @override
   _XiaoShuoSearchSearchPageState createState() =>
       _XiaoShuoSearchSearchPageState();
@@ -48,7 +50,7 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
         queryParameters: {"keywords": keywords}, onSuccess: (resultList) {
       var data = List.generate(resultList.length,
           (index) => XiaoshuoDetail.fromJson(resultList[index]));
-      if (data.length == 0) {
+      if (data.isEmpty) {
         _xiaoShuoProvider!.setStateType(StateType.order);
       } else {
         _xiaoShuoProvider!.setStateType(StateType.empty);
@@ -78,19 +80,19 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
         children: [
           Expanded(
               child: Consumer<XiaoShuoProvider>(builder: (_, provider, __) {
-            return provider.list.length > 0
+            return provider.list.isNotEmpty
                 ? ListView.builder(
                     itemCount: provider.list.length,
                     itemBuilder: (_, index) {
                       return Card(
                         elevation: 5,
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                             side: BorderSide(
                               style: BorderStyle.solid,
                               color: Colours.orange,
                             )),
-                        margin: EdgeInsets.all(10),
+                        margin: const EdgeInsets.all(10),
                         child: ListTile(
                           title: Text(provider.list[index].name),
                           subtitle: Text(provider.list[index].author),
@@ -98,7 +100,7 @@ class _XiaoShuoSearchSearchPageState extends State<XiaoShuoSearchSearchPage> {
                             provider.list[index].img,
                             fit: BoxFit.cover,
                           ),
-                          trailing: Icon(Icons.keyboard_arrow_right),
+                          trailing: const Icon(Icons.keyboard_arrow_right),
                           onTap: () {
                             String jsonString =
                                 jsonEncode(provider.list[index]);
