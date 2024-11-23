@@ -7,7 +7,7 @@ import 'package:flustars_flutter3/flustars_flutter3.dart';
 import 'package:flutter/material.dart';
 
 class XiaoShuoProvider extends ChangeNotifier {
-  List<XiaoshuoDetail> _xiaoshuos = [];
+  final List<XiaoshuoDetail> _xiaoshuos = [];
   List<XiaoshuoDetail> get xiaoshuo => _xiaoshuos;
 
   StateType _state = StateType.empty;
@@ -25,7 +25,7 @@ class XiaoShuoProvider extends ChangeNotifier {
   String _shunxuText = "章节顺序-正序";
   String get shunxuText => _shunxuText;
 
-  List<String> _readList = [];
+  final List<String> _readList = [];
   List<String> get readList => _readList;
 
   XiaoshuoDetail? _lastread;
