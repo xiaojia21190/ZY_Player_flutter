@@ -3,7 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  battery_plus_windows
+  battery_plus
+  screen_brightness_windows
   url_launcher_windows
 )
 

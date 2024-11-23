@@ -16,7 +16,7 @@ import 'bookshelf_cloud_widget.dart';
 class BookshelfHeader extends StatefulWidget {
   final XiaoshuoDetail novel;
 
-  BookshelfHeader(this.novel);
+  const BookshelfHeader(this.novel, {Key? key}) : super(key: key);
 
   @override
   _BookshelfHeaderState createState() => _BookshelfHeaderState();
@@ -45,6 +45,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
     super.initState();
   }
 
+  @override
   dispose() {
     controller!.dispose();
     super.dispose();
@@ -55,7 +56,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
     var width = Screen.widthOt;
     var bgHeight = width / 0.9;
     var height = Screen.topSafeHeight + 200;
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
       child: Stack(
@@ -83,7 +84,7 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
   }
 
   Widget buildContent(BuildContext context) {
-    XiaoshuoDetail novel = this.widget.novel;
+    XiaoshuoDetail novel = widget.novel;
 
     var width = Screen.widthOt;
     return Container(
@@ -105,22 +106,22 @@ class _BookshelfHeaderState extends State<BookshelfHeader> with SingleTickerProv
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             DecoratedBox(
+              decoration: const BoxDecoration(boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
               child: LoadImage(
                 novel.img,
                 width: 130,
               ),
-              decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 10),
-                  Text(novel.name, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  Text(novel.name, style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
                   Row(
                     children: <Widget>[
-                      Text(' 读至${Random.secure().nextInt(100)}%     继续阅读 ', style: TextStyle(fontSize: 14, color: Colours.paper)),
+                      Text(' 读至${Random.secure().nextInt(100)}%     继续阅读 ', style: const TextStyle(fontSize: 14, color: Colours.paper)),
                       Image.asset('assets/images/book/bookshelf_continue_read.png'),
                     ],
                   ),

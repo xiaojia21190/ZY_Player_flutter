@@ -11,7 +11,7 @@ class XiaoShuoRouter implements IRouterProvider {
 
   @override
   void initRouter(FluroRouter router) {
-    router.define(searchPage, handler: Handler(handlerFunc: (_, __) => XiaoShuoSearchSearchPage()));
+    router.define(searchPage, handler: Handler(handlerFunc: (_, __) => const XiaoShuoSearchSearchPage()));
     router.define(zjPage, handler: Handler(handlerFunc: (_, params) => XiaoShuoDetailPage(xiaoshuodetail: params['xiaoshuodetail']!.first)));
     router.define(contentPage, handler: Handler(handlerFunc: (_, params) => XiaoShuoContentPage(id: int.parse(params['id']!.first), chpId: params['chpId']!.first, title: params['title']!.first)));
   }

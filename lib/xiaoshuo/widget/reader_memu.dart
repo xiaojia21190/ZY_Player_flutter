@@ -15,8 +15,8 @@ import 'package:ZY_Player_flutter/util/toast.dart';
 import 'package:ZY_Player_flutter/widgets/click_item.dart';
 import 'package:ZY_Player_flutter/widgets/load_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screen_wake/flutter_screen_wake.dart';
 import 'package:provider/provider.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 class ColorCh {
   String name;
@@ -34,7 +34,7 @@ class ReaderMenu extends StatefulWidget {
   final VoidCallback? onPreviousArticle;
   final VoidCallback? onNextArticle;
 
-  ReaderMenu({
+  const ReaderMenu({Key? key, 
     this.articleIndex,
     this.title,
     this.chpId,
@@ -42,7 +42,7 @@ class ReaderMenu extends StatefulWidget {
     this.onTap,
     this.onPreviousArticle,
     this.onNextArticle,
-  });
+  }) : super(key: key);
 
   @override
   _ReaderMenuState createState() => _ReaderMenuState();
@@ -61,21 +61,21 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   bool sizeSlider = false;
   double fsise = 0;
 
-  List<ColorCh> _list = [
+  final List<ColorCh> _list = [
     ColorCh("银河白", Colours.yinhebai),
     ColorCh("杏仁黄", Colours.xingrenhuang),
     ColorCh("青草绿", Colours.qingcaolv),
     ColorCh("暗黑", Colours.cunhei),
   ];
 
-  List<XiaoshuoList> _list1 = [];
+  final List<XiaoshuoList> _list1 = [];
 
   Future? fetData;
 
   @override
   initState() {
     _appStateProvider = Store.value<AppStateProvider>(context);
-    this.getLight();
+    getLight();
     fsise = _appStateProvider!.xsFontSize;
     fetData = fetchData();
     super.initState();
@@ -83,7 +83,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    FlutterScreenWake.setBrightness(light);
+    ScreenBrightness().setScreenBrightness(light);
     super.dispose();
   }
 
@@ -107,12 +107,12 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
       left: 0,
       right: 0,
       child: Container(
-        decoration: BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+        decoration: const BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
         height: Screen.navigationBarHeight - 40,
-        padding: EdgeInsets.fromLTRB(20, 0, 5, 0),
+        padding: const EdgeInsets.fromLTRB(20, 0, 5, 0),
         child: Row(
           children: <Widget>[
-            Container(
+            SizedBox(
               width: 21,
               child: GestureDetector(
                 onTap: () {
@@ -139,14 +139,14 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(
             "当前亮度:${(light * 100).toInt()}%",
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           Slider(
             value: light,
             onChanged: (v) {
               setState(() {
                 light = v;
-                FlutterScreenWake.setBrightness(v);
+                ScreenBrightness().setScreenBrightness(light);
               });
             },
             label: "亮度:${(light * 100).toInt()}%", //气泡的值
@@ -166,7 +166,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
         children: [
           Text(
             "当前字体大小:$fsise",
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           Slider(
             value: fsise,
@@ -191,7 +191,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
       width: Screen.widthOt,
       height: _appStateProvider!.opacityLevel == 1.0 ? 80 : 0,
       color: Colors.black87,
-      padding: EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 20),
       child: Wrap(
         alignment: WrapAlignment.spaceAround,
         crossAxisAlignment: WrapCrossAlignment.center,
@@ -213,7 +213,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                       ),
                       Text(
                         _list[index].name,
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       )
                     ],
                   ),
@@ -233,7 +233,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
           colorSlider ? buildColor() : Container(),
           sizeSlider ? buildSize() : Container(),
           Container(
-            decoration: BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+            decoration: const BoxDecoration(color: Colours.paper, boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
             padding: EdgeInsets.only(bottom: Screen.bottomSafeHeight),
             child: Column(
               children: <Widget>[
@@ -264,16 +264,16 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                       builder: (BuildContext context) {
                         return Container(
                           height: 550,
-                          decoration: BoxDecoration(color: isDark ? Colours.dark_app_main : Colours.app_main, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                          decoration: BoxDecoration(color: isDark ? Colours.dark_app_main : Colours.app_main, borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
                           child: Column(
                             children: [
-                              _list.length > 0
+                              _list.isNotEmpty
                                   ? TextButton(
                                       onPressed: () {
                                         var index = _list1.indexWhere((element) => element.id == widget.chpId);
-                                        scrollController.animateTo(50.0 * index - 80, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                        scrollController.animateTo(50.0 * index - 80, duration: const Duration(milliseconds: 300), curve: Curves.ease);
                                       },
-                                      child: Text("去当前"))
+                                      child: const Text("去当前"))
                                   : Container(),
                               Expanded(
                                   child: FutureBuilder(
@@ -299,11 +299,11 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
                                     } else {
                                       return Container(
                                         alignment: Alignment.center,
-                                        child: TextButton(onPressed: fetchData, child: Text('点击刷新章节')),
+                                        child: TextButton(onPressed: fetchData, child: const Text('点击刷新章节')),
                                       );
                                     }
                                   } else {
-                                    return Container(alignment: Alignment.center, child: CircularProgressIndicator());
+                                    return Container(alignment: Alignment.center, child: const CircularProgressIndicator());
                                   }
                                 },
                               ))
@@ -352,14 +352,14 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
         callClick();
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 7),
+        padding: const EdgeInsets.symmetric(vertical: 7),
         child: Column(
           children: <Widget>[
             LoadImage(
               icon,
               height: 21,
             ),
-            Text(title, style: TextStyle(fontSize: 12, color: Colours.darkGray)),
+            Text(title, style: const TextStyle(fontSize: 12, color: Colours.darkGray)),
           ],
         ),
       ),
@@ -372,7 +372,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
         builder: (_, value, __) {
           return AnimatedOpacity(
             opacity: value,
-            duration: new Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             child: Stack(children: <Widget>[
               buildTopView(context),
               buildBottomView(),

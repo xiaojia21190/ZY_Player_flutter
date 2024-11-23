@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class BookshelfCloudWidget extends AnimatedWidget {
   final double width;
-  BookshelfCloudWidget({required Animation<double> animation, required this.width}) : super(listenable: animation);
+  const BookshelfCloudWidget({Key? key, required Animation<double> animation, required this.width}) : super(key: key, listenable: animation);
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     final Animation<double> animation = listenable as Animation<double>;
-    return Container(
+    return SizedBox(
       width: width,
       height: width * 0.73,
       child: Stack(
