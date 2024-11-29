@@ -1,7 +1,6 @@
 import 'package:ZY_Player_flutter/common/common.dart';
 import 'package:ZY_Player_flutter/home/home_page.dart';
 import 'package:ZY_Player_flutter/localization/app_localizations.dart';
-import 'package:ZY_Player_flutter/login/page/login_page.dart';
 import 'package:ZY_Player_flutter/net/dio_utils.dart';
 import 'package:ZY_Player_flutter/net/intercept.dart';
 import 'package:ZY_Player_flutter/provider/app_state_provider.dart';
@@ -27,10 +26,9 @@ Future<void> main() async {
 
   /// sp初始化
   await SpUtil.getInstance();
-  final String? accessToken = SpUtil.getString(Constant.accessToken);
   runApp(
     Store.init(MyApp(
-      home: accessToken!.isNotEmpty ? Home() : LoginPage(),
+      home: const Home(),
     )),
   );
 
@@ -41,7 +39,7 @@ class MyApp extends StatelessWidget {
   final Widget? home;
   final ThemeData? theme;
 
-  MyApp({this.home, this.theme}) {
+  MyApp({Key? key, this.home, this.theme}) : super(key: key) {
     Log.init();
     initDio();
 
@@ -54,10 +52,10 @@ class MyApp extends StatelessWidget {
     final List<Interceptor> interceptors = [];
 
     /// 统一添加身份验证请求头
-    interceptors.add(AuthInterceptor());
+    // interceptors.add(AuthInterceptor());
 
     /// 刷新Token
-    interceptors.add(TokenInterceptor());
+    // interceptors.add(TokenInterceptor());
 
     /// 打印Log(生产模式去除)
     if (!Constant.inProduction) {
@@ -104,7 +102,7 @@ class MyApp extends StatelessWidget {
 
                 /// 保证文字大小不受手机系统设置影响 https://www.kikt.top/posts/flutter/layout/dynamic-text/
                 return MediaQuery(
-                  data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                  data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
                   child: child!,
                 );
               },
@@ -112,7 +110,7 @@ class MyApp extends StatelessWidget {
               /// 因为使用了fluro，这里设置主要针对Web
               onUnknownRoute: (_) {
                 return MaterialPageRoute(
-                  builder: (BuildContext context) => PageNotFound(),
+                  builder: (BuildContext context) => const PageNotFound(),
                 );
               },
             );
