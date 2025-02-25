@@ -28,7 +28,7 @@ dependencies:
   url_launcher: ^6.1.12
   universal_platform: ^1.0.0+1
   # 侧滑删除 https://github.com/letsar/flutter_slidable
-  flutter_slidable: ^3.1.1
+  flutter_slidable: ^4.0.0
   # WebView插件 https://github.com/flutter/plugins/tree/master/packages/webview_flutter
   webview_flutter: ^4.8.0
   # 处理键盘事件 https://github.com/diegoveloper/flutter_keyboard_actions
@@ -46,8 +46,8 @@ dependencies:
   #json 序列化
   json_annotation: ^4.8.1
   #播放器
-  chewie: ^1.8.3
-  video_player: ^2.9.1
+  chewie: ^1.10.0
+  video_player: ^2.9.3
   #更新
   #  ota_update: ^6.0.0
 
@@ -74,7 +74,7 @@ dependencies:
   #
   animated_bottom_navigation_bar: ^1.2.0
   fradio_nullsafety: ^2.0.2
-  webview_cookie_manager: ^2.0.6
+  webview_cookie_manager_plus: ^2.0.16
 
   flexible_wrap: ^1.0.0
 

@@ -138,7 +138,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> with WidgetsBinding
     _detailProvider.setStateType(StateType.loading);
     await DioUtils.instance.requestNetwork(Method.get, HttpApi.detailReource, queryParameters: {"url": _playlist!.url}, onSuccess: (data) {
       if (data != null && data.length > 0) {
-        List.generate(data.length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data[index])));
+        List.generate(data["playList"].length, (index) => _detailProvider.addDetailResource(DetailReource.fromJson(data["playList"][index])));
         _detailProvider.setJuji();
         _detailProvider.setStateType(StateType.empty);
       } else {

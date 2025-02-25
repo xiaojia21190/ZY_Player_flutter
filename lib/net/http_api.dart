@@ -13,7 +13,7 @@ class HttpApi {
   static const String getSearchXszjDetail = 'getSearchXszjDetail';
   static const String hotSearch = 'HotSearch';
   static const String HomeHot = 'HomeHot';
-  static const String getHotList = "getHotZiyuan";
+  static const String getHotList = "getHotData";
   static const String piankuMoreData = "piankuMoreData";
   static const String getHomeManhua = "getHomeManhua";
   static const String updateApp = "updateApp";

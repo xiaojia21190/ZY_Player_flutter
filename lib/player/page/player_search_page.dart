@@ -76,8 +76,8 @@ class _PlayerSearchPageState extends State<PlayerSearchPage> {
 
   @override
   void dispose() {
-    _baseListProvider.clear();
     super.dispose();
+    // _baseListProvider.clear();
   }
 
   @override
