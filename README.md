@@ -48,8 +48,6 @@
  </a>
 </p>
 
-### ThanksDartNode
-[![DartNodeLogo](./white_color_full.png)](https://dartnode.com)
 ### License
 
 [MIT](LICENSE)
